@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AvxBlas", "AvxBlas\AvxBlas.vcxproj", "{B8787353-E3D0-4CFF-ACC8-20B7791FFBEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvxBlasTest", "AvxBlasTest\AvxBlasTest.csproj", "{A333DF54-6FC3-454B-8C07-8766BD23B0E9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B8787353-E3D0-4CFF-ACC8-20B7791FFBEB} = {B8787353-E3D0-4CFF-ACC8-20B7791FFBEB}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8787353-E3D0-4CFF-ACC8-20B7791FFBEB}.Debug|x64.ActiveCfg = Debug|x64
+		{B8787353-E3D0-4CFF-ACC8-20B7791FFBEB}.Debug|x64.Build.0 = Debug|x64
+		{B8787353-E3D0-4CFF-ACC8-20B7791FFBEB}.Release|x64.ActiveCfg = Release|x64
+		{B8787353-E3D0-4CFF-ACC8-20B7791FFBEB}.Release|x64.Build.0 = Release|x64
+		{A333DF54-6FC3-454B-8C07-8766BD23B0E9}.Debug|x64.ActiveCfg = Debug|x64
+		{A333DF54-6FC3-454B-8C07-8766BD23B0E9}.Debug|x64.Build.0 = Debug|x64
+		{A333DF54-6FC3-454B-8C07-8766BD23B0E9}.Release|x64.ActiveCfg = Release|x64
+		{A333DF54-6FC3-454B-8C07-8766BD23B0E9}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B697E898-D349-4421-9287-00E2E00EB433}
+	EndGlobalSection
+EndGlobal
