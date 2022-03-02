@@ -6,19 +6,21 @@
 
 using namespace System;
 
-void AvxBlas::Util::CheckLength(unsigned int length, ...cli::array<Array<float>^>^ arrays) {
+generic <typename T> where T : ValueType
+void AvxBlas::Util::CheckLength(unsigned int length, ...cli::array<Array<T>^>^ arrays) {
     if (length <= 0) {
         return;
     }
     
-    for each (Array<float>^ array in arrays){
+    for each (Array<T>^ array in arrays){
         if (length > (unsigned int)array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
         }
     }
 }
 
-void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...cli::array<Array<float>^>^ arrays) {
+generic <typename T> where T : ValueType
+void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...cli::array<Array<T>^>^ arrays) {
     if (length <= 0) {
         return;
     }
@@ -27,15 +29,15 @@ void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...
         throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
     }
 
-    for each (Array<float>^ array in arrays) {
+    for each (Array<T>^ array in arrays) {
         if (index >= (unsigned int)array->Length || index + length > (unsigned int)array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
         }
     }
 }
 
-
-void AvxBlas::Util::CheckDuplicateArray(... cli::array<Array<float>^>^ arrays) {
+generic <typename T> where T : ValueType
+void AvxBlas::Util::CheckDuplicateArray(... cli::array<Array<T>^>^ arrays) {
     for (int i = 0; i < arrays->Length; i++) {
         for (int j = 0; j < i; j++) {
             if (ReferenceEquals(arrays[i], arrays[j])) {

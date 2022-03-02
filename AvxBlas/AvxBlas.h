@@ -78,9 +78,14 @@ namespace AvxBlas {
 
     public ref class Util abstract sealed {
         internal:
-        static void CheckLength(unsigned int length, ... cli::array<Array<float>^>^ arrays);
-        static void CheckOutOfRange(unsigned int index, unsigned int length, ... cli::array<Array<float>^>^ arrays);
-        static void CheckDuplicateArray(... cli::array<Array<float>^>^ arrays);
+        generic <typename T> where T : ValueType
+        static void CheckLength(unsigned int length, ... cli::array<Array<T>^>^ arrays);
+        
+        generic <typename T> where T : ValueType
+        static void CheckOutOfRange(unsigned int index, unsigned int length, ... cli::array<Array<T>^>^ arrays);
+        
+        generic <typename T> where T : ValueType
+        static void CheckDuplicateArray(... cli::array<Array<T>^>^ arrays);
         
         static property System::String^ AvxNotSupported { System::String^ get(); };
         static property System::String^ InvalidArrayLength { System::String^ get(); };
@@ -98,6 +103,7 @@ namespace AvxBlas {
 
         public:
         static void Add(unsigned int n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Add(unsigned int n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {
@@ -105,6 +111,8 @@ namespace AvxBlas {
 
         public:
         static void Clear(unsigned int n, float c, Array<float>^ y);
+        static void Clear(unsigned int n, double c, Array<double>^ y);
         static void Zeroset(unsigned int n, Array<float>^ y);
+        static void Zeroset(unsigned int n, Array<double>^ y);
     };
 }
