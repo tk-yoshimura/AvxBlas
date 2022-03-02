@@ -11,7 +11,7 @@ void add(unsigned int n, const float* __restrict x1_ptr, const float* __restrict
 
         __m256 y = _mm256_add_ps(x1, x2);
 
-        _mm256_store_ps(y_ptr + i, y);
+        _mm256_stream_ps(y_ptr + i, y);
     }
 
     if (k > 0) {
