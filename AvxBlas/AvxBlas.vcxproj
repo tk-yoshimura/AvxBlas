@@ -80,6 +80,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Array\array.cpp" />
     <ClCompile Include="Elementwise\BinaryArithmetric\add.cpp" />
     <ClCompile Include="Elementwise\Initialize\static_cctor.cpp" />
     <ClCompile Include="Util\masktable.cpp" />

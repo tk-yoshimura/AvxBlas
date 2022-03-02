@@ -26,12 +26,12 @@ void add(unsigned int n, const float* __restrict x1_ptr, const float* __restrict
     }
 }
 
-void AvxBlas::Elementwise::Add(unsigned int n, array<float>^ x1, array<float>^ x2, array<float>^ y) {
+void AvxBlas::Elementwise::Add(unsigned int n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y) {
     Util::CheckLength(n, x1, x2, y);
 
-    pin_ptr<float> x1_ptr = &x1[0];
-    pin_ptr<float> x2_ptr = &x2[0];
-    pin_ptr<float> y_ptr = &y[0];
+    float* x1_ptr = (float*)(x1->Ptr.ToPointer());
+    float* x2_ptr = (float*)(x2->Ptr.ToPointer());
+    float* y_ptr = (float*)(y->Ptr.ToPointer());
 
     add(n, x1_ptr, x2_ptr, y_ptr);
 }

@@ -6,19 +6,19 @@
 
 using namespace System;
 
-void AvxBlas::Util::CheckLength(unsigned int length, ...array<array<float>^>^ arrays){
+void AvxBlas::Util::CheckLength(unsigned int length, ...cli::array<Array<float>^>^ arrays) {
     if (length <= 0) {
         return;
     }
     
-    for each (array<float>^ array in arrays){
+    for each (Array<float>^ array in arrays){
         if (length > (unsigned int)array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
         }
     }
 }
 
-void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...array<array<float>^>^ arrays) {
+void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...cli::array<Array<float>^>^ arrays) {
     if (length <= 0) {
         return;
     }
@@ -27,7 +27,7 @@ void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...
         throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
     }
 
-    for each (array<float>^ array in arrays) {
+    for each (Array<float>^ array in arrays) {
         if (index >= (unsigned int)array->Length || index + length > (unsigned int)array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
         }
@@ -35,7 +35,7 @@ void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...
 }
 
 
-void AvxBlas::Util::CheckDuplicateArray(... array<array<float>^>^ arrays) {
+void AvxBlas::Util::CheckDuplicateArray(... cli::array<Array<float>^>^ arrays) {
     for (int i = 0; i < arrays->Length; i++) {
         for (int j = 0; j < i; j++) {
             if (ReferenceEquals(arrays[i], arrays[j])) {
