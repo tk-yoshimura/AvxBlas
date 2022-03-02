@@ -19,14 +19,23 @@
     <Filter Include="Source\Elementwise\BinaryArithmetric">
       <UniqueIdentifier>{45b7232d-cc1a-44a0-92f9-0a4aed3e860a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Elementwise\Initialize">
-      <UniqueIdentifier>{aeae5ac8-2f31-430b-a0e1-798c11b6ac52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Util">
       <UniqueIdentifier>{91b4dc2b-dbb0-470c-b1a1-cc36a2f7e1a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Array">
       <UniqueIdentifier>{a5eeb1ce-c541-426c-8f25-6bdcebfc43a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Initialize">
+      <UniqueIdentifier>{d3d69416-077a-4017-9e22-70fe488992b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Elementwise\Ctor">
+      <UniqueIdentifier>{aeae5ac8-2f31-430b-a0e1-798c11b6ac52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Initialize\Clear">
+      <UniqueIdentifier>{ef94c6d5-c73f-455a-97ff-2f476e60a894}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Initialize\Ctor">
+      <UniqueIdentifier>{41487b2c-2024-45e4-a057-c138d678a939}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -41,9 +50,6 @@
     <ClCompile Include="Elementwise\BinaryArithmetric\add.cpp">
       <Filter>Source\Elementwise\BinaryArithmetric</Filter>
     </ClCompile>
-    <ClCompile Include="Elementwise\Initialize\static_cctor.cpp">
-      <Filter>Source\Elementwise\Initialize</Filter>
-    </ClCompile>
     <ClCompile Include="Util\masktable.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
@@ -52,6 +58,15 @@
     </ClCompile>
     <ClCompile Include="Array\array.cpp">
       <Filter>Source\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\Ctor\elementwise_cctor.cpp">
+      <Filter>Source\Elementwise\Ctor</Filter>
+    </ClCompile>
+    <ClCompile Include="Initialize\Clear\clear.cpp">
+      <Filter>Source\Initialize\Clear</Filter>
+    </ClCompile>
+    <ClCompile Include="Initialize\Ctor\initialize_cctor.cpp">
+      <Filter>Source\Initialize\Ctor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

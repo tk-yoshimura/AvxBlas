@@ -99,4 +99,12 @@ namespace AvxBlas {
         public:
         static void Add(unsigned int n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
     };
+
+    public ref class Initialize abstract sealed {
+        static Initialize();
+
+        public:
+        static void Clear(unsigned int n, float c, Array<float>^ y);
+        static void Zeroset(unsigned int n, Array<float>^ y);
+    };
 }
