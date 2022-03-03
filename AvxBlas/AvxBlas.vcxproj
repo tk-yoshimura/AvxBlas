@@ -83,6 +83,7 @@
     <ClCompile Include="Array\array.cpp" />
     <ClCompile Include="Elementwise\BinaryArithmetric\add.cpp" />
     <ClCompile Include="Elementwise\Ctor\elementwise_cctor.cpp" />
+    <ClCompile Include="Elementwise\UnaryArithmetric\abs.cpp" />
     <ClCompile Include="Initialize\Clear\clear.cpp" />
     <ClCompile Include="Initialize\Ctor\initialize_cctor.cpp" />
     <ClCompile Include="Util\masktable.cpp" />

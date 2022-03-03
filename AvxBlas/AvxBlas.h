@@ -104,6 +104,9 @@ namespace AvxBlas {
         public:
         static void Add(unsigned int n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void Add(unsigned int n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Abs(unsigned int n, Array<float>^ x, Array<float>^ y);
+        static void Abs(unsigned int n, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {
@@ -112,7 +115,12 @@ namespace AvxBlas {
         public:
         static void Clear(unsigned int n, float c, Array<float>^ y);
         static void Clear(unsigned int n, double c, Array<double>^ y);
+        static void Clear(unsigned int index, unsigned int n, float c, Array<float>^ y);
+        static void Clear(unsigned int index, unsigned int n, double c, Array<double>^ y);
+
         static void Zeroset(unsigned int n, Array<float>^ y);
         static void Zeroset(unsigned int n, Array<double>^ y);
+        static void Zeroset(unsigned int index, unsigned int n, Array<float>^ y);
+        static void Zeroset(unsigned int index, unsigned int n, Array<double>^ y);
     };
 }

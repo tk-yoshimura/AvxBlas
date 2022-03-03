@@ -37,6 +37,9 @@
     <Filter Include="Source\Initialize\Ctor">
       <UniqueIdentifier>{41487b2c-2024-45e4-a057-c138d678a939}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Elementwise\UnaryArithmetric">
+      <UniqueIdentifier>{b601e0ab-2a6a-442d-bacf-ca02091b3551}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvxBlas.h">
@@ -67,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="Initialize\Ctor\initialize_cctor.cpp">
       <Filter>Source\Initialize\Ctor</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\UnaryArithmetric\abs.cpp">
+      <Filter>Source\Elementwise\UnaryArithmetric</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

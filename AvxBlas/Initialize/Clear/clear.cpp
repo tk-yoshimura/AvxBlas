@@ -42,8 +42,26 @@ void AvxBlas::Initialize::Clear(unsigned int n, float c, Array<float>^ y) {
     clear(n, c, y_ptr);
 }
 
+void AvxBlas::Initialize::Clear(unsigned int index, unsigned int n, float c, Array<float>^ y) {
+    Util::CheckOutOfRange(index, n, y);
+
+    float* y_ptr = (float*)(y->Ptr.ToPointer());
+    y_ptr += index;
+
+    for (int i = index, thr = (index + 7) / 8 * 8; n > 0 && i < thr; i++, n--) {
+        *y_ptr = c;
+        y_ptr++;
+    }
+
+    clear(n, c, y_ptr);
+}
+
 void AvxBlas::Initialize::Zeroset(unsigned int n, Array<float>^ y) {
-    Clear(n, 0, y);
+    Clear(n, 0.0f, y);
+}
+
+void AvxBlas::Initialize::Zeroset(unsigned int index, unsigned int n, Array<float>^ y) {
+    Clear(index, n, 0.0f, y);
 }
 
 void AvxBlas::Initialize::Clear(unsigned int n, double c, Array<double>^ y) {
@@ -54,6 +72,24 @@ void AvxBlas::Initialize::Clear(unsigned int n, double c, Array<double>^ y) {
     clear(n, c, y_ptr);
 }
 
+void AvxBlas::Initialize::Clear(unsigned int index, unsigned int n, double c, Array<double>^ y) {
+    Util::CheckOutOfRange(index, n, y);
+
+    double* y_ptr = (double*)(y->Ptr.ToPointer());
+    y_ptr += index;
+
+    for (int i = index, thr = (index + 3) / 4 * 4; n > 0 && i < thr; i++, n--) {
+        *y_ptr = c;
+        y_ptr++;
+    }
+
+    clear(n, c, y_ptr);
+}
+
 void AvxBlas::Initialize::Zeroset(unsigned int n, Array<double>^ y) {
-    Clear(n, 0, y);
+    Clear(n, 0.0, y);
+}
+
+void AvxBlas::Initialize::Zeroset(unsigned int index, unsigned int n, Array<double>^ y) {
+    Clear(index, n, 0.0, y);
 }

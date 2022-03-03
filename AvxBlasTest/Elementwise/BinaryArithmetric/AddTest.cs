@@ -1,9 +1,9 @@
 using AvxBlas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AvxBlasTest {
+namespace AvxBlasTest.ElementwiseTest {
     [TestClass]
-    public class ElementwiseTest {
+    public class AddTest {
         [TestMethod]
         public void SAddTest() {
             Array<float> x1 = new float[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
