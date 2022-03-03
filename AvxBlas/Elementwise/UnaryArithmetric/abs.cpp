@@ -62,7 +62,7 @@ void abs(unsigned int length, const double* __restrict x_ptr, double* __restrict
     }
 }
 
-void AvxBlas::Elementwise::Abs(unsigned int length, Array<float>^ x, Array<float>^ y) {    
+void AvxBlas::Elementwise::Abs(UInt32 length, Array<float>^ x, Array<float>^ y) {
     Util::CheckLength(length, x, y);
 
     float* x_ptr = (float*)(x->Ptr.ToPointer());
@@ -71,7 +71,7 @@ void AvxBlas::Elementwise::Abs(unsigned int length, Array<float>^ x, Array<float
     abs(length, x_ptr, y_ptr);
 }
 
-void AvxBlas::Elementwise::Abs(unsigned int length, Array<double>^ x, Array<double>^ y) {
+void AvxBlas::Elementwise::Abs(UInt32 length, Array<double>^ x, Array<double>^ y) {
     Util::CheckLength(length, x, y);
 
     double* x_ptr = (double*)(x->Ptr.ToPointer());

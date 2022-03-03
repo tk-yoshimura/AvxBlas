@@ -34,32 +34,32 @@ IntPtr AvxBlas::Array<T>::Ptr::get() {
 }
 
 generic <typename T>
-UInt64 AvxBlas::Array<T>::Length::get() {
+UInt32 AvxBlas::Array<T>::Length::get() {
     return length;
 }
 
 generic <typename T>
-UInt64 AvxBlas::Array<T>::MaxLength::get() {
+UInt32 AvxBlas::Array<T>::MaxLength::get() {
     return MaxByteSize / ElementSize;
 }
 
 generic <typename T>
-UInt64 AvxBlas::Array<T>::ByteSize::get() {
+UInt32 AvxBlas::Array<T>::ByteSize::get() {
     return ElementSize * Length;
 }
 
 generic <typename T>
-UInt64 AvxBlas::Array<T>::MaxByteSize::get() {
+UInt32 AvxBlas::Array<T>::MaxByteSize::get() {
     return 0x40000000ull;
 }
 
 generic <typename T>
-UInt64 AvxBlas::Array<T>::ElementSize::get() {
-    return (UInt64)Marshal::SizeOf(T::typeid);
+UInt32 AvxBlas::Array<T>::ElementSize::get() {
+    return (UInt32)Marshal::SizeOf(T::typeid);
 }
 
 generic <typename T>
-UInt64 AvxBlas::Array<T>::Alignment::get() {
+UInt32 AvxBlas::Array<T>::Alignment::get() {
     return 32;
 }
 
@@ -85,12 +85,12 @@ String^ AvxBlas::Array<T>::Overview::get() {
 }
 
 generic <typename T>
-AvxBlas::Array<T>::Array(UInt64 length) {
+AvxBlas::Array<T>::Array(UInt32 length){
     if (length > MaxLength) {
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
 
-    size_t size = ((length * ElementSize + Alignment - 1) / Alignment) * Alignment;
+    size_t size = (static_cast<size_t>((length * ElementSize + Alignment - 1) / Alignment)) * Alignment;
 
     void* ptr = _aligned_malloc(size, Alignment);
     if (ptr == nullptr) {
@@ -104,25 +104,18 @@ AvxBlas::Array<T>::Array(UInt64 length) {
 }
 
 generic <typename T>
-AvxBlas::Array<T>::Array(Int64 length)
-    : Array(length >= 0 ? (UInt64)length : throw gcnew System::ArgumentOutOfRangeException("length")){}
-
-generic <typename T>
-AvxBlas::Array<T>::Array(UInt32 length) : Array((UInt64)length) {}
-
-generic <typename T>
 AvxBlas::Array<T>::Array(Int32 length)
-    : Array(length >= 0 ? (UInt64)length : throw gcnew System::ArgumentOutOfRangeException("length")) {}
+    : Array(length >= 0 ? (UInt32)length : throw gcnew System::ArgumentOutOfRangeException("length")) {}
 
 generic <typename T>
 AvxBlas::Array<T>::Array(cli::array<T>^ array) {
-    UInt64 length = (UInt64)array->LongLength;
+    UInt32 length = (UInt32)array->LongLength;
 
     if (length > MaxLength) {
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
 
-    size_t size = ((length * ElementSize + Alignment - 1) / Alignment) * Alignment;
+    size_t size = (static_cast<size_t>((length * ElementSize + Alignment - 1) / Alignment)) * Alignment;
 
     void* ptr = _aligned_malloc(size, Alignment);
     if (ptr == nullptr) {
@@ -136,12 +129,12 @@ AvxBlas::Array<T>::Array(cli::array<T>^ array) {
 }
 
 generic <typename T>
-T AvxBlas::Array<T>::default::get(UInt64 index){
+T AvxBlas::Array<T>::default::get(UInt32 index){
     if (index >= length) {
         throw gcnew System::IndexOutOfRangeException();
     }
 
-    void* ptr = (void*)((UInt64)Ptr.ToInt64() + ElementSize * index);
+    void* ptr = (void*)(Ptr.ToInt64() + ElementSize * static_cast<long long>(index));
 
     cli::array<T> ^buffer = gcnew cli::array<T>(1);
 
@@ -153,12 +146,12 @@ T AvxBlas::Array<T>::default::get(UInt64 index){
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::default::set(UInt64 index, T value) {
+void AvxBlas::Array<T>::default::set(UInt32 index, T value) {
     if (index >= length) {
         throw gcnew System::IndexOutOfRangeException();
     }
 
-    void* ptr = (void*)((UInt64)Ptr.ToInt64() + ElementSize * index);
+    void* ptr = (void*)(Ptr.ToInt64() + ElementSize * static_cast<long long>(index));
 
     cli::array<T>^ buffer = gcnew cli::array<T>(1) { value };
 
@@ -174,7 +167,7 @@ AvxBlas::Array<T>::operator AvxBlas::Array<T>^ (cli::array<T>^ array) {
 
 generic <typename T>
 AvxBlas::Array<T>::operator cli::array<T>^ (Array^ array) {
-    if (array->length > (UInt64)int::MaxValue) {
+    if (array->length > (UInt32)int::MaxValue) {
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
 
@@ -195,8 +188,8 @@ void AvxBlas::Array<T>::Read(cli::array<T>^ array) {
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::Write(cli::array<T>^ array, UInt64 count) {
-    if (count > length || count > (UInt64)array->LongLength) {
+void AvxBlas::Array<T>::Write(cli::array<T>^ array, UInt32 count) {
+    if (count > length || count > (UInt32)array->LongLength) {
         throw gcnew System::ArgumentOutOfRangeException("count");
     }
 
@@ -208,12 +201,12 @@ void AvxBlas::Array<T>::Write(cli::array<T>^ array, UInt64 count) {
 
     pin_ptr<T> array_ptr = &(array[0]);
 
-    memcpy_s(ptr, count * ElementSize, (void*)array_ptr, count * ElementSize);
+    memcpy_s(ptr, static_cast<rsize_t>(count) * ElementSize, (void*)array_ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::Read(cli::array<T>^ array, UInt64 count) {
-    if (count > length || count > (UInt64)array->LongLength) {
+void AvxBlas::Array<T>::Read(cli::array<T>^ array, UInt32 count) {
+    if (count > length || count > (UInt32)array->LongLength) {
         throw gcnew System::ArgumentOutOfRangeException("count");
     }
 
@@ -225,7 +218,7 @@ void AvxBlas::Array<T>::Read(cli::array<T>^ array, UInt64 count) {
 
     pin_ptr<T> array_ptr = &(array[0]);
 
-    memcpy_s((void*)array_ptr, count * ElementSize, ptr, count * ElementSize);
+    memcpy_s((void*)array_ptr, static_cast<rsize_t>(count) * ElementSize, ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
 generic <typename T>
@@ -234,29 +227,29 @@ void AvxBlas::Array<T>::Zeroset() {
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::Zeroset(UInt64 count) {
+void AvxBlas::Array<T>::Zeroset(UInt32 count) {
     Zeroset(0, count);
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::Zeroset(UInt64 index, UInt64 count) {
-    void* ptr = (void*)((UInt64)Ptr.ToInt64() + ElementSize * index);
+void AvxBlas::Array<T>::Zeroset(UInt32 index, UInt32 count) {
+    void* ptr = (void*)(Ptr.ToInt64() + ElementSize * static_cast<long long>(index));
 
-    memset(ptr, 0, count * ElementSize);
+    memset(ptr, 0, static_cast<size_t>(count) * ElementSize);
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::CopyTo(Array^ array, UInt64 count) {
+void AvxBlas::Array<T>::CopyTo(Array^ array, UInt32 count) {
     Copy(this, array, count);
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::CopyTo(UInt64 index, Array^ dst_array, UInt64 dst_index, UInt64 count) {
+void AvxBlas::Array<T>::CopyTo(UInt32 index, Array^ dst_array, UInt32 dst_index, UInt32 count) {
     Copy(this, index, dst_array, dst_index, count);
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::Copy(Array^ src_array, Array^ dst_array, UInt64 count) {
+void AvxBlas::Array<T>::Copy(Array^ src_array, Array^ dst_array, UInt32 count) {
     if (count > src_array->Length || count > dst_array->Length) {
         throw gcnew System::ArgumentOutOfRangeException("count");
     }
@@ -264,11 +257,11 @@ void AvxBlas::Array<T>::Copy(Array^ src_array, Array^ dst_array, UInt64 count) {
     void* src_ptr = src_array->Ptr.ToPointer();
     void* dst_ptr = dst_array->Ptr.ToPointer();
 
-    memcpy_s(dst_ptr, count * ElementSize, src_ptr, count * ElementSize);
+    memcpy_s(dst_ptr, static_cast<rsize_t>(count) * ElementSize, src_ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
 generic <typename T>
-void AvxBlas::Array<T>::Copy(Array^ src_array, UInt64 src_index, Array^ dst_array, UInt64 dst_index, UInt64 count) {
+void AvxBlas::Array<T>::Copy(Array^ src_array, UInt32 src_index, Array^ dst_array, UInt32 dst_index, UInt32 count) {
     if (src_index >= src_array->Length || src_index + count > src_array->Length) {
         throw gcnew ArgumentOutOfRangeException("src_index");
     }
@@ -276,10 +269,10 @@ void AvxBlas::Array<T>::Copy(Array^ src_array, UInt64 src_index, Array^ dst_arra
         throw gcnew ArgumentOutOfRangeException("dst_index");
     }
 
-    void* src_ptr = (void*)((UInt64)src_array->Ptr.ToInt64() + ElementSize * src_index);
-    void* dst_ptr = (void*)((UInt64)dst_array->Ptr.ToInt64() + ElementSize * dst_index);
+    void* src_ptr = (void*)(src_array->Ptr.ToInt64() + ElementSize * static_cast<long long>(src_index));
+    void* dst_ptr = (void*)(dst_array->Ptr.ToInt64() + ElementSize * static_cast<long long>(dst_index));
 
-    memcpy_s(dst_ptr, count * ElementSize, src_ptr, count * ElementSize);
+    memcpy_s(dst_ptr, static_cast<rsize_t>(count) * ElementSize, src_ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
 

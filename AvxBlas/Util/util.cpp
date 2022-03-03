@@ -7,7 +7,7 @@
 using namespace System;
 
 generic <typename T> where T : ValueType
-void AvxBlas::Util::CheckLength(unsigned int length, ...cli::array<Array<T>^>^ arrays) {
+void AvxBlas::Util::CheckLength(UInt32 length, ...cli::array<Array<T>^>^ arrays) {
     if (length <= 0) {
         return;
     }
@@ -20,7 +20,7 @@ void AvxBlas::Util::CheckLength(unsigned int length, ...cli::array<Array<T>^>^ a
 }
 
 generic <typename T> where T : ValueType
-void AvxBlas::Util::CheckOutOfRange(unsigned int index, unsigned int length, ...cli::array<Array<T>^>^ arrays) {
+void AvxBlas::Util::CheckOutOfRange(UInt32 index, UInt32 length, ...cli::array<Array<T>^>^ arrays) {
     if (length <= 0) {
         return;
     }

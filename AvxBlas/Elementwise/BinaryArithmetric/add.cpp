@@ -50,7 +50,7 @@ void add(unsigned int n, const double* __restrict x1_ptr, const double* __restri
     }
 }
 
-void AvxBlas::Elementwise::Add(unsigned int n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y) {
+void AvxBlas::Elementwise::Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y) {
     Util::CheckLength(n, x1, x2, y);
 
     float* x1_ptr = (float*)(x1->Ptr.ToPointer());
@@ -60,7 +60,7 @@ void AvxBlas::Elementwise::Add(unsigned int n, Array<float>^ x1, Array<float>^ x
     add(n, x1_ptr, x2_ptr, y_ptr);
 }
 
-void AvxBlas::Elementwise::Add(unsigned int n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y) {
+void AvxBlas::Elementwise::Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y) {
     Util::CheckLength(n, x1, x2, y);
 
     double* x1_ptr = (double*)(x1->Ptr.ToPointer());
