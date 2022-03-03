@@ -1,4 +1,4 @@
-#include "../AvxBlas.h"
+#include "../AvxBlasUtil.h"
 #include <exception>
 
 using namespace System;

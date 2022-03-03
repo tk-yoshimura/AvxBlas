@@ -1,4 +1,5 @@
 #include "../../AvxBlas.h"
+#include "../../AvxBlasUtil.h"
 
 using namespace System;
 

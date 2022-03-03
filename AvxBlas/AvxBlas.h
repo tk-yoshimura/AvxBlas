@@ -2,17 +2,12 @@
 
 #pragma warning(disable: 4793)
 
-#include <immintrin.h>
-
 using namespace System;
 using namespace System::Diagnostics;
 using namespace System::Runtime::CompilerServices;
 
 namespace AvxBlas {
-    [assembly:InternalsVisibleTo("AvxBlasTest")] ;
-
-    extern __m256i masktable_m256(int k);
-    extern __m128i masktable_m128(int k);
+    [assembly:InternalsVisibleTo("AvxBlasTest")];
 
     generic <typename T> where T : ValueType
     [DebuggerDisplayAttribute("{Overview,nq}")]
