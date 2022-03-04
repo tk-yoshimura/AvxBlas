@@ -1,37 +1,43 @@
 #include "../../AvxBlas.h"
 #include "../../AvxBlasUtil.h"
 
+#include <immintrin.h>
+
 using namespace System;
 
-void clear(unsigned int n, float c, float* __restrict y_ptr) {
-    const unsigned int j = n & AVX2_FLOAT_BATCH_MASK, k = n - j;
+void clear(
+    const unsigned int n, const float c, 
+    float* __restrict y_ptr) {
+    
+    const unsigned int nb = n & AVX2_FLOAT_BATCH_MASK, nr = n - nb;
 
     __m256 fillc = _mm256_set1_ps(c);
 
-    for (unsigned int i = 0; i < j; i += AVX2_FLOAT_STRIDE) {
+    for (unsigned int i = 0; i < nb; i += AVX2_FLOAT_STRIDE) {
         _mm256_stream_ps(y_ptr + i, fillc);
     }
+    if (nr > 0) {
+        mm256_mask(const __m256i mask, nr);
 
-    if (k > 0) {
-        __m256i mask = AvxBlas::masktable_m256(k);
-
-        _mm256_maskstore_ps(y_ptr + j, mask, fillc);
+        _mm256_maskstore_ps(y_ptr + nb, mask, fillc);
     }
 }
 
-void clear(unsigned int n, double c, double* __restrict y_ptr) {
-    const unsigned int j = n & AVX2_DOUBLE_BATCH_MASK, k = n - j;
+void clear(
+    const unsigned int n, const double c, 
+    double* __restrict y_ptr) {
+    
+    const unsigned int nb = n & AVX2_DOUBLE_BATCH_MASK, nr = n - nb;
 
     __m256d fillc = _mm256_set1_pd(c);
 
-    for (unsigned int i = 0; i < j; i += AVX2_DOUBLE_STRIDE) {
+    for (unsigned int i = 0; i < nb; i += AVX2_DOUBLE_STRIDE) {
         _mm256_stream_pd(y_ptr + i, fillc);
     }
+    if (nr > 0) {
+        mm256_mask(const __m256i mask, nr * 2);
 
-    if (k > 0) {
-        __m256i mask = AvxBlas::masktable_m256(k * 2);
-
-        _mm256_maskstore_pd(y_ptr + j, mask, fillc);
+        _mm256_maskstore_pd(y_ptr + nb, mask, fillc);
     }
 }
 
@@ -49,7 +55,7 @@ void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, float c, Array<float>^ y
     float* y_ptr = (float*)(y->Ptr.ToPointer());
     y_ptr += index;
 
-    for (UInt32 i = index, thr = (index + 7) / 8 * 8; n > 0 && i < thr; i++, n--) {
+    for (UInt32 i = index, thr = (index + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK; n > 0 && i < thr; i++, n--) {
         *y_ptr = c;
         y_ptr++;
     }
@@ -79,7 +85,7 @@ void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, double c, Array<double>^
     double* y_ptr = (double*)(y->Ptr.ToPointer());
     y_ptr += index;
 
-    for (UInt32 i = index, thr = (index + 3) / 4 * 4; n > 0 && i < thr; i++, n--) {
+    for (UInt32 i = index, thr = (index + AVX2_DOUBLE_REMAIN_MASK) & AVX2_DOUBLE_BATCH_MASK; n > 0 && i < thr; i++, n--) {
         *y_ptr = c;
         y_ptr++;
     }

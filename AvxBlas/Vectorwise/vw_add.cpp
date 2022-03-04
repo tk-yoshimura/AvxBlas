@@ -1,6 +1,7 @@
 #include "../AvxBlas.h"
 #include "../AvxBlasUtil.h"
 #include <memory.h>
+#include <immintrin.h>
 
 using namespace System;
 
@@ -29,7 +30,7 @@ void vw_disorder_add(
 
     const unsigned int incxb = incx & AVX2_FLOAT_BATCH_MASK, incxr = incx - incxb;
 
-    const __m256i mask = AvxBlas::masktable_m256(incxr);
+    mm256_mask(const __m256i mask, incxr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < incxb; c += AVX2_FLOAT_STRIDE) {
@@ -77,7 +78,7 @@ void vw_batch_add(
     if (nr > 0) {
         const unsigned int rem = incx * nr;
         const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-        const __m256i mask = AvxBlas::masktable_m256(remr);
+        mm256_mask(const __m256i mask, remr);
 
         for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);

@@ -62,9 +62,6 @@
     <ClCompile Include="Elementwise\BinaryArithmetric\ew_add.cpp">
       <Filter>Source\Elementwise\BinaryArithmetric</Filter>
     </ClCompile>
-    <ClCompile Include="Util\masktable.cpp">
-      <Filter>Source\Util</Filter>
-    </ClCompile>
     <ClCompile Include="Util\util.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>

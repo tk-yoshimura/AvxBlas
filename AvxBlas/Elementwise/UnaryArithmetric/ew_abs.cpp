@@ -1,6 +1,8 @@
 #include "../../AvxBlas.h"
 #include "../../AvxBlasUtil.h"
 
+#include <immintrin.h>
+
 using namespace System;
 
 void abs(
@@ -25,7 +27,7 @@ void abs(
         _mm256_stream_ps(y_ptr + i, y);
     }
     if (nr > 0) {
-        __m256i mask = AvxBlas::masktable_m256(nr);
+        mm256_mask(const __m256i mask, nr);
 
         __m256 x = _mm256_maskload_ps(x_ptr + nb, mask);
 
@@ -57,7 +59,7 @@ void abs(
         _mm256_stream_pd(y_ptr + i, y);
     }
     if (nr > 0) {
-        __m256i mask = AvxBlas::masktable_m256(nr * 2);
+        mm256_mask(const __m256i mask, nr * 2);
 
         __m256d x = _mm256_maskload_pd(x_ptr + nb, mask);
 
