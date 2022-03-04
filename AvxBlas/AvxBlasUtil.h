@@ -12,11 +12,11 @@ namespace AvxBlas {
 }
 
 #define mm256_mask(ret, k) \
-    int __mask_v[15] = { -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0 }; \
-    int __mask_j = 7 - (k); \
+    const int __mask_v[15] = { -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0 }; \
+    const int __mask_j = 7 - (k); \
     ret = _mm256_setr_epi32(__mask_v[__mask_j], __mask_v[__mask_j + 1], __mask_v[__mask_j + 2], __mask_v[__mask_j + 3], __mask_v[__mask_j + 4], __mask_v[__mask_j + 5], __mask_v[__mask_j + 6], __mask_v[__mask_j + 7]);
 
 #define mm128_mask(ret, k) \
-    int __mask_v[7] = { -1, -1, -1, 0, 0, 0, 0 }; \
-    int __mask_j = 3 - (k); \
+    const int __mask_v[7] = { -1, -1, -1, 0, 0, 0, 0 }; \
+    const int __mask_j = 3 - (k); \
     ret = _mm_setr_epi32(__mask_v[__mask_j], __mask_v[__mask_j + 1], __mask_v[__mask_j + 2], __mask_v[__mask_j + 3]);

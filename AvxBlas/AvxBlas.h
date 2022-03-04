@@ -122,7 +122,7 @@ namespace AvxBlas {
 
         public:
         static void Add(UInt32 n, UInt32 incx, Array<float>^ x, Array<float>^ v, Array<float>^ y);
-        //static void Add(UInt32 n, UInt32 incx, Array<double>^ x, Array<double>^ v, Array<double>^ y);
+        static void Add(UInt32 n, UInt32 incx, Array<double>^ x, Array<double>^ v, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {
