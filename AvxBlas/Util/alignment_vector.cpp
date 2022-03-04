@@ -5,7 +5,7 @@ void AvxBlas::alignment_vector_s(
     const unsigned int n, const unsigned int incx, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
-    const unsigned int j = incx & AVX2_FLOAT_STRIDE_MASK, k = incx - j;
+    const unsigned int j = incx & AVX2_FLOAT_BATCH_MASK, k = incx - j;
     
     const __m256i mask = AvxBlas::masktable_m256(k);
     
@@ -29,7 +29,7 @@ void AvxBlas::alignment_vector_d(
     const unsigned int n, const unsigned int incx, 
     const double* __restrict x_ptr, double* __restrict y_ptr) {
     
-    const unsigned int j = incx & AVX2_DOUBLE_STRIDE_MASK, k = incx - j;
+    const unsigned int j = incx & AVX2_DOUBLE_BATCH_MASK, k = incx - j;
 
     const __m256i mask = AvxBlas::masktable_m256(k * 2);
 

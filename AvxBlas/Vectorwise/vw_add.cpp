@@ -27,7 +27,7 @@ void vw_disorder_add(
     const unsigned int n, const unsigned int incx, 
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
-    const unsigned int incxb = incx & AVX2_FLOAT_STRIDE_MASK, incxr = incx - incxb;
+    const unsigned int incxb = incx & AVX2_FLOAT_BATCH_MASK, incxr = incx - incxb;
 
     const __m256i mask = AvxBlas::masktable_m256(incxr);
 
@@ -76,7 +76,7 @@ void vw_batch_add(
     }
     if (nr > 0) {
         const unsigned int rem = incx * nr;
-        const unsigned int remb = rem & AVX2_FLOAT_STRIDE_MASK, remr = rem - remb;
+        const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
         const __m256i mask = AvxBlas::masktable_m256(remr);
 
         for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
@@ -114,7 +114,7 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 incx, Array<float>^ x, Array<floa
     float* v_ptr = (float*)(v->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
     
-    if ((incx & 7u) == 0u) {
+    if ((incx & AVX2_FLOAT_REMAIN_MASK) == 0u) {
         vw_alignment_add(n, incx, x_ptr, v_ptr, y_ptr);
         return;
     }

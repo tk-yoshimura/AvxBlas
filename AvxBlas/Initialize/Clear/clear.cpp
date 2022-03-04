@@ -4,7 +4,7 @@
 using namespace System;
 
 void clear(unsigned int n, float c, float* __restrict y_ptr) {
-    const unsigned int j = n & AVX2_FLOAT_STRIDE_MASK, k = n - j;
+    const unsigned int j = n & AVX2_FLOAT_BATCH_MASK, k = n - j;
 
     __m256 fillc = _mm256_set1_ps(c);
 
@@ -20,7 +20,7 @@ void clear(unsigned int n, float c, float* __restrict y_ptr) {
 }
 
 void clear(unsigned int n, double c, double* __restrict y_ptr) {
-    const unsigned int j = n & AVX2_DOUBLE_STRIDE_MASK, k = n - j;
+    const unsigned int j = n & AVX2_DOUBLE_BATCH_MASK, k = n - j;
 
     __m256d fillc = _mm256_set1_pd(c);
 

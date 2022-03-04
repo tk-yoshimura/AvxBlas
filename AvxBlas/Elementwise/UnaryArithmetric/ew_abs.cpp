@@ -7,7 +7,7 @@ void abs(
     const unsigned int n, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
-    const unsigned int nb = n & AVX2_FLOAT_STRIDE_MASK, nr = n - nb;
+    const unsigned int nb = n & AVX2_FLOAT_BATCH_MASK, nr = n - nb;
 
     union {
         float f;
@@ -39,7 +39,7 @@ void abs(
     const unsigned int n, 
     const double* __restrict x_ptr, double* __restrict y_ptr) {
     
-    const unsigned int nb = n & AVX2_DOUBLE_STRIDE_MASK, nr = n - nb;
+    const unsigned int nb = n & AVX2_DOUBLE_BATCH_MASK, nr = n - nb;
 
     union {
         double f;
