@@ -18,8 +18,6 @@ namespace AvxBlasTest.VectorwiseTest {
                     0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
                     15u, 16u, 17u, 255u, 256u, 257u, 1023u, 1024u, 1025u, 4095u, 4096u, 4097u }) {
 
-                    Console.WriteLine($"\n{n} {incx}");
-
                     float[] x = (new float[n * incx]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
                     float[] v = (new float[incx]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
 
