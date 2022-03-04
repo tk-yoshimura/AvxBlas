@@ -6,7 +6,7 @@ void AvxBlas::alignment_vector_s(unsigned int n, unsigned int incx, const float*
     const __m256i mask = AvxBlas::masktable_m256(k);
     
     for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < j; c++) {
+        for (unsigned int c = 0; c < j; c += 8) {
             __m256 x = _mm256_load_ps(x_ptr + c);
 
             _mm256_storeu_ps(y_ptr + c, x);
@@ -27,7 +27,7 @@ void AvxBlas::alignment_vector_d(unsigned int n, unsigned int incx, const double
     const __m256i mask = AvxBlas::masktable_m256(k * 2);
 
     for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < j; c++) {
+        for (unsigned int c = 0; c < j; c += 4) {
             __m256d x = _mm256_load_pd(x_ptr + c);
 
             _mm256_storeu_pd(y_ptr + c, x);

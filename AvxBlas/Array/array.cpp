@@ -90,6 +90,12 @@ AvxBlas::Array<T>::Array(UInt32 length){
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
 
+    if (length <= 0) {
+        this->length = length;
+        this->ptr = IntPtr::Zero;
+        return;
+    }
+
     size_t size = (static_cast<size_t>((length * ElementSize + AVX2_ALIGNMENT - 1) / AVX2_ALIGNMENT)) * AVX2_ALIGNMENT;
 
     void* ptr = _aligned_malloc(size, AVX2_ALIGNMENT);
@@ -109,10 +115,16 @@ AvxBlas::Array<T>::Array(Int32 length)
 
 generic <typename T>
 AvxBlas::Array<T>::Array(cli::array<T>^ array) {
-    UInt32 length = (UInt32)array->LongLength;
-
-    if (length > MaxLength) {
+    if (array->LongLength > MaxLength) {
         throw gcnew System::ArgumentOutOfRangeException("length");
+    }
+
+    UInt32 length = array->Length;
+
+    if (length <= 0) {
+        this->length = length;
+        this->ptr = IntPtr::Zero;
+        return;
     }
 
     size_t size = (static_cast<size_t>((length * ElementSize + AVX2_ALIGNMENT - 1) / AVX2_ALIGNMENT)) * AVX2_ALIGNMENT;
@@ -167,8 +179,8 @@ AvxBlas::Array<T>::operator AvxBlas::Array<T>^ (cli::array<T>^ array) {
 
 generic <typename T>
 AvxBlas::Array<T>::operator cli::array<T>^ (Array^ array) {
-    if (array->length > (UInt32)int::MaxValue) {
-        throw gcnew System::ArgumentOutOfRangeException("length");
+    if (array->length <= 0) {
+        return gcnew cli::array<T>(0);
     }
 
     cli::array<T>^ arr = gcnew cli::array<T>((int)array->length);

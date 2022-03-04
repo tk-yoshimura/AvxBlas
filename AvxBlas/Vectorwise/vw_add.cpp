@@ -21,12 +21,12 @@ void vw_alignment_add(unsigned int n, unsigned int incx, const float* __restrict
 }
 
 void vw_disorder_add(unsigned int n, unsigned int incx, const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
-    const unsigned int j = incx & ~7u, k = incx - j;
+    const unsigned int incxb = incx & ~7u, incxr = incx - incxb;
 
-    const __m256i mask = AvxBlas::masktable_m256(k);
+    const __m256i mask = AvxBlas::masktable_m256(incxr);
 
     for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < j; c += 8) {
+        for (unsigned int c = 0; c < incxb; c += 8) {
             __m256 x = _mm256_loadu_ps(x_ptr + c);
             __m256 v = _mm256_load_ps(v_ptr + c);
 
@@ -34,13 +34,13 @@ void vw_disorder_add(unsigned int n, unsigned int incx, const float* __restrict 
 
             _mm256_storeu_ps(y_ptr + c, y);
         }
-        if (k > 0) {
-            __m256 x = _mm256_maskload_ps(x_ptr + j, mask);
-            __m256 v = _mm256_maskload_ps(v_ptr + j, mask);
+        if (incxr > 0) {
+            __m256 x = _mm256_maskload_ps(x_ptr + incxb, mask);
+            __m256 v = _mm256_maskload_ps(v_ptr + incxb, mask);
 
             __m256 y = _mm256_add_ps(x, v);
 
-            _mm256_maskstore_ps(y_ptr + j, mask, y);
+            _mm256_maskstore_ps(y_ptr + incxb, mask, y);
         }
 
         x_ptr += incx;
@@ -48,44 +48,92 @@ void vw_disorder_add(unsigned int n, unsigned int incx, const float* __restrict 
     }
 }
 
+void vw_batch_add(unsigned int n, unsigned int g, unsigned int incx, const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+    const unsigned int nb = n / g * g, nr = n - nb;
+    const unsigned int incxg = incx * g;
+
+    for (unsigned int i = 0; i < nb; i += g) {
+        for (unsigned int c = 0; c < incxg; c += 8) {
+            __m256 x = _mm256_load_ps(x_ptr + c);
+            __m256 v = _mm256_load_ps(v_ptr + c);
+
+            __m256 y = _mm256_add_ps(x, v);
+
+            _mm256_stream_ps(y_ptr + c, y);
+        }
+
+        x_ptr += incxg;
+        y_ptr += incxg;
+    }
+    if (nr > 0) {
+        const unsigned int incxb = incx & ~7u, incxr = incx - incxb;
+        const __m256i mask = AvxBlas::masktable_m256(incxr);
+
+        for (unsigned int i = nb; i < n; i++) {
+            for (unsigned int c = 0; c < incxb; c += 8) {
+                __m256 x = _mm256_loadu_ps(x_ptr + c);
+                __m256 v = _mm256_load_ps(v_ptr + c);
+
+                __m256 y = _mm256_add_ps(x, v);
+
+                _mm256_storeu_ps(y_ptr + c, y);
+            }
+            if (incxr > 0) {
+                __m256 x = _mm256_maskload_ps(x_ptr + incxb, mask);
+                __m256 v = _mm256_maskload_ps(v_ptr + incxb, mask);
+
+                __m256 y = _mm256_add_ps(x, v);
+
+                _mm256_maskstore_ps(y_ptr + incxb, mask, y);
+            }
+
+            x_ptr += incx;
+            y_ptr += incx;
+        }
+    }
+}
+
 void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 incx, Array<float>^ x, Array<float>^ v, Array<float>^ y) {
+    if (n <= 0 || incx <= 0) {
+        return;
+    }
+
+    Util::CheckProdOverflow(n, incx);
+
     Util::CheckLength(n * incx, x, y);
     Util::CheckLength(incx, v);
 
+    Util::CheckDuplicateArray(v, y);
+
+    float* x_ptr = (float*)(x->Ptr.ToPointer());
+    float* v_ptr = (float*)(v->Ptr.ToPointer());
+    float* y_ptr = (float*)(y->Ptr.ToPointer());
+    
     if ((incx & 7u) == 0u) {
-        float* x_ptr = (float*)(x->Ptr.ToPointer());
-        float* v_ptr = (float*)(v->Ptr.ToPointer());
-        float* y_ptr = (float*)(y->Ptr.ToPointer());
-
         vw_alignment_add(n, incx, x_ptr, v_ptr, y_ptr);
+        return;
     }
-    else if (incx <= MAX_VECTORWISE_ALIGNMNET_INCX) {
+
+    if (incx <= MAX_VECTORWISE_ALIGNMNET_INCX) {
         UInt32 ulen = lcm(incx, AVX2_ALIGNMENT / Array<float>::ElementSize);
+        UInt32 g = ulen / incx;
 
-        if (ulen <= MAX_VECTORWISE_ALIGNMNET_ULENGTH) {
-            float* x_ptr = (float*)(x->Ptr.ToPointer());
-            float* v_ptr = (float*)(v->Ptr.ToPointer());
-            float* y_ptr = (float*)(y->Ptr.ToPointer());
-
-            float* u_ptr = (float*)_aligned_malloc(ulen, AVX2_ALIGNMENT);
+        if (n >= g * 4 && ulen <= MAX_VECTORWISE_ALIGNMNET_ULENGTH) {
+            float* u_ptr = (float*)_aligned_malloc(static_cast<size_t>(ulen) * Array<float>::ElementSize, AVX2_ALIGNMENT);
             if (u_ptr == nullptr) {
                 throw gcnew System::OutOfMemoryException();
             }
 
-            alignment_vector_s(ulen / incx, incx, v_ptr, u_ptr);
-
-            vw_alignment_add(n, ulen, x_ptr, u_ptr, y_ptr);
+            alignment_vector_s(g, incx, v_ptr, u_ptr);
+            vw_batch_add(n, g, incx, x_ptr, u_ptr, y_ptr);
 
             _aligned_free(u_ptr);
+
+            return;
         }
     }
-    else {
-        float* x_ptr = (float*)(x->Ptr.ToPointer());
-        float* v_ptr = (float*)(v->Ptr.ToPointer());
-        float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-        vw_disorder_add(n, incx, x_ptr, v_ptr, y_ptr);
-    }
+    vw_disorder_add(n, incx, x_ptr, v_ptr, y_ptr);
 }
 
 //void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 incx, Array<double>^ x, Array<double>^ v, Array<double>^ y) {

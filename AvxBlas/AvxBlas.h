@@ -83,6 +83,8 @@ namespace AvxBlas {
         
         generic <typename T> where T : ValueType
         static void CheckDuplicateArray(... cli::array<Array<T>^>^ arrays);
+
+        static void CheckProdOverflow(... cli::array<UInt32>^ arrays);
         
         static property System::String^ AvxNotSupported { System::String^ get(); };
         static property System::String^ InvalidArrayLength { System::String^ get(); };

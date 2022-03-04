@@ -24,7 +24,7 @@ namespace AvxBlasTest {
 
         [TestMethod]
         public void AlignmentTest() {
-            for (int length = 0; length <= 100; length++) {
+            for (int length = 1; length <= 100; length++) {
 
                 Array<float> arr = new Array<float>((uint)length);
 

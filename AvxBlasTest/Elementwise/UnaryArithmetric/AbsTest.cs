@@ -25,6 +25,22 @@ namespace AvxBlasTest.ElementwiseTest {
                     CollectionAssert.AreEqual(t, (float[])y);
                 }
             }
+
+            { 
+                float[] x = new float[] { 
+                    -float.Epsilon, float.Epsilon, float.MinValue, float.MaxValue, float.NegativeInfinity, float.PositiveInfinity 
+                };
+
+                float[] t = new float[] { 
+                    float.Epsilon, float.Epsilon, float.MaxValue, float.MaxValue, float.PositiveInfinity, float.PositiveInfinity 
+                };
+
+                Array<float> y = new float[x.Length];
+
+                Elementwise.Abs((uint)x.Length, x, y);
+
+                CollectionAssert.AreEqual(t, (float[])y);
+            }
         }
 
         [TestMethod]
@@ -45,6 +61,22 @@ namespace AvxBlasTest.ElementwiseTest {
 
                     CollectionAssert.AreEqual(t, (double[])y);
                 }
+            }
+
+            { 
+                double[] x = new double[] { 
+                    -double.Epsilon, double.Epsilon, double.MinValue, double.MaxValue, double.NegativeInfinity, double.PositiveInfinity 
+                };
+
+                double[] t = new double[] { 
+                    double.Epsilon, double.Epsilon, double.MaxValue, double.MaxValue, double.PositiveInfinity, double.PositiveInfinity 
+                };
+
+                Array<double> y = new double[x.Length];
+
+                Elementwise.Abs((uint)x.Length, x, y);
+
+                CollectionAssert.AreEqual(t, (double[])y);
             }
         }
     }

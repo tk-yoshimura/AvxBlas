@@ -48,6 +48,23 @@ void AvxBlas::Util::CheckDuplicateArray(... cli::array<Array<T>^>^ arrays) {
     }
 }
 
+void AvxBlas::Util::CheckProdOverflow(... cli::array<UInt32>^ arrays) {
+    if (arrays->Length <= 1) {
+        return;
+    }
+
+    UInt32 a = arrays[0];
+
+    for (int i = 1; i < arrays->Length; i++) {
+        UInt32 b = arrays[i];
+
+        if (b > 0 && a > (~0ul) / b) {
+            throw gcnew System::OverflowException();
+        }
+
+        a *= b;
+    }
+}
 
 bool is_supported_avx() {
     std::array<int, 4> cpui;
