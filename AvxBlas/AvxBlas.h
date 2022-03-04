@@ -7,6 +7,10 @@ using namespace System::Diagnostics;
 using namespace System::Runtime::CompilerServices;
 
 #define AVX2_ALIGNMENT (32)
+#define AVX2_FLOAT_STRIDE (8)
+#define AVX2_FLOAT_STRIDE_MASK (~7u)
+#define AVX2_DOUBLE_STRIDE (4)
+#define AVX2_DOUBLE_STRIDE_MASK (~3u)
 #define MAX_VECTORWISE_ALIGNMNET_INCX (4096)
 #define MAX_VECTORWISE_ALIGNMNET_ULENGTH (4096)
 

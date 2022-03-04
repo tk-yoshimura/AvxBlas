@@ -10,12 +10,12 @@ namespace AvxBlasTest.VectorwiseTest {
         public void SAddTest() {
             Random random = new Random(1234);
 
-            foreach (uint n in new uint[] { 
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 
+            foreach (uint n in new uint[] {
+                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
                     15u, 16u, 17u, 63u, 64u, 65u, 255u, 256u, 257u }) {
 
-                foreach (uint incx in new uint[] { 
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 
+                foreach (uint incx in new uint[] {
+                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
                     15u, 16u, 17u, 255u, 256u, 257u, 1023u, 1024u, 1025u, 4095u, 4096u, 4097u }) {
 
                     Console.WriteLine($"\n{n} {incx}");

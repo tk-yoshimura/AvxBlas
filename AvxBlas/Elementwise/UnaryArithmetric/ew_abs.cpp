@@ -7,7 +7,7 @@ void abs(
     const unsigned int n, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
-    const unsigned int nb = n & ~7u, nr = n - nb;
+    const unsigned int nb = n & AVX2_FLOAT_STRIDE_MASK, nr = n - nb;
 
     union {
         float f;
@@ -17,7 +17,7 @@ void abs(
 
     const __m256 bitmask = _mm256_set1_ps(m32.f);
 
-    for (unsigned int i = 0; i < nb; i += 8) {
+    for (unsigned int i = 0; i < nb; i += AVX2_FLOAT_STRIDE) {
         __m256 x = _mm256_load_ps(x_ptr + i);
 
         __m256 y = _mm256_and_ps(bitmask, x);
@@ -39,7 +39,7 @@ void abs(
     const unsigned int n, 
     const double* __restrict x_ptr, double* __restrict y_ptr) {
     
-    const unsigned int nb = n & ~3u, nr = n - nb;
+    const unsigned int nb = n & AVX2_DOUBLE_STRIDE_MASK, nr = n - nb;
 
     union {
         double f;
@@ -49,7 +49,7 @@ void abs(
 
     const __m256d bitmask = _mm256_set1_pd(m32.f);
 
-    for (unsigned int i = 0; i < nb; i += 4) {
+    for (unsigned int i = 0; i < nb; i += AVX2_DOUBLE_STRIDE) {
         __m256d x = _mm256_load_pd(x_ptr + i);
 
         __m256d y = _mm256_and_pd(bitmask, x);

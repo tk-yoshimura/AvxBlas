@@ -9,7 +9,7 @@ void vw_alignment_add(
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
     
     for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < incx; c += 8) {
+        for (unsigned int c = 0; c < incx; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
             __m256 v = _mm256_load_ps(v_ptr + c);
 
@@ -27,12 +27,12 @@ void vw_disorder_add(
     const unsigned int n, const unsigned int incx, 
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
-    const unsigned int incxb = incx & ~7u, incxr = incx - incxb;
+    const unsigned int incxb = incx & AVX2_FLOAT_STRIDE_MASK, incxr = incx - incxb;
 
     const __m256i mask = AvxBlas::masktable_m256(incxr);
 
     for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < incxb; c += 8) {
+        for (unsigned int c = 0; c < incxb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_loadu_ps(x_ptr + c);
             __m256 v = _mm256_load_ps(v_ptr + c);
 
@@ -62,7 +62,7 @@ void vw_batch_add(
     const unsigned int incxg = incx * g;
 
     for (unsigned int i = 0; i < nb; i += g) {
-        for (unsigned int c = 0; c < incxg; c += 8) {
+        for (unsigned int c = 0; c < incxg; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
             __m256 v = _mm256_load_ps(v_ptr + c);
 
@@ -76,10 +76,10 @@ void vw_batch_add(
     }
     if (nr > 0) {
         const unsigned int rem = incx * nr;
-        const unsigned int remb = rem & ~7u, remr = rem - remb;
+        const unsigned int remb = rem & AVX2_FLOAT_STRIDE_MASK, remr = rem - remb;
         const __m256i mask = AvxBlas::masktable_m256(remr);
 
-        for (unsigned int c = 0; c < remb; c += 8) {
+        for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
             __m256 v = _mm256_load_ps(v_ptr + c);
 
@@ -120,7 +120,7 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 incx, Array<float>^ x, Array<floa
     }
 
     if (incx <= MAX_VECTORWISE_ALIGNMNET_INCX) {
-        UInt32 ulen = lcm(incx, AVX2_ALIGNMENT / Array<float>::ElementSize);
+        UInt32 ulen = lcm(incx, AVX2_FLOAT_STRIDE);
         UInt32 g = ulen / incx;
 
         if (n >= g * 4 && ulen <= MAX_VECTORWISE_ALIGNMNET_ULENGTH) {

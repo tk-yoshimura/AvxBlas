@@ -4,11 +4,11 @@
 using namespace System;
 
 void clear(unsigned int n, float c, float* __restrict y_ptr) {
-    const unsigned int j = n & ~7u, k = n - j;
+    const unsigned int j = n & AVX2_FLOAT_STRIDE_MASK, k = n - j;
 
     __m256 fillc = _mm256_set1_ps(c);
 
-    for (unsigned int i = 0; i < j; i += 8) {
+    for (unsigned int i = 0; i < j; i += AVX2_FLOAT_STRIDE) {
         _mm256_stream_ps(y_ptr + i, fillc);
     }
 
@@ -20,11 +20,11 @@ void clear(unsigned int n, float c, float* __restrict y_ptr) {
 }
 
 void clear(unsigned int n, double c, double* __restrict y_ptr) {
-    const unsigned int j = n & ~3u, k = n - j;
+    const unsigned int j = n & AVX2_DOUBLE_STRIDE_MASK, k = n - j;
 
     __m256d fillc = _mm256_set1_pd(c);
 
-    for (unsigned int i = 0; i < j; i += 4) {
+    for (unsigned int i = 0; i < j; i += AVX2_DOUBLE_STRIDE) {
         _mm256_stream_pd(y_ptr + i, fillc);
     }
 

@@ -26,13 +26,13 @@ namespace AvxBlasTest.ElementwiseTest {
                 }
             }
 
-            { 
-                float[] x = new float[] { 
-                    -float.Epsilon, float.Epsilon, float.MinValue, float.MaxValue, float.NegativeInfinity, float.PositiveInfinity 
+            {
+                float[] x = new float[] {
+                    -float.Epsilon, float.Epsilon, float.MinValue, float.MaxValue, float.NegativeInfinity, float.PositiveInfinity
                 };
 
-                float[] t = new float[] { 
-                    float.Epsilon, float.Epsilon, float.MaxValue, float.MaxValue, float.PositiveInfinity, float.PositiveInfinity 
+                float[] t = new float[] {
+                    float.Epsilon, float.Epsilon, float.MaxValue, float.MaxValue, float.PositiveInfinity, float.PositiveInfinity
                 };
 
                 Array<float> y = new float[x.Length];
@@ -63,13 +63,13 @@ namespace AvxBlasTest.ElementwiseTest {
                 }
             }
 
-            { 
-                double[] x = new double[] { 
-                    -double.Epsilon, double.Epsilon, double.MinValue, double.MaxValue, double.NegativeInfinity, double.PositiveInfinity 
+            {
+                double[] x = new double[] {
+                    -double.Epsilon, double.Epsilon, double.MinValue, double.MaxValue, double.NegativeInfinity, double.PositiveInfinity
                 };
 
-                double[] t = new double[] { 
-                    double.Epsilon, double.Epsilon, double.MaxValue, double.MaxValue, double.PositiveInfinity, double.PositiveInfinity 
+                double[] t = new double[] {
+                    double.Epsilon, double.Epsilon, double.MaxValue, double.MaxValue, double.PositiveInfinity, double.PositiveInfinity
                 };
 
                 Array<double> y = new double[x.Length];

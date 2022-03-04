@@ -7,9 +7,9 @@ void add(
     const unsigned int n, 
     const float* __restrict x1_ptr, const float* __restrict x2_ptr, float* __restrict y_ptr) {
     
-    const unsigned int nb = n & ~7u, nr = n - nb;
+    const unsigned int nb = n & AVX2_FLOAT_STRIDE_MASK, nr = n - nb;
 
-    for (unsigned int i = 0; i < nb; i += 8) {
+    for (unsigned int i = 0; i < nb; i += AVX2_FLOAT_STRIDE) {
         __m256 x1 = _mm256_load_ps(x1_ptr + i);
         __m256 x2 = _mm256_load_ps(x2_ptr + i);
 
@@ -33,9 +33,9 @@ void add(
     const unsigned int n, 
     const double* __restrict x1_ptr, const double* __restrict x2_ptr, double* __restrict y_ptr) {
     
-    const unsigned int nb = n & ~3u, nr = n - nb;
+    const unsigned int nb = n & AVX2_DOUBLE_STRIDE_MASK, nr = n - nb;
 
-    for (unsigned int i = 0; i < nb; i += 4) {
+    for (unsigned int i = 0; i < nb; i += AVX2_DOUBLE_STRIDE) {
         __m256d x1 = _mm256_load_pd(x1_ptr + i);
         __m256d x2 = _mm256_load_pd(x2_ptr + i);
 
