@@ -1,33 +1,53 @@
 using AvxBlas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
 namespace AvxBlasTest.ElementwiseTest {
     [TestClass]
     public class AddTest {
         [TestMethod]
         public void SAddTest() {
-            Array<float> x1 = new float[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            Array<float> x2 = new float[] { 6, 7, 8, 9, 10, 0, 1, 2, 3, 4, 5 };
-            Array<float> t = new float[] { 6, 8, 10, 12, 14, 5, 7, 9, 11, 0, 0 };
+            Random random = new Random(1234);
 
-            Array<float> y = new float[x1.Length];
+            for (uint length = 1; length <= 16; length++) {
+                for (uint count = 0; count <= length; count++) {
+                    float[] x1 = (new float[length]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
+                    float[] x2 = (new float[length]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
 
-            Elementwise.Add(9, x1, x2, y);
+                    float[] t = (new float[length])
+                        .Select((_, idx) => idx < count ? x1[idx] + x2[idx] : 0)
+                        .ToArray();
 
-            CollectionAssert.AreEqual((float[])t, (float[])y);
+                    Array<float> y = new float[length];
+
+                    Elementwise.Add(count, x1, x2, y);
+
+                    CollectionAssert.AreEqual(t, (float[])y);
+                }
+            }
         }
 
         [TestMethod]
         public void DAddTest() {
-            Array<double> x1 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            Array<double> x2 = new double[] { 6, 7, 8, 9, 10, 0, 1, 2, 3, 4, 5 };
-            Array<double> t = new double[] { 6, 8, 10, 12, 14, 5, 7, 9, 11, 0, 0 };
+            Random random = new Random(1234);
 
-            Array<double> y = new double[x1.Length];
+            for (uint length = 1; length <= 16; length++) {
+                for (uint count = 0; count <= length; count++) {
+                    double[] x1 = (new double[length]).Select((_, idx) => (double)random.Next(32) - 16).ToArray();
+                    double[] x2 = (new double[length]).Select((_, idx) => (double)random.Next(32) - 16).ToArray();
 
-            Elementwise.Add(9, x1, x2, y);
+                    double[] t = (new double[length])
+                        .Select((_, idx) => idx < count ? x1[idx] + x2[idx] : 0)
+                        .ToArray();
 
-            CollectionAssert.AreEqual((double[])t, (double[])y);
+                    Array<double> y = new double[length];
+
+                    Elementwise.Add(count, x1, x2, y);
+
+                    CollectionAssert.AreEqual(t, (double[])y);
+                }
+            }
         }
     }
 }

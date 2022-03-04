@@ -3,8 +3,8 @@
 
 using namespace System;
 
-void abs(unsigned int length, const float* __restrict x_ptr, float* __restrict y_ptr) {
-    const unsigned int j = length & ~7u, k = length - j;
+void abs(unsigned int n, const float* __restrict x_ptr, float* __restrict y_ptr) {
+    const unsigned int j = n & ~7u, k = n - j;
 
     union {
         float f;

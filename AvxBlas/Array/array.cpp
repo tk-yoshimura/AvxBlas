@@ -60,7 +60,7 @@ UInt32 AvxBlas::Array<T>::ElementSize::get() {
 
 generic <typename T>
 UInt32 AvxBlas::Array<T>::Alignment::get() {
-    return 32;
+    return AVX2_ALIGNMENT;
 }
 
 generic <typename T>
@@ -90,9 +90,9 @@ AvxBlas::Array<T>::Array(UInt32 length){
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
 
-    size_t size = (static_cast<size_t>((length * ElementSize + Alignment - 1) / Alignment)) * Alignment;
+    size_t size = (static_cast<size_t>((length * ElementSize + AVX2_ALIGNMENT - 1) / AVX2_ALIGNMENT)) * AVX2_ALIGNMENT;
 
-    void* ptr = _aligned_malloc(size, Alignment);
+    void* ptr = _aligned_malloc(size, AVX2_ALIGNMENT);
     if (ptr == nullptr) {
         throw gcnew System::OutOfMemoryException();
     }
@@ -115,9 +115,9 @@ AvxBlas::Array<T>::Array(cli::array<T>^ array) {
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
 
-    size_t size = (static_cast<size_t>((length * ElementSize + Alignment - 1) / Alignment)) * Alignment;
+    size_t size = (static_cast<size_t>((length * ElementSize + AVX2_ALIGNMENT - 1) / AVX2_ALIGNMENT)) * AVX2_ALIGNMENT;
 
-    void* ptr = _aligned_malloc(size, Alignment);
+    void* ptr = _aligned_malloc(size, AVX2_ALIGNMENT);
     if (ptr == nullptr) {
         throw gcnew System::OutOfMemoryException();
     }

@@ -1,11 +1,9 @@
 #include "../AvxBlasUtil.h"
 #include <exception>
 
-using namespace System;
-
-__m256i AvxBlas::masktable_m256(int k) {
+__m256i AvxBlas::masktable_m256(unsigned int k) {
 #ifdef _DEBUG
-    if (k < 0 || k >= 8) {
+    if (k >= 8) {
         throw std::exception();
     }
 #endif // _DEBUG
@@ -16,9 +14,9 @@ __m256i AvxBlas::masktable_m256(int k) {
     return _mm256_setr_epi32(v[j], v[j + 1], v[j + 2], v[j + 3], v[j + 4], v[j + 5], v[j + 6], v[j + 7]);
 }
 
-__m128i AvxBlas::masktable_m128(int k) {
+__m128i AvxBlas::masktable_m128(unsigned int k) {
 #ifdef _DEBUG
-    if (k < 0 || k >= 4) {
+    if (k >= 4) {
         throw std::exception();
     }
 #endif // _DEBUG

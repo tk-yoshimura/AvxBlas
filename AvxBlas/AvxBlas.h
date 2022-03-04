@@ -6,6 +6,10 @@ using namespace System;
 using namespace System::Diagnostics;
 using namespace System::Runtime::CompilerServices;
 
+#define AVX2_ALIGNMENT (32)
+#define MAX_VECTORWISE_ALIGNMNET_INCX (4096)
+#define MAX_VECTORWISE_ALIGNMNET_ULENGTH (4096)
+
 namespace AvxBlas {
     [assembly:InternalsVisibleTo("AvxBlasTest")];
 
@@ -95,11 +99,19 @@ namespace AvxBlas {
         static Elementwise();
 
         public:
-        static void Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
-        static void Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
-
         static void Abs(UInt32 n, Array<float>^ x, Array<float>^ y);
         static void Abs(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+    };
+
+    public ref class Vectorwise abstract sealed {
+        static Vectorwise();
+
+        public:
+        static void Add(UInt32 n, UInt32 incx, Array<float>^ x, Array<float>^ v, Array<float>^ y);
+        //static void Add(UInt32 n, UInt32 incx, Array<double>^ x, Array<double>^ v, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {

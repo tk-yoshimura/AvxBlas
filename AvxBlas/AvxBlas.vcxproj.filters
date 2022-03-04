@@ -40,6 +40,12 @@
     <Filter Include="Source\Elementwise\UnaryArithmetric">
       <UniqueIdentifier>{b601e0ab-2a6a-442d-bacf-ca02091b3551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Vectorwise">
+      <UniqueIdentifier>{bc19b6dc-680e-4ed8-8079-634527c6354a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Vectorwise\Ctor">
+      <UniqueIdentifier>{6cdd5e46-4e34-4c36-b0e1-a886a64e43fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvxBlas.h">
@@ -76,6 +82,18 @@
     </ClCompile>
     <ClCompile Include="Elementwise\UnaryArithmetric\abs.cpp">
       <Filter>Source\Elementwise\UnaryArithmetric</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\alignment_vector.cpp">
+      <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Vectorwise\vw_add.cpp">
+      <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\numeric.cpp">
+      <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Vectorwise\Ctor\vectorwise_cctor.cpp">
+      <Filter>Source\Vectorwise\Ctor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

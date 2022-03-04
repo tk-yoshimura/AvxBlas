@@ -48,10 +48,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
+    <ManagedAssembly>
+    </ManagedAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
+    <ManagedAssembly>
+    </ManagedAssembly>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -77,7 +83,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AvxBlas.h" />
-    <ClInclude Include="AvxBlasUtil.h" />
+    <ClInclude Include="AvxBlasUtil.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -87,8 +96,12 @@
     <ClCompile Include="Elementwise\UnaryArithmetric\abs.cpp" />
     <ClCompile Include="Initialize\Clear\clear.cpp" />
     <ClCompile Include="Initialize\Ctor\initialize_cctor.cpp" />
+    <ClCompile Include="Util\alignment_vector.cpp" />
     <ClCompile Include="Util\masktable.cpp" />
+    <ClCompile Include="Util\numeric.cpp" />
     <ClCompile Include="Util\util.cpp" />
+    <ClCompile Include="Vectorwise\Ctor\vectorwise_cctor.cpp" />
+    <ClCompile Include="Vectorwise\vw_add.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

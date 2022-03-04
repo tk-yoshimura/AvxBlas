@@ -1,4 +1,5 @@
 #include "../AvxBlas.h"
+#include "../AvxBlasUtil.h"
 #include <array>
 #include <vector>
 #include <bitset>

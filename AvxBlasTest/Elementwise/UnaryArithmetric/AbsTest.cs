@@ -1,31 +1,51 @@
 using AvxBlas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
 namespace AvxBlasTest.ElementwiseTest {
     [TestClass]
-    public class ClearTest {
+    public class AbsTest {
         [TestMethod]
         public void SAbsTest() {
-            Array<float> x = new float[] { 0, -1, -2, 3, -4, -5, 6, -7, 8, 9, -10 };
-            Array<float> t = new float[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 0 };
+            Random random = new Random(1234);
 
-            Array<float> y = new float[x.Length];
+            for (uint length = 1; length <= 16; length++) {
+                for (uint count = 0; count <= length; count++) {
+                    float[] x = (new float[length]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
 
-            Elementwise.Abs(9, x, y);
+                    float[] t = (new float[length])
+                        .Select((_, idx) => idx < count ? Math.Abs(x[idx]) : 0)
+                        .ToArray();
 
-            CollectionAssert.AreEqual((float[])t, (float[])y);
+                    Array<float> y = new float[length];
+
+                    Elementwise.Abs(count, x, y);
+
+                    CollectionAssert.AreEqual(t, (float[])y);
+                }
+            }
         }
 
         [TestMethod]
         public void DAbsTest() {
-            Array<double> x = new double[] { 0, -1, -2, 3, -4, -5, 6, -7, float.NegativeInfinity, 9, -10 };
-            Array<double> t = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, float.PositiveInfinity, 0, 0 };
+            Random random = new Random(1234);
 
-            Array<double> y = new double[x.Length];
+            for (uint length = 1; length <= 16; length++) {
+                for (uint count = 0; count <= length; count++) {
+                    double[] x = (new double[length]).Select((_, idx) => (double)random.Next(32) - 16).ToArray();
 
-            Elementwise.Abs(9, x, y);
+                    double[] t = (new double[length])
+                        .Select((_, idx) => idx < count ? Math.Abs(x[idx]) : 0)
+                        .ToArray();
 
-            CollectionAssert.AreEqual((double[])t, (double[])y);
+                    Array<double> y = new double[length];
+
+                    Elementwise.Abs(count, x, y);
+
+                    CollectionAssert.AreEqual(t, (double[])y);
+                }
+            }
         }
     }
 }
