@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 日本語 (日本) resources
+// JAPANESE resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
@@ -83,7 +83,7 @@ BEGIN
     END
 END
 
-#endif    // 日本語 (日本) resources
+#endif    // JAPANESE resources
 /////////////////////////////////////////////////////////////////////////////
 
 
