@@ -66,29 +66,25 @@ void vw_batch_add(unsigned int n, unsigned int g, unsigned int incx, const float
         y_ptr += incxg;
     }
     if (nr > 0) {
-        const unsigned int incxb = incx & ~7u, incxr = incx - incxb;
-        const __m256i mask = AvxBlas::masktable_m256(incxr);
+        const unsigned int rem = incx * nr;
+        const unsigned int remb = rem & ~7u, remr = rem - remb;
+        const __m256i mask = AvxBlas::masktable_m256(remr);
 
-        for (unsigned int i = nb; i < n; i++) {
-            for (unsigned int c = 0; c < incxb; c += 8) {
-                __m256 x = _mm256_loadu_ps(x_ptr + c);
-                __m256 v = _mm256_load_ps(v_ptr + c);
+        for (unsigned int c = 0; c < remb; c += 8) {
+            __m256 x = _mm256_load_ps(x_ptr + c);
+            __m256 v = _mm256_load_ps(v_ptr + c);
 
-                __m256 y = _mm256_add_ps(x, v);
+            __m256 y = _mm256_add_ps(x, v);
 
-                _mm256_storeu_ps(y_ptr + c, y);
-            }
-            if (incxr > 0) {
-                __m256 x = _mm256_maskload_ps(x_ptr + incxb, mask);
-                __m256 v = _mm256_maskload_ps(v_ptr + incxb, mask);
+            _mm256_stream_ps(y_ptr + c, y);
+        }
+        if (remr > 0) {
+            __m256 x = _mm256_maskload_ps(x_ptr + remb, mask);
+            __m256 v = _mm256_maskload_ps(v_ptr + remb, mask);
 
-                __m256 y = _mm256_add_ps(x, v);
+            __m256 y = _mm256_add_ps(x, v);
 
-                _mm256_maskstore_ps(y_ptr + incxb, mask, y);
-            }
-
-            x_ptr += incx;
-            y_ptr += incx;
+            _mm256_maskstore_ps(y_ptr + remb, mask, y);
         }
     }
 }
