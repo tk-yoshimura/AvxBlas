@@ -3,7 +3,10 @@
 
 using namespace System;
 
-void abs(unsigned int n, const float* __restrict x_ptr, float* __restrict y_ptr) {
+void abs(
+    const unsigned int n, 
+    const float* __restrict x_ptr, float* __restrict y_ptr) {
+    
     const unsigned int nb = n & ~7u, nr = n - nb;
 
     union {
@@ -32,7 +35,10 @@ void abs(unsigned int n, const float* __restrict x_ptr, float* __restrict y_ptr)
     }
 }
 
-void abs(unsigned int n, const double* __restrict x_ptr, double* __restrict y_ptr) {
+void abs(
+    const unsigned int n, 
+    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    
     const unsigned int nb = n & ~3u, nr = n - nb;
 
     union {

@@ -3,7 +3,10 @@
 
 using namespace System;
 
-void add(unsigned int n, const float* __restrict x1_ptr, const float* __restrict x2_ptr, float* __restrict y_ptr) {
+void add(
+    const unsigned int n, 
+    const float* __restrict x1_ptr, const float* __restrict x2_ptr, float* __restrict y_ptr) {
+    
     const unsigned int nb = n & ~7u, nr = n - nb;
 
     for (unsigned int i = 0; i < nb; i += 8) {
@@ -26,7 +29,10 @@ void add(unsigned int n, const float* __restrict x1_ptr, const float* __restrict
     }
 }
 
-void add(unsigned int n, const double* __restrict x1_ptr, const double* __restrict x2_ptr, double* __restrict y_ptr) {
+void add(
+    const unsigned int n, 
+    const double* __restrict x1_ptr, const double* __restrict x2_ptr, double* __restrict y_ptr) {
+    
     const unsigned int nb = n & ~3u, nr = n - nb;
 
     for (unsigned int i = 0; i < nb; i += 4) {

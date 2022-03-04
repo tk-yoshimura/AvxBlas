@@ -58,7 +58,7 @@ void AvxBlas::Util::CheckProdOverflow(... cli::array<UInt32>^ arrays) {
     for (int i = 1; i < arrays->Length; i++) {
         UInt32 b = arrays[i];
 
-        if (b > 0 && a > (~0ul) / b) {
+        if (b > 0 && a > (~0u) / b) {
             throw gcnew System::OverflowException();
         }
 
@@ -163,13 +163,13 @@ bool AvxBlas::Util::IsSupportedFMA::get() {
 }
 
 System::String^ AvxBlas::Util::AvxNotSupported::get() {
-    return gcnew System::String("AVX2 not supported on this platform.");
+    return "AVX2 not supported on this platform.";
 }
 
 System::String^ AvxBlas::Util::InvalidArrayLength::get() {
-    return gcnew System::String("The specified array length is invalid.");
+    return "The specified array length is invalid.";
 }
 
 System::String^ AvxBlas::Util::DuplicatedArray::get() {
-    return gcnew System::String("The specified arrays are duplicated.");
+    return "The specified arrays are duplicated.";
 }

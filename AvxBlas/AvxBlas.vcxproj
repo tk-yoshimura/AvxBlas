@@ -91,16 +91,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Array\array.cpp" />
-    <ClCompile Include="Elementwise\BinaryArithmetric\add.cpp" />
-    <ClCompile Include="Elementwise\Ctor\elementwise_cctor.cpp" />
-    <ClCompile Include="Elementwise\UnaryArithmetric\abs.cpp" />
+    <ClCompile Include="Elementwise\BinaryArithmetric\ew_add.cpp" />
+    <ClCompile Include="Elementwise\Ctor\ew_cctor.cpp" />
+    <ClCompile Include="Elementwise\UnaryArithmetric\ew_abs.cpp" />
     <ClCompile Include="Initialize\Clear\clear.cpp" />
     <ClCompile Include="Initialize\Ctor\initialize_cctor.cpp" />
     <ClCompile Include="Util\alignment_vector.cpp" />
     <ClCompile Include="Util\masktable.cpp" />
     <ClCompile Include="Util\numeric.cpp" />
     <ClCompile Include="Util\util.cpp" />
-    <ClCompile Include="Vectorwise\Ctor\vectorwise_cctor.cpp" />
+    <ClCompile Include="Vectorwise\Ctor\vw_cctor.cpp" />
     <ClCompile Include="Vectorwise\vw_add.cpp" />
   </ItemGroup>
   <ItemGroup>

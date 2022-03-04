@@ -4,7 +4,10 @@
 
 using namespace System;
 
-void vw_alignment_add(unsigned int n, unsigned int incx, const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+void vw_alignment_add(
+    const unsigned int n, const unsigned int incx, 
+    const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+    
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < incx; c += 8) {
             __m256 x = _mm256_load_ps(x_ptr + c);
@@ -20,7 +23,10 @@ void vw_alignment_add(unsigned int n, unsigned int incx, const float* __restrict
     }
 }
 
-void vw_disorder_add(unsigned int n, unsigned int incx, const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+void vw_disorder_add(
+    const unsigned int n, const unsigned int incx, 
+    const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+
     const unsigned int incxb = incx & ~7u, incxr = incx - incxb;
 
     const __m256i mask = AvxBlas::masktable_m256(incxr);
@@ -48,7 +54,10 @@ void vw_disorder_add(unsigned int n, unsigned int incx, const float* __restrict 
     }
 }
 
-void vw_batch_add(unsigned int n, unsigned int g, unsigned int incx, const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+void vw_batch_add(
+    const unsigned int n, const unsigned int g, const unsigned int incx, 
+    const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
+    
     const unsigned int nb = n / g * g, nr = n - nb;
     const unsigned int incxg = incx * g;
 
