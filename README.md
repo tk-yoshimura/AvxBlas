@@ -90,7 +90,7 @@ Aggregation.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
 |---|---|---|---|
 |T|float or double|type||
 |n|uint|processing count||
-|samples|uint|aggregation samples||
+|samples|uint|sampling count||
 |stride|uint|stride of x,y||
 |x|Array|input|length &geq; n x samples x stride|
 |y|Array|output|length &geq; n x stride, y &ne; x|
