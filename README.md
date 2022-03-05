@@ -76,7 +76,7 @@ Constant.___(uint n, Array<T> x, T c, Array<T> y);
 |T|float or double|type|
 |n|uint|count of processing|
 |x|Array|input, length &geq; n|
-|c|float or double|value|
+|c|float or double|input value|
 |y|Array|output, length &geq; n|
 
 ### Initialize
@@ -90,7 +90,7 @@ Initialize.Clear(uint n, T c, Array<T> y);
 |---|---|---|
 |T|float or double|type|
 |n|uint|count of processing|
-|c|float or double|value|
+|c|float or double|filling value|
 |y|Array|output, length &geq; n|
 
 ## Licence
