@@ -25,7 +25,7 @@ Array<float> x2 = new float[] { 6, 7, 8, 9, 10, 0, 1, 2, 3, 4, 5 };
 // make zeroset output array
 Array<float> y = new(x1.Length);
 
-// orerate
+// operate
 Elementwise.Add(9, x1, x2, y);
 
 // check
@@ -94,6 +94,36 @@ Aggregation.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
 |stride|uint|stride of x,y||
 |x|Array|input|length &geq; n x samples x stride|
 |y|Array|output|length &geq; n x stride, y &ne; x|
+
+### Vectorise
+
+```csharp
+Vectorise.___(uint n, uint stride, Array<T> x, Array<T> y);
+```
+
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|samples|uint|sampling count||
+|stride|uint|stride of x,y||
+|x|Array|input|length &geq; n|
+|y|Array|output|length &geq; n x stride, y &ne; x|
+
+### Reorder
+
+```csharp
+Reorder.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
+```
+
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|items|uint|reordering count||
+|stride|uint|stride of x,y||
+|x|Array|input|length &geq; n x samples x stride|
+|y|Array|output|length &geq; n x samples x stride, y &ne; x|
 
 ### Initialize
 
