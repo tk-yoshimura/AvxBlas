@@ -35,6 +35,20 @@ CollectionAssert.AreEqual(t, (float[])y);
 
 ## Operations
 
+### Initialize
+
+```csharp
+Elementwise.Zeroset(uint n, Array<T> y);
+Elementwise.Clear(uint n, T c, Array<T> y);
+```
+
+|parameter|type|note|
+|---|---|---|
+|T|float or double|type|
+|n|uint|count of processing|
+|c|float or double|value|
+|y|Array|output, length &geq; n|
+
 ### Elementwise
 
 ```csharp
