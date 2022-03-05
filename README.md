@@ -33,6 +33,24 @@ float[] t = new float[] { 6, 8, 10, 12, 14, 5, 7, 9, 11, 0, 0 };
 CollectionAssert.AreEqual(t, (float[])y);
 ```
 
+## Operations
+
+### Elementwise
+
+```csharp
+Elementwise.###(uint n, Array<T> x1, Array<T> x2, Array<T> y);
+```
+
+y = ope(x1, x2)
+
+|parameters|type|note|
+|---|---|---|
+|T|float or double|type|
+|n|uint|count of processing|
+|x1|Array|input, length \geq; n|
+|x2|Array|input, length \geq; n|
+|y|Array|output, length \geq; n|
+
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
 
