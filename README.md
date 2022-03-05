@@ -38,8 +38,8 @@ CollectionAssert.AreEqual(t, (float[])y);
 ### Initialize
 
 ```csharp
-Elementwise.Zeroset(uint n, Array<T> y);
-Elementwise.Clear(uint n, T c, Array<T> y);
+Initialize.Zeroset(uint n, Array<T> y);
+Initialize.Clear(uint n, T c, Array<T> y);
 ```
 
 |parameter|type|note|
