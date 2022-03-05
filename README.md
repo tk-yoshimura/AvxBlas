@@ -122,8 +122,8 @@ Reordering.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
 |n|uint|processing count||
 |items|uint|reordering count||
 |stride|uint|stride of x,y||
-|x|Array|input|length &geq; n x samples x stride|
-|y|Array|output|length &geq; n x samples x stride, y &ne; x|
+|x|Array|input|length &geq; n x items x stride|
+|y|Array|output|length &geq; n x items x stride, y &ne; x|
 
 ### Transforming
 
