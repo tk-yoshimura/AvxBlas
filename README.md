@@ -35,32 +35,19 @@ CollectionAssert.AreEqual(t, (float[])y);
 
 ## Operations
 
-### Initialize
-
-```csharp
-Initialize.Zeroset(uint n, Array<T> y);
-Initialize.Clear(uint n, T c, Array<T> y);
-```
-
-|parameter|type|note|
-|---|---|---|
-|T|float or double|type|
-|n|uint|count of processing|
-|c|float or double|value|
-|y|Array|output, length &geq; n|
-
 ### Elementwise
 
 ```csharp
+Elementwise.___(uint n, Array<T> x, Array<T> y);
 Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> y);
+Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> x3, Array<T> y);
 ```
 
 |parameter|type|note|
 |---|---|---|
 |T|float or double|type|
 |n|uint|count of processing|
-|x1|Array|input, length &geq; n|
-|x2|Array|input, length &geq; n|
+|x*|Array|input, length &geq; n|
 |y|Array|output, length &geq; n|
 
 ### Vectorwise
@@ -76,7 +63,21 @@ Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 |incx|uint|stride of x,y|
 |x|Array|input, length &geq; n * incx|
 |v|Array|input, length &geq; incx|
-|y|Array|output, length &geq; n * incx|
+|y|Array|output, length &geq; n * incx, y &neq; v|
+
+### Initialize
+
+```csharp
+Initialize.Zeroset(uint n, Array<T> y);
+Initialize.Clear(uint n, T c, Array<T> y);
+```
+
+|parameter|type|note|
+|---|---|---|
+|T|float or double|type|
+|n|uint|count of processing|
+|c|float or double|value|
+|y|Array|output, length &geq; n|
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)

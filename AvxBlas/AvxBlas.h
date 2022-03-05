@@ -112,6 +112,14 @@ namespace AvxBlas {
         static void Add(UInt32 n, UInt32 incx, Array<double>^ x, Array<double>^ v, Array<double>^ y);
     };
 
+    public ref class Constant abstract sealed {
+        static Constant();
+
+        public:
+        static void Add(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void Add(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+    };
+
     public ref class Initialize abstract sealed {
         static Initialize();
 

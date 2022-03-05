@@ -25,7 +25,7 @@ namespace AvxBlasTest.VectorwiseTest {
                         .Select((_, idx) => idx < n * incx ? x[idx] + v[idx % incx] : 0)
                         .ToArray();
 
-                    Array<float> y = new float[n * incx + 4];
+                    Array<float> y = new(n * incx + 4);
 
                     Vectorwise.Add(n, incx, x, v, y);
 
@@ -53,7 +53,7 @@ namespace AvxBlasTest.VectorwiseTest {
                         .Select((_, idx) => idx < n * incx ? x[idx] + v[idx % incx] : 0)
                         .ToArray();
 
-                    Array<double> y = new double[n * incx + 4];
+                    Array<double> y = new(n * incx + 4);
 
                     Vectorwise.Add(n, incx, x, v, y);
 

@@ -5,24 +5,18 @@
 
 using namespace System;
 
-void ew_abs(
+void const_add(
     const unsigned int n, 
-    const float* __restrict x_ptr, float* __restrict y_ptr) {
+    const float* __restrict x_ptr, const float c, float* __restrict y_ptr) {
     
     const unsigned int nb = n & AVX2_FLOAT_BATCH_MASK, nr = n - nb;
 
-    union {
-        float f;
-        unsigned __int32 i;
-    }m32;
-    m32.i = 0x7FFFFFFFu;
-
-    const __m256 bitmask = _mm256_set1_ps(m32.f);
+    __m256 fillc = _mm256_set1_ps(c);
 
     for (unsigned int i = 0; i < nb; i += AVX2_FLOAT_STRIDE) {
         __m256 x = _mm256_load_ps(x_ptr + i);
 
-        __m256 y = _mm256_and_ps(bitmask, x);
+        __m256 y = _mm256_add_ps(x, fillc);
 
         _mm256_stream_ps(y_ptr + i, y);
     }
@@ -31,30 +25,24 @@ void ew_abs(
 
         __m256 x = _mm256_maskload_ps(x_ptr + nb, mask);
 
-        __m256 y = _mm256_and_ps(bitmask, x);
+        __m256 y = _mm256_add_ps(x, fillc);
 
         _mm256_maskstore_ps(y_ptr + nb, mask, y);
     }
 }
 
-void ew_abs(
+void const_add(
     const unsigned int n, 
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const double* __restrict x_ptr, const double c, double* __restrict y_ptr) {
     
     const unsigned int nb = n & AVX2_DOUBLE_BATCH_MASK, nr = n - nb;
 
-    union {
-        double f;
-        unsigned __int64 i;
-    }m32;
-    m32.i = 0x7FFFFFFFFFFFFFFFul;
-
-    const __m256d bitmask = _mm256_set1_pd(m32.f);
+    __m256d fillc = _mm256_set1_pd(c);
 
     for (unsigned int i = 0; i < nb; i += AVX2_DOUBLE_STRIDE) {
         __m256d x = _mm256_load_pd(x_ptr + i);
 
-        __m256d y = _mm256_and_pd(bitmask, x);
+        __m256d y = _mm256_add_pd(x, fillc);
 
         _mm256_stream_pd(y_ptr + i, y);
     }
@@ -63,13 +51,13 @@ void ew_abs(
 
         __m256d x = _mm256_maskload_pd(x_ptr + nb, mask);
 
-        __m256d y = _mm256_and_pd(bitmask, x);
+        __m256d y = _mm256_add_pd(x, fillc);
 
         _mm256_maskstore_pd(y_ptr + nb, mask, y);
     }
 }
 
-void AvxBlas::Elementwise::Abs(UInt32 n, Array<float>^ x, Array<float>^ y) {
+void AvxBlas::Constant::Add(UInt32 n, Array<float>^ x, float c, Array<float>^ y) {
     if (n <= 0) {
         return;
     }
@@ -79,18 +67,18 @@ void AvxBlas::Elementwise::Abs(UInt32 n, Array<float>^ x, Array<float>^ y) {
     float* x_ptr = (float*)(x->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-    ew_abs(n, x_ptr, y_ptr);
+    const_add(n, x_ptr, c, y_ptr);
 }
 
-void AvxBlas::Elementwise::Abs(UInt32 n, Array<double>^ x, Array<double>^ y) {
+void AvxBlas::Constant::Add(UInt32 n, Array<double>^ x, double c, Array<double>^ y) {
     if (n <= 0) {
         return;
     }
-    
+
     Util::CheckLength(n, x, y);
 
     double* x_ptr = (double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
-    ew_abs(n, x_ptr, y_ptr);
+    const_add(n, x_ptr, c, y_ptr);
 }

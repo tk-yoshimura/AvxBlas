@@ -18,7 +18,7 @@ namespace AvxBlasTest.ElementwiseTest {
                         .Select((_, idx) => idx < count ? Math.Abs(x[idx]) : 0)
                         .ToArray();
 
-                    Array<float> y = new float[length];
+                    Array<float> y = new(length);
 
                     Elementwise.Abs(count, x, y);
 
@@ -35,7 +35,7 @@ namespace AvxBlasTest.ElementwiseTest {
                     float.Epsilon, float.Epsilon, float.MaxValue, float.MaxValue, float.PositiveInfinity, float.PositiveInfinity
                 };
 
-                Array<float> y = new float[x.Length];
+                Array<float> y = new(x.Length);
 
                 Elementwise.Abs((uint)x.Length, x, y);
 
@@ -55,7 +55,7 @@ namespace AvxBlasTest.ElementwiseTest {
                         .Select((_, idx) => idx < count ? Math.Abs(x[idx]) : 0)
                         .ToArray();
 
-                    Array<double> y = new double[length];
+                    Array<double> y = new(length);
 
                     Elementwise.Abs(count, x, y);
 
@@ -72,7 +72,7 @@ namespace AvxBlasTest.ElementwiseTest {
                     double.Epsilon, double.Epsilon, double.MaxValue, double.MaxValue, double.PositiveInfinity, double.PositiveInfinity
                 };
 
-                Array<double> y = new double[x.Length];
+                Array<double> y = new(x.Length);
 
                 Elementwise.Abs((uint)x.Length, x, y);
 

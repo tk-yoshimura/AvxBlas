@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Array\array.cpp" />
+    <ClCompile Include="Constant\const_add.cpp" />
+    <ClCompile Include="Constant\const_cctor.cpp" />
     <ClCompile Include="Elementwise\ew_abs.cpp" />
     <ClCompile Include="Elementwise\ew_add.cpp" />
     <ClCompile Include="Elementwise\ew_cctor.cpp" />

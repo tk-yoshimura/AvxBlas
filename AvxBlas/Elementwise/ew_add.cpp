@@ -5,7 +5,7 @@
 
 using namespace System;
 
-void add(
+void ew_add(
     const unsigned int n, 
     const float* __restrict x1_ptr, const float* __restrict x2_ptr, float* __restrict y_ptr) {
     
@@ -31,7 +31,7 @@ void add(
     }
 }
 
-void add(
+void ew_add(
     const unsigned int n, 
     const double* __restrict x1_ptr, const double* __restrict x2_ptr, double* __restrict y_ptr) {
     
@@ -68,7 +68,7 @@ void AvxBlas::Elementwise::Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Arr
     float* x2_ptr = (float*)(x2->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-    add(n, x1_ptr, x2_ptr, y_ptr);
+    ew_add(n, x1_ptr, x2_ptr, y_ptr);
 }
 
 void AvxBlas::Elementwise::Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y) {
@@ -82,5 +82,5 @@ void AvxBlas::Elementwise::Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, A
     double* x2_ptr = (double*)(x2->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
-    add(n, x1_ptr, x2_ptr, y_ptr);
+    ew_add(n, x1_ptr, x2_ptr, y_ptr);
 }

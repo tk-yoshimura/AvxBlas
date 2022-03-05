@@ -28,6 +28,9 @@
     <Filter Include="Source\Vectorwise">
       <UniqueIdentifier>{bc19b6dc-680e-4ed8-8079-634527c6354a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Constant">
+      <UniqueIdentifier>{5111ae43-8c3c-43a0-bbab-dec57c6fe936}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -73,6 +76,12 @@
     </ClCompile>
     <ClCompile Include="Vectorwise\vw_cctor.cpp">
       <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_cctor.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_add.cpp">
+      <Filter>Source\Constant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
