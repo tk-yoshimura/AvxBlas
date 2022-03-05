@@ -52,7 +52,7 @@ Initialize.Clear(uint n, T c, Array<T> y);
 ### Elementwise
 
 ```csharp
-Elementwise.###(uint n, Array<T> x1, Array<T> x2, Array<T> y);
+Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> y);
 ```
 
 |parameter|type|note|
@@ -66,7 +66,7 @@ Elementwise.###(uint n, Array<T> x1, Array<T> x2, Array<T> y);
 ### Vectorwise
 
 ```csharp
-Vectorwise.###(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
+Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 ```
 
 |parameter|type|note|
