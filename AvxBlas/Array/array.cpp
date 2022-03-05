@@ -86,7 +86,15 @@ String^ AvxBlas::Array<T>::Overview::get() {
 }
 
 generic <typename T>
-AvxBlas::Array<T>::Array(UInt32 length){
+AvxBlas::Array<T>::Array(UInt32 length)
+    : Array(length, true) {}
+
+generic <typename T>
+AvxBlas::Array<T>::Array(Int32 length)
+    : Array(length, true) {}
+
+generic <typename T>
+AvxBlas::Array<T>::Array(UInt32 length, bool zeroset){
     if (length > MaxLength) {
         throw gcnew System::ArgumentOutOfRangeException("length");
     }
@@ -107,12 +115,14 @@ AvxBlas::Array<T>::Array(UInt32 length){
     this->length = length;
     this->ptr = IntPtr(ptr);
 
-    Zeroset();
+    if (zeroset) {
+        Zeroset();
+    }
 }
 
 generic <typename T>
-AvxBlas::Array<T>::Array(Int32 length)
-    : Array(length >= 0 ? (UInt32)length : throw gcnew System::ArgumentOutOfRangeException("length")) {}
+AvxBlas::Array<T>::Array(Int32 length, bool zeroset)
+    : Array(length >= 0 ? (UInt32)length : throw gcnew System::ArgumentOutOfRangeException("length"), zeroset) {}
 
 generic <typename T>
 AvxBlas::Array<T>::Array(cli::array<T>^ array) {

@@ -8,7 +8,7 @@ namespace AvxBlasTest.ConstantTest {
     public class AddTest {
         [TestMethod]
         public void SAddTest() {
-            Random random = new Random(1234);
+            Random random = new(1234);
 
             const float c = 5f;
 
@@ -31,7 +31,7 @@ namespace AvxBlasTest.ConstantTest {
 
         [TestMethod]
         public void DAddTest() {
-            Random random = new Random(1234);
+            Random random = new(1234);
 
             const double c = 5d;
 

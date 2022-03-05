@@ -11,7 +11,7 @@ namespace AvxBlasTest {
         public void CreateTest() {
             const int length = 15;
 
-            Array<float> arr = new Array<float>(length);
+            Array<float> arr = new(length);
 
             Assert.IsTrue(arr.IsValid);
             Assert.AreEqual(Marshal.SizeOf(typeof(float)) * length, (int)arr.ByteSize);
@@ -26,7 +26,7 @@ namespace AvxBlasTest {
         public void AlignmentTest() {
             for (int length = 1; length <= 100; length++) {
 
-                Array<float> arr = new Array<float>((uint)length);
+                Array<float> arr = new(length);
 
                 Assert.IsTrue(arr.IsValid);
                 Assert.AreEqual(Marshal.SizeOf(typeof(float)) * length, (int)arr.ByteSize);
@@ -50,7 +50,7 @@ namespace AvxBlasTest {
 
             float[] v = new float[length];
 
-            Array<float> arr = new Array<float>(length);
+            Array<float> arr = new(length);
 
             arr.Read(v);
 
@@ -66,8 +66,8 @@ namespace AvxBlasTest {
             float[] v = (new float[length]).Select((_, idx) => (float)idx).ToArray();
             float[] v2 = new float[length];
 
-            Array<float> arr = new Array<float>(length);
-            Array<float> arr2 = new Array<float>(length);
+            Array<float> arr = new(length);
+            Array<float> arr2 = new(length);
 
             arr.Write(v);
 
@@ -86,8 +86,8 @@ namespace AvxBlasTest {
             float[] v2 = new float[length];
             float[] v3 = (new float[length]).Select((_, idx) => idx < (float)(length - 1) ? (float)idx : 0).ToArray();
 
-            Array<float> arr = new Array<float>(length);
-            Array<float> arr2 = new Array<float>(length);
+            Array<float> arr = new(length);
+            Array<float> arr2 = new(length);
 
             arr.Write(v, length - 1);
 
@@ -109,7 +109,7 @@ namespace AvxBlasTest {
 
             float[] v5 = new float[length];
 
-            Array<float> arr = new Array<float>(length);
+            Array<float> arr = new(length);
 
             arr.Write(v, length);
             arr.Zeroset();
@@ -138,8 +138,8 @@ namespace AvxBlasTest {
 
             float[] v6 = new float[length];
 
-            Array<float> arr = new Array<float>(v);
-            Array<float> arr2 = new Array<float>(length);
+            Array<float> arr = new(v);
+            Array<float> arr2 = new(length);
 
             arr2.Zeroset();
             arr.CopyTo(arr2, arr.Length);

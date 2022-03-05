@@ -8,7 +8,7 @@ namespace AvxBlasTest.VectorwiseTest {
     public class AddTest {
         [TestMethod]
         public void SAddTest() {
-            Random random = new Random(1234);
+            Random random = new(1234);
 
             foreach (uint n in new uint[] {
                     0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
@@ -36,7 +36,7 @@ namespace AvxBlasTest.VectorwiseTest {
 
         [TestMethod]
         public void DAddTest() {
-            Random random = new Random(1234);
+            Random random = new(1234);
 
             foreach (uint n in new uint[] {
                     0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,

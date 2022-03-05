@@ -39,6 +39,8 @@ namespace AvxBlas {
 
         Array(UInt32 length);
         Array(Int32 length);
+        Array(UInt32 length, bool zeroset);
+        Array(Int32 length, bool zeroset);
         Array(cli::array<T>^ array);
 
         property T default[UInt32] { T get(UInt32 index); void set(UInt32 index, T value); }

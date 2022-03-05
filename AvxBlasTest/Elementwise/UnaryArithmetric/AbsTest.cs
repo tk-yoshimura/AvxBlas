@@ -8,7 +8,7 @@ namespace AvxBlasTest.ElementwiseTest {
     public class AbsTest {
         [TestMethod]
         public void SAbsTest() {
-            Random random = new Random(1234);
+            Random random = new(1234);
 
             for (uint length = 1; length <= 16; length++) {
                 for (uint count = 0; count <= length; count++) {
@@ -45,7 +45,7 @@ namespace AvxBlasTest.ElementwiseTest {
 
         [TestMethod]
         public void DAbsTest() {
-            Random random = new Random(1234);
+            Random random = new(1234);
 
             for (uint length = 1; length <= 16; length++) {
                 for (uint count = 0; count <= length; count++) {
