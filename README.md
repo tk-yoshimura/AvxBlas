@@ -92,7 +92,7 @@ Aggregate.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
 |n|uint|processing count|||
 |samples|uint|sampling count|||
 |stride|uint|stride of x,y|||
-|x|Array|input|(n, samples, stride||
+|x|Array|input|(n, samples, stride)||
 |y|Array|output|(n, stride)|y &ne; x|
 
 ### Vectorise
@@ -118,12 +118,12 @@ Reorder.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
 
 |parameter|type|note|shape|condition|
 |---|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|items|uint|reordering count||
-|stride|uint|stride of x,y||
-|x|Array|input|length &geq; n x items x stride|
-|y|Array|output|length &geq; n x items x stride, y &ne; x|
+|T|float or double|type|||
+|n|uint|processing count|||
+|items|uint|reordering count|||
+|stride|uint|stride of x,y|||
+|x|Array|input|(n, items, stride)||
+|y|Array|output|(n, items, stride)|y &ne; x|
 
 ### Initialize
 
