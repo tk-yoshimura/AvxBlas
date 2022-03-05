@@ -83,6 +83,9 @@
     <ClCompile Include="Constant\const_add.cpp">
       <Filter>Source\Constant</Filter>
     </ClCompile>
+    <ClCompile Include="Vectorwise\vw_fill.cpp">
+      <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

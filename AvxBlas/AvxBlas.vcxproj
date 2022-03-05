@@ -103,6 +103,7 @@
     <ClCompile Include="Util\util_check.cpp" />
     <ClCompile Include="Vectorwise\vw_add.cpp" />
     <ClCompile Include="Vectorwise\vw_cctor.cpp" />
+    <ClCompile Include="Vectorwise\vw_fill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

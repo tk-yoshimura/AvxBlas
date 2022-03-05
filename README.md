@@ -53,6 +53,7 @@ Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> x3, Array<T> y);
 ### Vectorwise
 
 ```csharp
+Vectorwise.___(uint n, uint incx, Array<T> v, Array<T> y);
 Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 ```
 
