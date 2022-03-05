@@ -53,18 +53,18 @@ Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> x3, Array<T> y);
 ### Vectorwise
 
 ```csharp
-Vectorwise.___(uint n, uint incx, Array<T> v, Array<T> y);
-Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
+Vectorwise.___(uint n, uint stride, Array<T> v, Array<T> y);
+Vectorwise.___(uint n, uint stride, Array<T> x, Array<T> v, Array<T> y);
 ```
 
 |parameter|type|note|condition|
 |---|---|---|---|
 |T|float or double|type||
 |n|uint|processing count||
-|incx|uint|stride of x,y||
-|x|Array|input|length &geq; n * incx|
-|v|Array|input|length &geq; incx|
-|y|Array|output|length &geq; n * incx, y &ne; v|
+|stride|uint|stride of x,y||
+|x|Array|input|length &geq; n x stride|
+|v|Array|input|length &geq; stride|
+|y|Array|output|length &geq; n x stride, y &ne; v|
 
 ### Constant
 
@@ -79,6 +79,21 @@ Constant.___(uint n, Array<T> x, T c, Array<T> y);
 |x|Array|input|length &geq; n|
 |c|float or double|input value||
 |y|Array|output|length &geq; n|
+
+### Aggregation
+
+```csharp
+Aggregation.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
+```
+
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|samples|uint|aggregation samples||
+|stride|uint|stride of x,y||
+|x|Array|input|length &geq; n x samples x stride|
+|y|Array|output|length &geq; n x stride, y &ne; x|
 
 ### Initialize
 
@@ -95,7 +110,7 @@ Initialize.Clear(uint index, uint n, T c, Array<T> y);
 |index|uint|processing offset, default=0||
 |n|uint|processing count||
 |c|float or double|filling value||
-|y|Array|output|length &geq; n + index|
+|y|Array|output|length &geq; index + n|
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)

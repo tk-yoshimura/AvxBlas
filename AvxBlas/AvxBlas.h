@@ -106,11 +106,11 @@ namespace AvxBlas {
         static Vectorwise();
 
         public:
-        static void Fill(UInt32 n, UInt32 incx, Array<float>^ v, Array<float>^ y);
-        static void Fill(UInt32 n, UInt32 incx, Array<double>^ v, Array<double>^ y);
+        static void Fill(UInt32 n, UInt32 stride, Array<float>^ v, Array<float>^ y);
+        static void Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<double>^ y);
         
-        static void Add(UInt32 n, UInt32 incx, Array<float>^ x, Array<float>^ v, Array<float>^ y);
-        static void Add(UInt32 n, UInt32 incx, Array<double>^ x, Array<double>^ v, Array<double>^ y);
+        static void Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<float>^ v, Array<float>^ y);
+        static void Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<double>^ v, Array<double>^ y);
     };
 
     public ref class Constant abstract sealed {

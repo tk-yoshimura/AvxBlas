@@ -7,8 +7,8 @@ extern unsigned int gcd(unsigned int a, unsigned int b);
 extern unsigned int lcm(unsigned int a, unsigned int b);
 extern unsigned long gcd(unsigned long a, unsigned long b);
 extern unsigned long lcm(unsigned long a, unsigned long b);
-extern void alignment_vector_s(unsigned int n, unsigned int incx, const float* __restrict x_ptr, float* __restrict y_ptr);
-extern void alignment_vector_d(unsigned int n, unsigned int incx, const double* __restrict x_ptr, double* __restrict y_ptr);
+extern void alignment_vector_s(unsigned int n, unsigned int stride, const float* __restrict x_ptr, float* __restrict y_ptr);
+extern void alignment_vector_d(unsigned int n, unsigned int stride, const double* __restrict x_ptr, double* __restrict y_ptr);
 extern __m256i mm256_mask(unsigned int n);
 extern __m128i mm128_mask(unsigned int n);
 
