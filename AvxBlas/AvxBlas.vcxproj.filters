@@ -86,6 +86,9 @@
     <ClCompile Include="Vectorwise\vw_fill.cpp">
       <Filter>Source\Vectorwise</Filter>
     </ClCompile>
+    <ClCompile Include="Util\util_mask.cpp">
+      <Filter>Source\Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

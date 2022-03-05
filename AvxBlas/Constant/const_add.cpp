@@ -1,8 +1,6 @@
 #include "../avxblas.h"
 #include "../avxblasutil.h"
 
-#include <immintrin.h>
-
 using namespace System;
 
 void const_add(
@@ -21,7 +19,7 @@ void const_add(
         _mm256_stream_ps(y_ptr + i, y);
     }
     if (nr > 0) {
-        mm256_mask(const __m256i mask, nr);
+        const __m256i mask = mm256_mask(nr);
 
         __m256 x = _mm256_maskload_ps(x_ptr + nb, mask);
 
@@ -47,7 +45,7 @@ void const_add(
         _mm256_stream_pd(y_ptr + i, y);
     }
     if (nr > 0) {
-        mm256_mask(const __m256i mask, nr * 2);
+        const __m256i mask = mm256_mask(nr * 2);
 
         __m256d x = _mm256_maskload_pd(x_ptr + nb, mask);
 

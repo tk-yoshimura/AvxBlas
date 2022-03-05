@@ -1,7 +1,7 @@
 #include "../avxblasutil.h"
 #include <exception>
 
-unsigned int AvxBlas::gcd(unsigned int a, unsigned int b) {
+unsigned int gcd(unsigned int a, unsigned int b) {
     if (b == 0) {
         return a;
     }
@@ -9,7 +9,7 @@ unsigned int AvxBlas::gcd(unsigned int a, unsigned int b) {
     return gcd(b, a % b);
 }
 
-unsigned int AvxBlas::lcm(unsigned int a, unsigned int b) {
+unsigned int lcm(unsigned int a, unsigned int b) {
     unsigned int c = a / gcd(a, b);
 
     if (b > 0 && c > (~0u) / b) {
@@ -19,7 +19,7 @@ unsigned int AvxBlas::lcm(unsigned int a, unsigned int b) {
     return c * b;
 }
 
-unsigned long AvxBlas::gcd(unsigned long a, unsigned long b) {
+unsigned long gcd(unsigned long a, unsigned long b) {
     if (b == 0) {
         return a;
     }
@@ -27,7 +27,7 @@ unsigned long AvxBlas::gcd(unsigned long a, unsigned long b) {
     return gcd(b, a % b);
 }
 
-unsigned long AvxBlas::lcm(unsigned long a, unsigned long b) {
+unsigned long lcm(unsigned long a, unsigned long b) {
     unsigned long c = a / gcd(a, b);
 
     if (b > 0 && c > (~0ul) / b) {

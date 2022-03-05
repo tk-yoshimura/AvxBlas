@@ -99,6 +99,7 @@
     <ClCompile Include="Initialize\init_clear.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
+    <ClCompile Include="Util\util_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />
     <ClCompile Include="Util\util_check.cpp" />
     <ClCompile Include="Vectorwise\vw_add.cpp" />

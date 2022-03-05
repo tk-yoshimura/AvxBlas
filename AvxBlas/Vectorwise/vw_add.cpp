@@ -1,7 +1,6 @@
 #include "../avxblas.h"
 #include "../avxblasutil.h"
 #include <memory.h>
-#include <immintrin.h>
 
 using namespace System;
 
@@ -30,7 +29,7 @@ void vw_disorder_add(
 
     const unsigned int incxb = incx & AVX2_FLOAT_BATCH_MASK, incxr = incx - incxb;
 
-    mm256_mask(const __m256i mask, incxr);
+    const __m256i mask = mm256_mask(incxr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < incxb; c += AVX2_FLOAT_STRIDE) {
@@ -78,7 +77,7 @@ void vw_batch_add(
     if (nr > 0) {
         const unsigned int rem = incx * nr;
         const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-        mm256_mask(const __m256i mask, remr);
+        const __m256i mask = mm256_mask(remr);
 
         for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
@@ -124,7 +123,7 @@ void vw_disorder_add(
 
     const unsigned int incxb = incx & AVX2_DOUBLE_BATCH_MASK, incxr = incx - incxb;
 
-    mm256_mask(const __m256i mask, incxr * 2);
+    const __m256i mask = mm256_mask(incxr * 2);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < incxb; c += AVX2_DOUBLE_STRIDE) {
@@ -172,7 +171,7 @@ void vw_batch_add(
     if (nr > 0) {
         const unsigned int rem = incx * nr;
         const unsigned int remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
-        mm256_mask(const __m256i mask, remr * 2);
+        const __m256i mask = mm256_mask(remr * 2);
 
         for (unsigned int c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);

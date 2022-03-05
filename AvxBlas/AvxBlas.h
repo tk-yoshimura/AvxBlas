@@ -7,8 +7,6 @@ using namespace System::Diagnostics;
 using namespace System::Runtime::CompilerServices;
 
 namespace AvxBlas {
-    [assembly:InternalsVisibleTo("AvxBlasTest")];
-
     generic <typename T> where T : ValueType
     [DebuggerDisplayAttribute("{Overview,nq}")]
     public ref class Array {
@@ -18,10 +16,8 @@ namespace AvxBlas {
         IntPtr ptr;
         UInt32 length;
 
-        internal:
-        property IntPtr Ptr { IntPtr get(); }
-
         public:
+        property IntPtr Ptr { IntPtr get(); }
         property UInt32 Length { UInt32 get(); }
         static property UInt32 MaxLength { UInt32 get(); }
         property UInt32 ByteSize { UInt32 get(); }

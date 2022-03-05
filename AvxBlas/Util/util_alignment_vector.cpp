@@ -1,15 +1,13 @@
 #include "../avxblas.h"
 #include "../avxblasutil.h"
 
-#include <immintrin.h>
-
-void AvxBlas::alignment_vector_s(
+void alignment_vector_s(
     const unsigned int n, const unsigned int incx, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
     const unsigned int incxb = incx & AVX2_FLOAT_BATCH_MASK, incxr = incx - incxb;
     
-    mm256_mask(const __m256i mask, incxr);
+    const __m256i mask = mm256_mask(incxr);
     
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < incxb; c += AVX2_FLOAT_STRIDE) {
@@ -27,13 +25,13 @@ void AvxBlas::alignment_vector_s(
     }
 }
 
-void AvxBlas::alignment_vector_d(
+void alignment_vector_d(
     const unsigned int n, const unsigned int incx, 
     const double* __restrict x_ptr, double* __restrict y_ptr) {
     
     const unsigned int incxb = incx & AVX2_DOUBLE_BATCH_MASK, incxr = incx - incxb;
 
-    mm256_mask(const __m256i mask, incxr * 2);
+    const __m256i mask = mm256_mask(incxr * 2);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < incxb; c += AVX2_DOUBLE_STRIDE) {
