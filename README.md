@@ -43,12 +43,12 @@ Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> y);
 Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> x3, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|x*|Array|input|length &geq; n|
-|y|Array|output|length &geq; n|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|processing count|||
+|x*|Array|input|n||
+|y|Array|output|n||
 
 ### Vectorwise
 
@@ -57,14 +57,14 @@ Vectorwise.___(uint n, uint stride, Array<T> v, Array<T> y);
 Vectorwise.___(uint n, uint stride, Array<T> x, Array<T> v, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|stride|uint|stride of x,y||
-|x|Array|input|length &geq; n x stride|
-|v|Array|input|length &geq; stride|
-|y|Array|output|length &geq; n x stride, y &ne; v|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|processing count|||
+|stride|uint|stride of x,y|||
+|x|Array|input|(n, stride)||
+|v|Array|input|stride||
+|y|Array|output|(n, stride)|y &ne; v|
 
 ### Constant
 
@@ -72,28 +72,28 @@ Vectorwise.___(uint n, uint stride, Array<T> x, Array<T> v, Array<T> y);
 Constant.___(uint n, Array<T> x, T c, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|x|Array|input|length &geq; n|
-|c|float or double|input value||
-|y|Array|output|length &geq; n|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|processing count|||
+|x|Array|input|n||
+|c|float or double|input value|||
+|y|Array|output|n||
 
-### Aggregation
+### Aggregate
 
 ```csharp
-Aggregation.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
+Aggregate.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|samples|uint|sampling count||
-|stride|uint|stride of x,y||
-|x|Array|input|length &geq; n x samples x stride|
-|y|Array|output|length &geq; n x stride, y &ne; x|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|processing count|||
+|samples|uint|sampling count|||
+|stride|uint|stride of x,y|||
+|x|Array|input|(n, samples, stride||
+|y|Array|output|(n, stride)|y &ne; x|
 
 ### Vectorise
 
@@ -101,44 +101,29 @@ Aggregation.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
 Vectorise.___(uint n, uint stride, Array<T> x, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|samples|uint|sampling count||
-|stride|uint|stride of x,y||
-|x|Array|input|length &geq; n|
-|y|Array|output|length &geq; n x stride, y &ne; x|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|processing count|||
+|samples|uint|sampling count|||
+|stride|uint|stride of x,y|||
+|x|Array|input|n||
+|y|Array|output|(n, stride)|y &ne; x|
 
-### Reordering
+### Reorder
 
 ```csharp
-Reordering.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
+Reorder.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
 |T|float or double|type||
 |n|uint|processing count||
 |items|uint|reordering count||
 |stride|uint|stride of x,y||
 |x|Array|input|length &geq; n x items x stride|
 |y|Array|output|length &geq; n x items x stride, y &ne; x|
-
-### Transforming
-
-```csharp
-Transforming.Transpose(uint n, uint stride_in, uint stride_out, Array<T> x, Array<T> y);
-```
-
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|n|uint|processing count||
-|stride_in|uint|stride of x||
-|stride_out|uint|stride of y||
-|x|Array|input, shape=(n, stride_out, stride_in)|length &geq; n x stride_out x stride_in|
-|y|Array|output, shape=(n, stride_in, stride_out)|length &geq; n x stride_in x stride_out, y &ne; x|
 
 ### Initialize
 
@@ -149,13 +134,28 @@ Initialize.Clear(uint n, T c, Array<T> y);
 Initialize.Clear(uint index, uint n, T c, Array<T> y);
 ```
 
-|parameter|type|note|condition|
-|---|---|---|---|
-|T|float or double|type||
-|index|uint|processing offset, default=0||
-|n|uint|processing count||
-|c|float or double|filling value||
-|y|Array|output|length &geq; index + n|
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|index|uint|processing offset, default=0|||
+|n|uint|processing count|||
+|c|float or double|filling value|||
+|y|Array|output|index + n||
+
+### Transform
+
+```csharp
+Transform.Transpose(uint n, uint stride_in, uint stride_out, Array<T> x, Array<T> y);
+```
+
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|processing count|||
+|stride_in|uint|stride of x|||
+|stride_out|uint|stride of y|||
+|x|Array|input|(n, stride_out, stride_in)||
+|y|Array|output|(n, stride_in, stride_out)|y &ne; x|
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
