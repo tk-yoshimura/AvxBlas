@@ -82,8 +82,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AvxBlas.h" />
-    <ClInclude Include="AvxBlasUtil.h">
+    <ClInclude Include="avxblas.h" />
+    <ClInclude Include="avxblasutil.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -91,16 +91,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Array\array.cpp" />
-    <ClCompile Include="Elementwise\BinaryArithmetric\ew_add.cpp" />
-    <ClCompile Include="Elementwise\Ctor\ew_cctor.cpp" />
-    <ClCompile Include="Elementwise\UnaryArithmetric\ew_abs.cpp" />
-    <ClCompile Include="Initialize\Clear\clear.cpp" />
-    <ClCompile Include="Initialize\Ctor\initialize_cctor.cpp" />
-    <ClCompile Include="Util\alignment_vector.cpp" />
-    <ClCompile Include="Util\numeric.cpp" />
-    <ClCompile Include="Util\util.cpp" />
-    <ClCompile Include="Vectorwise\Ctor\vw_cctor.cpp" />
+    <ClCompile Include="Elementwise\ew_abs.cpp" />
+    <ClCompile Include="Elementwise\ew_add.cpp" />
+    <ClCompile Include="Elementwise\ew_cctor.cpp" />
+    <ClCompile Include="Initialize\init_clear.cpp" />
+    <ClCompile Include="Initialize\init_cctor.cpp" />
+    <ClCompile Include="Util\util_alignment_vector.cpp" />
+    <ClCompile Include="Util\util_numeric.cpp" />
+    <ClCompile Include="Util\util_check.cpp" />
     <ClCompile Include="Vectorwise\vw_add.cpp" />
+    <ClCompile Include="Vectorwise\vw_cctor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

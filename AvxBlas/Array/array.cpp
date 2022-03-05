@@ -1,4 +1,5 @@
-#include "../AvxBlas.h"
+#include "../avxblas.h"
+#include "../avxblasutil.h"
 
 #include <stdlib.h>
 #include <memory.h>

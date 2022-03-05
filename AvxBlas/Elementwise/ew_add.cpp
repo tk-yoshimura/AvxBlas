@@ -1,5 +1,5 @@
-#include "../../AvxBlas.h"
-#include "../../AvxBlasUtil.h"
+#include "../avxblas.h"
+#include "../avxblasutil.h"
 
 #include <immintrin.h>
 

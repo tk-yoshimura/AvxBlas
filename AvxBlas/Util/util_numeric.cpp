@@ -1,4 +1,4 @@
-#include "../AvxBlasUtil.h"
+#include "../avxblasutil.h"
 #include <exception>
 
 unsigned int AvxBlas::gcd(unsigned int a, unsigned int b) {

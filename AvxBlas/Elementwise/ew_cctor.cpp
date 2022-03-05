@@ -1,4 +1,4 @@
-#include "../../AvxBlas.h"
+#include "../avxblas.h"
 
 static AvxBlas::Elementwise::Elementwise() {
     if (!AvxBlas::Util::IsSupportedAVX || !AvxBlas::Util::IsSupportedAVX2) {
