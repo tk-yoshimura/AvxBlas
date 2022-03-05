@@ -46,7 +46,7 @@ Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> x3, Array<T> y);
 |parameter|type|note|
 |---|---|---|
 |T|float or double|type|
-|n|uint|count of processing|
+|n|uint|processing count|
 |x*|Array|input, length &geq; n|
 |y|Array|output, length &geq; n|
 
@@ -60,7 +60,7 @@ Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 |parameter|type|note|
 |---|---|---|
 |T|float or double|type|
-|n|uint|count of processing|
+|n|uint|processing count|
 |incx|uint|stride of x,y|
 |x|Array|input, length &geq; n * incx|
 |v|Array|input, length &geq; incx|
@@ -75,7 +75,7 @@ Constant.___(uint n, Array<T> x, T c, Array<T> y);
 |parameter|type|note|
 |---|---|---|
 |T|float or double|type|
-|n|uint|count of processing|
+|n|uint|processing count|
 |x|Array|input, length &geq; n|
 |c|float or double|input value|
 |y|Array|output, length &geq; n|
@@ -84,13 +84,16 @@ Constant.___(uint n, Array<T> x, T c, Array<T> y);
 
 ```csharp
 Initialize.Zeroset(uint n, Array<T> y);
+Initialize.Zeroset(uint index, uint n, Array<T> y);
 Initialize.Clear(uint n, T c, Array<T> y);
+Initialize.Clear(uint index, uint n, T c, Array<T> y);
 ```
 
 |parameter|type|note|
 |---|---|---|
 |T|float or double|type|
-|n|uint|count of processing|
+|index|uint|processing offset|
+|n|uint|processing count|
 |c|float or double|filling value|
 |y|Array|output, length &geq; n|
 
