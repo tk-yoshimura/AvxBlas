@@ -106,7 +106,7 @@ Vectorise.___(uint n, uint stride, Array<T> x, Array<T> y);
 |T|float or double|type|||
 |n|uint|processing count|||
 |samples|uint|sampling count|||
-|stride|uint|stride of x,y|||
+|stride|uint|stride of y|||
 |x|Array|input|n||
 |y|Array|output|(n, stride)|y &ne; x|
 
