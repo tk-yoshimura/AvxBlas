@@ -49,6 +49,21 @@ Elementwise.###(uint n, Array<T> x1, Array<T> x2, Array<T> y);
 |x2|Array|input, length &geq; n|
 |y|Array|output, length &geq; n|
 
+### Vectorwise
+
+```csharp
+Vectorwise.###(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
+```
+
+|parameter|type|note|
+|---|---|---|
+|T|float or double|type|
+|n|uint|count of processing|
+|incx|uint|stride of x,y|
+|x|Array|input, length &geq; n * incx|
+|v|Array|input, length &geq; incx|
+|y|Array|output, length &geq; n * incx|
+
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
 
