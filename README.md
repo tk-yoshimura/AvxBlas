@@ -110,10 +110,10 @@ Vectorise.___(uint n, uint stride, Array<T> x, Array<T> y);
 |x|Array|input|length &geq; n|
 |y|Array|output|length &geq; n x stride, y &ne; x|
 
-### Reorder
+### Reordering
 
 ```csharp
-Reorder.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
+Reordering.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
 ```
 
 |parameter|type|note|condition|
@@ -124,6 +124,21 @@ Reorder.___(uint n, uint items, uint stride, Array<T> x, Array<T> y);
 |stride|uint|stride of x,y||
 |x|Array|input|length &geq; n x samples x stride|
 |y|Array|output|length &geq; n x samples x stride, y &ne; x|
+
+### Transforming
+
+```csharp
+Transforming.Transpose(uint n, uint stride_in, uint stride_out, Array<T> x, Array<T> y);
+```
+
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|stride_in|uint|stride of x||
+|stride_out|uint|stride of y||
+|x|Array|input, shape=(n, stride_out, stride_in)|length &geq; n x stride_out x stride_in|
+|y|Array|output, shape=(n, stride_in, stride_out)|length &geq; n x stride_in x stride_out, y &ne; x|
 
 ### Initialize
 
