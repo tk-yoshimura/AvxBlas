@@ -64,7 +64,7 @@ Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 |incx|uint|stride of x,y|
 |x|Array|input, length &geq; n * incx|
 |v|Array|input, length &geq; incx|
-|y|Array|output, length &geq; n * incx, y &neq; v|
+|y|Array|output, length &geq; n * incx, y \neq v|
 
 ### Constant
 
@@ -92,10 +92,10 @@ Initialize.Clear(uint index, uint n, T c, Array<T> y);
 |parameter|type|note|
 |---|---|---|
 |T|float or double|type|
-|index|uint|processing offset|
+|index|uint|processing offset, default=0|
 |n|uint|processing count|
 |c|float or double|filling value|
-|y|Array|output, length &geq; n|
+|y|Array|output, length &geq; n + index|
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
