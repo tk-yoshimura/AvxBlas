@@ -64,7 +64,7 @@ Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 |incx|uint|stride of x,y|
 |x|Array|input, length &geq; n * incx|
 |v|Array|input, length &geq; incx|
-|y|Array|output, length &geq; n * incx, y \neq v|
+|y|Array|output, length &geq; n * incx, y &ne; v|
 
 ### Constant
 
