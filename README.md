@@ -65,6 +65,20 @@ Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 |v|Array|input, length &geq; incx|
 |y|Array|output, length &geq; n * incx, y &neq; v|
 
+### Constant
+
+```csharp
+Constant.___(uint n, Array<T> x, T c, Array<T> y);
+```
+
+|parameter|type|note|
+|---|---|---|
+|T|float or double|type|
+|n|uint|count of processing|
+|x|Array|input, length &geq; n|
+|c|float or double|value|
+|y|Array|output, length &geq; n|
+
 ### Initialize
 
 ```csharp
