@@ -17,7 +17,7 @@ AVX2 suppoted CPU. (Intel:Haswell(2013)-, AMD:Excavator(2015)-)
 
 ## Usage
 
-'''csharp
+```csharp
 // make input array
 Array<float> x1 = new float[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 Array<float> x2 = new float[] { 6, 7, 8, 9, 10, 0, 1, 2, 3, 4, 5 };
@@ -31,7 +31,7 @@ Elementwise.Add(9, x1, x2, y);
 // check
 float[] t = new float[] { 6, 8, 10, 12, 14, 5, 7, 9, 11, 0, 0 };
 CollectionAssert.AreEqual(t, (float[])y);
-'''
+```
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
