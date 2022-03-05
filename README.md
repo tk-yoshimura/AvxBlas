@@ -43,12 +43,12 @@ Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> y);
 Elementwise.___(uint n, Array<T> x1, Array<T> x2, Array<T> x3, Array<T> y);
 ```
 
-|parameter|type|note|
-|---|---|---|
-|T|float or double|type|
-|n|uint|processing count|
-|x*|Array|input, length &geq; n|
-|y|Array|output, length &geq; n|
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|x*|Array|input|length &geq; n|
+|y|Array|output|length &geq; n|
 
 ### Vectorwise
 
@@ -57,14 +57,14 @@ Vectorwise.___(uint n, uint incx, Array<T> v, Array<T> y);
 Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 ```
 
-|parameter|type|note|
-|---|---|---|
-|T|float or double|type|
-|n|uint|processing count|
-|incx|uint|stride of x,y|
-|x|Array|input, length &geq; n * incx|
-|v|Array|input, length &geq; incx|
-|y|Array|output, length &geq; n * incx, y &ne; v|
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|incx|uint|stride of x,y||
+|x|Array|input|length &geq; n * incx|
+|v|Array|input|length &geq; incx|
+|y|Array|output|length &geq; n * incx, y &ne; v|
 
 ### Constant
 
@@ -72,13 +72,13 @@ Vectorwise.___(uint n, uint incx, Array<T> x, Array<T> v, Array<T> y);
 Constant.___(uint n, Array<T> x, T c, Array<T> y);
 ```
 
-|parameter|type|note|
-|---|---|---|
-|T|float or double|type|
-|n|uint|processing count|
-|x|Array|input, length &geq; n|
-|c|float or double|input value|
-|y|Array|output, length &geq; n|
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|n|uint|processing count||
+|x|Array|input|length &geq; n|
+|c|float or double|input value||
+|y|Array|output|length &geq; n|
 
 ### Initialize
 
@@ -89,13 +89,13 @@ Initialize.Clear(uint n, T c, Array<T> y);
 Initialize.Clear(uint index, uint n, T c, Array<T> y);
 ```
 
-|parameter|type|note|
-|---|---|---|
-|T|float or double|type|
-|index|uint|processing offset, default=0|
-|n|uint|processing count|
-|c|float or double|filling value|
-|y|Array|output, length &geq; n + index|
+|parameter|type|note|condition|
+|---|---|---|---|
+|T|float or double|type||
+|index|uint|processing offset, default=0||
+|n|uint|processing count||
+|c|float or double|filling value||
+|y|Array|output|length &geq; n + index|
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
