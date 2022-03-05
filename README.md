@@ -41,7 +41,7 @@ CollectionAssert.AreEqual(t, (float[])y);
 Elementwise.###(uint n, Array<T> x1, Array<T> x2, Array<T> y);
 ```
 
-|parameters|type|note|
+|parameter|type|note|
 |---|---|---|
 |T|float or double|type|
 |n|uint|count of processing|
