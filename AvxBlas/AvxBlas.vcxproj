@@ -90,21 +90,29 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Aggregate\ag_cctor.cpp" />
+    <ClCompile Include="Aggregate\ag_sum.cpp" />
     <ClCompile Include="Array\array.cpp" />
-    <ClCompile Include="Constant\const_add.cpp" />
+    <ClCompile Include="Constant\const_add_d.cpp" />
+    <ClCompile Include="Constant\const_add_s.cpp" />
     <ClCompile Include="Constant\const_cctor.cpp" />
-    <ClCompile Include="Elementwise\ew_abs.cpp" />
-    <ClCompile Include="Elementwise\ew_add.cpp" />
+    <ClCompile Include="Elementwise\ew_abs_d.cpp" />
+    <ClCompile Include="Elementwise\ew_abs_s.cpp" />
+    <ClCompile Include="Elementwise\ew_add_d.cpp" />
+    <ClCompile Include="Elementwise\ew_add_s.cpp" />
     <ClCompile Include="Elementwise\ew_cctor.cpp" />
-    <ClCompile Include="Initialize\init_clear.cpp" />
+    <ClCompile Include="Initialize\init_clear_d.cpp" />
+    <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
     <ClCompile Include="Util\util_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />
     <ClCompile Include="Util\util_check.cpp" />
-    <ClCompile Include="Vectorwise\vw_add.cpp" />
+    <ClCompile Include="Vectorwise\vw_add_d.cpp" />
+    <ClCompile Include="Vectorwise\vw_add_s.cpp" />
     <ClCompile Include="Vectorwise\vw_cctor.cpp" />
-    <ClCompile Include="Vectorwise\vw_fill.cpp" />
+    <ClCompile Include="Vectorwise\vw_fill_d.cpp" />
+    <ClCompile Include="Vectorwise\vw_fill_s.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

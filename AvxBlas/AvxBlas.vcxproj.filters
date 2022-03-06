@@ -31,6 +31,9 @@
     <Filter Include="Source\Constant">
       <UniqueIdentifier>{5111ae43-8c3c-43a0-bbab-dec57c6fe936}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Aggregate">
+      <UniqueIdentifier>{748cb91a-a1be-4e5a-ae9e-cd236891ec38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -53,16 +56,16 @@
     <ClCompile Include="Util\util_alignment_vector.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Vectorwise\vw_add.cpp">
+    <ClCompile Include="Vectorwise\vw_add_s.cpp">
       <Filter>Source\Vectorwise</Filter>
     </ClCompile>
     <ClCompile Include="Util\util_numeric.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Elementwise\ew_abs.cpp">
+    <ClCompile Include="Elementwise\ew_abs_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
-    <ClCompile Include="Elementwise\ew_add.cpp">
+    <ClCompile Include="Elementwise\ew_add_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
     <ClCompile Include="Elementwise\ew_cctor.cpp">
@@ -71,7 +74,7 @@
     <ClCompile Include="Initialize\init_cctor.cpp">
       <Filter>Source\Initialize</Filter>
     </ClCompile>
-    <ClCompile Include="Initialize\init_clear.cpp">
+    <ClCompile Include="Initialize\init_clear_s.cpp">
       <Filter>Source\Initialize</Filter>
     </ClCompile>
     <ClCompile Include="Vectorwise\vw_cctor.cpp">
@@ -80,14 +83,38 @@
     <ClCompile Include="Constant\const_cctor.cpp">
       <Filter>Source\Constant</Filter>
     </ClCompile>
-    <ClCompile Include="Constant\const_add.cpp">
+    <ClCompile Include="Constant\const_add_s.cpp">
       <Filter>Source\Constant</Filter>
     </ClCompile>
-    <ClCompile Include="Vectorwise\vw_fill.cpp">
+    <ClCompile Include="Vectorwise\vw_fill_s.cpp">
       <Filter>Source\Vectorwise</Filter>
     </ClCompile>
     <ClCompile Include="Util\util_mask.cpp">
       <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_cctor.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_sum.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_abs_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_add_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Initialize\init_clear_d.cpp">
+      <Filter>Source\Initialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_add_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Vectorwise\vw_add_d.cpp">
+      <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Vectorwise\vw_fill_d.cpp">
+      <Filter>Source\Vectorwise</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -121,6 +121,14 @@ namespace AvxBlas {
         static void Add(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
     };
 
+    public ref class Aggregate abstract sealed {
+        static Aggregate();
+
+        public:
+        //static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
+        //static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
+    };
+
     public ref class Initialize abstract sealed {
         static Initialize();
 
