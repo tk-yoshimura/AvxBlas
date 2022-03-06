@@ -29,7 +29,9 @@ namespace AvxBlasTest.VectorwiseTest {
 
                     Vectorwise.Add(n, stride, x, v, y);
 
-                    CollectionAssert.AreEqual(t, (float[])y);
+                    CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} stride{stride}");
+
+                    Console.WriteLine($"OK: n{n} stride{stride}");
                 }
             }
         }
@@ -57,7 +59,9 @@ namespace AvxBlasTest.VectorwiseTest {
 
                     Vectorwise.Add(n, stride, x, v, y);
 
-                    CollectionAssert.AreEqual(t, (double[])y);
+                    CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} stride{stride}");
+
+                    Console.WriteLine($"OK: n{n} stride{stride}");
                 }
             }
         }

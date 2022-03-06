@@ -1,6 +1,7 @@
 #include "../avxblas.h"
 #include "../avxblasutil.h"
 #include <memory.h>
+#include <exception>
 
 using namespace System;
 
@@ -61,6 +62,12 @@ void vw_batch_add_d(
     const unsigned int nb = n / g * g, nr = n - nb;
     const unsigned int sg = stride * g;
 
+#ifdef _DEBUG
+    if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
     for (unsigned int i = 0; i < nb; i += g) {
         for (unsigned int c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
@@ -115,6 +122,10 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<d
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
+#ifdef _DEBUG
+        Console::WriteLine("type alignment");
+#endif // _DEBUG
+
         vw_alignment_add_d(n, stride, x_ptr, v_ptr, y_ptr);
         return;
     }
@@ -129,6 +140,10 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<d
                 throw gcnew System::OutOfMemoryException();
             }
 
+#ifdef _DEBUG
+            Console::WriteLine("type batch g:" + g.ToString());
+#endif // _DEBUG
+
             alignment_vector_d(g, stride, v_ptr, u_ptr);
             vw_batch_add_d(n, g, stride, x_ptr, u_ptr, y_ptr);
 
@@ -137,6 +152,10 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<d
             return;
         }
     }
+
+#ifdef _DEBUG
+    Console::WriteLine("type disorder");
+#endif // _DEBUG
 
     vw_disorder_add_d(n, stride, x_ptr, v_ptr, y_ptr);
 }

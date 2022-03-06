@@ -22,5 +22,16 @@ extern __m128i mm128_mask(unsigned int n);
 #define AVX2_DOUBLE_BATCH_MASK (~3u)
 #define AVX2_DOUBLE_REMAIN_MASK (3u)
 
+//#define AVX1_ALIGNMENT (16)
+//
+//#define AVX1_FLOAT_STRIDE (4)
+//#define AVX1_FLOAT_BATCH_MASK (~3u)
+//#define AVX1_FLOAT_REMAIN_MASK (3u)
+//
+//#define AVX1_DOUBLE_STRIDE (2)
+//#define AVX1_DOUBLE_BATCH_MASK (~1u)
+//#define AVX1_DOUBLE_REMAIN_MASK (1u)
+
 #define MAX_VECTORWISE_ALIGNMNET_INCX (4096)
 #define MAX_VECTORWISE_ALIGNMNET_ULENGTH (4096)
+#define MAX_AGGREGATE_BATCHING (64)

@@ -93,7 +93,7 @@ Aggregate.___(uint n, uint samples, uint stride, Array<T> x, Array<T> y);
 |samples|uint|sampling count|||
 |stride|uint|stride of x,y|||
 |x|Array|input|(n, samples, stride)||
-|y|Array|output|(n, stride)|y &ne; x|
+|y|Array|output|(n, stride)||
 
 ### Vectorise
 

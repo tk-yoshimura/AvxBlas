@@ -95,7 +95,7 @@
     <ClCompile Include="Aggregate\ag_cctor.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
-    <ClCompile Include="Aggregate\ag_sum.cpp">
+    <ClCompile Include="Aggregate\ag_sum_s.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
     <ClCompile Include="Elementwise\ew_abs_d.cpp">
