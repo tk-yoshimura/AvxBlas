@@ -380,43 +380,33 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
     float* x_ptr = (float*)(x->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-    if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
+    try {
+        if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+            Console::WriteLine("type alignment");
 #endif // _DEBUG
 
-        try {
             ag_alignment_sum_s(n, samples, stride, x_ptr, y_ptr);
-        }
-        catch (std::bad_alloc) {
-            throw gcnew System::OutOfMemoryException();
-        }
-        return;
-    }
-
-    if (stride <= MAX_AGGREGATE_BATCHING) {
-        UInt32 g = lcm(stride, AVX2_FLOAT_STRIDE) / stride;
-
-        if (samples >= g * 4) {
-#ifdef _DEBUG
-            Console::WriteLine("type batch g:" + g.ToString());
-#endif // _DEBUG
-
-            try {
-                ag_batch_sum_s(n, g, samples, stride, x_ptr, y_ptr);
-            }
-            catch (std::bad_alloc) {
-                throw gcnew System::OutOfMemoryException();
-            }
             return;
         }
-    }
 
+        if (stride <= MAX_AGGREGATE_BATCHING) {
+            UInt32 g = lcm(stride, AVX2_FLOAT_STRIDE) / stride;
+
+            if (samples >= g * 4) {
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+                Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-    try {
+                ag_batch_sum_s(n, g, samples, stride, x_ptr, y_ptr);
+                return;
+            }
+        }
+
+#ifdef _DEBUG
+        Console::WriteLine("type disorder");
+#endif // _DEBUG
+
         ag_disorder_sum_s(n, samples, stride, x_ptr, y_ptr);
     }
     catch (std::bad_alloc) {
