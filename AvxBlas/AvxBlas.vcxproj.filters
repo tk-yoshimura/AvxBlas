@@ -45,7 +45,10 @@
     <ClInclude Include="resource.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="avxblasutil.h">
+    <ClInclude Include="constants.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

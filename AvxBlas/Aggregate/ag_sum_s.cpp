@@ -1,5 +1,6 @@
 #include "../avxblas.h"
-#include "../avxblasutil.h"
+#include "../constants.h"
+#include "../utils.h"
 #include "../Inline/inline_sum.cpp"
 #include <memory.h>
 

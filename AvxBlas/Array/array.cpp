@@ -1,5 +1,5 @@
 #include "../avxblas.h"
-#include "../avxblasutil.h"
+#include "../constants.h"
 
 #include <stdlib.h>
 #include <memory.h>

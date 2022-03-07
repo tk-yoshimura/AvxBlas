@@ -1,5 +1,4 @@
 #include "../avxblas.h"
-#include "../avxblasutil.h"
 #include <array>
 #include <vector>
 #include <bitset>
@@ -10,7 +9,7 @@ using namespace System;
 #pragma unmanaged
 
 bool is_supported_avx() {
-    std::array<int, 4> cpui;
+    std::array<int, 4> cpui{};
     std::vector<std::array<int, 4>> data;
     std::bitset<32> f_1_ECX;
 
@@ -31,7 +30,7 @@ bool is_supported_avx() {
 
 
 bool is_supported_avx2() {
-    std::array<int, 4> cpui;
+    std::array<int, 4> cpui{};
     std::vector<std::array<int, 4>> data;
     std::bitset<32> f_7_EBX;
 
@@ -51,7 +50,7 @@ bool is_supported_avx2() {
 }
 
 bool is_supported_avx512f() {
-    std::array<int, 4> cpui;
+    std::array<int, 4> cpui{};
     std::vector<std::array<int, 4>> data;
     std::bitset<32> f_7_EBX;
 
@@ -72,7 +71,7 @@ bool is_supported_avx512f() {
 
 
 bool is_supported_fma() {
-    std::array<int, 4> cpui;
+    std::array<int, 4> cpui{};
     std::vector<std::array<int, 4>> data;
     std::bitset<32> f_1_ECX;
 

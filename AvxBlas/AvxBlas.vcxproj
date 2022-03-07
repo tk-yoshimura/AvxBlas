@@ -82,7 +82,8 @@
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <Optimization>MaxSpeed</Optimization>
       <BufferSecurityCheck>true</BufferSecurityCheck>
-      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <FloatingPointExceptions>
+      </FloatingPointExceptions>
       <ExceptionHandling>false</ExceptionHandling>
       <ControlFlowGuard>
       </ControlFlowGuard>
@@ -94,11 +95,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h" />
-    <ClInclude Include="avxblasutil.h">
+    <ClInclude Include="constants.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Aggregate\ag_cctor.cpp" />
