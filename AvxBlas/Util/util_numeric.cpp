@@ -1,39 +1,39 @@
-#include "../avxblasutil.h"
-#include <exception>
+#include "../avxblas.h"
+using namespace System;
 
-#pragma unmanaged
+#pragma managed
 
-unsigned int gcd(unsigned int a, unsigned int b) {
+UInt32 AvxBlas::Util::GCD(UInt32 a, UInt32 b) {
     if (b == 0) {
         return a;
     }
 
-    return gcd(b, a % b);
+    return GCD(b, a % b);
 }
 
-unsigned int lcm(unsigned int a, unsigned int b) {
-    unsigned int c = a / gcd(a, b);
+UInt32 AvxBlas::Util::LCM(UInt32 a, UInt32 b) {
+    UInt32 c = a / GCD(a, b);
 
     if (b > 0 && c > (~0u) / b) {
-        throw std::exception("overflow lcm");
+        throw gcnew System::OverflowException();
     }
 
     return c * b;
 }
 
-unsigned long gcd(unsigned long a, unsigned long b) {
+UInt64 AvxBlas::Util::GCD(UInt64 a, UInt64 b) {
     if (b == 0) {
         return a;
     }
 
-    return gcd(b, a % b);
+    return GCD(b, a % b);
 }
 
-unsigned long lcm(unsigned long a, unsigned long b) {
-    unsigned long c = a / gcd(a, b);
+UInt64 AvxBlas::Util::LCM(UInt64 a, UInt64 b) {
+    UInt64 c = a / GCD(a, b);
 
     if (b > 0 && c > (~0ul) / b) {
-        throw std::exception("overflow lcm");
+        throw gcnew System::OverflowException();
     }
 
     return c * b;

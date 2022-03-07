@@ -5,7 +5,7 @@ using namespace System;
 
 #pragma unmanaged
 
-void clear_s(
+int clear_s(
     const unsigned int n, const float c, 
     float* __restrict y_ptr) {
     
@@ -21,6 +21,8 @@ void clear_s(
 
         _mm256_maskstore_ps(y_ptr + nb, mask, fillc);
     }
+
+    return SUCCESS;
 }
 
 #pragma managed

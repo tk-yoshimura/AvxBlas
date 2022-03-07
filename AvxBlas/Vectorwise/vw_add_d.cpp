@@ -1,13 +1,12 @@
 #include "../avxblas.h"
 #include "../avxblasutil.h"
 #include <memory.h>
-#include <exception>
 
 using namespace System;
 
 #pragma unmanaged
 
-void vw_alignment_add_d(
+int vw_alignment_add_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
 
@@ -24,9 +23,11 @@ void vw_alignment_add_d(
         x_ptr += stride;
         y_ptr += stride;
     }
+
+    return SUCCESS;
 }
 
-void vw_disorder_add_d(
+int vw_disorder_add_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
 
@@ -55,9 +56,11 @@ void vw_disorder_add_d(
         x_ptr += stride;
         y_ptr += stride;
     }
+
+    return SUCCESS;
 }
 
-void vw_batch_add_d(
+int vw_batch_add_d(
     const unsigned int n, const unsigned int g, const unsigned int stride,
     const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
 
@@ -66,14 +69,21 @@ void vw_batch_add_d(
 
 #ifdef _DEBUG
     if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0) {
-        throw std::exception();
+        return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    double* u_ptr = (double*)_aligned_malloc(sg * sizeof(double), AVX2_ALIGNMENT);
+    if (u_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+
+    alignment_vector_d(g, stride, v_ptr, u_ptr);
 
     for (unsigned int i = 0; i < nb; i += g) {
         for (unsigned int c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
-            __m256d v = _mm256_load_pd(v_ptr + c);
+            __m256d v = _mm256_load_pd(u_ptr + c);
 
             __m256d y = _mm256_add_pd(x, v);
 
@@ -90,7 +100,7 @@ void vw_batch_add_d(
 
         for (unsigned int c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
-            __m256d v = _mm256_load_pd(v_ptr + c);
+            __m256d v = _mm256_load_pd(u_ptr + c);
 
             __m256d y = _mm256_add_pd(x, v);
 
@@ -98,13 +108,17 @@ void vw_batch_add_d(
         }
         if (remr > 0) {
             __m256d x = _mm256_maskload_pd(x_ptr + remb, mask);
-            __m256d v = _mm256_maskload_pd(v_ptr + remb, mask);
+            __m256d v = _mm256_maskload_pd(u_ptr + remb, mask);
 
             __m256d y = _mm256_add_pd(x, v);
 
             _mm256_maskstore_pd(y_ptr + remb, mask, y);
         }
     }
+
+    _aligned_free(u_ptr);
+
+    return SUCCESS;
 }
 
 #pragma managed
@@ -135,24 +149,16 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<d
     }
 
     if (stride <= MAX_VECTORWISE_ALIGNMNET_INCX) {
-        UInt32 ulen = lcm(stride, AVX2_DOUBLE_STRIDE);
-        UInt32 g = ulen / stride;
+        UInt32 g = Util::LCM(stride, AVX2_DOUBLE_STRIDE) / stride;
 
-        if (n >= g * 4 && ulen <= MAX_VECTORWISE_ALIGNMNET_ULENGTH) {
-            double* u_ptr = (double*)_aligned_malloc(static_cast<size_t>(ulen) * Array<double>::ElementSize, AVX2_ALIGNMENT);
-            if (u_ptr == nullptr) {
-                throw gcnew System::OutOfMemoryException();
-            }
-
+        if (n >= g * 4) {
 #ifdef _DEBUG
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            alignment_vector_d(g, stride, v_ptr, u_ptr);
-            vw_batch_add_d(n, g, stride, x_ptr, u_ptr, y_ptr);
-
-            _aligned_free(u_ptr);
-
+            if (vw_batch_add_d(n, g, stride, x_ptr, v_ptr, y_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
+            }
             return;
         }
     }

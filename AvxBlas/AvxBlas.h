@@ -82,6 +82,11 @@ namespace AvxBlas {
         static property System::String^ InvalidArrayLength { System::String^ get(); };
         static property System::String^ DuplicatedArray { System::String^ get(); };
 
+        static UInt32 LCM(UInt32 a, UInt32 b);
+        static UInt64 LCM(UInt64 a, UInt64 b);
+        static UInt32 GCD(UInt32 a, UInt32 b);
+        static UInt64 GCD(UInt64 a, UInt64 b);
+
         public:
         static property bool IsSupportedAVX { bool get(); };
         static property bool IsSupportedAVX2 { bool get(); };

@@ -4,21 +4,20 @@
 
 #include <immintrin.h>
 
-extern unsigned int gcd(unsigned int a, unsigned int b);
-extern unsigned int lcm(unsigned int a, unsigned int b);
-extern unsigned long gcd(unsigned long a, unsigned long b);
-extern unsigned long lcm(unsigned long a, unsigned long b);
+extern void alignment_vector_s(const unsigned int n, const unsigned int stride, const float* __restrict x_ptr, float* __restrict y_ptr);
+extern void alignment_vector_d(const unsigned int n, const unsigned int stride, const double* __restrict x_ptr, double* __restrict y_ptr);
 
-extern void alignment_vector_s(unsigned int n, unsigned int stride, const float* __restrict x_ptr, float* __restrict y_ptr);
-extern void alignment_vector_d(unsigned int n, unsigned int stride, const double* __restrict x_ptr, double* __restrict y_ptr);
+extern __m128i _mm_set_mask(const unsigned int n);
+extern __m256i _mm256_set_mask(const unsigned int n);
 
-extern __m128i _mm_set_mask(unsigned int n);
-extern __m256i _mm256_set_mask(unsigned int n);
+extern __forceinline float _mm256_sum8to1_ps(const __m256 x);
+extern __forceinline __m128 _mm256_sum8to2_ps(const __m256 x);
+extern __forceinline __m128 _mm256_sum6to3_ps(const __m256 x);
+extern __forceinline __m128 _mm256_sum8to4_ps(const __m256 x);
 
-extern __forceinline __m128 _mm256_sum8to1_ps(__m256 x);
-extern __forceinline __m128 _mm256_sum8to2_ps(__m256 x);
-extern __forceinline __m128 _mm256_sum6to3_ps(__m256 x);
-extern __forceinline __m128 _mm256_sum8to4_ps(__m256 x);
+#define SUCCESS (0)
+#define FAILURE_BADPARAM (-1)
+#define FAILURE_BADALLOC (-2)
 
 #define AVX2_ALIGNMENT (32)
 
@@ -31,7 +30,6 @@ extern __forceinline __m128 _mm256_sum8to4_ps(__m256 x);
 #define AVX2_DOUBLE_REMAIN_MASK (3u)
 
 #define MAX_VECTORWISE_ALIGNMNET_INCX (4096)
-#define MAX_VECTORWISE_ALIGNMNET_ULENGTH (4096)
 #define MAX_AGGREGATE_BATCHING (64)
 
 #pragma managed

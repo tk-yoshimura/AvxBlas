@@ -5,7 +5,7 @@ using namespace System;
 
 #pragma unmanaged
 
-void ew_abs_s(
+int ew_abs_s(
     const unsigned int n, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
@@ -35,6 +35,8 @@ void ew_abs_s(
 
         _mm256_maskstore_ps(y_ptr + nb, mask, y);
     }
+
+    return SUCCESS;
 }
 
 #pragma managed

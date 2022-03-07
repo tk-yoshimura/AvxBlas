@@ -5,7 +5,7 @@ using namespace System;
 
 #pragma unmanaged
 
-void const_add_s(
+int const_add_s(
     const unsigned int n, 
     const float* __restrict x_ptr, const float c, float* __restrict y_ptr) {
     
@@ -29,6 +29,8 @@ void const_add_s(
 
         _mm256_maskstore_ps(y_ptr + nb, mask, y);
     }
+
+    return SUCCESS;
 }
 
 #pragma managed

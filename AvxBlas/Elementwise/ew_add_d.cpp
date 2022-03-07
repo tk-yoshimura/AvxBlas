@@ -5,7 +5,7 @@ using namespace System;
 
 #pragma unmanaged
 
-void ew_add_d(
+int ew_add_d(
     const unsigned int n,
     const double* __restrict x1_ptr, const double* __restrict x2_ptr, double* __restrict y_ptr) {
 
@@ -29,6 +29,8 @@ void ew_add_d(
 
         _mm256_maskstore_pd(y_ptr + nb, mask, y);
     }
+
+    return SUCCESS;
 }
 
 #pragma managed
