@@ -10,7 +10,8 @@ namespace AvxBlasTest.AggregateTest {
         public void SAddTest() {
             Random random = new(1234);
 
-            for (uint n = 1; n <= 8; n++) {
+            foreach (uint n in new uint[] {
+                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
 
                 foreach (uint samples in new uint[] {
                     0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
@@ -18,7 +19,8 @@ namespace AvxBlasTest.AggregateTest {
 
                     foreach (uint stride in new uint[] {
                         0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
-                        15u, 16u, 17u, 63u, 64u, 65u, 255u, 256u, 257u }) {
+                        15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u, 
+                        63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
                         uint inlength = n * samples * stride + 4;
                         uint outlength = n * stride + 4;
