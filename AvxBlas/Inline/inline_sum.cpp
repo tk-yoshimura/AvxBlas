@@ -1,6 +1,6 @@
-#include "../avxblasutil.h"
-
 #pragma unmanaged
+
+#include <immintrin.h>
 
 __forceinline float _mm256_sum8to1_ps(const __m256 x) {
     const __m128 y = _mm_add_ps(_mm256_castps256_ps128(x), _mm256_extractf128_ps(x, 1));

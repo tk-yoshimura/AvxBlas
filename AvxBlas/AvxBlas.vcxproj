@@ -81,10 +81,11 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <Optimization>MaxSpeed</Optimization>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <ExceptionHandling>false</ExceptionHandling>
-      <ControlFlowGuard>false</ControlFlowGuard>
+      <ControlFlowGuard>
+      </ControlFlowGuard>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
@@ -114,9 +115,9 @@
     <ClCompile Include="Initialize\init_clear_d.cpp" />
     <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
+    <ClCompile Include="Inline\inline_sum.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />
-    <ClCompile Include="Util\util_mm_aggregate.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />
     <ClCompile Include="Util\util_check.cpp" />
     <ClCompile Include="Vectorwise\vw_add_d.cpp" />

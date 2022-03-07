@@ -10,11 +10,6 @@ extern void alignment_vector_d(const unsigned int n, const unsigned int stride, 
 extern __m128i _mm_set_mask(const unsigned int n);
 extern __m256i _mm256_set_mask(const unsigned int n);
 
-extern __forceinline float _mm256_sum8to1_ps(const __m256 x);
-extern __forceinline __m128 _mm256_sum8to2_ps(const __m256 x);
-extern __forceinline __m128 _mm256_sum6to3_ps(const __m256 x);
-extern __forceinline __m128 _mm256_sum8to4_ps(const __m256 x);
-
 #define SUCCESS (0)
 #define FAILURE_BADPARAM (-1)
 #define FAILURE_BADALLOC (-2)
