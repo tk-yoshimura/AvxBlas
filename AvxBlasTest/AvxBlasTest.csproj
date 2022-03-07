@@ -2,9 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
@@ -15,9 +13,15 @@
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <Reference Include="AvxBlas">
       <HintPath>..\AvxBlas\bin\x64\Debug\AvxBlas.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <Reference Include="AvxBlas">
+      <HintPath>..\AvxBlas\bin\x64\Release\AvxBlas.dll</HintPath>
     </Reference>
   </ItemGroup>
 
