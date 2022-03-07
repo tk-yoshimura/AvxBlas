@@ -31,3 +31,17 @@ __forceinline __m128 _mm256_sum8to4_ps(const __m256 x) {
 
     return ret;
 }
+
+__forceinline double _mm256_sum4to1_pd(const __m256d x) {
+    const __m128d y = _mm_add_pd(_mm256_castpd256_pd128(x), _mm256_extractf128_pd(x, 1));
+    const __m128d z = _mm_hadd_pd(y, y);
+    const double ret = _mm_cvtsd_f64(z);
+
+    return ret;
+}
+
+__forceinline __m128d _mm256_sum4to2_pd(const __m256d x) {
+    const __m128d ret = _mm_add_pd(_mm256_castpd256_pd128(x), _mm256_extractf128_pd(x, 1));
+    
+    return ret;
+}

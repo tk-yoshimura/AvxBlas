@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Aggregate\ag_cctor.cpp" />
+    <ClCompile Include="Aggregate\ag_sum_d.cpp" />
     <ClCompile Include="Aggregate\ag_sum_s.cpp" />
     <ClCompile Include="Array\array.cpp" />
     <ClCompile Include="Constant\const_add_d.cpp" />

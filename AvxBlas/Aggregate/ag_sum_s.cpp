@@ -14,7 +14,6 @@ int ag_stride1_sum_s(
 
     const __m256 zero = _mm256_setzero_ps();
     const unsigned int sb = samples & AVX2_FLOAT_BATCH_MASK, sr = samples - sb;
-    const __m128i mask1 = _mm_set_mask(1);
     const __m256i mask = _mm256_set_mask(sr);
 
     for (unsigned int i = 0; i < n; i++) {
