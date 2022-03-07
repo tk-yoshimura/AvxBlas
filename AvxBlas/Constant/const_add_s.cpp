@@ -3,6 +3,8 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void const_add_s(
     const unsigned int n, 
     const float* __restrict x_ptr, const float c, float* __restrict y_ptr) {
@@ -19,7 +21,7 @@ void const_add_s(
         _mm256_stream_ps(y_ptr + i, y);
     }
     if (nr > 0) {
-        const __m256i mask = mm256_mask(nr);
+        const __m256i mask = _mm256_set_mask(nr);
 
         __m256 x = _mm256_maskload_ps(x_ptr + nb, mask);
 
@@ -28,6 +30,8 @@ void const_add_s(
         _mm256_maskstore_ps(y_ptr + nb, mask, y);
     }
 }
+
+#pragma managed
 
 void AvxBlas::Constant::Add(UInt32 n, Array<float>^ x, float c, Array<float>^ y) {
     if (n <= 0) {

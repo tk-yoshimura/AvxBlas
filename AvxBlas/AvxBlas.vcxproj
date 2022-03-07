@@ -63,6 +63,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -76,6 +77,9 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <Optimization>Full</Optimization>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -105,7 +109,8 @@
     <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
-    <ClCompile Include="Util\util_mask.cpp" />
+    <ClCompile Include="Util\util_mm_mask.cpp" />
+    <ClCompile Include="Util\util_mm_aggregate.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />
     <ClCompile Include="Util\util_check.cpp" />
     <ClCompile Include="Vectorwise\vw_add_d.cpp" />

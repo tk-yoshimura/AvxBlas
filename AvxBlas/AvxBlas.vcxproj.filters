@@ -89,7 +89,7 @@
     <ClCompile Include="Vectorwise\vw_fill_s.cpp">
       <Filter>Source\Vectorwise</Filter>
     </ClCompile>
-    <ClCompile Include="Util\util_mask.cpp">
+    <ClCompile Include="Util\util_mm_mask.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
     <ClCompile Include="Aggregate\ag_cctor.cpp">
@@ -115,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="Vectorwise\vw_fill_d.cpp">
       <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\util_mm_aggregate.cpp">
+      <Filter>Source\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

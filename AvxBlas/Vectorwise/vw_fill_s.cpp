@@ -5,6 +5,8 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void vw_alignment_fill_s(
     const unsigned int n, const unsigned int stride, 
     const float* __restrict v_ptr, float* __restrict y_ptr) {
@@ -26,7 +28,7 @@ void vw_disorder_fill_s(
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
-    const __m256i mask = mm256_mask(sr);
+    const __m256i mask = _mm256_set_mask(sr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
@@ -69,7 +71,7 @@ void vw_batch_fill_s(
     if (nr > 0) {
         const unsigned int rem = stride * nr;
         const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-        const __m256i mask = mm256_mask(remr);
+        const __m256i mask = _mm256_set_mask(remr);
 
         for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 v = _mm256_load_ps(v_ptr + c);
@@ -83,6 +85,8 @@ void vw_batch_fill_s(
         }
     }
 }
+
+#pragma managed
 
 void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<float>^ v, Array<float>^ y) {
     if (n <= 0 || stride <= 0) {

@@ -1,6 +1,8 @@
 #include "../avxblasutil.h"
 #include <exception>
 
+#pragma unmanaged
+
 unsigned int gcd(unsigned int a, unsigned int b) {
     if (b == 0) {
         return a;

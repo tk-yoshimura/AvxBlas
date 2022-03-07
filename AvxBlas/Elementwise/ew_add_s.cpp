@@ -3,6 +3,8 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void ew_add_s(
     const unsigned int n,
     const float* __restrict x1_ptr, const float* __restrict x2_ptr, float* __restrict y_ptr) {
@@ -18,7 +20,7 @@ void ew_add_s(
         _mm256_stream_ps(y_ptr + i, y);
     }
     if (nr > 0) {
-        const __m256i mask = mm256_mask(nr);
+        const __m256i mask = _mm256_set_mask(nr);
 
         __m256 x1 = _mm256_maskload_ps(x1_ptr + nb, mask);
         __m256 x2 = _mm256_maskload_ps(x2_ptr + nb, mask);
@@ -28,6 +30,8 @@ void ew_add_s(
         _mm256_maskstore_ps(y_ptr + nb, mask, y);
     }
 }
+
+#pragma managed
 
 void AvxBlas::Elementwise::Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y) {
     if (n <= 0) {

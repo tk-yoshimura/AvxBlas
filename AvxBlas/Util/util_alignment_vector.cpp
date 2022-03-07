@@ -1,13 +1,15 @@
 #include "../avxblas.h"
 #include "../avxblasutil.h"
 
+#pragma unmanaged
+
 void alignment_vector_s(
     const unsigned int n, const unsigned int stride, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
     
-    const __m256i mask = mm256_mask(sr);
+    const __m256i mask = _mm256_set_mask(sr);
     
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
@@ -31,7 +33,7 @@ void alignment_vector_d(
     
     const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
-    const __m256i mask = mm256_mask(sr * 2);
+    const __m256i mask = _mm256_set_mask(sr * 2);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {

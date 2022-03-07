@@ -7,13 +7,99 @@
 
 using namespace System;
 
+#pragma unmanaged
+
+bool is_supported_avx() {
+    std::array<int, 4> cpui;
+    std::vector<std::array<int, 4>> data;
+    std::bitset<32> f_1_ECX;
+
+    __cpuid(cpui.data(), 0);
+    int nids = cpui[0];
+
+    for (int i = 0; i <= nids; i++){
+        __cpuidex(cpui.data(), i, 0);
+        data.push_back(cpui);
+    }
+
+    if (nids >= 1){
+        f_1_ECX = data[1][2];
+    }
+
+    return f_1_ECX[28];
+}
+
+
+bool is_supported_avx2() {
+    std::array<int, 4> cpui;
+    std::vector<std::array<int, 4>> data;
+    std::bitset<32> f_7_EBX;
+
+    __cpuid(cpui.data(), 0);
+    int nids = cpui[0];
+
+    for (int i = 0; i <= nids; i++) {
+        __cpuidex(cpui.data(), i, 0);
+        data.push_back(cpui);
+    }
+
+    if (nids >= 7) {
+        f_7_EBX = data[7][1];
+    }
+
+    return f_7_EBX[5];
+}
+
+bool is_supported_avx512f() {
+    std::array<int, 4> cpui;
+    std::vector<std::array<int, 4>> data;
+    std::bitset<32> f_7_EBX;
+
+    __cpuid(cpui.data(), 0);
+    int nids = cpui[0];
+
+    for (int i = 0; i <= nids; i++) {
+        __cpuidex(cpui.data(), i, 0);
+        data.push_back(cpui);
+    }
+
+    if (nids >= 7) {
+        f_7_EBX = data[7][1];
+    }
+
+    return f_7_EBX[16];
+}
+
+
+bool is_supported_fma() {
+    std::array<int, 4> cpui;
+    std::vector<std::array<int, 4>> data;
+    std::bitset<32> f_1_ECX;
+
+    __cpuid(cpui.data(), 0);
+    int nids = cpui[0];
+
+    for (int i = 0; i <= nids; i++) {
+        __cpuidex(cpui.data(), i, 0);
+        data.push_back(cpui);
+    }
+
+    if (nids >= 1) {
+        f_1_ECX = data[1][2];
+    }
+
+    return f_1_ECX[12];
+}
+
+#pragma managed
+
 generic <typename T> where T : ValueType
 void AvxBlas::Util::CheckLength(UInt32 length, ...cli::array<Array<T>^>^ arrays) {
     if (length <= 0) {
         return;
     }
-    
-    for each (Array<T>^ array in arrays){
+
+    for each (Array<T> ^ array in arrays) {
         if (length > (unsigned int)array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
         }
@@ -30,7 +116,7 @@ void AvxBlas::Util::CheckOutOfRange(UInt32 index, UInt32 length, ...cli::array<A
         throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
     }
 
-    for each (Array<T>^ array in arrays) {
+    for each (Array<T> ^ array in arrays) {
         if (index >= (unsigned int)array->Length || index + length > (unsigned int)array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
         }
@@ -66,96 +152,16 @@ void AvxBlas::Util::CheckProdOverflow(... cli::array<UInt32>^ arrays) {
     }
 }
 
-bool is_supported_avx() {
-    std::array<int, 4> cpui;
-    std::vector<std::array<int, 4>> data;
-    std::bitset<32> f_1_ECX;
-
-    __cpuid(cpui.data(), 0);
-    int nids = cpui[0];
-
-    for (int i = 0; i <= nids; i++){
-        __cpuidex(cpui.data(), i, 0);
-        data.push_back(cpui);
-    }
-
-    if (nids >= 1){
-        f_1_ECX = data[1][2];
-    }
-
-    return f_1_ECX[28];
-}
-
 bool AvxBlas::Util::IsSupportedAVX::get() {
     return is_supported_avx();
-}
-
-bool is_supported_avx2() {
-    std::array<int, 4> cpui;
-    std::vector<std::array<int, 4>> data;
-    std::bitset<32> f_7_EBX;
-
-    __cpuid(cpui.data(), 0);
-    int nids = cpui[0];
-
-    for (int i = 0; i <= nids; i++) {
-        __cpuidex(cpui.data(), i, 0);
-        data.push_back(cpui);
-    }
-
-    if (nids >= 7) {
-        f_7_EBX = data[7][1];
-    }
-
-    return f_7_EBX[5];
 }
 
 bool AvxBlas::Util::IsSupportedAVX2::get() {
     return is_supported_avx2();
 }
 
-bool is_supported_avx512f() {
-    std::array<int, 4> cpui;
-    std::vector<std::array<int, 4>> data;
-    std::bitset<32> f_7_EBX;
-
-    __cpuid(cpui.data(), 0);
-    int nids = cpui[0];
-
-    for (int i = 0; i <= nids; i++) {
-        __cpuidex(cpui.data(), i, 0);
-        data.push_back(cpui);
-    }
-
-    if (nids >= 7) {
-        f_7_EBX = data[7][1];
-    }
-
-    return f_7_EBX[16];
-}
-
 bool AvxBlas::Util::IsSupportedAVX512F::get() {
     return is_supported_avx512f();
-}
-
-bool is_supported_fma() {
-    std::array<int, 4> cpui;
-    std::vector<std::array<int, 4>> data;
-    std::bitset<32> f_1_ECX;
-
-    __cpuid(cpui.data(), 0);
-    int nids = cpui[0];
-
-    for (int i = 0; i <= nids; i++) {
-        __cpuidex(cpui.data(), i, 0);
-        data.push_back(cpui);
-    }
-
-    if (nids >= 1) {
-        f_1_ECX = data[1][2];
-    }
-
-    return f_1_ECX[12];
 }
 
 bool AvxBlas::Util::IsSupportedFMA::get() {

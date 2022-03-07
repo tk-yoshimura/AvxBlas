@@ -3,6 +3,8 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void ew_abs_d(
     const unsigned int n, 
     const double* __restrict x_ptr, double* __restrict y_ptr) {
@@ -25,7 +27,7 @@ void ew_abs_d(
         _mm256_stream_pd(y_ptr + i, y);
     }
     if (nr > 0) {
-        const __m256i mask = mm256_mask(nr * 2);
+        const __m256i mask = _mm256_set_mask(nr * 2);
 
         __m256d x = _mm256_maskload_pd(x_ptr + nb, mask);
 
@@ -34,6 +36,8 @@ void ew_abs_d(
         _mm256_maskstore_pd(y_ptr + nb, mask, y);
     }
 }
+
+#pragma managed
 
 void AvxBlas::Elementwise::Abs(UInt32 n, Array<double>^ x, Array<double>^ y) {
     if (n <= 0) {

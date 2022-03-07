@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma warning(disable: 4793)
-
 using namespace System;
 using namespace System::Diagnostics;
 using namespace System::Runtime::CompilerServices;

@@ -6,14 +6,16 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void ag_stride1_sum_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
     const __m256 zero = _mm256_setzero_ps();
     const unsigned int sb = samples & AVX2_FLOAT_BATCH_MASK, sr = samples - sb;
-    const __m128i mask1 = mm128_mask(1);
-    const __m256i mask = mm256_mask(sr);
+    const __m128i mask1 = _mm_set_mask(1);
+    const __m256i mask = _mm256_set_mask(sr);
 
     for (unsigned int i = 0; i < n; i++) {
         __m256 buf = zero;
@@ -33,9 +35,7 @@ void ag_stride1_sum_s(
             x_ptr += sr;
         }
 
-        __m128 y = _mm_add_ps(_mm256_extractf128_ps(buf, 0), _mm256_extractf128_ps(buf, 1));
-        y = _mm_add_ps(y, _mm_permute_ps(y, _MM_PERM_CDAB));
-        y = _mm_add_ps(y, _mm_permute_ps(y, _MM_PERM_BADC));
+        __m128 y = _mm256_sum8to1_ps(buf);
 
         _mm_maskstore_ps(y_ptr, mask1, y);
 
@@ -49,8 +49,8 @@ void ag_stride2_sum_s(
 
     const __m256 zero = _mm256_setzero_ps();
     const unsigned int sb = samples / 4 * 4, sr = samples - sb;
-    const __m128i mask2 = mm128_mask(2);
-    const __m256i mask = mm256_mask(sr * 2);
+    const __m128i mask2 = _mm_set_mask(2);
+    const __m256i mask = _mm256_set_mask(sr * 2);
 
     for (unsigned int i = 0; i < n; i++) {
         __m256 buf = zero;
@@ -70,8 +70,7 @@ void ag_stride2_sum_s(
             x_ptr += sr * 2;
         }
 
-        __m128 y = _mm_add_ps(_mm256_extractf128_ps(buf, 0), _mm256_extractf128_ps(buf, 1));
-        y = _mm_add_ps(y, _mm_permute_ps(y, _MM_PERM_BADC));
+        __m128 y = _mm256_sum8to2_ps(buf);
 
         _mm_maskstore_ps(y_ptr, mask2, y);
 
@@ -85,9 +84,8 @@ void ag_stride3_sum_s(
 
     const __m256 zero = _mm256_setzero_ps();
     const unsigned int sb = samples / 2 * 2, sr = samples - sb;
-    const __m128i mask3 = mm128_mask(3);
-    const __m256i mask6 = mm256_mask(6);
-    const __m256i perm = _mm256_setr_epi32(0, 1, 2, 6, 3, 4, 5, 7);
+    const __m128i mask3 = _mm_set_mask(3);
+    const __m256i mask6 = _mm256_set_mask(6);
 
     for (unsigned int i = 0; i < n; i++) {
         __m256 buf = zero;
@@ -107,9 +105,7 @@ void ag_stride3_sum_s(
             x_ptr += 3;
         }
 
-        buf = _mm256_permutevar8x32_ps(buf, perm);
-
-        __m128 y = _mm_add_ps(_mm256_extractf128_ps(buf, 0), _mm256_extractf128_ps(buf, 1));
+        __m128 y = _mm256_sum6to3_ps(buf);
 
         _mm_maskstore_ps(y_ptr, mask3, y);
 
@@ -123,7 +119,7 @@ void ag_stride4_sum_s(
 
     const __m256 zero = _mm256_setzero_ps();
     const unsigned int sb = samples / 2 * 2, sr = samples - sb;
-    const __m256i mask4 = mm256_mask(4);
+    const __m256i mask4 = _mm256_set_mask(4);
 
     for (unsigned int i = 0; i < n; i++) {
         __m256 buf = zero;
@@ -143,7 +139,7 @@ void ag_stride4_sum_s(
             x_ptr += AVX2_FLOAT_STRIDE / 2;
         }
 
-        __m128 y = _mm_add_ps(_mm256_extractf128_ps(buf, 0), _mm256_extractf128_ps(buf, 1));
+        __m128 y = _mm256_sum8to4_ps(buf);
 
         _mm_stream_ps(y_ptr, y);
 
@@ -162,7 +158,7 @@ void ag_stride5to7_sum_s(
 #endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
-    const __m256i mask = mm256_mask(stride);
+    const __m256i mask = _mm256_set_mask(stride);
 
     for (unsigned int i = 0; i < n; i++) {
         __m256 buf = zero;
@@ -396,7 +392,7 @@ void ag_disorder_sum_s(
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
     const __m256 zero = _mm256_setzero_ps();
-    const __m256i mask = mm256_mask(sr);
+    const __m256i mask = _mm256_set_mask(sr);
 
     float* buf = (float*)_aligned_malloc(((size_t)stride + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
     if (buf == nullptr) {
@@ -461,7 +457,7 @@ void ag_batch_sum_s(
     const unsigned int sb = samples / g * g, sr = samples - sb;
     const unsigned int rem = stride * sr;
     const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-    const __m256i mask = mm256_mask(remr);
+    const __m256i mask = _mm256_set_mask(remr);
 
     const __m256 zero = _mm256_setzero_ps();
 
@@ -513,6 +509,8 @@ void ag_batch_sum_s(
 
     _aligned_free(buf);
 }
+
+#pragma managed
 
 void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y) {
     if (n <= 0 || samples <= 0 || stride <= 0) {

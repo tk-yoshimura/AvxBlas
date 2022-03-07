@@ -3,6 +3,8 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void clear_d(
     const unsigned int n, const double c, 
     double* __restrict y_ptr) {
@@ -15,11 +17,13 @@ void clear_d(
         _mm256_stream_pd(y_ptr + i, fillc);
     }
     if (nr > 0) {
-        const __m256i mask = mm256_mask(nr * 2);
+        const __m256i mask = _mm256_set_mask(nr * 2);
 
         _mm256_maskstore_pd(y_ptr + nb, mask, fillc);
     }
 }
+
+#pragma managed
 
 void AvxBlas::Initialize::Clear(UInt32 n, double c, Array<double>^ y) {
     Util::CheckLength(n, y);

@@ -5,6 +5,8 @@
 
 using namespace System;
 
+#pragma unmanaged
+
 void vw_alignment_add_s(
     const unsigned int n, const unsigned int stride, 
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
@@ -30,7 +32,7 @@ void vw_disorder_add_s(
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
-    const __m256i mask = mm256_mask(sr);
+    const __m256i mask = _mm256_set_mask(sr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
@@ -84,7 +86,7 @@ void vw_batch_add_s(
     if (nr > 0) {
         const unsigned int rem = stride * nr;
         const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-        const __m256i mask = mm256_mask(remr);
+        const __m256i mask = _mm256_set_mask(remr);
 
         for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
@@ -104,6 +106,8 @@ void vw_batch_add_s(
         }
     }
 }
+
+#pragma managed
 
 void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<float>^ v, Array<float>^ y) {
     if (n <= 0 || stride <= 0) {
