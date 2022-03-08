@@ -494,6 +494,11 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
     Util::CheckLength(n * samples * stride, x);
     Util::CheckLength(n * stride, y);
 
+    if (samples == 1) {
+        Elementwise::Copy(n * stride, x, y);
+        return;
+    }
+
     double* x_ptr = (double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
