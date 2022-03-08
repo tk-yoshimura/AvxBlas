@@ -502,6 +502,24 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
     double* x_ptr = (double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
+    if (stride == 1u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride1");
+#endif // _DEBUG
+
+        ag_stride1_sum_d(n, samples, x_ptr, y_ptr);
+        return;
+    }
+
+    if (stride == 2u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride2");
+#endif // _DEBUG
+
+        ag_stride2_sum_d(n, samples, x_ptr, y_ptr);
+        return;
+    }
+
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type alignment");

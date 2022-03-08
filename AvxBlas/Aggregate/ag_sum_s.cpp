@@ -609,6 +609,33 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
     float* x_ptr = (float*)(x->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
+    if (stride == 1u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride1");
+#endif // _DEBUG
+
+        ag_stride1_sum_s(n, samples, x_ptr, y_ptr);
+        return;
+    }
+
+    if (stride == 2u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride2");
+#endif // _DEBUG
+
+        ag_stride2_sum_s(n, samples, x_ptr, y_ptr);
+        return;
+    }
+
+    if (stride == 4u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride4");
+#endif // _DEBUG
+
+        ag_stride4_sum_s(n, samples, x_ptr, y_ptr);
+        return;
+    }
+
     if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type alignment");
