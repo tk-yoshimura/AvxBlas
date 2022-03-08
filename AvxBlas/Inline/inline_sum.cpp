@@ -2,6 +2,13 @@
 
 #include <immintrin.h>
 
+__forceinline float _mm_sum4to1_ps(const __m128 x) {
+    const __m128 y = _mm_add_ps(x, _mm_movehl_ps(x, x));
+    const float ret = _mm_cvtss_f32(_mm_add_ss(y, _mm_shuffle_ps(y, y, 1)));
+
+    return ret;
+}
+
 __forceinline float _mm256_sum8to1_ps(const __m256 x) {
     const __m128 y = _mm_add_ps(_mm256_castps256_ps128(x), _mm256_extractf128_ps(x, 1));
     const __m128 z = _mm_add_ps(y, _mm_movehl_ps(y, y));

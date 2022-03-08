@@ -16,29 +16,50 @@ int ag_stride1_sum_d(
     const unsigned int sb = samples & AVX2_DOUBLE_BATCH_MASK, sr = samples - sb;
     const __m256i mask = _mm256_set_mask(sr * 2);
 
-    for (unsigned int i = 0; i < n; i++) {
-        __m256d buf = zero;
+    if (sr > 0) {
+        for (unsigned int i = 0; i < n; i++) {
+            __m256d buf = zero;
 
-        for (unsigned int s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
-            __m256d x = _mm256_loadu_pd(x_ptr);
+            for (unsigned int s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
+                __m256d x = _mm256_loadu_pd(x_ptr);
 
-            buf = _mm256_add_pd(x, buf);
+                buf = _mm256_add_pd(x, buf);
 
-            x_ptr += AVX2_DOUBLE_STRIDE;
+                x_ptr += AVX2_DOUBLE_STRIDE;
+            }
+            {
+                __m256d x = _mm256_maskload_pd(x_ptr, mask);
+
+                buf = _mm256_add_pd(x, buf);
+
+                x_ptr += sr;
+            }
+
+            double y = _mm256_sum4to1_pd(buf);
+
+            *y_ptr = y;
+
+            y_ptr += 1;
         }
-        if (sr > 0) {
-            __m256d x = _mm256_maskload_pd(x_ptr, mask);
+    }
+    else {
+        for (unsigned int i = 0; i < n; i++) {
+            __m256d buf = zero;
 
-            buf = _mm256_add_pd(x, buf);
+            for (unsigned int s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
+                __m256d x = _mm256_load_pd(x_ptr);
 
-            x_ptr += sr;
+                buf = _mm256_add_pd(x, buf);
+
+                x_ptr += AVX2_DOUBLE_STRIDE;
+            }
+
+            double y = _mm256_sum4to1_pd(buf);
+
+            *y_ptr = y;
+
+            y_ptr += 1;
         }
-
-        double y = _mm256_sum4to1_pd(buf);
-
-        *y_ptr = y;
-
-        y_ptr += 1;
     }
 
     return SUCCESS;
@@ -52,29 +73,50 @@ int ag_stride2_sum_d(
     const unsigned int sb = samples / 2 * 2, sr = samples - sb;
     const __m256i mask = _mm256_set_mask(sr * 4);
 
-    for (unsigned int i = 0; i < n; i++) {
-        __m256d buf = zero;
+    if (sr > 0) {
+        for (unsigned int i = 0; i < n; i++) {
+            __m256d buf = zero;
 
-        for (unsigned int s = 0; s < sb; s += 2) {
-            __m256d x = _mm256_loadu_pd(x_ptr);
+            for (unsigned int s = 0; s < sb; s += 2) {
+                __m256d x = _mm256_loadu_pd(x_ptr);
 
-            buf = _mm256_add_pd(x, buf);
+                buf = _mm256_add_pd(x, buf);
 
-            x_ptr += AVX2_DOUBLE_STRIDE;
+                x_ptr += AVX2_DOUBLE_STRIDE;
+            }
+            {
+                __m256d x = _mm256_maskload_pd(x_ptr, mask);
+
+                buf = _mm256_add_pd(x, buf);
+
+                x_ptr += sr * 2;
+            }
+
+            __m128d y = _mm256_sum4to2_pd(buf);
+
+            _mm_stream_pd(y_ptr, y);
+
+            y_ptr += 2;
         }
-        if (sr > 0) {
-            __m256d x = _mm256_maskload_pd(x_ptr, mask);
+    }
+    else {
+        for (unsigned int i = 0; i < n; i++) {
+            __m256d buf = zero;
 
-            buf = _mm256_add_pd(x, buf);
+            for (unsigned int s = 0; s < sb; s += 2) {
+                __m256d x = _mm256_load_pd(x_ptr);
 
-            x_ptr += sr * 2;
+                buf = _mm256_add_pd(x, buf);
+
+                x_ptr += AVX2_DOUBLE_STRIDE;
+            }
+
+            __m128d y = _mm256_sum4to2_pd(buf);
+
+            _mm_stream_pd(y_ptr, y);
+
+            y_ptr += 2;
         }
-
-        __m128d y = _mm256_sum4to2_pd(buf);
-
-        _mm_stream_pd(y_ptr, y);
-
-        y_ptr += 2;
     }
 
     return SUCCESS;
