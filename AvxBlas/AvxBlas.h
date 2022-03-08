@@ -98,6 +98,9 @@ namespace AvxBlas {
         static Elementwise();
 
         public:
+        static void Copy(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Copy(UInt32 n, Array<double>^ x, Array<double>^ y);
+        
         static void Abs(UInt32 n, Array<float>^ x, Array<float>^ y);
         static void Abs(UInt32 n, Array<double>^ x, Array<double>^ y);
 

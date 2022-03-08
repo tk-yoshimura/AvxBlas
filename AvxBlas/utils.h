@@ -9,3 +9,17 @@ extern void alignment_vector_d(const unsigned int n, const unsigned int stride, 
 
 extern __m128i _mm_set_mask(const unsigned int n);
 extern __m256i _mm256_set_mask(const unsigned int n);
+
+union _m32 {
+    float f;
+    unsigned __int32 i;
+
+    constexpr _m32(unsigned __int32 i) : i(i) { }
+};
+
+union _m64 {
+    double f;
+    unsigned __int64 i;
+
+    constexpr _m64(unsigned __int64 i) : i(i) { }
+};

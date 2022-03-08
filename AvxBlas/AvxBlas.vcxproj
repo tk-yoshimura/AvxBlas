@@ -115,9 +115,12 @@
     <ClCompile Include="Elementwise\ew_add_d.cpp" />
     <ClCompile Include="Elementwise\ew_add_s.cpp" />
     <ClCompile Include="Elementwise\ew_cctor.cpp" />
+    <ClCompile Include="Elementwise\ew_copy_d.cpp" />
+    <ClCompile Include="Elementwise\ew_copy_s.cpp" />
     <ClCompile Include="Initialize\init_clear_d.cpp" />
     <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
+    <ClCompile Include="Inline\inline_ope.cpp" />
     <ClCompile Include="Inline\inline_sum.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />

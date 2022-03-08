@@ -39,6 +39,25 @@ __forceinline __m128 _mm256_sum8to4_ps(const __m256 x) {
     return ret;
 }
 
+__forceinline float _mm256_sum16to1_ps(const __m256 x, const __m256 y) {
+    float ret = _mm256_sum8to1_ps(_mm256_add_ps(x, y));
+
+    return ret;
+}
+
+__forceinline float _mm256_sum32to1_ps(const __m256 x, const __m256 y, const __m256 z, const __m256 w) {
+    float ret = _mm256_sum8to1_ps(_mm256_add_ps(_mm256_add_ps(x, y), _mm256_add_ps(z, w)));
+
+    return ret;
+}
+
+__forceinline double _mm_sum2to1_pd(const __m128d x) {
+    const __m128d y = _mm_hadd_pd(x, x);
+    const double ret = _mm_cvtsd_f64(y);
+
+    return ret;
+}
+
 __forceinline double _mm256_sum4to1_pd(const __m256d x) {
     const __m128d y = _mm_add_pd(_mm256_castpd256_pd128(x), _mm256_extractf128_pd(x, 1));
     const __m128d z = _mm_hadd_pd(y, y);
@@ -50,5 +69,17 @@ __forceinline double _mm256_sum4to1_pd(const __m256d x) {
 __forceinline __m128d _mm256_sum4to2_pd(const __m256d x) {
     const __m128d ret = _mm_add_pd(_mm256_castpd256_pd128(x), _mm256_extractf128_pd(x, 1));
     
+    return ret;
+}
+
+__forceinline double _mm256_sum8to1_ps(const __m256d x, const __m256d y) {
+    double ret = _mm256_sum4to1_pd(_mm256_add_pd(x, y));
+
+    return ret;
+}
+
+__forceinline double _mm256_sum16to1_ps(const __m256d x, const __m256d y, const __m256d z, const __m256d w) {
+    double ret = _mm256_sum4to1_pd(_mm256_add_pd(_mm256_add_pd(x, y), _mm256_add_pd(z, w)));
+
     return ret;
 }

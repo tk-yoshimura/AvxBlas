@@ -19,7 +19,7 @@ namespace AvxBlasTest.AggregateTest {
 
                     foreach (uint stride in new uint[] {
                         0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 11u, 12u, 13u,
-                        15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u, 
+                        15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u,
                         63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
                         uint inlength = n * samples * stride + 4;
@@ -29,7 +29,7 @@ namespace AvxBlasTest.AggregateTest {
 
                         float[] t = new float[outlength];
 
-                        for (int i = 0; i < n; i++) { 
+                        for (int i = 0; i < n; i++) {
                             for (int j = 0; j < stride; j++) {
                                 float s = 0;
 
@@ -66,7 +66,7 @@ namespace AvxBlasTest.AggregateTest {
 
                     foreach (uint stride in new uint[] {
                         0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 11u, 12u, 13u,
-                        15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u, 
+                        15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u,
                         63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
                         uint inlength = n * samples * stride + 4;
@@ -76,7 +76,7 @@ namespace AvxBlasTest.AggregateTest {
 
                         double[] t = new double[outlength];
 
-                        for (int i = 0; i < n; i++) { 
+                        for (int i = 0; i < n; i++) {
                             for (int j = 0; j < stride; j++) {
                                 double s = 0;
 
