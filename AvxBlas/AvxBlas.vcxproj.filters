@@ -137,6 +137,9 @@
     <ClCompile Include="Inline\inline_ope.cpp">
       <Filter>Source\Inline</Filter>
     </ClCompile>
+    <ClCompile Include="Inline\inline_dotmul_s.cpp">
+      <Filter>Source\Inline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

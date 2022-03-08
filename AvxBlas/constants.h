@@ -2,6 +2,7 @@
 #define FAILURE_BADPARAM (-1)
 #define FAILURE_BADALLOC (-2)
 
+#define AVX1_ALIGNMENT (16)
 #define AVX2_ALIGNMENT (32)
 
 #define AVX2_FLOAT_STRIDE (8)

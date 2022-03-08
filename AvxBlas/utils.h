@@ -4,6 +4,9 @@
 
 #include <immintrin.h>
 
+static_assert(sizeof(float)  == 4, "sizeof float must be 4");
+static_assert(sizeof(double) == 8, "sizeof float must be 8");
+
 extern void alignment_vector_s(const unsigned int n, const unsigned int stride, const float* __restrict x_ptr, float* __restrict y_ptr);
 extern void alignment_vector_d(const unsigned int n, const unsigned int stride, const double* __restrict x_ptr, double* __restrict y_ptr);
 
