@@ -9,7 +9,7 @@ void add_stride8_test(const unsigned int N, float* x1, float* x2, float* y){
     int s = add_stride8_s(N, x1, x2, y);
 
     auto start = std::chrono::system_clock::now();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1024; i++) {
         int ret = add_stride8_s(N, x1, x2, y);
 
         ret += s;
@@ -26,7 +26,7 @@ void add_stride16_test(const unsigned int N, float* x1, float* x2, float* y) {
     int s = add_stride16_s(N, x1, x2, y);
 
     auto start = std::chrono::system_clock::now();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1024; i++) {
         int ret = add_stride16_s(N, x1, x2, y);
 
         ret += s;
@@ -43,7 +43,7 @@ void add_stride32_test(const unsigned int N, float* x1, float* x2, float* y) {
     int s = add_stride32_s(N, x1, x2, y);
 
     auto start = std::chrono::system_clock::now();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1024; i++) {
         int ret = add_stride32_s(N, x1, x2, y);
 
         ret += s;
@@ -64,17 +64,25 @@ int main(){
     float* x2 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
     float* y  = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
 
+    for (int i = 0; i < N; i++) {
+        x1[i] = rand();
+        x2[i] = rand();
+    }
+
     add_stride8_test(N, x1, x2, y);
 
     std::cout << y[N - 1] << std::endl;
+    y[N - 1] = 0;
 
     add_stride16_test(N, x1, x2, y);
 
     std::cout << y[N - 1] << std::endl;
+    y[N - 1] = 0;
 
     add_stride32_test(N, x1, x2, y);
 
     std::cout << y[N - 1] << std::endl;
+    y[N - 1] = 0;
 
     _aligned_free(x1);
     _aligned_free(x2);
