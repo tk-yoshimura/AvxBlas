@@ -13,16 +13,25 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source\Tests">
+      <UniqueIdentifier>{9abb4098-1b65-4b7f-8441-35a5dc843f93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils">
+      <UniqueIdentifier>{60d0c5ff-3e21-4718-be4e-171c94f4b5f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="util_mm_mask.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="Tests\add_test.cpp">
+      <Filter>Source\Tests</Filter>
     </ClCompile>
-    <ClCompile Include="add_test.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="Utils\util_mm_mask.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\dotmul_test.cpp">
+      <Filter>Source\Tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

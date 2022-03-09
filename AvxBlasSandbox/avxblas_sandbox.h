@@ -20,3 +20,15 @@ extern int add_stride16_s(
 extern int add_stride32_s(
     const unsigned int n,
     const float* __restrict x1_ptr, const float* __restrict x2_ptr, float* __restrict y_ptr);
+
+extern float dotmul_stride8_s(
+    const unsigned int n,
+    const float* __restrict x1_ptr, const float* __restrict x2_ptr);
+
+extern float dotmul_stride16_s(
+    const unsigned int n,
+    const float* __restrict x1_ptr, const float* __restrict x2_ptr);
+
+extern float dotmul_stride32_s(
+    const unsigned int n,
+    const float* __restrict x1_ptr, const float* __restrict x2_ptr);

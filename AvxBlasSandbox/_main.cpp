@@ -12,7 +12,7 @@ void add_stride8_test(const unsigned int N, float* x1, float* x2, float* y){
     for (int i = 0; i < 1024; i++) {
         int ret = add_stride8_s(N, x1, x2, y);
 
-        ret += s;
+        s += ret;
     }
 
     auto dur = std::chrono::system_clock::now() - start;
@@ -29,7 +29,7 @@ void add_stride16_test(const unsigned int N, float* x1, float* x2, float* y) {
     for (int i = 0; i < 1024; i++) {
         int ret = add_stride16_s(N, x1, x2, y);
 
-        ret += s;
+        s += ret;
     }
 
     auto dur = std::chrono::system_clock::now() - start;
@@ -46,12 +46,72 @@ void add_stride32_test(const unsigned int N, float* x1, float* x2, float* y) {
     for (int i = 0; i < 1024; i++) {
         int ret = add_stride32_s(N, x1, x2, y);
 
-        ret += s;
+        s += ret;
     }
 
     auto dur = std::chrono::system_clock::now() - start;
     auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
 
+    std::cout << microsec << " micro sec \n";
+    std::cout << "ret: " << s << "\n";
+}
+
+void dotmul_stride8_test(const unsigned int N, float* x1, float* x2) {
+    float s = dotmul_stride8_s(N, x1, x2);
+
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 1024; i++) {
+        float ret = dotmul_stride8_s(N, x1, x2);
+
+        s += ret;
+    }
+
+    s /= 1025;
+
+    auto dur = std::chrono::system_clock::now() - start;
+    auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+
+    std::cout << "dotmul_stride8" << std::endl;
+    std::cout << microsec << " micro sec \n";
+    std::cout << "ret: " << s << "\n";
+}
+
+void dotmul_stride16_test(const unsigned int N, float* x1, float* x2) {
+    float s = dotmul_stride16_s(N, x1, x2);
+
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 1024; i++) {
+        float ret = dotmul_stride16_s(N, x1, x2);
+
+        s += ret;
+    }
+
+    s /= 1025;
+
+    auto dur = std::chrono::system_clock::now() - start;
+    auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+
+    std::cout << "dotmul_stride16" << std::endl;
+    std::cout << microsec << " micro sec \n";
+    std::cout << "ret: " << s << "\n";
+}
+
+void dotmul_stride32_test(const unsigned int N, float* x1, float* x2) {
+    float s = dotmul_stride32_s(N, x1, x2);
+
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 1024; i++) {
+        float ret = dotmul_stride32_s(N, x1, x2);
+
+        s += ret;
+    }
+
+    s /= 1025;
+
+    auto dur = std::chrono::system_clock::now() - start;
+    auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+
+    std::cout << "dotmul_stride32" << std::endl;
     std::cout << microsec << " micro sec \n";
     std::cout << "ret: " << s << "\n";
 }
@@ -62,31 +122,27 @@ int main(){
 
     float* x1 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
     float* x2 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
-    float* y  = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
+    //float* y  = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
+
+    double s = 0;
 
     for (int i = 0; i < N; i++) {
-        x1[i] = rand();
-        x2[i] = rand();
+        x1[i] = rand() / (float)RAND_MAX;
+        x2[i] = rand() / (float)RAND_MAX;
+
+        s += (double)x1[i] * (double)x2[i];
     }
 
-    add_stride8_test(N, x1, x2, y);
+    std::cout << "expected: " << s << std::endl;
 
-    std::cout << y[N - 1] << std::endl;
-    y[N - 1] = 0;
-
-    add_stride16_test(N, x1, x2, y);
-
-    std::cout << y[N - 1] << std::endl;
-    y[N - 1] = 0;
-
-    add_stride32_test(N, x1, x2, y);
-
-    std::cout << y[N - 1] << std::endl;
-    y[N - 1] = 0;
+    for (int i = 0; i < 20; i++) {
+        dotmul_stride8_test(N, x1, x2);
+        dotmul_stride16_test(N, x1, x2);
+        dotmul_stride32_test(N, x1, x2);
+    }
 
     _aligned_free(x1);
     _aligned_free(x2);
-    _aligned_free(y);
 
     getchar();
 }
