@@ -18,5 +18,16 @@
     <ClCompile Include="_main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="util_mm_mask.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="add_test.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="avxblas_sandbox.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

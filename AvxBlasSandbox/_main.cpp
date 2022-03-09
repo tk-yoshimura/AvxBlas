@@ -1,48 +1,84 @@
 ﻿#include <iostream>
 
 #include <immintrin.h>
+#include <chrono>
 
-// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1+e2+e3,e4+e5+e6+e7,-,-,-,-,-,-
-__forceinline __m128 _mm256_hadd4_ps(const __m256 x) {
-    const __m256i _perm82 = _mm256_setr_epi32(0, 4, 1, 2, 3, 5, 6, 7);
+#include "avxblas_sandbox.h"
 
-    const __m256 y = _mm256_hadd_ps(x, x);
-    const __m256 z = _mm256_hadd_ps(y, y);
-    const __m256 ret = _mm256_permutevar8x32_ps(z, _perm82);
+void add_stride8_test(const unsigned int N, float* x1, float* x2, float* y){
+    int s = add_stride8_s(N, x1, x2, y);
 
-    return ret;
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 1000; i++) {
+        int ret = add_stride8_s(N, x1, x2, y);
+
+        ret += s;
+    }
+
+    auto dur = std::chrono::system_clock::now() - start;
+    auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+
+    std::cout << microsec << " micro sec \n";
+    std::cout << "ret: " << s << "\n";
 }
 
-// e0,e1,e2,e3,e4,e5,_,_ -> e0+e1+e2,e3+e4+e5,-,-,-,-,-,-
-__forceinline __m256 _mm256_hadd3_ps(const __m256 x) {
-    const __m256i _perm82 = _mm256_setr_epi32(0, 4, 1, 2, 3, 5, 6, 7);
-    const __m256i _perm43 = _mm256_setr_epi32(0, 1, 2, 6, 3, 4, 5, 7);
-    const __m256 _mask43 = _mm256_castsi256_ps(_mm256_setr_epi32(~0u, ~0u, ~0u, 0, ~0u, ~0u, ~0u, 0));
+void add_stride16_test(const unsigned int N, float* x1, float* x2, float* y) {
+    int s = add_stride16_s(N, x1, x2, y);
 
-    const __m256 y = _mm256_and_ps(_mm256_permutevar8x32_ps(x, _perm43), _mask43);
-    const __m256 z = _mm256_hadd_ps(y, y);
-    const __m256 w = _mm256_hadd_ps(z, z);
-    const __m256 ret = _mm256_permutevar8x32_ps(w, _perm82);
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 1000; i++) {
+        int ret = add_stride16_s(N, x1, x2, y);
 
-    return ret;
+        ret += s;
+    }
+
+    auto dur = std::chrono::system_clock::now() - start;
+    auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+
+    std::cout << microsec << " micro sec \n";
+    std::cout << "ret: " << s << "\n";
 }
 
-// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1,e2+e3,e4+e5,e6+e7,-,-,-,-
-__forceinline __m256 _mm256_hadd2_ps(const __m256 x) {
-    const __m256i _perm = _mm256_setr_epi32(0, 1, 4, 5, 2, 3, 6, 7);
+void add_stride32_test(const unsigned int N, float* x1, float* x2, float* y) {
+    int s = add_stride32_s(N, x1, x2, y);
 
-    const __m256 y = _mm256_hadd_ps(x, x);
-    const __m256 ret = _mm256_permutevar8x32_ps(y, _perm);
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 1000; i++) {
+        int ret = add_stride32_s(N, x1, x2, y);
 
-    return ret;
+        ret += s;
+    }
+
+    auto dur = std::chrono::system_clock::now() - start;
+    auto microsec = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+
+    std::cout << microsec << " micro sec \n";
+    std::cout << "ret: " << s << "\n";
 }
+
 
 int main(){
-    const __m256i _perm43 = _mm256_setr_epi32(0, 1, 2, 6, 3, 4, 5, 7);
+    const unsigned int N = 1 << 24;
 
-    __m256 x = _mm256_setr_ps(2, 3, 7, 11, 19, 23, 29, 37);
-    
-    __m256 y = _mm256_hadd4_ps(x);
+    float* x1 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
+    float* x2 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
+    float* y  = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
+
+    add_stride8_test(N, x1, x2, y);
+
+    std::cout << y[N - 1] << std::endl;
+
+    add_stride16_test(N, x1, x2, y);
+
+    std::cout << y[N - 1] << std::endl;
+
+    add_stride32_test(N, x1, x2, y);
+
+    std::cout << y[N - 1] << std::endl;
+
+    _aligned_free(x1);
+    _aligned_free(x2);
+    _aligned_free(y);
 
     getchar();
 }
