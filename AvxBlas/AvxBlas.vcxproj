@@ -103,6 +103,8 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Affine\affine_cctor.cpp" />
+    <ClCompile Include="Affine\affine_dotmul_s.cpp" />
     <ClCompile Include="Aggregate\ag_cctor.cpp" />
     <ClCompile Include="Aggregate\ag_sum_d.cpp" />
     <ClCompile Include="Aggregate\ag_sum_s.cpp" />
@@ -122,6 +124,7 @@
     <ClCompile Include="Initialize\init_cctor.cpp" />
     <ClCompile Include="Inline\inline_dotmul_s.cpp" />
     <ClCompile Include="Inline\inline_ope.cpp" />
+    <ClCompile Include="Inline\inline_set.cpp" />
     <ClCompile Include="Inline\inline_sum.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />

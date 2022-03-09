@@ -222,7 +222,7 @@ int ag_stride5to7_sum_s(
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
-    if (stride >= AVX2_FLOAT_STRIDE || stride <= AVX2_FLOAT_STRIDE / 2) {
+    if (stride <= AVX2_FLOAT_STRIDE / 2 || stride >= AVX2_FLOAT_STRIDE) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

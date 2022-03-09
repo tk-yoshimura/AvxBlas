@@ -37,6 +37,9 @@
     <Filter Include="Source\Inline">
       <UniqueIdentifier>{e3cd92a7-388e-4090-814b-91bee8e5447e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Affine">
+      <UniqueIdentifier>{b7e9195d-d433-4510-9772-0d195869c1c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -138,6 +141,15 @@
       <Filter>Source\Inline</Filter>
     </ClCompile>
     <ClCompile Include="Inline\inline_dotmul_s.cpp">
+      <Filter>Source\Inline</Filter>
+    </ClCompile>
+    <ClCompile Include="Affine\affine_cctor.cpp">
+      <Filter>Source\Affine</Filter>
+    </ClCompile>
+    <ClCompile Include="Affine\affine_dotmul_s.cpp">
+      <Filter>Source\Affine</Filter>
+    </ClCompile>
+    <ClCompile Include="Inline\inline_set.cpp">
       <Filter>Source\Inline</Filter>
     </ClCompile>
   </ItemGroup>

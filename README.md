@@ -156,6 +156,21 @@ Transform.Transpose(uint n, uint stride_in, uint stride_out, Array<T> x, Array<T
 |x|Array|input|(n, stride_out, stride_in)||
 |y|Array|output|(n, stride_in, stride_out)|y &ne; x|
 
+### Affine
+```csharp
+Affine.Dotmul(uint na, uint nb, uint stride, Array<T> a, Array<T> b, Array<T> y);
+```
+
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|na|uint|processing count of a|||
+|nb|uint|processing count of b|||
+|stride|uint|stride of a,b|||
+|a|Array|input|(na, stride)||
+|b|Array|input|(nb, stride)||
+|y|Array|output|(na, nb)|y &ne; a,b|
+
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
 

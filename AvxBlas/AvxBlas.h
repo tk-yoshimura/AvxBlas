@@ -135,6 +135,13 @@ namespace AvxBlas {
         static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
+    public ref class Affine abstract sealed {
+        static Affine();
+
+        public:
+        //static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<float>^ a, Array<float>^ b, Array<float>^ y);
+    };
+
     public ref class Initialize abstract sealed {
         static Initialize();
 
