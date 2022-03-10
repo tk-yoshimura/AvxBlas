@@ -111,37 +111,12 @@ __forceinline double _mm256_sum16to1_pd(const __m256d x, const __m256d y, const 
     return ret;
 }
 
-// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1,e2+e3,e4+e5,e6+e7,-,-,-,-
-__forceinline __m256 _mm256_hadd2_ps(const __m256 x) {
-    const __m256i _perm = _mm256_setr_epi32(0, 1, 4, 5, 2, 3, 6, 7);
+// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1,e2+e3,e4+e5,e6+e7
+__forceinline __m128 _mm256_hadd2_ps(const __m256 x) {
+    const __m128 lo = _mm256_castps256_ps128(x);
+    const __m128 hi = _mm256_extractf128_ps(x, 1);
 
-    const __m256 y = _mm256_hadd_ps(x, x);
-    const __m256 ret = _mm256_permutevar8x32_ps(y, _perm);
-
-    return ret;
-}
-
-// e0,e1,e2,e3,e4,e5,_,_ -> e0+e1+e2,e3+e4+e5,-,-,-,-,-,-
-__forceinline __m256 _mm256_hadd3_ps(const __m256 x) {
-    const __m256i _perm82 = _mm256_setr_epi32(0, 4, 1, 2, 3, 5, 6, 7);
-    const __m256i _perm43 = _mm256_setr_epi32(0, 1, 2, 6, 3, 4, 5, 7);
-    const __m256 _mask43 = _mm256_castsi256_ps(_mm256_setr_epi32(~0u, ~0u, ~0u, 0, ~0u, ~0u, ~0u, 0));
-
-    const __m256 y = _mm256_and_ps(_mm256_permutevar8x32_ps(x, _perm43), _mask43);
-    const __m256 z = _mm256_hadd_ps(y, y);
-    const __m256 w = _mm256_hadd_ps(z, z);
-    const __m256 ret = _mm256_permutevar8x32_ps(w, _perm82);
-
-    return ret;
-}
-
-// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1+e2+e3,e4+e5+e6+e7,-,-,-,-,-,-
-__forceinline __m256 _mm256_hadd4_ps(const __m256 x) {
-    const __m256i _perm82 = _mm256_setr_epi32(0, 4, 1, 2, 3, 5, 6, 7);
-
-    const __m256 y = _mm256_hadd_ps(x, x);
-    const __m256 z = _mm256_hadd_ps(y, y);
-    const __m256 ret = _mm256_permutevar8x32_ps(z, _perm82);
-
+    const __m128 ret = _mm_hadd_ps(lo, hi);
+    
     return ret;
 }
