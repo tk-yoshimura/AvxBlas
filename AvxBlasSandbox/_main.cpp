@@ -57,7 +57,7 @@ void add_stride32_test(const unsigned int N, float* x1, float* x2, float* y) {
 }
 
 void dotmul_stride8_test(const unsigned int N, float* x1, float* x2) {
-    float s = dotmul_stride8_s(N, x1, x2);
+    double s = dotmul_stride8_s(N, x1, x2);
 
     auto start = std::chrono::system_clock::now();
     for (int i = 0; i < 1024; i++) {
@@ -77,7 +77,7 @@ void dotmul_stride8_test(const unsigned int N, float* x1, float* x2) {
 }
 
 void dotmul_stride16_test(const unsigned int N, float* x1, float* x2) {
-    float s = dotmul_stride16_s(N, x1, x2);
+    double s = dotmul_stride16_s(N, x1, x2);
 
     auto start = std::chrono::system_clock::now();
     for (int i = 0; i < 1024; i++) {
@@ -97,7 +97,7 @@ void dotmul_stride16_test(const unsigned int N, float* x1, float* x2) {
 }
 
 void dotmul_stride32_test(const unsigned int N, float* x1, float* x2) {
-    float s = dotmul_stride32_s(N, x1, x2);
+    double s = dotmul_stride32_s(N, x1, x2);
 
     auto start = std::chrono::system_clock::now();
     for (int i = 0; i < 1024; i++) {
@@ -123,6 +123,12 @@ int main(){
     float* x1 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
     float* x2 = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
     //float* y  = (float*)_aligned_malloc(N * sizeof(float), AVX2_ALIGNMENT);
+
+    if (x1 == nullptr || x2 == nullptr) {
+        return -1;
+    }
+
+    srand(time(NULL));
 
     double s = 0;
 
