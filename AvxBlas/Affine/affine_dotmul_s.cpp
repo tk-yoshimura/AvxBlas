@@ -543,6 +543,9 @@ void AvxBlas::Affine::Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<float>^ 
     Util::CheckLength(nb * stride, b);
     Util::CheckLength(na * nb, y);
 
+    Util::CheckDuplicateArray(a, y);
+    Util::CheckDuplicateArray(b, y);
+
     float* a_ptr = (float*)(a->Ptr.ToPointer());
     float* b_ptr = (float*)(b->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
