@@ -7,7 +7,7 @@
 #pragma unmanaged
 
 const int __mask_mm256[15] = { -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0 };
-const int __mask_mm128[7]  = { -1, -1, -1, 0, 0, 0, 0 };
+const int __mask_mm128[7] = { -1, -1, -1, 0, 0, 0, 0 };
 
 __m256i _mm256_set_mask(const unsigned int n) {
 #ifdef _DEBUG

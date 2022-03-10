@@ -155,8 +155,8 @@ int ag_stride3_sum_d(
 }
 
 int ag_stride4_sum_d(
-    const unsigned int n, const unsigned int samples, 
-    const double* __restrict x_ptr, double* __restrict y_ptr){
+    const unsigned int n, const unsigned int samples,
+    const double* __restrict x_ptr, double* __restrict y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -454,7 +454,7 @@ int ag_batch_sum_d(
     const unsigned int sg = stride * g;
 
 #ifdef _DEBUG
-    if((sg & AVX2_DOUBLE_REMAIN_MASK) != 0){
+    if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

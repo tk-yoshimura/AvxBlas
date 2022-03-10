@@ -7,9 +7,9 @@ using namespace System;
 #pragma unmanaged
 
 int ew_copy_s(
-    const unsigned int n, 
+    const unsigned int n,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
-    
+
     if (x_ptr == y_ptr) {
         return SUCCESS;
     }
@@ -21,7 +21,7 @@ int ew_copy_s(
 #endif // _DEBUG
 
     unsigned int r = n;
-    
+
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         __m256 x0 = _mm256_load_ps(x_ptr);
         __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);

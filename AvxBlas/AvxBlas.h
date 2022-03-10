@@ -39,8 +39,8 @@ namespace AvxBlas {
 
         property T default[UInt32] { T get(UInt32 index); void set(UInt32 index, T value); }
 
-        static operator Array^ (cli::array<T>^ array);
-        static operator cli::array<T>^ (Array^ array);
+        static operator Array ^ (cli::array<T>^ array);
+        static operator cli::array<T> ^ (Array^ array);
 
         void Write(cli::array<T>^ array);
         void Read(cli::array<T>^ array);
@@ -68,16 +68,16 @@ namespace AvxBlas {
     public ref class Util abstract sealed {
         internal:
         generic <typename T> where T : ValueType
-        static void CheckLength(UInt32 length, ... cli::array<Array<T>^>^ arrays);
-        
+            static void CheckLength(UInt32 length, ... cli::array<Array<T>^>^ arrays);
+
         generic <typename T> where T : ValueType
-        static void CheckOutOfRange(UInt32 index, UInt32 length, ... cli::array<Array<T>^>^ arrays);
-        
+            static void CheckOutOfRange(UInt32 index, UInt32 length, ... cli::array<Array<T>^>^ arrays);
+
         generic <typename T> where T : ValueType
-        static void CheckDuplicateArray(... cli::array<Array<T>^>^ arrays);
+            static void CheckDuplicateArray(... cli::array<Array<T>^>^ arrays);
 
         static void CheckProdOverflow(... cli::array<UInt32>^ arrays);
-        
+
         static property System::String^ AvxNotSupported { System::String^ get(); };
         static property System::String^ InvalidArrayLength { System::String^ get(); };
         static property System::String^ DuplicatedArray { System::String^ get(); };
@@ -100,7 +100,7 @@ namespace AvxBlas {
         public:
         static void Copy(UInt32 n, Array<float>^ x, Array<float>^ y);
         static void Copy(UInt32 n, Array<double>^ x, Array<double>^ y);
-        
+
         static void Abs(UInt32 n, Array<float>^ x, Array<float>^ y);
         static void Abs(UInt32 n, Array<double>^ x, Array<double>^ y);
 
@@ -114,7 +114,7 @@ namespace AvxBlas {
         public:
         static void Fill(UInt32 n, UInt32 stride, Array<float>^ v, Array<float>^ y);
         static void Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<double>^ y);
-        
+
         static void Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<float>^ v, Array<float>^ y);
         static void Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<double>^ v, Array<double>^ y);
     };

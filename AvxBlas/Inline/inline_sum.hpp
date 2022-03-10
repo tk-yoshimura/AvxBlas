@@ -86,7 +86,7 @@ __forceinline double _mm256_sum4to1_pd(const __m256d x) {
 // e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e2+e4+e6,e1+e3+e5+e7
 __forceinline __m128d _mm256_sum4to2_pd(const __m256d x) {
     const __m128d ret = _mm_add_pd(_mm256_castpd256_pd128(x), _mm256_extractf128_pd(x, 1));
-    
+
     return ret;
 }
 
@@ -117,6 +117,6 @@ __forceinline __m128 _mm256_hadd2_ps(const __m256 x) {
     const __m128 hi = _mm256_extractf128_ps(x, 1);
 
     const __m128 ret = _mm_hadd_ps(lo, hi);
-    
+
     return ret;
 }

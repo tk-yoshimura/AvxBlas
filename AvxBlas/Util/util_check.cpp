@@ -16,12 +16,12 @@ bool is_supported_avx() {
     __cpuid(cpui.data(), 0);
     int nids = cpui[0];
 
-    for (int i = 0; i <= nids; i++){
+    for (int i = 0; i <= nids; i++) {
         __cpuidex(cpui.data(), i, 0);
         data.push_back(cpui);
     }
 
-    if (nids >= 1){
+    if (nids >= 1) {
         f_1_ECX = data[1][2];
     }
 

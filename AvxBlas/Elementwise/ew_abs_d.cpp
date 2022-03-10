@@ -8,7 +8,7 @@ using namespace System;
 #pragma unmanaged
 
 int ew_abs_d(
-    const unsigned int n, 
+    const unsigned int n,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
 #ifdef _DEBUG
@@ -18,7 +18,7 @@ int ew_abs_d(
 #endif // _DEBUG
 
     unsigned int r = n;
-    
+
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         __m256d x0 = _mm256_load_pd(x_ptr);
         __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
@@ -83,7 +83,7 @@ void AvxBlas::Elementwise::Abs(UInt32 n, Array<double>^ x, Array<double>^ y) {
     if (n <= 0) {
         return;
     }
-    
+
     Util::CheckLength(n, x, y);
 
     double* x_ptr = (double*)(x->Ptr.ToPointer());

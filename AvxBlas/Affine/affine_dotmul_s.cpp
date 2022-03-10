@@ -13,7 +13,7 @@ using namespace System;
 int affine_stride1_dotmul_s(
     const unsigned int na, const unsigned int nb,
     const float* __restrict a_ptr, const float* __restrict b_ptr, float* __restrict y_ptr) {
-        
+
     const unsigned int nbb = nb & AVX2_FLOAT_BATCH_MASK, nbr = nb - nbb;
     const __m256i mask = _mm256_set_mask(nbr);
 
@@ -451,7 +451,7 @@ int affine_stride32_dotmul_s(
 
 int affine_alignment_dotmul_s(
     const unsigned int na, const unsigned int nb, const unsigned int stride,
-    const float* __restrict a_ptr, const float* __restrict b_ptr, float* __restrict y_ptr){
+    const float* __restrict a_ptr, const float* __restrict b_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_FLOAT_REMAIN_MASK) != 0) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {

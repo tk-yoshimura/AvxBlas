@@ -8,7 +8,7 @@ using namespace System;
 #pragma unmanaged
 
 int vw_alignment_add_s(
-    const unsigned int n, const unsigned int stride, 
+    const unsigned int n, const unsigned int stride,
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
@@ -16,7 +16,7 @@ int vw_alignment_add_s(
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
-    
+
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < stride; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
@@ -35,7 +35,7 @@ int vw_alignment_add_s(
 }
 
 int vw_disorder_add_s(
-    const unsigned int n, const unsigned int stride, 
+    const unsigned int n, const unsigned int stride,
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
@@ -74,7 +74,7 @@ int vw_disorder_add_s(
 }
 
 int vw_batch_add_s(
-    const unsigned int n, const unsigned int g, const unsigned int stride, 
+    const unsigned int n, const unsigned int g, const unsigned int stride,
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
     const unsigned int nb = n / g * g, nr = n - nb;
@@ -151,7 +151,7 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<fl
     float* x_ptr = (float*)(x->Ptr.ToPointer());
     float* v_ptr = (float*)(v->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
-    
+
     if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type alignment");

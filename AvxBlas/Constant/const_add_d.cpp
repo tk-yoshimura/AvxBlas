@@ -7,28 +7,72 @@ using namespace System;
 #pragma unmanaged
 
 int const_add_d(
-    const unsigned int n, 
+    const unsigned int n,
     const double* __restrict x_ptr, const double c, double* __restrict y_ptr) {
-    
-    const unsigned int nb = n & AVX2_DOUBLE_BATCH_MASK, nr = n - nb;
 
-    __m256d fillc = _mm256_set1_pd(c);
-
-    for (unsigned int i = 0; i < nb; i += AVX2_DOUBLE_STRIDE) {
-        __m256d x = _mm256_load_pd(x_ptr + i);
-
-        __m256d y = _mm256_add_pd(x, fillc);
-
-        _mm256_stream_pd(y_ptr + i, y);
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
     }
-    if (nr > 0) {
-        const __m256i mask = _mm256_set_mask(nr * 2);
+#endif // _DEBUG
 
-        __m256d x = _mm256_maskload_pd(x_ptr + nb, mask);
+    unsigned int r = n;
+
+    const __m256d fillc = _mm256_set1_pd(c);
+
+    while (r >= AVX2_DOUBLE_STRIDE * 4) {
+        __m256d x0 = _mm256_load_pd(x_ptr);
+        __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
+        __m256d x2 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
+        __m256d x3 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 3);
+
+        __m256d y0 = _mm256_add_pd(x0, fillc);
+        __m256d y1 = _mm256_add_pd(x1, fillc);
+        __m256d y2 = _mm256_add_pd(x2, fillc);
+        __m256d y3 = _mm256_add_pd(x3, fillc);
+
+        _mm256_stream_pd(y_ptr, y0);
+        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE, y1);
+        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE * 2, y2);
+        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE * 3, y3);
+
+        x_ptr += AVX2_DOUBLE_STRIDE * 4;
+        y_ptr += AVX2_DOUBLE_STRIDE * 4;
+        r -= AVX2_DOUBLE_STRIDE * 4;
+    }
+    if (r >= AVX2_DOUBLE_STRIDE * 2) {
+        __m256d x0 = _mm256_load_pd(x_ptr);
+        __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
+
+        __m256d y0 = _mm256_add_pd(x0, fillc);
+        __m256d y1 = _mm256_add_pd(x1, fillc);
+
+        _mm256_stream_pd(y_ptr, y0);
+        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE, y1);
+
+        x_ptr += AVX2_DOUBLE_STRIDE * 2;
+        y_ptr += AVX2_DOUBLE_STRIDE * 2;
+        r -= AVX2_DOUBLE_STRIDE * 2;
+    }
+    if (r >= AVX2_DOUBLE_STRIDE) {
+        __m256d x0 = _mm256_load_pd(x_ptr);
+
+        __m256d y0 = _mm256_add_pd(x0, fillc);
+
+        _mm256_stream_pd(y_ptr, y0);
+
+        x_ptr += AVX2_DOUBLE_STRIDE;
+        y_ptr += AVX2_DOUBLE_STRIDE;
+        r -= AVX2_DOUBLE_STRIDE;
+    }
+    if (r > 0) {
+        const __m256i mask = _mm256_set_mask(r * 2);
+
+        __m256d x = _mm256_maskload_pd(x_ptr, mask);
 
         __m256d y = _mm256_add_pd(x, fillc);
 
-        _mm256_maskstore_pd(y_ptr + nb, mask, y);
+        _mm256_maskstore_pd(y_ptr, mask, y);
     }
 
     return SUCCESS;

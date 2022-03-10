@@ -8,7 +8,7 @@ using namespace System;
 #pragma unmanaged
 
 int ew_abs_s(
-    const unsigned int n, 
+    const unsigned int n,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
@@ -18,7 +18,7 @@ int ew_abs_s(
 #endif // _DEBUG
 
     unsigned int r = n;
-    
+
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         __m256 x0 = _mm256_load_ps(x_ptr);
         __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
@@ -42,7 +42,7 @@ int ew_abs_s(
     if (r >= AVX2_FLOAT_STRIDE * 2) {
         __m256 x0 = _mm256_load_ps(x_ptr);
         __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
-        
+
         __m256 y0 = _mm256_abs_ps(x0);
         __m256 y1 = _mm256_abs_ps(x1);
 
@@ -55,7 +55,7 @@ int ew_abs_s(
     }
     if (r >= AVX2_FLOAT_STRIDE) {
         __m256 x0 = _mm256_load_ps(x_ptr);
-        
+
         __m256 y0 = _mm256_abs_ps(x0);
 
         _mm256_stream_ps(y_ptr, y0);

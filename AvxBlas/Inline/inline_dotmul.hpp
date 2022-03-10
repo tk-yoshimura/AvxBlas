@@ -118,7 +118,7 @@ __forceinline float dotmul_disorder_s(unsigned int n, const float* x_ptr, const 
         s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr), _mm256_loadu_ps(y_ptr), s0);
         s1 = _mm256_fmadd_ps(_mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE, mask), _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE, mask), s1);
     }
-    else{
+    else {
         s0 = _mm256_fmadd_ps(_mm256_maskload_ps(x_ptr, mask), _mm256_maskload_ps(y_ptr, mask), s0);
     }
 
@@ -236,7 +236,7 @@ __forceinline double dotmul_disorder_s(const unsigned int n, const double* x_ptr
         s0 = _mm256_fmadd_pd(_mm256_loadu_pd(x_ptr), _mm256_loadu_pd(y_ptr), s0);
         s1 = _mm256_fmadd_pd(_mm256_maskload_pd(x_ptr + AVX2_DOUBLE_STRIDE, mask), _mm256_maskload_pd(y_ptr + AVX2_DOUBLE_STRIDE, mask), s1);
     }
-    else{
+    else {
         s0 = _mm256_fmadd_pd(_mm256_maskload_pd(x_ptr, mask), _mm256_maskload_pd(y_ptr, mask), s0);
     }
 
