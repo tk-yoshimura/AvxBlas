@@ -7,7 +7,7 @@ namespace AvxBlasTest.InitializeTest {
     public class ZerosetTest {
         [TestMethod]
         public void SZerosetTest() {
-            for (uint length = 1; length <= 16; length++) {
+            for (uint length = 1; length <= 64; length++) {
                 for (uint index = 0; index < length; index++) {
                     for (uint count = 0; count <= length - index; count++) {
                         float[] v = (new float[length]).Select((_, idx) => (float)idx + 1).ToArray();
@@ -26,7 +26,7 @@ namespace AvxBlasTest.InitializeTest {
                 }
             }
 
-            for (uint length = 1; length <= 16; length++) {
+            for (uint length = 1; length <= 64; length++) {
                 for (uint count = 0; count <= length; count++) {
                     float[] v = (new float[length]).Select((_, idx) => (float)idx + 1).ToArray();
                     float[] v2 = (new float[length])
@@ -46,7 +46,7 @@ namespace AvxBlasTest.InitializeTest {
 
         [TestMethod]
         public void DZerosetTest() {
-            for (uint length = 1; length <= 16; length++) {
+            for (uint length = 1; length <= 64; length++) {
                 for (uint index = 0; index < length; index++) {
                     for (uint count = 0; count <= length - index; count++) {
                         double[] v = (new double[length]).Select((_, idx) => (double)idx + 1).ToArray();
@@ -65,7 +65,7 @@ namespace AvxBlasTest.InitializeTest {
                 }
             }
 
-            for (uint length = 1; length <= 16; length++) {
+            for (uint length = 1; length <= 64; length++) {
                 for (uint count = 0; count <= length; count++) {
                     double[] v = (new double[length]).Select((_, idx) => (double)idx + 1).ToArray();
                     double[] v2 = (new double[length])

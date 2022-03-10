@@ -1,3 +1,4 @@
+#pragma once
 #pragma unmanaged
 
 #include <immintrin.h>
@@ -90,14 +91,21 @@ __forceinline __m128d _mm256_sum4to2_pd(const __m256d x) {
 }
 
 // e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e2+e4+e6,e1+e3+e5+e7
-__forceinline double _mm256_sum8to1_ps(const __m256d x, const __m256d y) {
+__forceinline double _mm256_sum8to1_pd(const __m256d x, const __m256d y) {
     double ret = _mm256_sum4to1_pd(_mm256_add_pd(x, y));
 
     return ret;
 }
 
+// e0,...,e11 -> e0+...+e11
+__forceinline double _mm256_sum12to1_pd(const __m256d x, const __m256d y, const __m256d z) {
+    double ret = _mm256_sum4to1_pd(_mm256_add_pd(_mm256_add_pd(x, y), z));
+
+    return ret;
+}
+
 // e0,...,e15 -> e0+...+e15
-__forceinline double _mm256_sum16to1_ps(const __m256d x, const __m256d y, const __m256d z, const __m256d w) {
+__forceinline double _mm256_sum16to1_pd(const __m256d x, const __m256d y, const __m256d z, const __m256d w) {
     double ret = _mm256_sum4to1_pd(_mm256_add_pd(_mm256_add_pd(x, y), _mm256_add_pd(z, w)));
 
     return ret;

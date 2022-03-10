@@ -7,20 +7,50 @@ using namespace System;
 #pragma unmanaged
 
 int clear_s(
-    const unsigned int n, const float c, 
+    const unsigned int index, const unsigned int n, const float c,
     float* __restrict y_ptr) {
-    
-    const unsigned int nb = n & AVX2_FLOAT_BATCH_MASK, nr = n - nb;
 
-    __m256 fillc = _mm256_set1_ps(c);
+    unsigned int r = n;
 
-    for (unsigned int i = 0; i < nb; i += AVX2_FLOAT_STRIDE) {
-        _mm256_stream_ps(y_ptr + i, fillc);
+    y_ptr += index;
+    while(r > 0) {
+        if (((size_t)y_ptr % AVX2_ALIGNMENT) == 0) {
+            break;
+        }
+
+        *y_ptr = c;
+        y_ptr++;
+        r--;
     }
-    if (nr > 0) {
-        const __m256i mask = _mm256_set_mask(nr);
+    
+    const __m256 fillc = _mm256_set1_ps(c);
 
-        _mm256_maskstore_ps(y_ptr + nb, mask, fillc);
+    while (r >= AVX2_FLOAT_STRIDE * 4) {
+        _mm256_stream_ps(y_ptr, fillc);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, fillc);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 2, fillc);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 3, fillc);
+
+        y_ptr += AVX2_FLOAT_STRIDE * 4;
+        r -= AVX2_FLOAT_STRIDE * 4;
+    }
+    if (r >= AVX2_FLOAT_STRIDE * 2) {
+        _mm256_stream_ps(y_ptr, fillc);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, fillc);
+
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
+        r -= AVX2_FLOAT_STRIDE * 2;
+    }
+    if (r >= AVX2_FLOAT_STRIDE) {
+        _mm256_stream_ps(y_ptr, fillc);
+
+        y_ptr += AVX2_FLOAT_STRIDE;
+        r -= AVX2_FLOAT_STRIDE;
+    }
+    if (r > 0) {
+        const __m256i mask = _mm256_set_mask(r);
+
+        _mm256_maskstore_ps(y_ptr, mask, fillc);
     }
 
     return SUCCESS;
@@ -33,21 +63,15 @@ void AvxBlas::Initialize::Clear(UInt32 n, float c, Array<float>^ y) {
 
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-    clear_s(n, c, y_ptr);
+    clear_s(0, n, c, y_ptr);
 }
 
 void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, float c, Array<float>^ y) {
     Util::CheckOutOfRange(index, n, y);
 
     float* y_ptr = (float*)(y->Ptr.ToPointer());
-    y_ptr += index;
-
-    for (UInt32 i = index, thr = (index + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK; n > 0 && i < thr; i++, n--) {
-        *y_ptr = c;
-        y_ptr++;
-    }
-
-    clear_s(n, c, y_ptr);
+    
+    clear_s(index, n, c, y_ptr);
 }
 
 void AvxBlas::Initialize::Zeroset(UInt32 n, Array<float>^ y) {

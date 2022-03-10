@@ -122,10 +122,10 @@
     <ClCompile Include="Initialize\init_clear_d.cpp" />
     <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
-    <ClCompile Include="Inline\inline_dotmul_s.cpp" />
-    <ClCompile Include="Inline\inline_ope.cpp" />
-    <ClCompile Include="Inline\inline_set.cpp" />
-    <ClCompile Include="Inline\inline_sum.cpp" />
+    <ClInclude Include="Inline\inline_dotmul.hpp" />
+    <ClInclude Include="Inline\inline_ope.hpp" />
+    <ClInclude Include="Inline\inline_set.hpp" />
+    <ClInclude Include="Inline\inline_sum.hpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />

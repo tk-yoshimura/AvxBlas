@@ -12,7 +12,7 @@ int vw_alignment_fill_d(
     const double* __restrict v_ptr, double* __restrict y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if (((stride & AVX2_DOUBLE_REMAIN_MASK) != 0) || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

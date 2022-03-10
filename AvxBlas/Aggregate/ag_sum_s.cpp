@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline/inline_sum.cpp"
+#include "../Inline/inline_sum.hpp"
 #include <memory.h>
 
 using namespace System;
@@ -165,7 +165,7 @@ int ag_stride4_sum_s(
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if (((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

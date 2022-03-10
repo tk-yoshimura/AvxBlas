@@ -10,7 +10,7 @@ namespace AvxBlasTest.ElementwiseTest {
         public void SAddTest() {
             Random random = new(1234);
 
-            for (uint length = 1; length <= 16; length++) {
+            for (uint length = 1; length <= 64; length++) {
                 for (uint count = 0; count <= length; count++) {
                     float[] x1 = (new float[length]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
                     float[] x2 = (new float[length]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
@@ -32,7 +32,7 @@ namespace AvxBlasTest.ElementwiseTest {
         public void DAddTest() {
             Random random = new(1234);
 
-            for (uint length = 1; length <= 16; length++) {
+            for (uint length = 1; length <= 64; length++) {
                 for (uint count = 0; count <= length; count++) {
                     double[] x1 = (new double[length]).Select((_, idx) => (double)random.Next(32) - 16).ToArray();
                     double[] x2 = (new double[length]).Select((_, idx) => (double)random.Next(32) - 16).ToArray();

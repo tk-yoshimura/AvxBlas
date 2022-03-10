@@ -7,7 +7,7 @@ using namespace System;
 #pragma unmanaged
 
 int ew_copy_s(
-    unsigned int n, 
+    const unsigned int n, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
     
     if (x_ptr == y_ptr) {
@@ -19,44 +19,46 @@ int ew_copy_s(
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    unsigned int r = n;
     
-    while (n >= AVX2_FLOAT_STRIDE * 4) {
+    while (r >= AVX2_FLOAT_STRIDE * 4) {
         __m256 x0 = _mm256_load_ps(x_ptr);
-        __m256 x1 = _mm256_load_ps(x_ptr + 8);
-        __m256 x2 = _mm256_load_ps(x_ptr + 16);
-        __m256 x3 = _mm256_load_ps(x_ptr + 24);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 x3 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3);
 
         _mm256_stream_ps(y_ptr, x0);
-        _mm256_stream_ps(y_ptr + 8, x1);
-        _mm256_stream_ps(y_ptr + 16, x2);
-        _mm256_stream_ps(y_ptr + 24, x3);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, x1);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 2, x2);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 3, x3);
 
         x_ptr += AVX2_FLOAT_STRIDE * 4;
         y_ptr += AVX2_FLOAT_STRIDE * 4;
-        n -= AVX2_FLOAT_STRIDE * 4;
+        r -= AVX2_FLOAT_STRIDE * 4;
     }
-    if (n >= AVX2_FLOAT_STRIDE * 2) {
+    if (r >= AVX2_FLOAT_STRIDE * 2) {
         __m256 x0 = _mm256_load_ps(x_ptr);
-        __m256 x1 = _mm256_load_ps(x_ptr + 8);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
 
         _mm256_stream_ps(y_ptr, x0);
-        _mm256_stream_ps(y_ptr + 8, x1);
+        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, x1);
 
         x_ptr += AVX2_FLOAT_STRIDE * 2;
         y_ptr += AVX2_FLOAT_STRIDE * 2;
-        n -= AVX2_FLOAT_STRIDE * 2;
+        r -= AVX2_FLOAT_STRIDE * 2;
     }
-    if (n >= AVX2_FLOAT_STRIDE) {
+    if (r >= AVX2_FLOAT_STRIDE) {
         __m256 x0 = _mm256_load_ps(x_ptr);
 
         _mm256_stream_ps(y_ptr, x0);
 
         x_ptr += AVX2_FLOAT_STRIDE;
         y_ptr += AVX2_FLOAT_STRIDE;
-        n -= AVX2_FLOAT_STRIDE;
+        r -= AVX2_FLOAT_STRIDE;
     }
-    if (n > 0) {
-        const __m256i mask = _mm256_set_mask(n);
+    if (r > 0) {
+        const __m256i mask = _mm256_set_mask(r);
 
         __m256 x = _mm256_maskload_ps(x_ptr, mask);
 

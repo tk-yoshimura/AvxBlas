@@ -54,6 +54,18 @@
     <ClInclude Include="utils.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_dotmul.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_ope.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_set.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_sum.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">
@@ -125,9 +137,6 @@
     <ClCompile Include="Vectorwise\vw_fill_d.cpp">
       <Filter>Source\Vectorwise</Filter>
     </ClCompile>
-    <ClCompile Include="Inline\inline_sum.cpp">
-      <Filter>Source\Inline</Filter>
-    </ClCompile>
     <ClCompile Include="Aggregate\ag_sum_d.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
@@ -137,20 +146,11 @@
     <ClCompile Include="Elementwise\ew_copy_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
-    <ClCompile Include="Inline\inline_ope.cpp">
-      <Filter>Source\Inline</Filter>
-    </ClCompile>
-    <ClCompile Include="Inline\inline_dotmul_s.cpp">
-      <Filter>Source\Inline</Filter>
-    </ClCompile>
     <ClCompile Include="Affine\affine_cctor.cpp">
       <Filter>Source\Affine</Filter>
     </ClCompile>
     <ClCompile Include="Affine\affine_dotmul_s.cpp">
       <Filter>Source\Affine</Filter>
-    </ClCompile>
-    <ClCompile Include="Inline\inline_set.cpp">
-      <Filter>Source\Inline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
