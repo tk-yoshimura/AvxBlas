@@ -140,6 +140,7 @@ namespace AvxBlas {
 
         public:
         static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<float>^ a, Array<float>^ b, Array<float>^ y);
+        static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^ a, Array<double>^ b, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {

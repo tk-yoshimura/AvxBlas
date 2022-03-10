@@ -152,6 +152,9 @@
     <ClCompile Include="Affine\affine_dotmul_s.cpp">
       <Filter>Source\Affine</Filter>
     </ClCompile>
+    <ClCompile Include="Affine\affine_dotmul_d.cpp">
+      <Filter>Source\Affine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Affine\affine_cctor.cpp" />
+    <ClCompile Include="Affine\affine_dotmul_d.cpp" />
     <ClCompile Include="Affine\affine_dotmul_s.cpp" />
     <ClCompile Include="Aggregate\ag_cctor.cpp" />
     <ClCompile Include="Aggregate\ag_sum_d.cpp" />

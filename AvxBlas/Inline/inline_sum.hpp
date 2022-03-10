@@ -120,3 +120,13 @@ __forceinline __m128 _mm256_hadd2_ps(const __m256 x) {
 
     return ret;
 }
+
+// e0,e1,e2,e3 -> e0+e1,e2+e3
+__forceinline __m128d _mm256_hadd2_pd(const __m256d x) {
+    const __m128d lo = _mm256_castpd256_pd128(x);
+    const __m128d hi = _mm256_extractf128_pd(x, 1);
+
+    const __m128d ret = _mm_hadd_pd(lo, hi);
+
+    return ret;
+}
