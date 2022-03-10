@@ -51,6 +51,13 @@ __forceinline float _mm256_sum16to1_ps(const __m256 x, const __m256 y) {
     return ret;
 }
 
+// e0,...,e23 -> e0+...+e23
+__forceinline float _mm256_sum24to1_ps(const __m256 x, const __m256 y, const __m256 z) {
+    float ret = _mm256_sum8to1_ps(_mm256_add_ps(_mm256_add_ps(x, y), z));
+
+    return ret;
+}
+
 // e0,...,e31 -> e0+...+e31
 __forceinline float _mm256_sum32to1_ps(const __m256 x, const __m256 y, const __m256 z, const __m256 w) {
     float ret = _mm256_sum8to1_ps(_mm256_add_ps(_mm256_add_ps(x, y), _mm256_add_ps(z, w)));

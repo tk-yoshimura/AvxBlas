@@ -7,26 +7,60 @@ using namespace System;
 #pragma unmanaged
 
 int ew_copy_d(
-    const unsigned int n, 
+    unsigned int n, 
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
     if (x_ptr == y_ptr) {
         return SUCCESS;
     }
-    
-    const unsigned int nb = n & AVX2_DOUBLE_BATCH_MASK, nr = n - nb;
 
-    for (unsigned int i = 0; i < nb; i += AVX2_DOUBLE_STRIDE) {
-        __m256d x = _mm256_load_pd(x_ptr + i);
-
-        _mm256_stream_pd(y_ptr + i, x);
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
     }
-    if (nr > 0) {
-        const __m256i mask = _mm256_set_mask(nr * 2);
+#endif // _DEBUG
+    
+    while (n >= AVX2_DOUBLE_STRIDE * 4) {
+        __m256d x0 = _mm256_load_pd(x_ptr);
+        __m256d x1 = _mm256_load_pd(x_ptr + 8);
+        __m256d x2 = _mm256_load_pd(x_ptr + 16);
+        __m256d x3 = _mm256_load_pd(x_ptr + 24);
 
-        __m256d x = _mm256_maskload_pd(x_ptr + nb, mask);
+        _mm256_stream_pd(y_ptr, x0);
+        _mm256_stream_pd(y_ptr + 8, x1);
+        _mm256_stream_pd(y_ptr + 16, x2);
+        _mm256_stream_pd(y_ptr + 24, x3);
 
-        _mm256_maskstore_pd(y_ptr + nb, mask, x);
+        x_ptr += AVX2_DOUBLE_STRIDE * 4;
+        y_ptr += AVX2_DOUBLE_STRIDE * 4;
+        n -= AVX2_DOUBLE_STRIDE * 4;
+    }
+    if (n >= AVX2_DOUBLE_STRIDE * 2) {
+        __m256d x0 = _mm256_load_pd(x_ptr);
+        __m256d x1 = _mm256_load_pd(x_ptr + 8);
+
+        _mm256_stream_pd(y_ptr, x0);
+        _mm256_stream_pd(y_ptr + 8, x1);
+
+        x_ptr += AVX2_DOUBLE_STRIDE * 2;
+        y_ptr += AVX2_DOUBLE_STRIDE * 2;
+        n -= AVX2_DOUBLE_STRIDE * 2;
+    }
+    if (n >= AVX2_DOUBLE_STRIDE) {
+        __m256d x0 = _mm256_load_pd(x_ptr);
+
+        _mm256_stream_pd(y_ptr, x0);
+
+        x_ptr += AVX2_DOUBLE_STRIDE;
+        y_ptr += AVX2_DOUBLE_STRIDE;
+        n -= AVX2_DOUBLE_STRIDE;
+    }
+    if (n > 0) {
+        const __m256i mask = _mm256_set_mask(n * 2);
+
+        __m256d x = _mm256_maskload_pd(x_ptr, mask);
+
+        _mm256_maskstore_pd(y_ptr, mask, x);
     }
 
     return SUCCESS;

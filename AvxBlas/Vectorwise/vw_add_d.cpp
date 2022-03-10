@@ -11,6 +11,12 @@ int vw_alignment_add_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
 
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
@@ -31,6 +37,12 @@ int vw_alignment_add_d(
 int vw_disorder_add_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
+
+#ifdef _DEBUG
+    if (((size_t)v_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
@@ -69,7 +81,7 @@ int vw_batch_add_d(
     const unsigned int sg = stride * g;
 
 #ifdef _DEBUG
-    if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0) {
+    if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

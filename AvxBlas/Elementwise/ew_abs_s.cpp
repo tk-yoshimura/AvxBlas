@@ -8,26 +8,68 @@ using namespace System;
 #pragma unmanaged
 
 int ew_abs_s(
-    const unsigned int n, 
+    unsigned int n, 
     const float* __restrict x_ptr, float* __restrict y_ptr) {
-    
-    const unsigned int nb = n & AVX2_FLOAT_BATCH_MASK, nr = n - nb;
 
-    for (unsigned int i = 0; i < nb; i += AVX2_FLOAT_STRIDE) {
-        __m256 x = _mm256_load_ps(x_ptr + i);
-
-        __m256 y = _mm256_abs_ps(x);
-
-        _mm256_stream_ps(y_ptr + i, y);
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
     }
-    if (nr > 0) {
-        const __m256i mask = _mm256_set_mask(nr);
+#endif // _DEBUG
+    
+    while (n >= AVX2_FLOAT_STRIDE * 4) {
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + 8);
+        __m256 x2 = _mm256_load_ps(x_ptr + 16);
+        __m256 x3 = _mm256_load_ps(x_ptr + 24);
 
-        __m256 x = _mm256_maskload_ps(x_ptr + nb, mask);
+        __m256 y0 = _mm256_abs_ps(x0);
+        __m256 y1 = _mm256_abs_ps(x1);
+        __m256 y2 = _mm256_abs_ps(x2);
+        __m256 y3 = _mm256_abs_ps(x3);
+
+        _mm256_stream_ps(y_ptr, y0);
+        _mm256_stream_ps(y_ptr + 8, y1);
+        _mm256_stream_ps(y_ptr + 16, y2);
+        _mm256_stream_ps(y_ptr + 24, y3);
+
+        x_ptr += AVX2_FLOAT_STRIDE * 4;
+        y_ptr += AVX2_FLOAT_STRIDE * 4;
+        n -= AVX2_FLOAT_STRIDE * 4;
+    }
+    if (n >= AVX2_FLOAT_STRIDE * 2) {
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + 8);
+        
+        __m256 y0 = _mm256_abs_ps(x0);
+        __m256 y1 = _mm256_abs_ps(x1);
+
+        _mm256_stream_ps(y_ptr, y0);
+        _mm256_stream_ps(y_ptr + 8, y1);
+
+        x_ptr += AVX2_FLOAT_STRIDE * 2;
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
+        n -= AVX2_FLOAT_STRIDE * 2;
+    }
+    if (n >= AVX2_FLOAT_STRIDE) {
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        
+        __m256 y0 = _mm256_abs_ps(x0);
+
+        _mm256_stream_ps(y_ptr, y0);
+
+        x_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
+        n -= AVX2_FLOAT_STRIDE;
+    }
+    if (n > 0) {
+        const __m256i mask = _mm256_set_mask(n);
+
+        __m256 x = _mm256_maskload_ps(x_ptr, mask);
 
         __m256 y = _mm256_abs_ps(x);
 
-        _mm256_maskstore_ps(y_ptr + nb, mask, y);
+        _mm256_maskstore_ps(y_ptr, mask, y);
     }
 
     return SUCCESS;

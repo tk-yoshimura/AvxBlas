@@ -164,6 +164,12 @@ int ag_stride4_sum_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
+#ifdef _DEBUG
+    if (((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
     const __m256 zero = _mm256_setzero_ps();
     const unsigned int sb = samples / 2 * 2, sr = samples - sb;
     const __m256i mask4 = _mm256_set_mask(4);
@@ -253,6 +259,12 @@ int ag_stride8_sum_s(
     const unsigned int n, const unsigned int samples, 
     const float* __restrict x_ptr, float* __restrict y_ptr){
 
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
     const __m256 zero = _mm256_setzero_ps();
 
     for (unsigned int i = 0; i < n; i++) {
@@ -277,6 +289,12 @@ int ag_stride8_sum_s(
 int ag_stride16_sum_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
+
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
 
@@ -305,6 +323,12 @@ int ag_stride16_sum_s(
 int ag_stride24_sum_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
+
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
 
@@ -338,6 +362,12 @@ int ag_stride24_sum_s(
 int ag_stride32_sum_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
+
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
 
@@ -416,6 +446,12 @@ int ag_alignment_sum_s(
         return ag_stride32_sum_s(n, samples, x_ptr, y_ptr);
     }
 
+#ifdef _DEBUG
+    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
     const __m256 zero = _mm256_setzero_ps();
 
     float* buf = (float*)_aligned_malloc(stride * sizeof(float), AVX2_ALIGNMENT);
@@ -460,8 +496,7 @@ int ag_disorder_sum_s(
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
     if (stride <= AVX2_FLOAT_STRIDE) {
-        ag_lessstride_sum_s(n, samples, stride, x_ptr, y_ptr);
-        return FAILURE_BADPARAM;
+        return ag_lessstride_sum_s(n, samples, stride, x_ptr, y_ptr);
     }
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
