@@ -164,7 +164,7 @@ int affine_stride4_dotmul_d(
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX1_ALIGNMENT) != 0) {
+    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

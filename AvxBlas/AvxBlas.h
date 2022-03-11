@@ -140,7 +140,7 @@ namespace AvxBlas {
 
         public:
         static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<float>^ x, Array<float>^ y);
-        //static void Transpose(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^ a, Array<double>^ b, Array<double>^ y);
+        static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Affine abstract sealed {

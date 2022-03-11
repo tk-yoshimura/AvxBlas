@@ -151,8 +151,8 @@ Transform.Transpose(uint n, uint r, uint s, uint stride, Array<T> x, Array<T> y)
 |---|---|---|---|---|
 |T|float or double|type|||
 |n|uint|batches|||
-|r|uint|transposing axis 1|||
-|s|uint|transposing axis 2|||
+|r|uint|transposing axis length 1|||
+|s|uint|transposing axis length 2|||
 |stride|uint|stride of x,y|||
 |x|Array|input|(n, r, s, stride)||
 |y|Array|output|(n, s, r, stride)|y &ne; x|

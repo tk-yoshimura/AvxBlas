@@ -164,6 +164,9 @@
     <ClCompile Include="Transform\transform_transpose_s.cpp">
       <Filter>Source\Transform</Filter>
     </ClCompile>
+    <ClCompile Include="Transform\transform_transpose_d.cpp">
+      <Filter>Source\Transform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
