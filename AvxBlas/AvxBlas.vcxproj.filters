@@ -40,6 +40,9 @@
     <Filter Include="Source\Affine">
       <UniqueIdentifier>{b7e9195d-d433-4510-9772-0d195869c1c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Transform">
+      <UniqueIdentifier>{5197ca05-ba65-433d-bed5-93c1a6d1159c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -154,6 +157,12 @@
     </ClCompile>
     <ClCompile Include="Affine\affine_dotmul_d.cpp">
       <Filter>Source\Affine</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform\transform_cctor.cpp">
+      <Filter>Source\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform\transform_transpose_s.cpp">
+      <Filter>Source\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

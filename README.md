@@ -144,17 +144,18 @@ Initialize.Clear(uint index, uint n, T c, Array<T> y);
 ### Transform
 
 ```csharp
-Transform.Transpose(uint n, uint stride_in, uint stride_out, Array<T> x, Array<T> y);
+Transform.Transpose(uint n, uint r, uint s, uint stride, Array<T> x, Array<T> y);
 ```
 
 |parameter|type|note|shape|condition|
 |---|---|---|---|---|
 |T|float or double|type|||
-|n|uint|processing count|||
-|stride_in|uint|stride of x|||
-|stride_out|uint|stride of y|||
-|x|Array|input|(n, stride_out, stride_in)||
-|y|Array|output|(n, stride_in, stride_out)|y &ne; x|
+|n|uint|batches|||
+|r|uint|transposing axis 1|||
+|s|uint|transposing axis 2|||
+|stride|uint|stride of x,y|||
+|x|Array|input|(n, r, s, stride)||
+|y|Array|output|(n, s, r, stride)|y &ne; x|
 
 ### Affine
 ```csharp

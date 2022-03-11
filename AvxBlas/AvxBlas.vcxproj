@@ -127,6 +127,8 @@
     <ClInclude Include="Inline\inline_ope.hpp" />
     <ClInclude Include="Inline\inline_set.hpp" />
     <ClInclude Include="Inline\inline_sum.hpp" />
+    <ClCompile Include="Transform\transform_cctor.cpp" />
+    <ClCompile Include="Transform\transform_transpose_s.cpp" />
     <ClCompile Include="Util\util_alignment_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />
