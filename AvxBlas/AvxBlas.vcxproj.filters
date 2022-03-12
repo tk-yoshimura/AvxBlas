@@ -43,6 +43,9 @@
     <Filter Include="Source\Transform">
       <UniqueIdentifier>{5197ca05-ba65-433d-bed5-93c1a6d1159c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Dense">
+      <UniqueIdentifier>{d8cb2fa7-3f2b-4f69-89a1-686cabc4f702}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -67,6 +70,9 @@
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_sum.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_kernelfma_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
   </ItemGroup>
@@ -166,6 +172,21 @@
     </ClCompile>
     <ClCompile Include="Transform\transform_transpose_d.cpp">
       <Filter>Source\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense\dense_cctor.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense\dense_forward_s.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense\dense_backwarddata_s.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense\dense_backwardfilter_s.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\util_zeroset.cpp">
+      <Filter>Source\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

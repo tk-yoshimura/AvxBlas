@@ -13,6 +13,9 @@ extern void alignment_vector_d(const unsigned int n, const unsigned int stride, 
 extern __m128i _mm_set_mask(const unsigned int n);
 extern __m256i _mm256_set_mask(const unsigned int n);
 
+extern void zeroset_s(const unsigned int n, float* y_ptr);
+extern void zeroset_d(const unsigned int n, double* y_ptr);
+
 union _m32 {
     float f;
     unsigned __int32 i;

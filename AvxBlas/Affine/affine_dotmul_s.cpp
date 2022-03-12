@@ -14,6 +14,12 @@ int affine_stride1_dotmul_s(
     const unsigned int na, const unsigned int nb,
     const float* __restrict a_ptr, const float* __restrict b_ptr, float* __restrict y_ptr) {
 
+#ifdef _DEBUG
+    if (((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
     const unsigned int nbb = nb & AVX2_FLOAT_BATCH_MASK, nbr = nb - nbb;
     const __m256i mask = _mm256_set_mask(nbr);
 

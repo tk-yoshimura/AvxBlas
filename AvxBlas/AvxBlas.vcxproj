@@ -99,6 +99,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Inline\inline_kernelfma_s.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -113,6 +114,10 @@
     <ClCompile Include="Constant\const_add_d.cpp" />
     <ClCompile Include="Constant\const_add_s.cpp" />
     <ClCompile Include="Constant\const_cctor.cpp" />
+    <ClCompile Include="Dense\dense_backwarddata_s.cpp" />
+    <ClCompile Include="Dense\dense_backwardfilter_s.cpp" />
+    <ClCompile Include="Dense\dense_cctor.cpp" />
+    <ClCompile Include="Dense\dense_forward_s.cpp" />
     <ClCompile Include="Elementwise\ew_abs_d.cpp" />
     <ClCompile Include="Elementwise\ew_abs_s.cpp" />
     <ClCompile Include="Elementwise\ew_add_d.cpp" />
@@ -134,6 +139,7 @@
     <ClCompile Include="Util\util_mm_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />
     <ClCompile Include="Util\util_check.cpp" />
+    <ClCompile Include="Util\util_zeroset.cpp" />
     <ClCompile Include="Vectorwise\vw_add_d.cpp" />
     <ClCompile Include="Vectorwise\vw_add_s.cpp" />
     <ClCompile Include="Vectorwise\vw_cctor.cpp" />

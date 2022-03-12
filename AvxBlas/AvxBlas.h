@@ -151,6 +151,15 @@ namespace AvxBlas {
         static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^ a, Array<double>^ b, Array<double>^ y);
     };
 
+    public ref class Dense abstract sealed {
+        static Dense();
+
+        public:
+        static void Forward(UInt32 n, UInt32 ic, UInt32 oc, Array<float>^ x, Array<float>^ w, Array<float>^ y);
+        static void BackwardData(UInt32 n, UInt32 ic, UInt32 oc, Array<float>^ dy, Array<float>^ w, Array<float>^ dx);
+        static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>^ x, Array<float>^ dy, Array<float>^ dw);
+    };
+
     public ref class Initialize abstract sealed {
         static Initialize();
 

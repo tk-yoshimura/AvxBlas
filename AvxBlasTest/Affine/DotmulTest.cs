@@ -18,7 +18,7 @@ namespace AvxBlasTest.AffineTest {
 
                     foreach (uint stride in new uint[] {
                         0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 11u, 12u, 13u, 14u,
-                        15u, 16u, 17u, 20u, 23u, 24u, 25u, 28u, 
+                        15u, 16u, 17u, 20u, 23u, 24u, 25u, 28u,
                         31u, 32u, 33u, 39u, 40u, 41u, 47u, 48u, 49u, 55u, 56u, 57u,
                         63u, 64u, 65u, 71u, 72u, 73u, 79u, 80u, 81u, 87u, 88u, 89u,
                         127u, 128u, 129u, 255u, 256u, 257u }) {
@@ -63,7 +63,7 @@ namespace AvxBlasTest.AffineTest {
 
                     foreach (uint stride in new uint[] {
                         0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 11u, 12u, 13u, 14u,
-                        15u, 16u, 17u, 20u, 23u, 24u, 25u, 28u, 
+                        15u, 16u, 17u, 20u, 23u, 24u, 25u, 28u,
                         31u, 32u, 33u, 39u, 40u, 41u, 47u, 48u, 49u, 55u, 56u, 57u,
                         63u, 64u, 65u, 71u, 72u, 73u, 79u, 80u, 81u, 87u, 88u, 89u,
                         127u, 128u, 129u, 255u, 256u, 257u }) {
