@@ -172,6 +172,95 @@ Affine.Dotmul(uint na, uint nb, uint stride, Array<T> a, Array<T> b, Array<T> y)
 |b|Array|input|(nb, stride)||
 |y|Array|output|(na, nb)|y &ne; a,b|
 
+### Dense
+```csharp
+Dense.Forward(uint n, uint inch, uint outch, Array<T> x, Array<T> w, Array<T> y);
+Dense.BackwardData(uint n, uint inch, uint outch, Array<T> dy, Array<T> w, Array<T> dx);
+Dense.BackwardFilter(uint n, uint inch, uint outch, Array<T> x, Array<T> dy, Array<T> dw);
+```
+
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|batches|||
+|inch|uint|in channels|||
+|outch|uint|out channels|||
+|x/dx|Array|input/output|(n, inch)||
+|y/dy|Array|output/input|(n, outch)||
+|w/dw|Array|input/output|(outch, inch)||
+
+### Convolution1D
+```csharp
+Convolution1D.Forward(uint n, uint ic, uint oc, uint iw, uint kw, 
+                      Array<T> x, Array<T> w, Array<T> y);
+Convolution1D.BackwardData(uint n, uint ic, uint oc, uint iw, uint kw, 
+                      Array<T> dy, Array<T> w, Array<T> dx);
+Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw, 
+                      Array<T> x, Array<T> dy, Array<T> dw);
+```
+
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|batches|||
+|ic|uint|in channels|||
+|oc|uint|out channels|||
+|iw|uint|in width|||
+|kw|uint|kernel width|||
+|x/dx|Array|input/output|(n, iw, ic)||
+|y/dy|Array|output/input|(n, ow, oc)|ow = iw-kw+1|
+|w/dw|Array|input/output|(kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
+
+### Convolution2D
+```csharp
+Convolution2D.Forward(uint n, uint ic, uint oc, uint iw, uint ih, uint kw, uint kh, 
+                      Array<T> x, Array<T> w, Array<T> y);
+Convolution2D.BackwardData(uint n, uint ic, uint oc, uint iw, uint ih, uint kw, uint kh, 
+                      Array<T> dy, Array<T> w, Array<T> dx);
+Convolution2D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint kw, uint kh, 
+                      Array<T> x, Array<T> dy, Array<T> dw);
+```
+
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|batches|||
+|ic|uint|in channels|||
+|oc|uint|out channels|||
+|iw|uint|in width|||
+|ih|uint|in height|||
+|kw|uint|kernel width|||
+|kh|uint|kenrel height|||
+|x/dx|Array|input/output|(n, ih, iw, ic)||
+|y/dy|Array|output/input|(n, oh, ow, oc)|oh = ih-kh+1, ow = iw-kw+1|
+|w/dw|Array|input/output|(kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
+
+### Convolution3D
+```csharp
+Convolution3D.Forward(uint n, uint ic, uint oc, uint iw, uint ih, uint id, uint kw, uint kh, uint kd, 
+                      Array<T> x, Array<T> w, Array<T> y);
+Convolution3D.BackwardData(uint n, uint ic, uint oc, uint iw, uint ih, uint id, uint kw, uint kh, uint kd, 
+                      Array<T> dy, Array<T> w, Array<T> dx);
+Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id, uint kw, uint kh, uint kd, 
+                      Array<T> x, Array<T> dy, Array<T> dw);
+```
+
+|parameter|type|note|shape|condition|
+|---|---|---|---|---|
+|T|float or double|type|||
+|n|uint|batches|||
+|ic|uint|in channels|||
+|oc|uint|out channels|||
+|iw|uint|in width|||
+|ih|uint|in height|||
+|id|uint|in depth|||
+|kw|uint|kernel width|||
+|kh|uint|kenrel height|||
+|kd|uint|kenrel depth|||
+|x/dx|Array|input/output|(n, id, ih, iw, ic)||
+|y/dy|Array|output/input|(n, od, oh, ow, oc)|od = id-kd+1, oh = ih-kh+1, ow = iw-kw+1|
+|w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
+
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
 
