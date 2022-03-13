@@ -197,6 +197,15 @@
     <ClCompile Include="Util\util_zeroset.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
+    <ClCompile Include="Dense\dense_forward_d.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense\dense_backwarddata_d.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense\dense_backwardfilter_d.cpp">
+      <Filter>Source\Dense</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

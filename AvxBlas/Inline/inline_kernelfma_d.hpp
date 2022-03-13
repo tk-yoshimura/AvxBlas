@@ -61,7 +61,7 @@ __forceinline void kernelfma_n16x_d(
     }
 }
 
-__forceinline void kernelfma_aligned_s(
+__forceinline void kernelfma_aligned_d(
     const unsigned int ic, const unsigned int oc,
     const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
 
@@ -164,7 +164,7 @@ __forceinline void kernelfma_aligned_s(
     }
 }
 
-__forceinline void kernelfma_unaligned_s(
+__forceinline void kernelfma_unaligned_d(
     const unsigned int ic, const unsigned int oc,
     const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr, const __m256i mask) {
 

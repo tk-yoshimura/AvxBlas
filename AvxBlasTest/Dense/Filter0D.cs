@@ -25,6 +25,22 @@ namespace AvxBlasTest.DenseTest {
             this.OutChannels = outchannels;
         }
 
+        public Filter0D(int inchannels, int outchannels, double[] val) {
+            if (inchannels < 1 || outchannels < 1) {
+                throw new ArgumentException();
+            }
+
+            int length = checked(inchannels * outchannels);
+
+            if (!(val is null) && val.Length != length) {
+                throw new ArgumentException(null, nameof(val));
+            }
+
+            this.val = (val is null) ? new double[length] : (double[])val.Clone();
+            this.InChannels = inchannels;
+            this.OutChannels = outchannels;
+        }
+
         public double this[int inch, int outch] {
             get {
                 if (inch < 0 || inch >= InChannels || outch < 0 || outch >= OutChannels) {
@@ -70,8 +86,12 @@ namespace AvxBlasTest.DenseTest {
             return base.GetHashCode();
         }
 
-        public float[] ToArray() {
+        public float[] ToFloatArray() {
             return val.Select((v) => (float)v).ToArray();
+        }
+
+        public double[] ToDoubleArray() {
+            return (double[])val.Clone();
         }
     }
 }

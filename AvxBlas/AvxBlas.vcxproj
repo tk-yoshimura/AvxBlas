@@ -117,9 +117,12 @@
     <ClCompile Include="Constant\const_add_d.cpp" />
     <ClCompile Include="Constant\const_add_s.cpp" />
     <ClCompile Include="Constant\const_cctor.cpp" />
+    <ClCompile Include="Dense\dense_backwarddata_d.cpp" />
     <ClCompile Include="Dense\dense_backwarddata_s.cpp" />
+    <ClCompile Include="Dense\dense_backwardfilter_d.cpp" />
     <ClCompile Include="Dense\dense_backwardfilter_s.cpp" />
     <ClCompile Include="Dense\dense_cctor.cpp" />
+    <ClCompile Include="Dense\dense_forward_d.cpp" />
     <ClCompile Include="Dense\dense_forward_s.cpp" />
     <ClCompile Include="Elementwise\ew_abs_d.cpp" />
     <ClCompile Include="Elementwise\ew_abs_s.cpp" />

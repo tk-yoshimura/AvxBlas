@@ -28,18 +28,58 @@ namespace AvxBlasTest.DenseTest {
 
                         Dense.BackwardData(n, ic, oc, y_tensor, w_tensor, x_tensor);
 
-                        float[] x_expect = x.ToArray();
+                        float[] x_expect = x.ToFloatArray();
                         float[] x_actual = x_tensor;
 
                         CollectionAssert.AreEqual(yval, (float[])y_tensor);
                         CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                        AssertError.Tolerance(x_expect, x_actual, 1e-6f, 1e-4f, ref max_err, $"NG {ic},{oc},{n}");
+                        AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG {ic},{oc},{n}");
 
                         Console.WriteLine($"OK: {ic},{oc},{n}");
                     }
                 }
             }
+
+            Console.WriteLine($"maxerr:{max_err}");
+        }
+
+        [TestMethod]
+        public void DBackwardDataTest() {
+            double max_err = 0;
+
+            foreach (uint n in new int[] { 1, 2 }) {
+                foreach (uint ic in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
+                    foreach (uint oc in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
+                        double[] yval = (new double[oc * n]).Select((_, idx) => idx * 1e-3).ToArray();
+                        double[] wval = (new double[ic * oc]).Select((_, idx) => (idx + 1) * 1e-3).Reverse().ToArray();
+
+                        Map0D y = new((int)oc, (int)n, yval);
+                        Filter0D w = new((int)ic, (int)oc, wval);
+
+                        Map0D x = Reference(y, w);
+
+                        Array<double> y_tensor = yval;
+                        Array<double> w_tensor = wval;
+
+                        Array<double> x_tensor = new(ic * n);
+
+                        Dense.BackwardData(n, ic, oc, y_tensor, w_tensor, x_tensor);
+
+                        double[] x_expect = x.ToDoubleArray();
+                        double[] x_actual = x_tensor;
+
+                        CollectionAssert.AreEqual(yval, (double[])y_tensor);
+                        CollectionAssert.AreEqual(wval, (double[])w_tensor);
+
+                        AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG {ic},{oc},{n}");
+
+                        Console.WriteLine($"OK: {ic},{oc},{n}");
+                    }
+                }
+            }
+
+            Console.WriteLine($"maxerr:{max_err}");
         }
 
         public static Map0D Reference(Map0D y, Filter0D w) {
@@ -80,9 +120,9 @@ namespace AvxBlasTest.DenseTest {
                 5.9180e-03f, 5.7420e-03f, 5.5660e-03f, 5.3900e-03f
             };
 
-            float[] x_actual = x.ToArray();
+            float[] x_actual = x.ToFloatArray();
 
-            AssertError.Tolerance(x_expect, x_actual, 1e-7f, 1e-5f, $"mismatch value {inchannels},{outchannels},{batch}");
+            AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, $"mismatch value {inchannels},{outchannels},{batch}");
         }
     }
 }

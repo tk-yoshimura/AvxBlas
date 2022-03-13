@@ -25,6 +25,22 @@ namespace AvxBlasTest.DenseTest {
             this.Batch = batch;
         }
 
+        public Map0D(int channels, int batch, double[] val) {
+            if (channels < 1 || batch < 1) {
+                throw new ArgumentException();
+            }
+
+            int length = checked(channels * batch);
+
+            if (!(val is null) && val.Length != length) {
+                throw new ArgumentException(null, nameof(val));
+            }
+
+            this.val = (val is null) ? new double[length] : (double[])val.Clone();
+            this.Channels = channels;
+            this.Batch = batch;
+        }
+
         public double this[int ch, int th] {
             get {
                 if (ch < 0 || ch >= Channels || th < 0 || th >= Batch) {
@@ -70,8 +86,12 @@ namespace AvxBlasTest.DenseTest {
             return base.GetHashCode();
         }
 
-        public float[] ToArray() {
+        public float[] ToFloatArray() {
             return val.Select((v) => (float)v).ToArray();
+        }
+
+        public double[] ToDoubleArray() {
+            return (double[])val.Clone();
         }
     }
 }
