@@ -48,7 +48,7 @@ int clear_s(
         r -= AVX2_FLOAT_STRIDE;
     }
     if (r > 0) {
-        const __m256i mask = _mm256_set_mask(r);
+        const __m256i mask = _mm256_setmask_ps(r);
 
         _mm256_maskstore_ps(y_ptr, mask, fillc);
     }

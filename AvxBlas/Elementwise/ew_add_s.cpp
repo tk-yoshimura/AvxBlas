@@ -74,7 +74,7 @@ int ew_add_s(
         r -= AVX2_FLOAT_STRIDE;
     }
     if (r > 0) {
-        const __m256i mask = _mm256_set_mask(r);
+        const __m256i mask = _mm256_setmask_ps(r);
 
         __m256 x1 = _mm256_maskload_ps(x1_ptr, mask);
         __m256 x2 = _mm256_maskload_ps(x2_ptr, mask);

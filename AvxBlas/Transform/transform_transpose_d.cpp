@@ -64,7 +64,7 @@ int transpose_stride3_d(
     const unsigned int n, const unsigned int r, const unsigned int s,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
-    const __m256i mask = _mm256_set_mask(6);
+    const __m256i mask = _mm256_setmask_pd(3);
 
     for (unsigned int th = 0; th < n; th++) {
 
@@ -128,7 +128,7 @@ int transpose_stride5to7_d(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_set_mask((stride & AVX2_DOUBLE_REMAIN_MASK) * 2);
+    const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
     for (unsigned int th = 0; th < n; th++) {
 
@@ -196,7 +196,7 @@ int transpose_stride9to11_d(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_set_mask((stride & AVX2_DOUBLE_REMAIN_MASK) * 2);
+    const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
     for (unsigned int th = 0; th < n; th++) {
 
@@ -268,7 +268,7 @@ int transpose_stride13to15_d(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_set_mask((stride & AVX2_DOUBLE_REMAIN_MASK) * 2);
+    const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
     for (unsigned int th = 0; th < n; th++) {
 
@@ -442,7 +442,7 @@ int transpose_unaligned_d(
         return transpose_stride13to15_d(n, r, s, stride, x_ptr, y_ptr);
     }
 
-    const __m256i mask = _mm256_set_mask((stride & AVX2_DOUBLE_REMAIN_MASK) * 2);
+    const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
     for (unsigned int th = 0; th < n; th++) {
 

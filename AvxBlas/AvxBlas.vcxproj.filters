@@ -60,7 +60,7 @@
     <ClInclude Include="utils.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_dotmul.hpp">
+    <ClInclude Include="Inline\inline_dotmul_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_ope.hpp">
@@ -69,10 +69,19 @@
     <ClInclude Include="Inline\inline_set.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_sum.hpp">
+    <ClInclude Include="Inline\inline_sum_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_kernelfma_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_kernelfma_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_sum_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_dotmul_d.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
   </ItemGroup>

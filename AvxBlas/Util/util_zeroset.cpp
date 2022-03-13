@@ -41,7 +41,7 @@ void zeroset_s(const unsigned int n, float* y_ptr) {
         r -= AVX2_FLOAT_STRIDE;
     }
     if (r > 0) {
-        const __m256i mask = _mm256_set_mask(r);
+        const __m256i mask = _mm256_setmask_ps(r);
 
         _mm256_maskstore_ps(y_ptr, mask, fillz);
     }
@@ -85,7 +85,7 @@ void zeroset_d(const unsigned int n, double* y_ptr) {
         r -= AVX2_DOUBLE_STRIDE;
     }
     if (r > 0) {
-        const __m256i mask = _mm256_set_mask(r * 2);
+        const __m256i mask = _mm256_setmask_pd(r);
 
         _mm256_maskstore_pd(y_ptr, mask, fillz);
     }

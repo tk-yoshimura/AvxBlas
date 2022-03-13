@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline/inline_sum.hpp"
+#include "../Inline/inline_sum_d.hpp"
 #include <memory.h>
 
 using namespace System;
@@ -14,7 +14,7 @@ int ag_sum_stride1_d(
 
     const __m256d zero = _mm256_setzero_pd();
     const unsigned int sb = samples & AVX2_DOUBLE_BATCH_MASK, sr = samples - sb;
-    const __m256i mask = _mm256_set_mask(sr * 2);
+    const __m256i mask = _mm256_setmask_pd(sr);
 
     if (sr > 0) {
         for (unsigned int i = 0; i < n; i++) {
@@ -77,7 +77,7 @@ int ag_sum_stride2_d(
 
     const __m256d zero = _mm256_setzero_pd();
     const unsigned int sb = samples / 2 * 2, sr = samples - sb;
-    const __m256i mask = _mm256_set_mask(sr * 4);
+    const __m256i mask = _mm256_setmask_pd(sr * 2);
 
     if (sr > 0) {
         for (unsigned int i = 0; i < n; i++) {
@@ -133,7 +133,7 @@ int ag_sum_stride3_d(
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
     const __m256d zero = _mm256_setzero_pd();
-    const __m256i mask = _mm256_set_mask(6);
+    const __m256i mask = _mm256_setmask_pd(3);
 
     for (unsigned int i = 0; i < n; i++) {
         __m256d buf = zero;
@@ -395,7 +395,7 @@ int ag_sum_unaligned_d(
     const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
     const __m256d zero = _mm256_setzero_pd();
-    const __m256i mask = _mm256_set_mask(sr * 2);
+    const __m256i mask = _mm256_setmask_pd(sr);
 
     double* buf = (double*)_aligned_malloc(((size_t)stride + AVX2_DOUBLE_STRIDE) * sizeof(double), AVX2_ALIGNMENT);
     if (buf == nullptr) {
@@ -462,7 +462,7 @@ int ag_sum_batch_d(
     const unsigned int sb = samples / g * g, sr = samples - sb;
     const unsigned int rem = stride * sr;
     const unsigned int remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
-    const __m256i mask = _mm256_set_mask(remr * 2);
+    const __m256i mask = _mm256_setmask_pd(remr);
 
     const __m256d zero = _mm256_setzero_pd();
 

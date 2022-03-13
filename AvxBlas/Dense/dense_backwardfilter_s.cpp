@@ -57,7 +57,7 @@ int dense_backwardfilter_unaligned_s(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_set_mask(ic & AVX2_FLOAT_REMAIN_MASK);
+    const __m256i mask = _mm256_setmask_ps(ic & AVX2_FLOAT_REMAIN_MASK);
 
     for (unsigned int i = 0; i < n; i++) {
         kernelfma_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);

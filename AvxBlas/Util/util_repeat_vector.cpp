@@ -10,7 +10,7 @@ void repeat_vector_s(
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
-    const __m256i mask = _mm256_set_mask(sr);
+    const __m256i mask = _mm256_setmask_ps(sr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
@@ -34,7 +34,7 @@ void repeat_vector_d(
 
     const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
-    const __m256i mask = _mm256_set_mask(sr * 2);
+    const __m256i mask = _mm256_setmask_pd(sr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {

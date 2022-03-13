@@ -46,7 +46,7 @@ int vw_add_unaligned_s(
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
-    const __m256i mask = _mm256_set_mask(sr);
+    const __m256i mask = _mm256_setmask_ps(sr);
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
@@ -109,7 +109,7 @@ int vw_add_batch_s(
     if (nr > 0) {
         const unsigned int rem = stride * nr;
         const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-        const __m256i mask = _mm256_set_mask(remr);
+        const __m256i mask = _mm256_setmask_ps(remr);
 
         for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
