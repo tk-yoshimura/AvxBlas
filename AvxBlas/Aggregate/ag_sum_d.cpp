@@ -8,7 +8,7 @@ using namespace System;
 
 #pragma unmanaged
 
-int ag_stride1_sum_d(
+int ag_sum_stride1_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -65,7 +65,7 @@ int ag_stride1_sum_d(
     return SUCCESS;
 }
 
-int ag_stride2_sum_d(
+int ag_sum_stride2_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -128,7 +128,7 @@ int ag_stride2_sum_d(
     return SUCCESS;
 }
 
-int ag_stride3_sum_d(
+int ag_sum_stride3_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -154,7 +154,7 @@ int ag_stride3_sum_d(
     return SUCCESS;
 }
 
-int ag_stride4_sum_d(
+int ag_sum_stride4_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -185,7 +185,7 @@ int ag_stride4_sum_d(
     return SUCCESS;
 }
 
-int ag_stride8_sum_d(
+int ag_sum_stride8_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -219,7 +219,7 @@ int ag_stride8_sum_d(
     return SUCCESS;
 }
 
-int ag_stride12_sum_d(
+int ag_sum_stride12_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -258,7 +258,7 @@ int ag_stride12_sum_d(
     return SUCCESS;
 }
 
-int ag_stride16_sum_d(
+int ag_sum_stride16_d(
     const unsigned int n, const unsigned int samples,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -302,41 +302,41 @@ int ag_stride16_sum_d(
     return SUCCESS;
 }
 
-int ag_lessstride_sum_d(
+int ag_sum_strideleq4_d(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
     if (stride == 1) {
-        return ag_stride1_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
     }
     else if (stride == 2) {
-        return ag_stride2_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride2_d(n, samples, x_ptr, y_ptr);
     }
     else if (stride == 3) {
-        return ag_stride3_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride3_d(n, samples, x_ptr, y_ptr);
     }
     else if (stride == AVX2_DOUBLE_STRIDE) {
-        return ag_stride4_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;
 }
 
-int ag_alignment_sum_d(
+int ag_sum_aligned_d(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
     if (stride == AVX2_DOUBLE_STRIDE) {
-        return ag_stride4_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
     }
     if (stride == AVX2_DOUBLE_STRIDE * 2) {
-        return ag_stride8_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_d(n, samples, x_ptr, y_ptr);
     }
     if (stride == AVX2_DOUBLE_STRIDE * 3) {
-        return ag_stride12_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride12_d(n, samples, x_ptr, y_ptr);
     }
     if (stride == AVX2_DOUBLE_STRIDE * 4) {
-        return ag_stride16_sum_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride16_d(n, samples, x_ptr, y_ptr);
     }
 
 #ifdef _DEBUG
@@ -384,12 +384,12 @@ int ag_alignment_sum_d(
     return SUCCESS;
 }
 
-int ag_disorder_sum_d(
+int ag_sum_unaligned_d(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
     if (stride <= AVX2_DOUBLE_STRIDE) {
-        return ag_lessstride_sum_d(n, samples, stride, x_ptr, y_ptr);
+        return ag_sum_strideleq4_d(n, samples, stride, x_ptr, y_ptr);
     }
 
     const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
@@ -447,7 +447,7 @@ int ag_disorder_sum_d(
     return SUCCESS;
 }
 
-int ag_batch_sum_d(
+int ag_sum_batch_d(
     const unsigned int n, const unsigned int g, const unsigned int samples, const unsigned int stride,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 
@@ -507,7 +507,7 @@ int ag_batch_sum_d(
             x_ptr += rem;
         }
 
-        ag_disorder_sum_d(1, g, stride, buf, y_ptr);
+        ag_sum_unaligned_d(1, g, stride, buf, y_ptr);
 
         y_ptr += stride;
     }
@@ -542,7 +542,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
         Console::WriteLine("type stride1");
 #endif // _DEBUG
 
-        ag_stride1_sum_d(n, samples, x_ptr, y_ptr);
+        ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
         return;
     }
 
@@ -551,16 +551,16 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
         Console::WriteLine("type stride2");
 #endif // _DEBUG
 
-        ag_stride2_sum_d(n, samples, x_ptr, y_ptr);
+        ag_sum_stride2_d(n, samples, x_ptr, y_ptr);
         return;
     }
 
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        if (ag_alignment_sum_d(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
+        if (ag_sum_aligned_d(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
             throw gcnew System::OutOfMemoryException();
         }
         return;
@@ -574,7 +574,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            if (ag_batch_sum_d(n, g, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
+            if (ag_sum_batch_d(n, g, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
                 throw gcnew System::OutOfMemoryException();
             }
             return;
@@ -582,10 +582,10 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
     }
 
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+    Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    if (ag_disorder_sum_d(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
+    if (ag_sum_unaligned_d(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
         throw gcnew System::OutOfMemoryException();
     }
     return;

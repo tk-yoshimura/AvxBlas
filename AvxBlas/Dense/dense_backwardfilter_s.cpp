@@ -7,7 +7,7 @@ using namespace System;
 
 #pragma unmanaged
 
-int dense_n32x_backwardfilter_s(
+int dense_backwardfilter_n32x_s(
     const unsigned int n, const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
 
@@ -18,7 +18,7 @@ int dense_n32x_backwardfilter_s(
 #endif // _DEBUG
 
     for (unsigned int i = 0; i < n; i++) {
-        n32x_kernelfma_s(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_n32x_s(ic, oc, x_ptr, y_ptr, w_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
@@ -27,7 +27,7 @@ int dense_n32x_backwardfilter_s(
     return SUCCESS;
 }
 
-int dense_alignment_backwardfilter_s(
+int dense_backwardfilter_aligned_s(
     const unsigned int n, const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
 
@@ -38,7 +38,7 @@ int dense_alignment_backwardfilter_s(
 #endif // _DEBUG
 
     for (unsigned int i = 0; i < n; i++) {
-        alignment_kernelfma_s(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
@@ -47,7 +47,7 @@ int dense_alignment_backwardfilter_s(
     return SUCCESS;
 }
 
-int dense_disorder_backwardfilter_s(
+int dense_backwardfilter_unaligned_s(
     const unsigned int n, const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
 
@@ -60,7 +60,7 @@ int dense_disorder_backwardfilter_s(
     const __m256i mask = _mm256_set_mask(ic & AVX2_FLOAT_REMAIN_MASK);
 
     for (unsigned int i = 0; i < n; i++) {
-        disorder_kernelfma_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+        kernelfma_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
 
         x_ptr += ic;
         y_ptr += oc;
@@ -88,23 +88,23 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>
 
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) == 0) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment x32");
+        Console::WriteLine("type aligned x32");
 #endif // _DEBUG
 
-        dense_n32x_backwardfilter_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        dense_backwardfilter_n32x_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
     else if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        dense_alignment_backwardfilter_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        dense_backwardfilter_aligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
     else {
 #ifdef _DEBUG
-        Console::WriteLine("type disorder");
+        Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-        dense_disorder_backwardfilter_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        dense_backwardfilter_unaligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
 }

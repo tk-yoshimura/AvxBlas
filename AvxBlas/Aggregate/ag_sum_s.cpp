@@ -8,7 +8,7 @@ using namespace System;
 
 #pragma unmanaged
 
-int ag_stride1_sum_s(
+int ag_sum_stride1_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -65,7 +65,7 @@ int ag_stride1_sum_s(
     return SUCCESS;
 }
 
-int ag_stride2_sum_s(
+int ag_sum_stride2_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -123,7 +123,7 @@ int ag_stride2_sum_s(
     return SUCCESS;
 }
 
-int ag_stride3_sum_s(
+int ag_sum_stride3_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -160,7 +160,7 @@ int ag_stride3_sum_s(
     return SUCCESS;
 }
 
-int ag_stride4_sum_s(
+int ag_sum_stride4_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -223,7 +223,7 @@ int ag_stride4_sum_s(
     return SUCCESS;
 }
 
-int ag_stride5to7_sum_s(
+int ag_sum_stride5to7_s(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -255,7 +255,7 @@ int ag_stride5to7_sum_s(
     return SUCCESS;
 }
 
-int ag_stride8_sum_s(
+int ag_sum_stride8_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -286,7 +286,7 @@ int ag_stride8_sum_s(
     return SUCCESS;
 }
 
-int ag_stride16_sum_s(
+int ag_sum_stride16_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -320,7 +320,7 @@ int ag_stride16_sum_s(
     return SUCCESS;
 }
 
-int ag_stride24_sum_s(
+int ag_sum_stride24_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -359,7 +359,7 @@ int ag_stride24_sum_s(
     return SUCCESS;
 }
 
-int ag_stride32_sum_s(
+int ag_sum_stride32_s(
     const unsigned int n, const unsigned int samples,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -403,47 +403,47 @@ int ag_stride32_sum_s(
     return SUCCESS;
 }
 
-int ag_lessstride_sum_s(
+int ag_sum_strideleq8_s(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
     if (stride == 1) {
-        return ag_stride1_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride1_s(n, samples, x_ptr, y_ptr);
     }
     else if (stride == 2) {
-        return ag_stride2_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride2_s(n, samples, x_ptr, y_ptr);
     }
     else if (stride == 3) {
-        return ag_stride3_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride3_s(n, samples, x_ptr, y_ptr);
     }
     else if (stride == AVX2_FLOAT_STRIDE / 2) {
-        return ag_stride4_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride4_s(n, samples, x_ptr, y_ptr);
     }
     else if (stride > AVX2_FLOAT_STRIDE / 2) {
-        return ag_stride5to7_sum_s(n, samples, stride, x_ptr, y_ptr);
+        return ag_sum_stride5to7_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == AVX2_FLOAT_STRIDE) {
-        return ag_stride8_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_s(n, samples, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;
 }
 
-int ag_alignment_sum_s(
+int ag_sum_aligned_s(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
     if (stride == AVX2_FLOAT_STRIDE) {
-        return ag_stride8_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_s(n, samples, x_ptr, y_ptr);
     }
     if (stride == AVX2_FLOAT_STRIDE * 2) {
-        return ag_stride16_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride16_s(n, samples, x_ptr, y_ptr);
     }
     if (stride == AVX2_FLOAT_STRIDE * 3) {
-        return ag_stride24_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride24_s(n, samples, x_ptr, y_ptr);
     }
     if (stride == AVX2_FLOAT_STRIDE * 4) {
-        return ag_stride32_sum_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride32_s(n, samples, x_ptr, y_ptr);
     }
 
 #ifdef _DEBUG
@@ -491,12 +491,12 @@ int ag_alignment_sum_s(
     return SUCCESS;
 }
 
-int ag_disorder_sum_s(
+int ag_sum_unaligned_s(
     const unsigned int n, const unsigned int samples, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
     if (stride <= AVX2_FLOAT_STRIDE) {
-        return ag_lessstride_sum_s(n, samples, stride, x_ptr, y_ptr);
+        return ag_sum_strideleq8_s(n, samples, stride, x_ptr, y_ptr);
     }
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
@@ -554,7 +554,7 @@ int ag_disorder_sum_s(
     return SUCCESS;
 }
 
-int ag_batch_sum_s(
+int ag_sum_batch_s(
     const unsigned int n, const unsigned int g, const unsigned int samples, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -614,7 +614,7 @@ int ag_batch_sum_s(
             x_ptr += rem;
         }
 
-        ag_disorder_sum_s(1, g, stride, buf, y_ptr);
+        ag_sum_unaligned_s(1, g, stride, buf, y_ptr);
 
         y_ptr += stride;
     }
@@ -649,7 +649,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
         Console::WriteLine("type stride1");
 #endif // _DEBUG
 
-        ag_stride1_sum_s(n, samples, x_ptr, y_ptr);
+        ag_sum_stride1_s(n, samples, x_ptr, y_ptr);
         return;
     }
 
@@ -658,7 +658,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
         Console::WriteLine("type stride2");
 #endif // _DEBUG
 
-        ag_stride2_sum_s(n, samples, x_ptr, y_ptr);
+        ag_sum_stride2_s(n, samples, x_ptr, y_ptr);
         return;
     }
 
@@ -667,16 +667,16 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
         Console::WriteLine("type stride4");
 #endif // _DEBUG
 
-        ag_stride4_sum_s(n, samples, x_ptr, y_ptr);
+        ag_sum_stride4_s(n, samples, x_ptr, y_ptr);
         return;
     }
 
     if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        if (ag_alignment_sum_s(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
+        if (ag_sum_aligned_s(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
             throw gcnew System::OutOfMemoryException();
         }
         return;
@@ -690,7 +690,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            if (ag_batch_sum_s(n, g, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
+            if (ag_sum_batch_s(n, g, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
                 throw gcnew System::OutOfMemoryException();
             }
             return;
@@ -698,10 +698,10 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
     }
 
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+    Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    if (ag_disorder_sum_s(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
+    if (ag_sum_unaligned_s(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
         throw gcnew System::OutOfMemoryException();
     }
     return;

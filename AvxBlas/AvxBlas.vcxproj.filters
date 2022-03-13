@@ -83,7 +83,7 @@
     <ClCompile Include="Array\array.cpp">
       <Filter>Source\Array</Filter>
     </ClCompile>
-    <ClCompile Include="Util\util_alignment_vector.cpp">
+    <ClCompile Include="Util\util_repeat_vector.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
     <ClCompile Include="Vectorwise\vw_add_s.cpp">

@@ -391,7 +391,7 @@ int transpose_stride32_s(
     return SUCCESS;
 }
 
-int transpose_alignment_s(
+int transpose_aligned_s(
     const unsigned int n, const unsigned int r, const unsigned int s, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -470,7 +470,7 @@ int transpose_alignment_s(
     return SUCCESS;
 }
 
-int transpose_disorder_s(
+int transpose_unaligned_s(
     const unsigned int n, const unsigned int r, const unsigned int s, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -590,17 +590,17 @@ void AvxBlas::Transform::Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, 
 
     if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        transpose_alignment_s(n, r, s, stride, x_ptr, y_ptr);
+        transpose_aligned_s(n, r, s, stride, x_ptr, y_ptr);
         return;
     }
 
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+    Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    transpose_disorder_s(n, r, s, stride, x_ptr, y_ptr);
+    transpose_unaligned_s(n, r, s, stride, x_ptr, y_ptr);
     return;
 }

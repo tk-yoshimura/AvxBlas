@@ -8,7 +8,7 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline void n32x_kernelfma_s(
+__forceinline void kernelfma_n32x_s(
     const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
 
@@ -61,7 +61,7 @@ __forceinline void n32x_kernelfma_s(
     }
 }
 
-__forceinline void alignment_kernelfma_s(
+__forceinline void kernelfma_aligned_s(
     const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
 
@@ -164,7 +164,7 @@ __forceinline void alignment_kernelfma_s(
     }
 }
 
-__forceinline void disorder_kernelfma_s(
+__forceinline void kernelfma_unaligned_s(
     const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {
 

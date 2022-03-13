@@ -7,7 +7,7 @@ using namespace System;
 
 #pragma unmanaged
 
-int vw_alignment_add_s(
+int vw_add_aligned_s(
     const unsigned int n, const unsigned int stride,
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
@@ -34,7 +34,7 @@ int vw_alignment_add_s(
     return SUCCESS;
 }
 
-int vw_disorder_add_s(
+int vw_add_unaligned_s(
     const unsigned int n, const unsigned int stride,
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
@@ -73,7 +73,7 @@ int vw_disorder_add_s(
     return SUCCESS;
 }
 
-int vw_batch_add_s(
+int vw_add_batch_s(
     const unsigned int n, const unsigned int g, const unsigned int stride,
     const float* __restrict x_ptr, const float* __restrict v_ptr, float* __restrict y_ptr) {
 
@@ -91,7 +91,7 @@ int vw_batch_add_s(
         return FAILURE_BADALLOC;
     }
 
-    alignment_vector_s(g, stride, v_ptr, u_ptr);
+    repeat_vector_s(g, stride, v_ptr, u_ptr);
 
     for (unsigned int i = 0; i < nb; i += g) {
         for (unsigned int c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
@@ -154,10 +154,10 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<fl
 
     if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        vw_alignment_add_s(n, stride, x_ptr, v_ptr, y_ptr);
+        vw_add_aligned_s(n, stride, x_ptr, v_ptr, y_ptr);
         return;
     }
 
@@ -170,7 +170,7 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<fl
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            if (vw_batch_add_s(n, g, stride, x_ptr, v_ptr, y_ptr) == FAILURE_BADALLOC) {
+            if (vw_add_batch_s(n, g, stride, x_ptr, v_ptr, y_ptr) == FAILURE_BADALLOC) {
                 throw gcnew System::OutOfMemoryException();
             }
             return;
@@ -178,8 +178,8 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<fl
     }
 
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+    Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    vw_disorder_add_s(n, stride, x_ptr, v_ptr, y_ptr);
+    vw_add_unaligned_s(n, stride, x_ptr, v_ptr, y_ptr);
 }

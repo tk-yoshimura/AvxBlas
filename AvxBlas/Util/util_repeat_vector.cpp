@@ -4,7 +4,7 @@
 
 #pragma unmanaged
 
-void alignment_vector_s(
+void repeat_vector_s(
     const unsigned int n, const unsigned int stride,
     const float* __restrict x_ptr, float* __restrict y_ptr) {
 
@@ -28,7 +28,7 @@ void alignment_vector_s(
     }
 }
 
-void alignment_vector_d(
+void repeat_vector_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict x_ptr, double* __restrict y_ptr) {
 

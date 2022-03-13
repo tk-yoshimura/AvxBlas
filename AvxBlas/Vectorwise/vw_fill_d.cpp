@@ -7,7 +7,7 @@ using namespace System;
 
 #pragma unmanaged
 
-int vw_alignment_fill_d(
+int vw_fill_aligned_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict v_ptr, double* __restrict y_ptr) {
 
@@ -30,7 +30,7 @@ int vw_alignment_fill_d(
     return SUCCESS;
 }
 
-int vw_disorder_fill_d(
+int vw_fill_unaligned_d(
     const unsigned int n, const unsigned int stride,
     const double* __restrict v_ptr, double* __restrict y_ptr) {
 
@@ -62,7 +62,7 @@ int vw_disorder_fill_d(
     return SUCCESS;
 }
 
-int vw_batch_fill_d(
+int vw_fill_batch_d(
     const unsigned int n, const unsigned int g, const unsigned int stride,
     const double* __restrict v_ptr, double* __restrict y_ptr) {
 
@@ -80,7 +80,7 @@ int vw_batch_fill_d(
         return FAILURE_BADALLOC;
     }
 
-    alignment_vector_d(g, stride, v_ptr, u_ptr);
+    repeat_vector_d(g, stride, v_ptr, u_ptr);
 
     for (unsigned int i = 0; i < nb; i += g) {
         for (unsigned int c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
@@ -132,10 +132,10 @@ void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<
 
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        vw_alignment_fill_d(n, stride, v_ptr, y_ptr);
+        vw_fill_aligned_d(n, stride, v_ptr, y_ptr);
         return;
     }
 
@@ -147,7 +147,7 @@ void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            if (vw_batch_fill_d(n, g, stride, v_ptr, y_ptr) == FAILURE_BADALLOC) {
+            if (vw_fill_batch_d(n, g, stride, v_ptr, y_ptr) == FAILURE_BADALLOC) {
                 throw gcnew System::OutOfMemoryException();
             }
             return;
@@ -155,8 +155,8 @@ void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<
     }
 
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+    Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    vw_disorder_fill_d(n, stride, v_ptr, y_ptr);
+    vw_fill_unaligned_d(n, stride, v_ptr, y_ptr);
 }

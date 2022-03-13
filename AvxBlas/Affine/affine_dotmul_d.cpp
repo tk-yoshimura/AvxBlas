@@ -10,7 +10,7 @@ using namespace System;
 
 #pragma unmanaged
 
-int affine_stride1_dotmul_d(
+int affine_dotmul_stride1_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -76,7 +76,7 @@ int affine_stride1_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride2_dotmul_d(
+int affine_dotmul_stride2_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -143,7 +143,7 @@ int affine_stride2_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride3_dotmul_d(
+int affine_dotmul_stride3_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -165,7 +165,7 @@ int affine_stride3_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride4_dotmul_d(
+int affine_dotmul_stride4_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -191,7 +191,7 @@ int affine_stride4_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride5to7_dotmul_d(
+int affine_dotmul_stride5to7_d(
     const unsigned int na, const unsigned int nb, const unsigned int stride,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -224,7 +224,7 @@ int affine_stride5to7_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride8_dotmul_d(
+int affine_dotmul_stride8_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -255,7 +255,7 @@ int affine_stride8_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride9to11_dotmul_d(
+int affine_dotmul_stride9to11_d(
     const unsigned int na, const unsigned int nb, const unsigned int stride,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -291,7 +291,7 @@ int affine_stride9to11_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride12_dotmul_d(
+int affine_dotmul_stride12_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -325,7 +325,7 @@ int affine_stride12_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride13to15_dotmul_d(
+int affine_dotmul_stride13to15_d(
     const unsigned int na, const unsigned int nb, const unsigned int stride,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -364,7 +364,7 @@ int affine_stride13to15_dotmul_d(
     return SUCCESS;
 }
 
-int affine_stride16_dotmul_d(
+int affine_dotmul_stride16_d(
     const unsigned int na, const unsigned int nb,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -401,7 +401,7 @@ int affine_stride16_dotmul_d(
     return SUCCESS;
 }
 
-int affine_alignment_dotmul_d(
+int affine_dotmul_aligned_d(
     const unsigned int na, const unsigned int nb, const unsigned int stride,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
@@ -412,21 +412,21 @@ int affine_alignment_dotmul_d(
 #endif // _DEBUG
 
     if (stride == 4) {
-        return affine_stride4_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride4_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
     if (stride == 8) {
-        return affine_stride8_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride8_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
     if (stride == 12) {
-        return affine_stride12_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride12_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
     if (stride == 16) {
-        return affine_stride16_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride16_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
 
     for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
         for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
-            double y = dotmul_alignment_d(stride, a_ptr + i, b_ptr + j);
+            double y = dotmul_aligned_d(stride, a_ptr + i, b_ptr + j);
 
             *y_ptr = y;
             y_ptr++;
@@ -436,34 +436,34 @@ int affine_alignment_dotmul_d(
     return SUCCESS;
 }
 
-int affine_disorder_dotmul_d(
+int affine_dotmul_unaligned_d(
     const unsigned int na, const unsigned int nb, const unsigned int stride,
     const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
 
     if (stride == 1) {
-        return affine_stride1_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride1_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
     if (stride == 2) {
-        return affine_stride2_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride2_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
     if (stride == 3) {
-        return affine_stride3_dotmul_d(na, nb, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride3_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
     if (stride < 8) {
-        return affine_stride5to7_dotmul_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride5to7_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
     if (stride < 12) {
-        return affine_stride9to11_dotmul_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride9to11_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
     if (stride < 16) {
-        return affine_stride13to15_dotmul_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+        return affine_dotmul_stride13to15_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
 
     const __m256i mask = _mm256_set_mask((stride & AVX2_DOUBLE_REMAIN_MASK) * 2);
 
     for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
         for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
-            double y = dotmul_disorder_d(stride, a_ptr + i, b_ptr + j, mask);
+            double y = dotmul_unaligned_d(stride, a_ptr + i, b_ptr + j, mask);
 
             *y_ptr = y;
             y_ptr++;
@@ -498,17 +498,17 @@ void AvxBlas::Affine::Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^
 
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
-        Console::WriteLine("type alignment");
+        Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        affine_alignment_dotmul_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+        affine_dotmul_aligned_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
         return;
     }
 
 #ifdef _DEBUG
-    Console::WriteLine("type disorder");
+    Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    affine_disorder_dotmul_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    affine_dotmul_unaligned_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     return;
 }
