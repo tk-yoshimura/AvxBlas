@@ -7,6 +7,120 @@ using namespace System;
 
 #pragma unmanaged
 
+int dense_backwardfilter_n1_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+
+#ifdef _DEBUG
+    if (ic != 1 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256i mask = _mm256_setmask_ps(oc & AVX2_FLOAT_REMAIN_MASK);
+
+    for (unsigned int i = 0; i < n; i++) {
+        kernelfma_n1_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+
+        x_ptr += ic;
+        y_ptr += oc;
+    }
+
+    return SUCCESS;
+}
+
+int dense_backwardfilter_n2_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+
+#ifdef _DEBUG
+    if (ic != 2 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256i mask = _mm256_setmask_ps((oc % (AVX2_FLOAT_STRIDE / 2)) * ic);
+
+    for (unsigned int i = 0; i < n; i++) {
+        kernelfma_n2_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+
+        x_ptr += ic;
+        y_ptr += oc;
+    }
+
+    return SUCCESS;
+}
+
+int dense_backwardfilter_n3_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+
+#ifdef _DEBUG
+    if (ic != 3 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256i mask = _mm256_setmask_ps((oc % 2) * ic);
+
+    for (unsigned int i = 0; i < n; i++) {
+        kernelfma_n3_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+
+        x_ptr += ic;
+        y_ptr += oc;
+    }
+
+    return SUCCESS;
+}
+
+int dense_backwardfilter_n4_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+
+#ifdef _DEBUG
+    if (ic != 4 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256i mask = _mm256_setmask_ps((oc % 2) * ic);
+
+    for (unsigned int i = 0; i < n; i++) {
+        kernelfma_n4_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+
+        x_ptr += ic;
+        y_ptr += oc;
+    }
+
+    return SUCCESS;
+}
+
+int dense_backwardfilter_nleq4_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+
+#ifdef _DEBUG
+    if (ic > AVX2_FLOAT_STRIDE / 2 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    if (ic == 1) {
+        return dense_backwardfilter_n1_s(n, 1, oc, x_ptr, y_ptr, w_ptr);
+    }
+    if (ic == 2) {
+        return dense_backwardfilter_n2_s(n, 2, oc, x_ptr, y_ptr, w_ptr);
+    }
+    if (ic == 3) {
+        return dense_backwardfilter_n3_s(n, 3, oc, x_ptr, y_ptr, w_ptr);
+    }
+    if (ic == 4) {
+        return dense_backwardfilter_n4_s(n, 4, oc, x_ptr, y_ptr, w_ptr);
+    }
+
+    return FAILURE_BADPARAM;
+}
+
 int dense_backwardfilter_n32x_s(
     const unsigned int n, const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
@@ -99,6 +213,13 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>
 #endif // _DEBUG
 
         dense_backwardfilter_aligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+    }
+    else if (ic <= AVX2_FLOAT_STRIDE / 2) {
+#ifdef _DEBUG
+        Console::WriteLine("type leq4");
+#endif // _DEBUG
+
+        dense_backwardfilter_nleq4_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
     else {
 #ifdef _DEBUG
