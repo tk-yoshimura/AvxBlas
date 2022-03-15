@@ -206,7 +206,7 @@ Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw,
 |ic|uint|in channels|||
 |oc|uint|out channels|||
 |iw|uint|in width|||
-|kw|uint|kernel width|||
+|kw|uint|kernel width||odd number|
 |x/dx|Array|input/output|(n, iw, ic)||
 |y/dy|Array|output/input|(n, ow, oc)|ow = iw-kw+1|
 |w/dw|Array|input/output|(kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
@@ -229,8 +229,8 @@ Convolution2D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint kw
 |oc|uint|out channels|||
 |iw|uint|in width|||
 |ih|uint|in height|||
-|kw|uint|kernel width|||
-|kh|uint|kenrel height|||
+|kw|uint|kernel width||odd number|
+|kh|uint|kenrel height||odd number|
 |x/dx|Array|input/output|(n, ih, iw, ic)||
 |y/dy|Array|output/input|(n, oh, ow, oc)|oh = ih-kh+1, ow = iw-kw+1|
 |w/dw|Array|input/output|(kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
@@ -254,9 +254,9 @@ Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id
 |iw|uint|in width|||
 |ih|uint|in height|||
 |id|uint|in depth|||
-|kw|uint|kernel width|||
-|kh|uint|kenrel height|||
-|kd|uint|kenrel depth|||
+|kw|uint|kernel width||odd number|
+|kh|uint|kenrel height||odd number|
+|kd|uint|kenrel depth||odd number|
 |x/dx|Array|input/output|(n, id, ih, iw, ic)||
 |y/dy|Array|output/input|(n, od, oh, ow, oc)|od = id-kd+1, oh = ih-kh+1, ow = iw-kw+1|
 |w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
