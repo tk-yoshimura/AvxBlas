@@ -48,7 +48,7 @@ namespace AvxBlasTest.DenseTest {
             double max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach (uint ic in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
+                foreach (uint ic in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65}) {
                     foreach (uint oc in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
                         double[] xval = (new double[ic * n]).Select((_, idx) => idx * 1e-3).ToArray();
                         double[] wval = (new double[ic * oc]).Select((_, idx) => (idx + 1) * 1e-3).Reverse().ToArray();

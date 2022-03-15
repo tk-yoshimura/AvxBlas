@@ -419,9 +419,9 @@ __forceinline void kernelfma_n3_aligned_s(
         __m256 w12 = _mm256_blend_ps(w1, w2, 0b11110000);
         __m256 w23 = _mm256_blend_ps(w2, w3, 0b11111100);
 
-        _mm256_storeu_ps(w_ptr, w01);
-        _mm256_storeu_ps(w_ptr + AVX2_FLOAT_STRIDE, w12);
-        _mm256_storeu_ps(w_ptr + AVX2_FLOAT_STRIDE * 2, w23);
+        _mm256_store_ps(w_ptr, w01);
+        _mm256_store_ps(w_ptr + AVX2_FLOAT_STRIDE, w12);
+        _mm256_store_ps(w_ptr + AVX2_FLOAT_STRIDE * 2, w23);
 
         src_ptr += 8;
         w_ptr += AVX2_FLOAT_STRIDE * 3;
