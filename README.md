@@ -210,7 +210,7 @@ Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw,
 |oc|uint|out channels|||
 |iw|uint|in width|||
 |kw|uint|kernel width||odd number|
-|padmode|PadMode|||None,Zero,Edge|
+|padmode|PadMode|padding mode||None,Zero,Edge|
 |x/dx|Array|input/output|(n, iw, ic)||
 |y/dy|Array|output/input|(n, ow, oc)|padmode=None: ow = iw-kw+1 <br/> padmode=Zero,Edge: ow = iw|
 |w/dw|Array|input/output|(kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
@@ -238,7 +238,7 @@ Convolution2D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint kw
 |ih|uint|in height|||
 |kw|uint|kernel width||odd number|
 |kh|uint|kenrel height||odd number|
-|padmode|PadMode|||None,Zero,Edge|
+|padmode|PadMode|padding mode||None,Zero,Edge|
 |x/dx|Array|input/output|(n, ih, iw, ic)||
 |y/dy|Array|output/input|(n, oh, ow, oc)|padmode=None: <br/>oh = ih-kh+1, ow = iw-kw+1<br/>padmode=Zero,Edge: <br/>oh = ih, ow = iw|
 |w/dw|Array|input/output|(kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
@@ -268,7 +268,7 @@ Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id
 |kw|uint|kernel width||odd number|
 |kh|uint|kenrel height||odd number|
 |kd|uint|kenrel depth||odd number|
-|padmode|PadMode|||None,Zero,Edge|
+|padmode|PadMode|padding mode||None,Zero,Edge|
 |x/dx|Array|input/output|(n, id, ih, iw, ic)||
 |y/dy|Array|output/input|(n, od, oh, ow, oc)|padmode=None: <br/>o_ = i_-k_+1<br/>padmode=Zero,Edge:<br/>o_ = i_|
 |w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w,  <br/>dw &ne; x,dy|
