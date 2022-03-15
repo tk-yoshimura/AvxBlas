@@ -210,7 +210,7 @@ Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw,
 |oc|uint|out channels|||
 |iw|uint|in width|||
 |kw|uint|kernel width||odd number|
-|padmode|PadMode|None,Zero,Edge|||
+|padmode|PadMode|||None,Zero,Edge|
 |pw|uint|pad width||padmode=None,pw=0 or padmode &ne; None,pw &ne; 0|
 |x/dx|Array|input/output|(n, iw, ic)||
 |y/dy|Array|output/input|(n, ow, oc)|ow = iw-kw+pw*2+1|
