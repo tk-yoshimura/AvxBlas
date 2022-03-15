@@ -270,7 +270,7 @@ Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id
 |kd|uint|kenrel depth||odd number|
 |padmode|PadMode|||None,Zero,Edge|
 |x/dx|Array|input/output|(n, id, ih, iw, ic)||
-|y/dy|Array|output/input|(n, od, oh, ow, oc)|padmode=None: <br/>o_ = i_-k_+1<br/>padmode=Zero,Edge:<br/>o_ = i_-k_+1|
+|y/dy|Array|output/input|(n, od, oh, ow, oc)|padmode=None: <br/>o_ = i_-k_+1<br/>padmode=Zero,Edge:<br/>o_ = i_|
 |w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w,  <br/>dw &ne; x,dy|
 
 ## Licence
