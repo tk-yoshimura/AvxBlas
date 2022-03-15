@@ -192,13 +192,13 @@ Dense.BackwardFilter(uint n, uint inch, uint outch, Array<T> x, Array<T> dy, Arr
 ### Convolution1D
 ```csharp
 Convolution1D.Forward(uint n, uint ic, uint oc, uint iw, uint kw, 
-                      PadMode padmode, uint pw,
+                      PadMode padmode, 
                       Array<T> x, Array<T> w, Array<T> y);
 Convolution1D.BackwardData(uint n, uint ic, uint oc, uint iw, uint kw, 
-                      PadMode padmode, uint pw,
+                      PadMode padmode, 
                       Array<T> dy, Array<T> w, Array<T> dx);
 Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw, 
-                      PadMode padmode, uint pw,
+                      PadMode padmode, 
                       Array<T> x, Array<T> dy, Array<T> dw);
 ```
 
@@ -211,9 +211,8 @@ Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw,
 |iw|uint|in width|||
 |kw|uint|kernel width||odd number|
 |padmode|PadMode|||None,Zero,Edge|
-|pw|uint|pad width||padmode=None,pw=0 or padmode &ne; None,pw &ne; 0|
 |x/dx|Array|input/output|(n, iw, ic)||
-|y/dy|Array|output/input|(n, ow, oc)|ow = iw-kw+pw*2+1|
+|y/dy|Array|output/input|(n, ow, oc)|padmode=None: ow = iw-kw+1 <br/> padmode=Zero,Edge: ow = iw|
 |w/dw|Array|input/output|(kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
 
 ### Convolution2D
