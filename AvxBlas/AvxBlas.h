@@ -94,6 +94,12 @@ namespace AvxBlas {
         static property bool IsSupportedFMA { bool get(); };
     };
 
+    public enum class PadMode {
+        None,
+        Zero,
+        Edge
+    };
+
     public ref class Elementwise abstract sealed {
         static Elementwise();
 
