@@ -17,13 +17,25 @@ int dense_backwardfilter_n1_s(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_setmask_ps(oc & AVX2_FLOAT_REMAIN_MASK);
+    unsigned int maskn = oc & AVX2_FLOAT_REMAIN_MASK;
 
-    for (unsigned int i = 0; i < n; i++) {
-        kernelfma_n1_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+    if (maskn > 0) {
+        const __m256i mask = _mm256_setmask_ps(maskn);
 
-        x_ptr += ic;
-        y_ptr += oc;
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n1_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+
+            x_ptr += ic;
+            y_ptr += oc;
+        }
+    }
+    else {
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n1_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+
+            x_ptr += ic;
+            y_ptr += oc;
+        }
     }
 
     return SUCCESS;
@@ -39,13 +51,25 @@ int dense_backwardfilter_n2_s(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_setmask_ps((oc % (AVX2_FLOAT_STRIDE / 2)) * ic);
+    unsigned int maskn = (oc % (AVX2_FLOAT_STRIDE / 2)) * ic;
 
-    for (unsigned int i = 0; i < n; i++) {
-        kernelfma_n2_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+    if (maskn > 0) {
+        const __m256i mask = _mm256_setmask_ps(maskn);
 
-        x_ptr += ic;
-        y_ptr += oc;
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n2_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+
+            x_ptr += ic;
+            y_ptr += oc;
+        }
+    }
+    else {
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n2_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+
+            x_ptr += ic;
+            y_ptr += oc;
+        }
     }
 
     return SUCCESS;
@@ -61,13 +85,24 @@ int dense_backwardfilter_n3_s(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_setmask_ps((oc % 2) * ic);
+    if (oc % 8 != 0) {
+        unsigned int maskn = 2 - (oc & 1);
+        const __m256i mask = _mm256_setmask_ps(maskn * ic);
 
-    for (unsigned int i = 0; i < n; i++) {
-        kernelfma_n3_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n3_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
 
-        x_ptr += ic;
-        y_ptr += oc;
+            x_ptr += ic;
+            y_ptr += oc;
+        }
+    }
+    else {
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n3_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+
+            x_ptr += ic;
+            y_ptr += oc;
+        }
     }
 
     return SUCCESS;
@@ -83,13 +118,23 @@ int dense_backwardfilter_n4_s(
     }
 #endif // _DEBUG
 
-    const __m256i mask = _mm256_setmask_ps((oc % 2) * ic);
+    if (oc % 2 != 0) {
+        const __m256i mask = _mm256_setmask_ps((oc % 2) * ic);
 
-    for (unsigned int i = 0; i < n; i++) {
-        kernelfma_n4_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n4_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
 
-        x_ptr += ic;
-        y_ptr += oc;
+            x_ptr += ic;
+            y_ptr += oc;
+        }
+    }
+    else {
+        for (unsigned int i = 0; i < n; i++) {
+            kernelfma_n4_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+
+            x_ptr += ic;
+            y_ptr += oc;
+        }
     }
 
     return SUCCESS;
