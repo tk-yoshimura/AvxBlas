@@ -262,8 +262,8 @@ Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id
 |kh|uint|kenrel height||odd number|
 |kd|uint|kenrel depth||odd number|
 |x/dx|Array|input/output|(n, id, ih, iw, ic)||
-|y/dy|Array|output/input|(n, od, oh, ow, oc)|od = id-kd+1, oh = ih-kh+1, ow = iw-kw+1|
-|w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
+|y/dy|Array|output/input|(n, od, oh, ow, oc)|od = id-kd+1, oh = ih-kh+1, <br/ >ow = iw-kw+1|
+|w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w,  <br/ >dw &ne; x,dy|
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
