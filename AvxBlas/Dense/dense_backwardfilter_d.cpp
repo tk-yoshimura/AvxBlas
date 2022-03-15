@@ -232,7 +232,7 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<double
 
     if ((ic % (AVX2_DOUBLE_STRIDE * 4)) == 0) {
 #ifdef _DEBUG
-        Console::WriteLine("type aligned x32");
+        Console::WriteLine("type aligned x16");
 #endif // _DEBUG
 
         dense_backwardfilter_n16x_d(n, ic, oc, x_ptr, y_ptr, w_ptr);
