@@ -218,10 +218,13 @@ Convolution1D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint kw,
 ### Convolution2D
 ```csharp
 Convolution2D.Forward(uint n, uint ic, uint oc, uint iw, uint ih, uint kw, uint kh, 
+                      PadMode padmode, 
                       Array<T> x, Array<T> w, Array<T> y);
 Convolution2D.BackwardData(uint n, uint ic, uint oc, uint iw, uint ih, uint kw, uint kh, 
+                      PadMode padmode, 
                       Array<T> dy, Array<T> w, Array<T> dx);
 Convolution2D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint kw, uint kh, 
+                      PadMode padmode, 
                       Array<T> x, Array<T> dy, Array<T> dw);
 ```
 
@@ -235,17 +238,21 @@ Convolution2D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint kw
 |ih|uint|in height|||
 |kw|uint|kernel width||odd number|
 |kh|uint|kenrel height||odd number|
+|padmode|PadMode|||None,Zero,Edge|
 |x/dx|Array|input/output|(n, ih, iw, ic)||
-|y/dy|Array|output/input|(n, oh, ow, oc)|oh = ih-kh+1, ow = iw-kw+1|
+|y/dy|Array|output/input|(n, oh, ow, oc)|padmode=None: <br/>oh = ih-kh+1, ow = iw-kw+1<br/>padmode=Zero,Edge: <br/>oh = ih, ow = iw|
 |w/dw|Array|input/output|(kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w, dw &ne; x,dy|
 
 ### Convolution3D
 ```csharp
 Convolution3D.Forward(uint n, uint ic, uint oc, uint iw, uint ih, uint id, uint kw, uint kh, uint kd, 
+                      PadMode padmode, 
                       Array<T> x, Array<T> w, Array<T> y);
 Convolution3D.BackwardData(uint n, uint ic, uint oc, uint iw, uint ih, uint id, uint kw, uint kh, uint kd, 
+                      PadMode padmode, 
                       Array<T> dy, Array<T> w, Array<T> dx);
 Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id, uint kw, uint kh, uint kd, 
+                      PadMode padmode, 
                       Array<T> x, Array<T> dy, Array<T> dw);
 ```
 
@@ -261,8 +268,9 @@ Convolution3D.BackwardFilter(uint n, uint ic, uint oc, uint iw, uint ih, uint id
 |kw|uint|kernel width||odd number|
 |kh|uint|kenrel height||odd number|
 |kd|uint|kenrel depth||odd number|
+|padmode|PadMode|||None,Zero,Edge|
 |x/dx|Array|input/output|(n, id, ih, iw, ic)||
-|y/dy|Array|output/input|(n, od, oh, ow, oc)|od = id-kd+1, oh = ih-kh+1, <br/>ow = iw-kw+1|
+|y/dy|Array|output/input|(n, od, oh, ow, oc)|padmode=None: <br/>o_ = i_-k_+1<br/>padmode=Zero,Edge:<br/>o_ = i_-k_+1|
 |w/dw|Array|input/output|(kd, kh, kw, oc, ic)|y &ne; x,w, dx &ne; dy,w,  <br/>dw &ne; x,dy|
 
 ## Licence
