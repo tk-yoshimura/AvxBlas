@@ -178,3 +178,11 @@ System::String^ AvxBlas::Util::InvalidArrayLength::get() {
 System::String^ AvxBlas::Util::DuplicatedArray::get() {
     return "The specified arrays are duplicated.";
 }
+
+System::String^ AvxBlas::Util::UndefinedEnum::get() {
+    return "The specified enum is undefined.";
+}
+
+System::String^ AvxBlas::Util::InvalidKernelSize::get() {
+    return "The specified kernel size is invalid.";
+}

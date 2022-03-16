@@ -46,6 +46,9 @@
     <Filter Include="Source\Dense">
       <UniqueIdentifier>{d8cb2fa7-3f2b-4f69-89a1-686cabc4f702}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Convolution1D">
+      <UniqueIdentifier>{57cb5677-237b-41bf-a8ac-c577a4005d74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -85,6 +88,18 @@
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_dilate.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_alignceil.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_matmul_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_matmul_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_imcol_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
   </ItemGroup>
@@ -208,6 +223,18 @@
     </ClCompile>
     <ClCompile Include="Dense\dense_backwardfilter_d.cpp">
       <Filter>Source\Dense</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution1D\conv1d_cctor.cpp">
+      <Filter>Source\Convolution1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution1D\conv1d_forward_s.cpp">
+      <Filter>Source\Convolution1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution1D\conv1d_backwarddata_s.cpp">
+      <Filter>Source\Convolution1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp">
+      <Filter>Source\Convolution1D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

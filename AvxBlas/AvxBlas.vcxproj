@@ -99,10 +99,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Inline\inline_alignceil.hpp" />
     <ClInclude Include="Inline\inline_dilate.hpp" />
     <ClInclude Include="Inline\inline_dotmul_d.hpp" />
+    <ClInclude Include="Inline\inline_imcol_s.hpp" />
     <ClInclude Include="Inline\inline_kernelfma_d.hpp" />
     <ClInclude Include="Inline\inline_kernelfma_s.hpp" />
+    <ClInclude Include="Inline\inline_matmul_d.hpp" />
+    <ClInclude Include="Inline\inline_matmul_s.hpp" />
     <ClInclude Include="Inline\inline_sum_d.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils.h" />
@@ -118,6 +122,10 @@
     <ClCompile Include="Constant\const_add_d.cpp" />
     <ClCompile Include="Constant\const_add_s.cpp" />
     <ClCompile Include="Constant\const_cctor.cpp" />
+    <ClCompile Include="Convolution1D\conv1d_backwarddata_s.cpp" />
+    <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp" />
+    <ClCompile Include="Convolution1D\conv1d_cctor.cpp" />
+    <ClCompile Include="Convolution1D\conv1d_forward_s.cpp" />
     <ClCompile Include="Dense\dense_backwarddata_d.cpp" />
     <ClCompile Include="Dense\dense_backwarddata_s.cpp" />
     <ClCompile Include="Dense\dense_backwardfilter_d.cpp" />

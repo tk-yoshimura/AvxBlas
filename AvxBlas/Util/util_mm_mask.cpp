@@ -6,8 +6,7 @@
 
 #pragma unmanaged
 
-const int __mask_mm128[7] = { -1, -1, -1, 0, 0, 0, 0 };
-const int __mask_mm256[15] = { -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0 };
+#define _MASK(i, n) (((i) < (n)) ? ~0u : 0u)
 
 __m128i _mm_setmask_ps(const unsigned int n) {
 #ifdef _DEBUG
@@ -16,7 +15,7 @@ __m128i _mm_setmask_ps(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm_loadu_epi32(__mask_mm128 + (3 - (n)));
+    return _mm_setr_epi32(_MASK(0, n), _MASK(1, n), _MASK(2, n), _MASK(3, n));
 }
 
 __m256i _mm256_setmask_ps(const unsigned int n) {
@@ -26,7 +25,7 @@ __m256i _mm256_setmask_ps(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm256_loadu_epi32(__mask_mm256 + (7 - (n)));
+    return _mm256_setr_epi32(_MASK(0, n), _MASK(1, n), _MASK(2, n), _MASK(3, n), _MASK(4, n), _MASK(5, n), _MASK(6, n), _MASK(7, n));
 }
 
 __m128i _mm_setmask_pd(const unsigned int n) {
@@ -36,7 +35,7 @@ __m128i _mm_setmask_pd(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm_loadu_epi32(__mask_mm128 + (3 - (n * 2)));
+    return _mm_setr_epi32(_MASK(0, n), _MASK(0, n), _MASK(1, n), _MASK(1, n));
 }
 
 __m256i _mm256_setmask_pd(const unsigned int n) {
@@ -46,5 +45,5 @@ __m256i _mm256_setmask_pd(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm256_loadu_epi32(__mask_mm256 + (7 - (n * 2)));
+    return _mm256_setr_epi32(_MASK(0, n), _MASK(0, n), _MASK(1, n), _MASK(1, n), _MASK(2, n), _MASK(2, n), _MASK(3, n), _MASK(3, n));
 }
