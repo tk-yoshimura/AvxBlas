@@ -65,35 +65,6 @@ namespace AvxBlas {
         !Array();
     };
 
-    public ref class Util abstract sealed {
-        internal:
-        generic <typename T> where T : ValueType
-            static void CheckLength(UInt32 length, ... cli::array<Array<T>^>^ arrays);
-
-        generic <typename T> where T : ValueType
-            static void CheckOutOfRange(UInt32 index, UInt32 length, ... cli::array<Array<T>^>^ arrays);
-
-        generic <typename T> where T : ValueType
-            static void CheckDuplicateArray(... cli::array<Array<T>^>^ arrays);
-
-        static void CheckProdOverflow(... cli::array<UInt32>^ arrays);
-
-        static property System::String^ AvxNotSupported { System::String^ get(); };
-        static property System::String^ InvalidArrayLength { System::String^ get(); };
-        static property System::String^ DuplicatedArray { System::String^ get(); };
-
-        static UInt32 LCM(UInt32 a, UInt32 b);
-        static UInt64 LCM(UInt64 a, UInt64 b);
-        static UInt32 GCD(UInt32 a, UInt32 b);
-        static UInt64 GCD(UInt64 a, UInt64 b);
-
-        public:
-        static property bool IsSupportedAVX { bool get(); };
-        static property bool IsSupportedAVX2 { bool get(); };
-        static property bool IsSupportedAVX512F { bool get(); };
-        static property bool IsSupportedFMA { bool get(); };
-    };
-
     public enum class PadMode {
         None,
         Zero,
@@ -171,6 +142,26 @@ namespace AvxBlas {
         static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<double>^ x, Array<double>^ dy, Array<double>^ dw);
     };
 
+    public ref class Convolution1D abstract sealed {
+        static Convolution1D();
+
+        public:
+        static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+                            PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
+        //static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+        //                    PadMode padmode, Array<double>^ x, Array<double>^ w, Array<double>^ y);
+
+        static void BackwardData(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+                                 PadMode padmode, Array<float>^ dy, Array<float>^ w, Array<float>^ dx);
+        //static void BackwardData(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+        //                         PadMode padmode, Array<double>^ dy, Array<double>^ w, Array<double>^ dx);
+
+        static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+                                   PadMode padmode, Array<float>^ x, Array<float>^ dy, Array<float>^ dw);
+        //static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+        //                           PadMode padmode, Array<double>^ x, Array<double>^ dy, Array<double>^ dw);
+    };
+
     public ref class Initialize abstract sealed {
         static Initialize();
 
@@ -184,5 +175,48 @@ namespace AvxBlas {
         static void Zeroset(UInt32 n, Array<double>^ y);
         static void Zeroset(UInt32 index, UInt32 n, Array<float>^ y);
         static void Zeroset(UInt32 index, UInt32 n, Array<double>^ y);
+    };
+
+    public ref class Util abstract sealed {
+        public:        
+        generic <typename T> where T : ValueType
+        static void CheckLength(UInt32 length, ... cli::array<Array<T>^>^ arrays);
+
+        generic <typename T> where T : ValueType
+        static void CheckOutOfRange(UInt32 index, UInt32 length, ... cli::array<Array<T>^>^ arrays);
+
+        generic <typename T> where T : ValueType
+        static void CheckDuplicateArray(... cli::array<Array<T>^>^ arrays);
+
+        static void CheckProdOverflow(... cli::array<UInt32>^ arrays);
+
+        static property bool IsSupportedAVX { bool get(); };
+        static property bool IsSupportedAVX2 { bool get(); };
+        static property bool IsSupportedAVX512F { bool get(); };
+        static property bool IsSupportedFMA { bool get(); };
+    };
+
+    private ref class Numeric abstract sealed {
+        public:
+        static UInt32 LCM(UInt32 a, UInt32 b);
+        static UInt64 LCM(UInt64 a, UInt64 b);
+        static UInt32 GCD(UInt32 a, UInt32 b);
+        static UInt64 GCD(UInt64 a, UInt64 b);
+    };
+
+    private ref class ErrorMessage abstract sealed {
+        public:
+        static initonly System::String^ AvxNotSupported =
+            "AVX2 not supported on this platform.";
+        static initonly System::String^ InvalidArrayLength =
+            "The specified array length is invalid.";
+        static initonly System::String^ DuplicatedArray =
+            "The specified arrays are duplicated.";
+        static initonly System::String^ UndefinedEnum =
+            "The specified enum is undefined.";
+        static initonly System::String^ InvalidKernelSize =
+            "The specified kernel size is invalid.";
+        static initonly System::String^ InvalidDataSize =
+            "The specified data size is invalid.";
     };
 }

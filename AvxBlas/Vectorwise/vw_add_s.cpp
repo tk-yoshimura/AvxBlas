@@ -162,7 +162,7 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<float>^ x, Array<fl
     }
 
     if (stride <= MAX_VECTORWISE_ALIGNMNET_INCX) {
-        UInt32 g = Util::LCM(stride, AVX2_FLOAT_STRIDE) / stride;
+        UInt32 g = Numeric::LCM(stride, AVX2_FLOAT_STRIDE) / stride;
 
         if (n >= g * 4) {
 

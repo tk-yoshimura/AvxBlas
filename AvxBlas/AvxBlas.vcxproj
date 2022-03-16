@@ -100,6 +100,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Inline\inline_alignceil.hpp" />
+    <ClInclude Include="Inline\inline_copy_s.hpp" />
     <ClInclude Include="Inline\inline_dilate.hpp" />
     <ClInclude Include="Inline\inline_dotmul_d.hpp" />
     <ClInclude Include="Inline\inline_imcol_s.hpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Inline\inline_matmul_d.hpp" />
     <ClInclude Include="Inline\inline_matmul_s.hpp" />
     <ClInclude Include="Inline\inline_sum_d.hpp" />
+    <ClInclude Include="Inline\inline_zeroset_s.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

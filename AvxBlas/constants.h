@@ -1,3 +1,5 @@
+#pragma once
+
 #define SUCCESS (0)
 #define FAILURE_BADPARAM (-1)
 #define FAILURE_BADALLOC (-2)
@@ -17,3 +19,4 @@
 #define MAX_AGGREGATE_BATCHING (64)
 
 #define MAX_KERNEL_SIZE (65537)
+#define MAX_DATA_SIZE (16777216)

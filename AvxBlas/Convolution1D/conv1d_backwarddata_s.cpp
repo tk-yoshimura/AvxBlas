@@ -11,10 +11,10 @@ void AvxBlas::Convolution1D::BackwardData(
     PadMode padmode, Array<float>^ dy, Array<float>^ w, Array<float>^ dx) {
 
     if (!Enum::IsDefined(PadMode::typeid, padmode)) {
-        throw gcnew System::ArgumentException(Util::UndefinedEnum);
+        throw gcnew System::ArgumentException(ErrorMessage::UndefinedEnum);
     }
     if ((kw & 1) == 0 || kw > MAX_KERNEL_SIZE || ((iw < kw) && padmode == PadMode::None)) {
-        throw gcnew System::ArgumentOutOfRangeException(Util::InvalidKernelSize);
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
     }
 
     if (n <= 0 || ic <= 0 || oc <= 0 || iw <= 0) {

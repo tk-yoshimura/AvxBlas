@@ -4,9 +4,28 @@
 #include "../constants.h"
 #include "../utils.h"
 
+#include "inline_copy_s.hpp"
+#include "inline_zeroset_s.hpp"
+
 #ifdef _DEBUG
 #include <exception>
 #endif // _DEBUG
+
+#pragma region padnone
+
+__forceinline void imcol1d_padnone_n32x_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const float* im_ptr, float* col_ptr) {
+
+#ifdef _DEBUG
+    if (((c * kw) % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    copy_n32x_s(c * kw, im_ptr + c * ix, col_ptr);
+}
 
 __forceinline void imcol1d_padnone_aligned_s(
     const unsigned int c, 
@@ -18,47 +37,8 @@ __forceinline void imcol1d_padnone_aligned_s(
         throw std::exception();
     }
 #endif // _DEBUG
-
-    im_ptr += c * ix;
-
-    unsigned int r = c * kw;
-        
-    while (r >= AVX2_FLOAT_STRIDE * 4) {
-        __m256 x0 = _mm256_load_ps(im_ptr);
-        __m256 x1 = _mm256_load_ps(im_ptr + AVX2_FLOAT_STRIDE);
-        __m256 x2 = _mm256_load_ps(im_ptr + AVX2_FLOAT_STRIDE * 2);
-        __m256 x3 = _mm256_load_ps(im_ptr + AVX2_FLOAT_STRIDE * 3);
-
-        _mm256_store_ps(col_ptr, x0);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE, x1);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, x2);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE * 3, x3);
-
-        im_ptr += AVX2_FLOAT_STRIDE * 4;
-        col_ptr += AVX2_FLOAT_STRIDE * 4;
-        r -= AVX2_FLOAT_STRIDE * 4;
-    }
-    if (r >= AVX2_FLOAT_STRIDE * 3) {
-        __m256 x0 = _mm256_load_ps(im_ptr);
-        __m256 x1 = _mm256_load_ps(im_ptr + AVX2_FLOAT_STRIDE);
-        __m256 x2 = _mm256_load_ps(im_ptr + AVX2_FLOAT_STRIDE * 2);
-
-        _mm256_store_ps(col_ptr, x0);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE, x1);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, x2);
-    }
-    else if (r >= AVX2_FLOAT_STRIDE * 2) {
-        __m256 x0 = _mm256_load_ps(im_ptr);
-        __m256 x1 = _mm256_load_ps(im_ptr + AVX2_FLOAT_STRIDE);
-
-        _mm256_store_ps(col_ptr, x0);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE, x1);
-    }
-    else if (r >= AVX2_FLOAT_STRIDE) {
-        __m256 x0 = _mm256_load_ps(im_ptr);
-        
-        _mm256_store_ps(col_ptr, x0);
-    }
+            
+    copy_aligned_s(c * kw, im_ptr + c * ix, col_ptr);
 }
 
 __forceinline float imcol1d_padnone_unaligned_s(
@@ -72,56 +52,22 @@ __forceinline float imcol1d_padnone_unaligned_s(
     }
 #endif // _DEBUG
 
-    im_ptr += c * ix;
+    copy_unaligned_s(c * kw, im_ptr + c * ix, col_ptr, mask);
+}
 
-    unsigned int r = c * kw;
+__forceinline void imcol2d_padnone_n32x_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const float* im_ptr, float* col_ptr) {
 
-    while (r >= AVX2_FLOAT_STRIDE * 4) {
-        __m256 x0 = _mm256_loadu_ps(im_ptr);
-        __m256 x1 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE);
-        __m256 x2 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE * 2);
-        __m256 x3 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE * 3);
+    im_ptr += c * iw * iy;
 
-        _mm256_storeu_ps(col_ptr, x0);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE, x1);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, x2);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE * 3, x3);
+    for (int ky = 0; ky < kh; ky++) {
+        imcol1d_padnone_n32x_s(c, kw, iw, ix, im_ptr, col_ptr);
 
-        im_ptr += AVX2_FLOAT_STRIDE * 4;
-        col_ptr += AVX2_FLOAT_STRIDE * 4;
-        r -= AVX2_FLOAT_STRIDE * 4;
-    }
-    if (r >= AVX2_FLOAT_STRIDE * 3) {
-        __m256 x0 = _mm256_loadu_ps(im_ptr);
-        __m256 x1 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE);
-        __m256 x2 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE * 2);
-        __m256 x3 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE * 3);
-
-        _mm256_storeu_ps(col_ptr, x0);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE, x1);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, x2);
-        _mm256_maskstore_ps(col_ptr + AVX2_FLOAT_STRIDE * 3, mask, x3);
-    }
-    else if (r >= AVX2_FLOAT_STRIDE * 2) {
-        __m256 x0 = _mm256_loadu_ps(im_ptr);
-        __m256 x1 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE);
-        __m256 x2 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE * 2);
-
-        _mm256_storeu_ps(col_ptr, x0);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE, x1);
-        _mm256_maskstore_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, mask, x2);
-    }
-    else if (r >= AVX2_FLOAT_STRIDE) {
-        __m256 x0 = _mm256_loadu_ps(im_ptr);
-        __m256 x1 = _mm256_loadu_ps(im_ptr + AVX2_FLOAT_STRIDE);
-
-        _mm256_storeu_ps(col_ptr, x0);
-        _mm256_maskstore_ps(col_ptr + AVX2_FLOAT_STRIDE, mask, x1);
-    }
-    else {
-        __m256 x0 = _mm256_loadu_ps(im_ptr);
-
-        _mm256_maskstore_ps(col_ptr, mask, x0);
+        im_ptr += c * iw;
+        col_ptr += c * kw;
     }
 }
 
@@ -154,6 +100,23 @@ __forceinline void imcol2d_padnone_unaligned_s(
 
         im_ptr += c * iw;
         col_ptr += c * kw;
+    }
+}
+
+__forceinline void imcol3d_padnone_n32x_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const unsigned int kd, const unsigned int id, const unsigned int iz,
+    const float* im_ptr, float* col_ptr) {
+
+    im_ptr += c * iw * ih * iz;
+
+    for (int kz = 0; kz < kd; kz++) {
+        imcol2d_padnone_n32x_s(c, kw, iw, ix, kh, ih, iy, im_ptr, col_ptr);
+
+        im_ptr += c * iw * ih;
+        col_ptr += c * kw * kh;
     }
 }
 
@@ -190,3 +153,201 @@ __forceinline void imcol3d_padnone_unaligned_s(
         col_ptr += c * kw * kh;
     }
 }
+
+#pragma endregion padnone
+
+#pragma region padzero
+
+__forceinline void imcol1d_padzero_n32x_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const float* im_ptr, float* col_ptr) {
+
+#ifdef _DEBUG
+    if ((c % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    const unsigned int pw = kw / 2;
+
+    if (ix >= pw && iw - ix < pw) {
+        copy_n32x_s(c * kw, im_ptr + c * (ix - pw), col_ptr);
+    }
+    else {
+        for (unsigned int kx = 0, x = ix - pw; kx < kw; kx++, x++) {
+            if (x < iw) {
+                copy_n32x_s(c, im_ptr + c * x, col_ptr);
+            }
+            else {
+                zeroset_n32x_s(c, col_ptr);
+            }
+            col_ptr += c;
+        }
+    }
+}
+
+__forceinline void imcol1d_padzero_aligned_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const float* im_ptr, float* col_ptr) {
+
+#ifdef _DEBUG
+    if ((c & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    const unsigned int pw = kw / 2;
+
+    if (ix >= pw && iw - ix < pw) {
+        copy_aligned_s(c * kw, im_ptr + c * (ix - pw), col_ptr);
+    }
+    else {
+        for (unsigned int kx = 0, x = ix - pw; kx < kw; kx++, x++) {
+            if (x < iw) {
+                copy_aligned_s(c, im_ptr + c * x, col_ptr);
+            }
+            else {
+                zeroset_aligned_s(c, col_ptr);
+            }
+            col_ptr += c;
+        }
+    }
+}
+
+__forceinline float imcol1d_padzero_unaligned_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const float* im_ptr, float* col_ptr, const __m256i mask) {
+
+#ifdef _DEBUG
+    if (((c * kw) & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    const unsigned int pw = kw / 2;
+
+    if (ix >= pw && iw - ix < pw) {
+        copy_unaligned_s(c * kw, im_ptr + c * (ix - pw), col_ptr, mask);
+    }
+    else {
+        const __m256i mask_c = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
+
+        for (unsigned int kx = 0, x = ix - pw; kx < kw; kx++, x++) {
+            if (x < iw) {
+                copy_unaligned_s(c, im_ptr + c * x, col_ptr, mask_c);
+            }
+            else {
+                zeroset_unaligned_s(c, col_ptr, mask_c);
+            }
+            col_ptr += c;
+        }
+    }
+}
+
+__forceinline void imcol2d_padzero_n32x_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const float* im_ptr, float* col_ptr) {
+
+    const unsigned int ph = kh / 2;
+
+    for (int ky = 0, y = iy - ph; ky < kh; ky++, y++) {
+        if (y < ih) {
+            imcol1d_padzero_n32x_s(c, kw, iw, ix, im_ptr + c * iw * y, col_ptr);
+        }
+        else {
+            zeroset_n32x_s(c * kw, col_ptr);
+        }
+
+        col_ptr += c * kw;
+    }
+}
+
+__forceinline void imcol2d_padzero_aligned_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const float* im_ptr, float* col_ptr) {
+
+    im_ptr += c * iw * iy;
+
+    for (int ky = 0; ky < kh; ky++) {
+        imcol1d_padnone_aligned_s(c, kw, iw, ix, im_ptr, col_ptr);
+
+        im_ptr += c * iw;
+        col_ptr += c * kw;
+    }
+}
+
+__forceinline void imcol2d_padzero_unaligned_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const float* im_ptr, float* col_ptr, const __m256i mask) {
+
+    im_ptr += c * iw * iy;
+
+    for (int ky = 0; ky < kh; ky++) {
+        imcol1d_padnone_unaligned_s(c, kw, iw, ix, im_ptr, col_ptr, mask);
+
+        im_ptr += c * iw;
+        col_ptr += c * kw;
+    }
+}
+
+__forceinline void imcol3d_padzero_n32x_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const unsigned int kd, const unsigned int id, const unsigned int iz,
+    const float* im_ptr, float* col_ptr) {
+
+    im_ptr += c * iw * ih * iz;
+
+    for (int kz = 0; kz < kd; kz++) {
+        imcol2d_padnone_n32x_s(c, kw, iw, ix, kh, ih, iy, im_ptr, col_ptr);
+
+        im_ptr += c * iw * ih;
+        col_ptr += c * kw * kh;
+    }
+}
+
+__forceinline void imcol3d_padzero_aligned_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const unsigned int kd, const unsigned int id, const unsigned int iz,
+    const float* im_ptr, float* col_ptr) {
+
+    im_ptr += c * iw * ih * iz;
+
+    for (int kz = 0; kz < kd; kz++) {
+        imcol2d_padnone_aligned_s(c, kw, iw, ix, kh, ih, iy, im_ptr, col_ptr);
+
+        im_ptr += c * iw * ih;
+        col_ptr += c * kw * kh;
+    }
+}
+
+__forceinline void imcol3d_padzero_unaligned_s(
+    const unsigned int c,
+    const unsigned int kw, const unsigned int iw, const unsigned int ix,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy,
+    const unsigned int kd, const unsigned int id, const unsigned int iz,
+    const float* im_ptr, float* col_ptr, const __m256i mask) {
+
+    im_ptr += c * iw * ih * iz;
+
+    for (int kz = 0; kz < kd; kz++) {
+        imcol2d_padnone_unaligned_s(c, kw, iw, ix, kh, ih, iy, im_ptr, col_ptr, mask);
+
+        im_ptr += c * iw * ih;
+        col_ptr += c * kw * kh;
+    }
+}
+
+#pragma endregion padzero

@@ -683,7 +683,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
     }
 
     if (stride <= MAX_AGGREGATE_BATCHING) {
-        UInt32 g = Util::LCM(stride, AVX2_FLOAT_STRIDE) / stride;
+        UInt32 g = Numeric::LCM(stride, AVX2_FLOAT_STRIDE) / stride;
 
         if (samples >= g * 4) {
 #ifdef _DEBUG

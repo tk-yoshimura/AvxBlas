@@ -6,7 +6,9 @@
 
 #pragma unmanaged
 
-#define _MASK(i, n) (((i) < (n)) ? ~0u : 0u)
+__forceinline int fz(unsigned int i, unsigned n) {
+    return (i < n) ? ~0u : 0u;
+}
 
 __m128i _mm_setmask_ps(const unsigned int n) {
 #ifdef _DEBUG
@@ -15,7 +17,7 @@ __m128i _mm_setmask_ps(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm_setr_epi32(_MASK(0, n), _MASK(1, n), _MASK(2, n), _MASK(3, n));
+    return _mm_setr_epi32(fz(0, n), fz(1, n), fz(2, n), fz(3, n));
 }
 
 __m256i _mm256_setmask_ps(const unsigned int n) {
@@ -25,7 +27,7 @@ __m256i _mm256_setmask_ps(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm256_setr_epi32(_MASK(0, n), _MASK(1, n), _MASK(2, n), _MASK(3, n), _MASK(4, n), _MASK(5, n), _MASK(6, n), _MASK(7, n));
+    return _mm256_setr_epi32(fz(0, n), fz(1, n), fz(2, n), fz(3, n), fz(4, n), fz(5, n), fz(6, n), fz(7, n));
 }
 
 __m128i _mm_setmask_pd(const unsigned int n) {
@@ -35,7 +37,7 @@ __m128i _mm_setmask_pd(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm_setr_epi32(_MASK(0, n), _MASK(0, n), _MASK(1, n), _MASK(1, n));
+    return _mm_setr_epi32(fz(0, n), fz(0, n), fz(1, n), fz(1, n));
 }
 
 __m256i _mm256_setmask_pd(const unsigned int n) {
@@ -45,5 +47,5 @@ __m256i _mm256_setmask_pd(const unsigned int n) {
     }
 #endif // _DEBUG
 
-    return _mm256_setr_epi32(_MASK(0, n), _MASK(0, n), _MASK(1, n), _MASK(1, n), _MASK(2, n), _MASK(2, n), _MASK(3, n), _MASK(3, n));
+    return _mm256_setr_epi32(fz(0, n), fz(0, n), fz(1, n), fz(1, n), fz(2, n), fz(2, n), fz(3, n), fz(3, n));
 }

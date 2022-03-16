@@ -102,6 +102,12 @@
     <ClInclude Include="Inline\inline_imcol_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_copy_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_zeroset_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">

@@ -3,7 +3,7 @@ using namespace System;
 
 #pragma managed
 
-UInt32 AvxBlas::Util::GCD(UInt32 a, UInt32 b) {
+UInt32 AvxBlas::Numeric::GCD(UInt32 a, UInt32 b) {
     if (b == 0) {
         return a;
     }
@@ -11,7 +11,7 @@ UInt32 AvxBlas::Util::GCD(UInt32 a, UInt32 b) {
     return GCD(b, a % b);
 }
 
-UInt32 AvxBlas::Util::LCM(UInt32 a, UInt32 b) {
+UInt32 AvxBlas::Numeric::LCM(UInt32 a, UInt32 b) {
     UInt32 c = a / GCD(a, b);
 
     if (b > 0 && c > (~0u) / b) {
@@ -21,7 +21,7 @@ UInt32 AvxBlas::Util::LCM(UInt32 a, UInt32 b) {
     return c * b;
 }
 
-UInt64 AvxBlas::Util::GCD(UInt64 a, UInt64 b) {
+UInt64 AvxBlas::Numeric::GCD(UInt64 a, UInt64 b) {
     if (b == 0) {
         return a;
     }
@@ -29,7 +29,7 @@ UInt64 AvxBlas::Util::GCD(UInt64 a, UInt64 b) {
     return GCD(b, a % b);
 }
 
-UInt64 AvxBlas::Util::LCM(UInt64 a, UInt64 b) {
+UInt64 AvxBlas::Numeric::LCM(UInt64 a, UInt64 b) {
     UInt64 c = a / GCD(a, b);
 
     if (b > 0 && c > (~0ul) / b) {

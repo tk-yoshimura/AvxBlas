@@ -100,7 +100,7 @@ void AvxBlas::Util::CheckLength(UInt32 length, ...cli::array<Array<T>^>^ arrays)
 
     for each (Array<T> ^ array in arrays) {
         if (length > (unsigned int)array->Length) {
-            throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
+            throw gcnew System::IndexOutOfRangeException(AvxBlas::ErrorMessage::InvalidArrayLength);
         }
     }
 }
@@ -112,12 +112,12 @@ void AvxBlas::Util::CheckOutOfRange(UInt32 index, UInt32 length, ...cli::array<A
     }
 
     if (index + length < index) {
-        throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
+        throw gcnew System::IndexOutOfRangeException(AvxBlas::ErrorMessage::InvalidArrayLength);
     }
 
     for each (Array<T> ^ array in arrays) {
         if (index >= (unsigned int)array->Length || index + length > (unsigned int)array->Length) {
-            throw gcnew System::IndexOutOfRangeException(AvxBlas::Util::InvalidArrayLength);
+            throw gcnew System::IndexOutOfRangeException(AvxBlas::ErrorMessage::InvalidArrayLength);
         }
     }
 }
@@ -127,7 +127,7 @@ void AvxBlas::Util::CheckDuplicateArray(... cli::array<Array<T>^>^ arrays) {
     for (int i = 0; i < arrays->Length; i++) {
         for (int j = 0; j < i; j++) {
             if (ReferenceEquals(arrays[i], arrays[j])) {
-                throw gcnew System::ArgumentException(AvxBlas::Util::DuplicatedArray);
+                throw gcnew System::ArgumentException(AvxBlas::ErrorMessage::DuplicatedArray);
             }
         }
     }
@@ -165,24 +165,4 @@ bool AvxBlas::Util::IsSupportedAVX512F::get() {
 
 bool AvxBlas::Util::IsSupportedFMA::get() {
     return is_supported_fma();
-}
-
-System::String^ AvxBlas::Util::AvxNotSupported::get() {
-    return "AVX2 not supported on this platform.";
-}
-
-System::String^ AvxBlas::Util::InvalidArrayLength::get() {
-    return "The specified array length is invalid.";
-}
-
-System::String^ AvxBlas::Util::DuplicatedArray::get() {
-    return "The specified arrays are duplicated.";
-}
-
-System::String^ AvxBlas::Util::UndefinedEnum::get() {
-    return "The specified enum is undefined.";
-}
-
-System::String^ AvxBlas::Util::InvalidKernelSize::get() {
-    return "The specified kernel size is invalid.";
 }
