@@ -90,7 +90,7 @@
     <ClInclude Include="Inline\inline_dilate.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_alignceil.hpp">
+    <ClInclude Include="Inline\inline_numeric.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_matmul_s.hpp">
@@ -241,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp">
       <Filter>Source\Convolution1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\util_align_kernel.cpp">
+      <Filter>Source\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

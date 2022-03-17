@@ -9,7 +9,10 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline void matmul_n32x_s(const unsigned int ic, const unsigned int oc, const float* x_ptr, const float* w_ptr, float* y_ptr) {
+__forceinline void matmul_n32x_s(
+    const unsigned int ic, const unsigned int oc, 
+    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+
     for (unsigned int i = 0; i < oc; i++) {
         float y = dotmul_n32x_s(ic, x_ptr, w_ptr);
         
@@ -20,7 +23,10 @@ __forceinline void matmul_n32x_s(const unsigned int ic, const unsigned int oc, c
     }
 }
 
-__forceinline void matmul_aligned_s(const unsigned int ic, const unsigned int oc, const float* x_ptr, const float* w_ptr, float* y_ptr) {
+__forceinline void matmul_aligned_s(
+    const unsigned int ic, const unsigned int oc, 
+    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+
     for (unsigned int i = 0; i < oc; i++) {
         float y = dotmul_aligned_s(ic, x_ptr, w_ptr);
 
@@ -31,7 +37,10 @@ __forceinline void matmul_aligned_s(const unsigned int ic, const unsigned int oc
     }
 }
 
-__forceinline float matmul_unaligned_s(const unsigned int ic, const unsigned int oc, const float* x_ptr, const float* w_ptr, float* y_ptr, const __m256i mask) {
+__forceinline float matmul_unaligned_s(
+    const unsigned int ic, const unsigned int oc, 
+    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr, const __m256i mask) {
+
     for (unsigned int i = 0; i < oc; i++) {
         float y = dotmul_unaligned_s(ic, x_ptr, w_ptr, mask);
 

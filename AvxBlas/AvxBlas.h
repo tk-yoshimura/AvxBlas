@@ -214,6 +214,10 @@ namespace AvxBlas {
             "The specified arrays are duplicated.";
         static initonly System::String^ UndefinedEnum =
             "The specified enum is undefined.";
+        static initonly System::String^ InvalidBatches =
+            "The specified batches is invalid.";
+        static initonly System::String^ InvalidChannels =
+            "The specified channels is invalid.";
         static initonly System::String^ InvalidKernelSize =
             "The specified kernel size is invalid.";
         static initonly System::String^ InvalidDataSize =

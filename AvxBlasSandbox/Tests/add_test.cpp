@@ -18,7 +18,7 @@ int add_stride8_s(
         n -= AVX2_FLOAT_STRIDE;
     }
     if (n > 0) {
-        const __m256i mask = _mm256_set_mask(n);
+        const __m256i mask = _mm256_setmask_ps(n);
 
         __m256 x1 = _mm256_maskload_ps(x1_ptr, mask);
         __m256 x2 = _mm256_maskload_ps(x2_ptr, mask);
@@ -66,7 +66,7 @@ int add_stride16_s(
         n -= AVX2_FLOAT_STRIDE;
     }
     if (n > 0) {
-        const __m256i mask = _mm256_set_mask(n);
+        const __m256i mask = _mm256_setmask_ps(n);
 
         __m256 x1 = _mm256_maskload_ps(x1_ptr, mask);
         __m256 x2 = _mm256_maskload_ps(x2_ptr, mask);
@@ -141,7 +141,7 @@ int add_stride32_s(
         n -= AVX2_FLOAT_STRIDE;
     }
     if (n > 0) {
-        const __m256i mask = _mm256_set_mask(n);
+        const __m256i mask = _mm256_setmask_ps(n);
 
         __m256 x1 = _mm256_maskload_ps(x1_ptr, mask);
         __m256 x2 = _mm256_maskload_ps(x2_ptr, mask);

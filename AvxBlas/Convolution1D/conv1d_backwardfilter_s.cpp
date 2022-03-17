@@ -16,8 +16,17 @@ void AvxBlas::Convolution1D::BackwardFilter(
     if (!Enum::IsDefined(PadMode::typeid, padmode)) {
         throw gcnew System::ArgumentException(ErrorMessage::UndefinedEnum);
     }
+    if (n > MAX_BATCHES) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidBatches);
+    }
+    if (ic > MAX_CHANNELS || oc > MAX_CHANNELS) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidChannels);
+    }
     if ((kw & 1) == 0 || kw > MAX_KERNEL_SIZE || ((iw < kw) && padmode == PadMode::None)) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
+    }
+    if (iw > MAX_DATA_SIZE) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 
     if (n <= 0 || ic <= 0 || oc <= 0 || iw <= 0) {
@@ -33,4 +42,6 @@ void AvxBlas::Convolution1D::BackwardFilter(
     Util::CheckLength(n * ic * iw, x);
     Util::CheckLength(n * oc * ow, dy);
     Util::CheckLength(ic * oc * kw, dw);
+
+    throw gcnew System::NotImplementedException();
 }

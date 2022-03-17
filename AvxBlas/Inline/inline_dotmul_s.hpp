@@ -9,7 +9,7 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline float dotmul_n32x_s(const unsigned int n, const float* x_ptr, const float* y_ptr) {
+__forceinline float dotmul_n32x_s(const unsigned int n, const float* __restrict x_ptr, const float* __restrict y_ptr) {
 #ifdef _DEBUG
     if (n <= 0 || (n % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -45,7 +45,7 @@ __forceinline float dotmul_n32x_s(const unsigned int n, const float* x_ptr, cons
     return ret;
 }
 
-__forceinline float dotmul_aligned_s(unsigned int n, const float* x_ptr, const float* y_ptr) {
+__forceinline float dotmul_aligned_s(const unsigned int n, const float* __restrict x_ptr, const float* __restrict y_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -83,7 +83,7 @@ __forceinline float dotmul_aligned_s(unsigned int n, const float* x_ptr, const f
     return ret;
 }
 
-__forceinline float dotmul_unaligned_s(unsigned int n, const float* x_ptr, const float* y_ptr, const __m256i mask) {
+__forceinline float dotmul_unaligned_s(const unsigned int n, const float* __restrict x_ptr, const float* __restrict y_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();

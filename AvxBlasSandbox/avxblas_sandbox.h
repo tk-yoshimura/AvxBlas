@@ -6,8 +6,10 @@
 #define AVX2_FLOAT_BATCH_MASK (~7u)
 #define AVX2_FLOAT_REMAIN_MASK (7u)
 
-extern __m256i _mm256_set_mask(const unsigned int n);
-extern __m128i _mm_set_mask(const unsigned int n);
+extern __m256i _mm256_setmask_ps(const unsigned int n);
+extern __m128i _mm_setmask_ps(const unsigned int n);
+extern __m256i _mm256_setmask_pd(const unsigned int n);
+extern __m128i _mm_setmask_pd(const unsigned int n);
 
 extern int add_stride8_s(
     const unsigned int n,

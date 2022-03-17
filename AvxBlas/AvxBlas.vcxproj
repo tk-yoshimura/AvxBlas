@@ -99,7 +99,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Inline\inline_alignceil.hpp" />
+    <ClInclude Include="Inline\inline_numeric.hpp" />
     <ClInclude Include="Inline\inline_copy_s.hpp" />
     <ClInclude Include="Inline\inline_dilate.hpp" />
     <ClInclude Include="Inline\inline_dotmul_d.hpp" />
@@ -152,6 +152,7 @@
     <ClCompile Include="Transform\transform_cctor.cpp" />
     <ClCompile Include="Transform\transform_transpose_d.cpp" />
     <ClCompile Include="Transform\transform_transpose_s.cpp" />
+    <ClCompile Include="Util\util_align_kernel.cpp" />
     <ClCompile Include="Util\util_repeat_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />

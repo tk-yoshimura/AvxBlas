@@ -220,6 +220,13 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<double
         return;
     }
 
+    if (n > MAX_BATCHES) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidBatches);
+    }
+    if (ic > MAX_CHANNELS || oc > MAX_CHANNELS) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidChannels);
+    }
+
     Util::CheckProdOverflow(n, ic);
     Util::CheckProdOverflow(n, oc);
     Util::CheckProdOverflow(ic, oc);
