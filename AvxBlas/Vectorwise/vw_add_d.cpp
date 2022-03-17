@@ -148,8 +148,8 @@ void AvxBlas::Vectorwise::Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<d
 
     Util::CheckDuplicateArray(v, y);
 
-    double* x_ptr = (double*)(x->Ptr.ToPointer());
-    double* v_ptr = (double*)(v->Ptr.ToPointer());
+    const double* x_ptr = (const double*)(x->Ptr.ToPointer());
+    const double* v_ptr = (const double*)(v->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {

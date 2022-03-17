@@ -534,7 +534,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
         return;
     }
 
-    double* x_ptr = (double*)(x->Ptr.ToPointer());
+    const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     if (stride == 1u) {

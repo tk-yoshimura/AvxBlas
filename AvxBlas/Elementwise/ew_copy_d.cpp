@@ -77,7 +77,7 @@ void AvxBlas::Elementwise::Copy(UInt32 n, Array<double>^ x, Array<double>^ y) {
 
     Util::CheckLength(n, x, y);
 
-    double* x_ptr = (double*)(x->Ptr.ToPointer());
+    const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     ew_copy_d(n, x_ptr, y_ptr);

@@ -87,7 +87,7 @@ void AvxBlas::Constant::Add(UInt32 n, Array<double>^ x, double c, Array<double>^
 
     Util::CheckLength(n, x, y);
 
-    double* x_ptr = (double*)(x->Ptr.ToPointer());
+    const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     const_add_d(n, x_ptr, c, y_ptr);

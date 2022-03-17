@@ -20,7 +20,7 @@ __forceinline void imcol1d_padnone_n32x_s(
     const float* __restrict im_ptr, float* __restrict col_ptr) {
 
 #ifdef _DEBUG
-    if (((c * kw) % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((c % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
@@ -34,7 +34,7 @@ __forceinline void imcol1d_padnone_aligned_s(
     const float* __restrict im_ptr, float* __restrict col_ptr) {
 
 #ifdef _DEBUG
-    if (((c * kw) & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((c & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
@@ -48,7 +48,7 @@ __forceinline void imcol1d_padnone_unaligned_s(
     const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
-    if (((c * kw) & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();
     }
 #endif // _DEBUG
@@ -223,7 +223,7 @@ __forceinline float imcol1d_padzero_unaligned_s(
     const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
-    if (((c * kw) & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();
     }
 #endif // _DEBUG
@@ -436,7 +436,7 @@ __forceinline float imcol1d_padedge_unaligned_s(
     const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
-    if (((c * kw) & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();
     }
 #endif // _DEBUG

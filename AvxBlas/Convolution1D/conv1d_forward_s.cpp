@@ -9,6 +9,29 @@ using namespace System;
 
 #pragma unmanaged
 
+int conv1d_forward_padnone_n32x_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const unsigned int iw, const unsigned int ow, const unsigned int kw,
+    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+
+#ifdef _DEBUG
+    if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    for (unsigned int i = 0; i < n; i++) {
+        for (unsigned int x = 0; x < ow; x++) {
+            matmul_n32x_s(ic * kw, oc, x_ptr + x * ic, w_ptr, y_ptr + x * oc);
+        }
+
+        x_ptr += ic * iw;
+        y_ptr += oc * ow;
+    }
+
+    return SUCCESS;
+}
+
 int conv1d_forward_padnone_aligned_s(
     const unsigned int n, const unsigned int ic, const unsigned int oc, 
     const unsigned int iw, const unsigned int ow, const unsigned int kw,
@@ -38,7 +61,7 @@ int conv1d_forward_padnone_unaligned_s(
     const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
 
 #ifdef _DEBUG
-    if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -93,6 +116,9 @@ void AvxBlas::Convolution1D::Forward(
     if ((kw & 1) == 0 || kw > MAX_KERNEL_SIZE || ((iw < kw) && padmode == PadMode::None)) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
     }
+    if (kw == 1 && padmode != PadMode::None) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
+    }
     if (iw > MAX_DATA_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
@@ -117,14 +143,26 @@ void AvxBlas::Convolution1D::Forward(
 
     Util::CheckDuplicateArray(x, w, y);
 
+    if (kw == 1) {
+        Dense::Forward(n * iw, ic, oc, x, w, y);
+        return;
+    }
+
     Array<float>^ transpose_w = gcnew Array<float>(w->Length, false);
     Transform::Transpose(1, kw, oc, ic, w, transpose_w);
 
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
-    float* y_ptr = (float*)(y->Ptr.ToPointer());
     const float* w_ptr = (const float*)(transpose_w->Ptr.ToPointer());
+    float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-    if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {
+    if ((ic % (AVX2_FLOAT_STRIDE * 4)) == 0) {
+#ifdef _DEBUG
+        Console::WriteLine("type n32x");
+#endif // _DEBUG
+
+        conv1d_forward_padnone_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+    }
+    else if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG

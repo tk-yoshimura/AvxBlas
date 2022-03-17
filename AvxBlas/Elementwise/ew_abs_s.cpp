@@ -86,7 +86,7 @@ void AvxBlas::Elementwise::Abs(UInt32 n, Array<float>^ x, Array<float>^ y) {
 
     Util::CheckLength(n, x, y);
 
-    float* x_ptr = (float*)(x->Ptr.ToPointer());
+    const float* x_ptr = (const float*)(x->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
     ew_abs_s(n, x_ptr, y_ptr);

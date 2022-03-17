@@ -246,8 +246,8 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>
     Util::CheckProdOverflow(n, oc);
     Util::CheckProdOverflow(ic, oc);
 
-    float* x_ptr = (float*)(x->Ptr.ToPointer());
-    float* y_ptr = (float*)(dy->Ptr.ToPointer());
+    const float* x_ptr = (const float*)(x->Ptr.ToPointer());
+    const float* y_ptr = (const float*)(dy->Ptr.ToPointer());
     float* w_ptr = (float*)(dw->Ptr.ToPointer());
 
     zeroset_s(ic * oc, w_ptr);

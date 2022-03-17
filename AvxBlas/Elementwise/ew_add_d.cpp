@@ -96,8 +96,8 @@ void AvxBlas::Elementwise::Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, A
 
     Util::CheckLength(n, x1, x2, y);
 
-    double* x1_ptr = (double*)(x1->Ptr.ToPointer());
-    double* x2_ptr = (double*)(x2->Ptr.ToPointer());
+    const double* x1_ptr = (const double*)(x1->Ptr.ToPointer());
+    const double* x2_ptr = (const double*)(x2->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     ew_add_d(n, x1_ptr, x2_ptr, y_ptr);

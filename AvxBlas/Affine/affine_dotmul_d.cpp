@@ -492,8 +492,8 @@ void AvxBlas::Affine::Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^
     Util::CheckDuplicateArray(a, y);
     Util::CheckDuplicateArray(b, y);
 
-    double* a_ptr = (double*)(a->Ptr.ToPointer());
-    double* b_ptr = (double*)(b->Ptr.ToPointer());
+    const double* a_ptr = (const double*)(a->Ptr.ToPointer());
+    const double* b_ptr = (const double*)(b->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
