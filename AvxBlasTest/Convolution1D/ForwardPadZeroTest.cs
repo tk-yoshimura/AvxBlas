@@ -5,18 +5,15 @@ using System.Linq;
 
 namespace AvxBlasTest.Connection1DTest {
     [TestClass]
-    public class ForwardPadNoneTest {
+    public class ForwardPadZeroTest {
         [TestMethod]
         public void SForwardTest() {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
                 foreach (uint iw in new int[] { 1, 2, 3, 4, 5, 8, 15, 16, 17, 28, 30, 32 }) {
-                    foreach (uint kw in new int[] { 1, 3, 5 }) {
-                        if (iw < kw) {
-                            continue;
-                        }
-                        uint ow = iw - kw + 1;
+                    foreach (uint kw in new int[] { 3, 5, 7 }) {
+                        uint ow = iw;
 
                         foreach (uint ic in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
                             foreach (uint oc in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
@@ -32,7 +29,7 @@ namespace AvxBlasTest.Connection1DTest {
                                 Array<float> w_tensor = wval;
                                 Array<float> y_tensor = new(oc * ow * n);
 
-                                Convolution1D.Forward(n, ic, oc, iw, kw, PadMode.None, x_tensor, w_tensor, y_tensor);
+                                Convolution1D.Forward(n, ic, oc, iw, kw, PadMode.Zero, x_tensor, w_tensor, y_tensor);
 
                                 float[] y_expect = y.ToFloatArray();
                                 float[] y_actual = y_tensor;
@@ -54,7 +51,7 @@ namespace AvxBlasTest.Connection1DTest {
 
         public static Map1D Reference(Map1D x, Filter1D w, int kwidth) {
             int inchannels = x.Channels, outchannels = w.OutChannels, batch = x.Batch;
-            int inw = x.Width, outw = inw - kwidth + 1;
+            int inw = x.Width, outw = inw;
 
             Map1D y = new(outchannels, outw, batch);
 
@@ -65,7 +62,10 @@ namespace AvxBlasTest.Connection1DTest {
                             double sum = y[outch, ox, th];
 
                             for (int inch = 0; inch < inchannels; inch++) {
-                                sum += x[inch, kx + ox, th] * w[inch, outch, kx];
+                                int ix = kx + ox - kwidth / 2;
+                                double xv = (ix >= 0 && ix < inw) ? x[inch, ix, th] : 0;
+
+                                sum += xv * w[inch, outch, kx];
                             }
 
                             y[outch, ox, th] = sum;
@@ -91,6 +91,7 @@ namespace AvxBlasTest.Connection1DTest {
             Map1D y = Reference(x, w, kwidth);
 
             float[] y_expect = {
+                8.204000000e-03f, 7.567000000e-03f, 6.930000000e-03f, 6.293000000e-03f, 5.656000000e-03f, 5.019000000e-03f, 4.382000000e-03f, 3.745000000e-03f, 3.108000000e-03f, 2.471000000e-03f, 1.834000000e-03f,
                 2.387000000e-02f, 2.240000000e-02f, 2.093000000e-02f, 1.946000000e-02f, 1.799000000e-02f, 1.652000000e-02f, 1.505000000e-02f, 1.358000000e-02f, 1.211000000e-02f, 1.064000000e-02f, 9.170000000e-03f,
                 4.592000000e-02f, 4.342100000e-02f, 4.092200000e-02f, 3.842300000e-02f, 3.592400000e-02f, 3.342500000e-02f, 3.092600000e-02f, 2.842700000e-02f, 2.592800000e-02f, 2.342900000e-02f, 2.093000000e-02f,
                 6.797000000e-02f, 6.444200000e-02f, 6.091400000e-02f, 5.738600000e-02f, 5.385800000e-02f, 5.033000000e-02f, 4.680200000e-02f, 4.327400000e-02f, 3.974600000e-02f, 3.621800000e-02f, 3.269000000e-02f,
@@ -102,6 +103,8 @@ namespace AvxBlasTest.Connection1DTest {
                 2.002700000e-01f, 1.905680000e-01f, 1.808660000e-01f, 1.711640000e-01f, 1.614620000e-01f, 1.517600000e-01f, 1.420580000e-01f, 1.323560000e-01f, 1.226540000e-01f, 1.129520000e-01f, 1.032500000e-01f,
                 2.223200000e-01f, 2.115890000e-01f, 2.008580000e-01f, 1.901270000e-01f, 1.793960000e-01f, 1.686650000e-01f, 1.579340000e-01f, 1.472030000e-01f, 1.364720000e-01f, 1.257410000e-01f, 1.150100000e-01f,
                 2.443700000e-01f, 2.326100000e-01f, 2.208500000e-01f, 2.090900000e-01f, 1.973300000e-01f, 1.855700000e-01f, 1.738100000e-01f, 1.620500000e-01f, 1.502900000e-01f, 1.385300000e-01f, 1.267700000e-01f,
+                2.184140000e-01f, 2.102310000e-01f, 2.020480000e-01f, 1.938650000e-01f, 1.856820000e-01f, 1.774990000e-01f, 1.693160000e-01f, 1.611330000e-01f, 1.529500000e-01f, 1.447670000e-01f, 1.365840000e-01f,
+                1.502550000e-01f, 1.407000000e-01f, 1.311450000e-01f, 1.215900000e-01f, 1.120350000e-01f, 1.024800000e-01f, 9.292500000e-02f, 8.337000000e-02f, 7.381500000e-02f, 6.426000000e-02f, 5.470500000e-02f,
                 3.105200000e-01f, 2.956730000e-01f, 2.808260000e-01f, 2.659790000e-01f, 2.511320000e-01f, 2.362850000e-01f, 2.214380000e-01f, 2.065910000e-01f, 1.917440000e-01f, 1.768970000e-01f, 1.620500000e-01f,
                 3.325700000e-01f, 3.166940000e-01f, 3.008180000e-01f, 2.849420000e-01f, 2.690660000e-01f, 2.531900000e-01f, 2.373140000e-01f, 2.214380000e-01f, 2.055620000e-01f, 1.896860000e-01f, 1.738100000e-01f,
                 3.546200000e-01f, 3.377150000e-01f, 3.208100000e-01f, 3.039050000e-01f, 2.870000000e-01f, 2.700950000e-01f, 2.531900000e-01f, 2.362850000e-01f, 2.193800000e-01f, 2.024750000e-01f, 1.855700000e-01f,
@@ -113,6 +116,7 @@ namespace AvxBlasTest.Connection1DTest {
                 4.869200000e-01f, 4.638410000e-01f, 4.407620000e-01f, 4.176830000e-01f, 3.946040000e-01f, 3.715250000e-01f, 3.484460000e-01f, 3.253670000e-01f, 3.022880000e-01f, 2.792090000e-01f, 2.561300000e-01f,
                 5.089700000e-01f, 4.848620000e-01f, 4.607540000e-01f, 4.366460000e-01f, 4.125380000e-01f, 3.884300000e-01f, 3.643220000e-01f, 3.402140000e-01f, 3.161060000e-01f, 2.919980000e-01f, 2.678900000e-01f,
                 5.310200000e-01f, 5.058830000e-01f, 4.807460000e-01f, 4.556090000e-01f, 4.304720000e-01f, 4.053350000e-01f, 3.801980000e-01f, 3.550610000e-01f, 3.299240000e-01f, 3.047870000e-01f, 2.796500000e-01f,
+                4.585630000e-01f, 4.414620000e-01f, 4.243610000e-01f, 4.072600000e-01f, 3.901590000e-01f, 3.730580000e-01f, 3.559570000e-01f, 3.388560000e-01f, 3.217550000e-01f, 3.046540000e-01f, 2.875530000e-01f,
             };
 
             float[] y_actual = y.ToFloatArray();
