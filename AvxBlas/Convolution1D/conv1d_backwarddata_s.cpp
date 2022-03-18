@@ -140,6 +140,117 @@ int conv1d_backwarddata_padnone_unaligned_s(
 
 #pragma endregion padnone
 
+#pragma region padzero
+
+int conv1d_backwarddata_padzero_n32x_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const unsigned int iw, const unsigned int ow, const unsigned int kw,
+    const float* __restrict y_ptr, const float* __restrict w_ptr, float* __restrict x_ptr) {
+
+#ifdef _DEBUG
+    if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+
+    for (unsigned int i = 0; i < n; i++) {
+        for (unsigned int x = 0; x < iw; x++) {
+            imcol1d_padzero_n32x_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr);
+
+            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+        }
+
+        x_ptr += ic * iw;
+        y_ptr += oc * ow;
+    }
+
+    _aligned_free(col_ptr);
+
+    return SUCCESS;
+}
+
+int conv1d_backwarddata_padzero_aligned_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const unsigned int iw, const unsigned int ow, const unsigned int kw,
+    const float* __restrict y_ptr, const float* __restrict w_ptr, float* __restrict x_ptr) {
+
+#ifdef _DEBUG
+    if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+
+    for (unsigned int i = 0; i < n; i++) {
+        for (unsigned int x = 0; x < iw; x++) {
+            imcol1d_padzero_aligned_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr);
+
+            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+        }
+
+        x_ptr += ic * iw;
+        y_ptr += oc * ow;
+    }
+
+    _aligned_free(col_ptr);
+
+    return SUCCESS;
+}
+
+int conv1d_backwarddata_padzero_unaligned_s(
+    const unsigned int n, const unsigned int ic, const unsigned int oc,
+    const unsigned int iw, const unsigned int ow, const unsigned int kw,
+    const float* __restrict y_ptr, const float* __restrict w_ptr, float* __restrict x_ptr) {
+
+#ifdef _DEBUG
+    if ((oc & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const unsigned int col_size = (oc * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+
+    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc(col_size * ic * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr || we_ptr == nullptr) {
+        if (col_ptr != nullptr) _aligned_free(col_ptr);
+        if (we_ptr != nullptr) _aligned_free(we_ptr);
+
+        return FAILURE_BADALLOC;
+    }
+    zeroset_aligned_s(col_size, col_ptr);
+    align_kernel_s(ic, oc * kw, col_size, w_ptr, we_ptr);
+
+    const __m256i mask = _mm256_setmask_ps((oc * kw) & AVX2_FLOAT_REMAIN_MASK);
+
+    for (unsigned int i = 0; i < n; i++) {
+        for (unsigned int x = 0; x < iw; x++) {
+            imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr, mask);
+
+            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + x * ic);
+        }
+
+        x_ptr += ic * iw;
+        y_ptr += oc * ow;
+    }
+
+    _aligned_free(col_ptr);
+    _aligned_free(we_ptr);
+
+    return SUCCESS;
+}
+
+#pragma endregion padzero
+
 #pragma managed
 
 void AvxBlas::Convolution1D::BackwardData(
@@ -203,9 +314,11 @@ void AvxBlas::Convolution1D::BackwardData(
                 throw gcnew System::OutOfMemoryException();
             }
         }
-        //else if (padmode == PadMode::Zero) {
-        //    conv1d_backwarddata_padzero_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-        //}
+        else if (padmode == PadMode::Zero) {
+            if (conv1d_backwarddata_padzero_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, w_ptr, x_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
+            }
+        }
         //else if (padmode == PadMode::Edge) {
         //    conv1d_backwarddata_padedge_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
         //}
@@ -220,9 +333,11 @@ void AvxBlas::Convolution1D::BackwardData(
                 throw gcnew System::OutOfMemoryException();
             }
         }
-        //else if (padmode == PadMode::Zero) {
-        //    conv1d_backwarddata_padzero_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-        //}
+        else if (padmode == PadMode::Zero) {
+            if (conv1d_backwarddata_padzero_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, w_ptr, x_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
+            }
+        }
         //else if (padmode == PadMode::Edge) {
         //    conv1d_backwarddata_padedge_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
         //}
@@ -237,11 +352,11 @@ void AvxBlas::Convolution1D::BackwardData(
                 throw gcnew System::OutOfMemoryException();
             }
         }
-        //else if (padmode == PadMode::Zero) {
-        //    if (conv1d_backwarddata_padzero_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
-        //        throw gcnew System::OutOfMemoryException();
-        //    }
-        //}
+        else if (padmode == PadMode::Zero) {
+            if (conv1d_backwarddata_padzero_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, w_ptr, x_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
+            }
+        }
         //else if (padmode == PadMode::Edge) {
         //    if (conv1d_backwarddata_padedge_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
         //        throw gcnew System::OutOfMemoryException();
