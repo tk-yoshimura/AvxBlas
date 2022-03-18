@@ -9,17 +9,21 @@ using namespace System;
 
 #pragma unmanaged
 
-void conv1d_backward_kernel_s(
+void conv1d_transpose_kernel_s(
     const unsigned ic, const unsigned oc, const unsigned kw,
     const float* __restrict w_ptr, float* __restrict wt_ptr) {
 
     unsigned int src_index = 0;
+
     for (unsigned int kx = 0, rkx = kw - 1; kx < kw; kx++, rkx--) {
         for (unsigned int j = 0; j < oc; j++) {
+            unsigned int dst_index = j + oc * rkx;
+
             for (unsigned int i = 0; i < ic; i++) {
-                wt_ptr[j + oc * (rkx + (kw * i))] = w_ptr[src_index];
+                wt_ptr[dst_index] = w_ptr[src_index];
 
                 src_index++;
+                dst_index += kw * oc;
             }
         }
     }
@@ -38,9 +42,7 @@ int conv1d_backwarddata_padnone_n32x_s(
     }
 #endif // _DEBUG
 
-    const unsigned int col_size = oc * kw;
-
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -49,7 +51,7 @@ int conv1d_backwarddata_padnone_n32x_s(
         for (unsigned int x = 0; x < iw; x++) {
             imcol1d_padzero_n32x_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
 
-            matmul_n32x_s(col_size, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
         }
 
         x_ptr += ic * iw;
@@ -72,9 +74,7 @@ int conv1d_backwarddata_padnone_aligned_s(
     }
 #endif // _DEBUG
 
-    const unsigned int col_size = oc * kw;
-
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -83,7 +83,7 @@ int conv1d_backwarddata_padnone_aligned_s(
         for (unsigned int x = 0; x < iw; x++) {
             imcol1d_padzero_aligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
 
-            matmul_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
         }
 
         x_ptr += ic * iw;
@@ -186,66 +186,68 @@ void AvxBlas::Convolution1D::BackwardData(
         return;
     }
 
+    Array<float>^ transpose_w = gcnew Array<float>(w->Length, false);
+    conv1d_transpose_kernel_s(ic, oc, kw, (const float*)(w->Ptr.ToPointer()), (float*)(transpose_w->Ptr.ToPointer()));
+
     const float* y_ptr = (const float*)(dy->Ptr.ToPointer());
-    const float* w_ptr = (const float*)(w->Ptr.ToPointer());
+    const float* w_ptr = (const float*)(transpose_w->Ptr.ToPointer());
     float* x_ptr = (float*)(dx->Ptr.ToPointer());
-    float* wt_ptr = (float*)_aligned_malloc(ic * oc * kw * sizeof(float), AVX2_ALIGNMENT);
-    conv1d_backward_kernel_s(ic, oc, kw, w_ptr, wt_ptr);
 
-    try {
-        if ((oc % (AVX2_FLOAT_STRIDE * 4)) == 0) {
+    if ((oc % (AVX2_FLOAT_STRIDE * 4)) == 0) {
 #ifdef _DEBUG
-            Console::WriteLine("type n32x");
+        Console::WriteLine("type n32x");
 #endif // _DEBUG
 
-            if (padmode == PadMode::None) {
-                conv1d_backwarddata_padnone_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
+        if (padmode == PadMode::None) {
+            if (conv1d_backwarddata_padnone_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, w_ptr, x_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
             }
-            //else if (padmode == PadMode::Zero) {
-            //    conv1d_backwarddata_padzero_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-            //}
-            //else if (padmode == PadMode::Edge) {
-            //    conv1d_backwarddata_padedge_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-            //}
         }
-        else if ((oc & AVX2_FLOAT_REMAIN_MASK) == 0) {
-#ifdef _DEBUG
-            Console::WriteLine("type aligned");
-#endif // _DEBUG
-
-            if (padmode == PadMode::None) {
-                conv1d_backwarddata_padnone_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-            }
-            //else if (padmode == PadMode::Zero) {
-            //    conv1d_backwarddata_padzero_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-            //}
-            //else if (padmode == PadMode::Edge) {
-            //    conv1d_backwarddata_padedge_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
-            //}
-        }
-        else {
-#ifdef _DEBUG
-            Console::WriteLine("type unaligned");
-#endif // _DEBUG
-
-            if (padmode == PadMode::None) {
-                if (conv1d_backwarddata_padnone_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
-                    throw gcnew System::OutOfMemoryException();
-                }
-            }
-            //else if (padmode == PadMode::Zero) {
-            //    if (conv1d_backwarddata_padzero_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
-            //        throw gcnew System::OutOfMemoryException();
-            //    }
-            //}
-            //else if (padmode == PadMode::Edge) {
-            //    if (conv1d_backwarddata_padedge_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
-            //        throw gcnew System::OutOfMemoryException();
-            //    }
-            //}
-        }
+        //else if (padmode == PadMode::Zero) {
+        //    conv1d_backwarddata_padzero_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
+        //}
+        //else if (padmode == PadMode::Edge) {
+        //    conv1d_backwarddata_padedge_n32x_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
+        //}
     }
-    finally {
-        _aligned_free(wt_ptr);
+    else if ((oc & AVX2_FLOAT_REMAIN_MASK) == 0) {
+#ifdef _DEBUG
+        Console::WriteLine("type aligned");
+#endif // _DEBUG
+
+        if (padmode == PadMode::None) {
+            if (conv1d_backwarddata_padnone_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, w_ptr, x_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
+            }
+        }
+        //else if (padmode == PadMode::Zero) {
+        //    conv1d_backwarddata_padzero_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
+        //}
+        //else if (padmode == PadMode::Edge) {
+        //    conv1d_backwarddata_padedge_aligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr);
+        //}
     }
+    else {
+#ifdef _DEBUG
+        Console::WriteLine("type unaligned");
+#endif // _DEBUG
+
+        if (padmode == PadMode::None) {
+            if (conv1d_backwarddata_padnone_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, w_ptr, x_ptr) == FAILURE_BADALLOC) {
+                throw gcnew System::OutOfMemoryException();
+            }
+        }
+        //else if (padmode == PadMode::Zero) {
+        //    if (conv1d_backwarddata_padzero_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
+        //        throw gcnew System::OutOfMemoryException();
+        //    }
+        //}
+        //else if (padmode == PadMode::Edge) {
+        //    if (conv1d_backwarddata_padedge_unaligned_s(n, ic, oc, iw, ow, kw, y_ptr, wt_ptr, x_ptr) == FAILURE_BADALLOC) {
+        //        throw gcnew System::OutOfMemoryException();
+        //    }
+        //}
+    }
+
+    transpose_w->~Array();
 }
