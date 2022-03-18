@@ -25,6 +25,9 @@ void AvxBlas::Convolution1D::BackwardFilter(
     if ((kw & 1) == 0 || kw > MAX_KERNEL_SIZE || ((iw < kw) && padmode == PadMode::None)) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
     }
+    if (kw == 1 && padmode != PadMode::None) {
+        throw gcnew System::ArgumentException(ErrorMessage::InvalidKernelSize);
+    }
     if (iw > MAX_DATA_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }

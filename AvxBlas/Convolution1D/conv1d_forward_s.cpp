@@ -122,7 +122,7 @@ int conv1d_forward_padzero_n32x_s(
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int x = 0; x < ow; x++) {
-            imcol1d_padzero_n32x_s(ic, kw, iw, x, x_ptr, col_ptr);
+            imcol1d_padzero_n32x_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_n32x_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
         }
@@ -154,7 +154,7 @@ int conv1d_forward_padzero_aligned_s(
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int x = 0; x < ow; x++) {
-            imcol1d_padzero_aligned_s(ic, kw, iw, x, x_ptr, col_ptr);
+            imcol1d_padzero_aligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_aligned_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
         }
@@ -196,7 +196,7 @@ int conv1d_forward_padzero_unaligned_s(
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int x = 0; x < ow; x++) {
-            imcol1d_padzero_unaligned_s(ic, kw, iw, x, x_ptr, col_ptr, mask);
+            imcol1d_padzero_unaligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr, mask);
 
             matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + x * oc);
         }
@@ -233,7 +233,7 @@ int conv1d_forward_padedge_n32x_s(
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int x = 0; x < ow; x++) {
-            imcol1d_padedge_n32x_s(ic, kw, iw, x, x_ptr, col_ptr);
+            imcol1d_padedge_n32x_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_n32x_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
         }
@@ -265,7 +265,7 @@ int conv1d_forward_padedge_aligned_s(
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int x = 0; x < ow; x++) {
-            imcol1d_padedge_aligned_s(ic, kw, iw, x, x_ptr, col_ptr);
+            imcol1d_padedge_aligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_aligned_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
         }
@@ -307,7 +307,7 @@ int conv1d_forward_padedge_unaligned_s(
 
     for (unsigned int i = 0; i < n; i++) {
         for (unsigned int x = 0; x < ow; x++) {
-            imcol1d_padedge_unaligned_s(ic, kw, iw, x, x_ptr, col_ptr, mask);
+            imcol1d_padedge_unaligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr, mask);
 
             matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + x * oc);
         }
