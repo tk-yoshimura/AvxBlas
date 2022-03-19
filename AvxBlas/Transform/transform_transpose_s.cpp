@@ -602,7 +602,7 @@ void AvxBlas::Transform::Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, 
         Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-        transpose_unaligned_s(n, r, s, stride, x_ptr, y_ptr);
+        ret = transpose_unaligned_s(n, r, s, stride, x_ptr, y_ptr);
     }
 
     Util::AssertReturnCode(ret);
