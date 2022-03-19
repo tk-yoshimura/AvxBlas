@@ -69,7 +69,7 @@
     <ClInclude Include="Inline\inline_ope.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_set.hpp">
+    <ClInclude Include="Inline\inline_set_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_sum_s.hpp">
@@ -87,7 +87,7 @@
     <ClInclude Include="Inline\inline_dotmul_d.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_dilate.hpp">
+    <ClInclude Include="Inline\inline_dilate_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_numeric.hpp">
@@ -106,6 +106,12 @@
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_zeroset_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_dilate_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_set_d.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,7 +248,10 @@
     <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp">
       <Filter>Source\Convolution1D</Filter>
     </ClCompile>
-    <ClCompile Include="Util\util_align_kernel.cpp">
+    <ClCompile Include="Util\util_align_kernel_s.cpp">
+      <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\util_align_kernel_d.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
   </ItemGroup>

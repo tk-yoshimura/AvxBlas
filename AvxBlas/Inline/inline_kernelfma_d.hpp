@@ -3,8 +3,8 @@
 
 #include "../constants.h"
 #include "../utils.h"
-#include "inline_dilate.hpp"
-#include "inline_set.hpp"
+#include "inline_dilate_d.hpp"
+#include "inline_set_d.hpp"
 
 #ifdef _DEBUG
 #include <exception>

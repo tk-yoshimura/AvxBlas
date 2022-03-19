@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline/inline_set.hpp"
+#include "../Inline/inline_set_d.hpp"
 #include "../Inline/inline_sum_d.hpp"
 #include "../Inline/inline_dotmul_d.hpp"
 #include <memory.h>
