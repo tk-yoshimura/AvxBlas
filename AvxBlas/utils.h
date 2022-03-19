@@ -24,6 +24,12 @@ extern void align_kernel_s(
 extern void align_kernel_d(
     const unsigned int n, const unsigned int unaligned_w_size, const unsigned int aligned_w_size,
     const double* __restrict unaligned_w_ptr, double* __restrict aligned_w_ptr);
+extern void unalign_kernel_s(
+    const unsigned int n, const unsigned int aligned_w_size, const unsigned int unaligned_w_size,
+    const float* __restrict aligned_w_ptr, float* __restrict unaligned_w_ptr);
+extern void unalign_kernel_d(
+    const unsigned int n, const unsigned int aligned_w_size, const unsigned int unaligned_w_size,
+    const double* __restrict aligned_w_ptr, double* __restrict unaligned_w_ptr);
 
 union _m32 {
     float f;

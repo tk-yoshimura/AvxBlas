@@ -454,7 +454,7 @@ int ag_sum_aligned_s(
 
     const __m256 zero = _mm256_setzero_ps();
 
-    float* buf = (float*)_aligned_malloc(stride * sizeof(float), AVX2_ALIGNMENT);
+    float* buf = (float*)_aligned_malloc((size_t)stride * sizeof(float), AVX2_ALIGNMENT);
     if (buf == nullptr) {
         return FAILURE_BADALLOC;
     }

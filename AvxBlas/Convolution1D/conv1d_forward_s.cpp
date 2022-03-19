@@ -70,8 +70,8 @@ int conv1d_forward_padnone_unaligned_s(
 
     const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
-    float* we_ptr = (float*)_aligned_malloc(col_size * oc * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr || we_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);
@@ -115,7 +115,7 @@ int conv1d_forward_padzero_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -147,7 +147,7 @@ int conv1d_forward_padzero_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -181,8 +181,8 @@ int conv1d_forward_padzero_unaligned_s(
 
     const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
-    float* we_ptr = (float*)_aligned_malloc(col_size * oc * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr || we_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);
@@ -226,7 +226,7 @@ int conv1d_forward_padedge_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -258,7 +258,7 @@ int conv1d_forward_padedge_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -292,8 +292,8 @@ int conv1d_forward_padedge_unaligned_s(
 
     const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
-    float* we_ptr = (float*)_aligned_malloc(col_size * oc * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr || we_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);

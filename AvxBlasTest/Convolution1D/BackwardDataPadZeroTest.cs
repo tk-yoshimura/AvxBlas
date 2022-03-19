@@ -7,7 +7,7 @@ namespace AvxBlasTest.Connection1DTest {
     [TestClass]
     public class BackwardDataPadZeroTest {
         [TestMethod]
-        public void SForwardTest() {
+        public void SBackwardDataPadZeroTest() {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {

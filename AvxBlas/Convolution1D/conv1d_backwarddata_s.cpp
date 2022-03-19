@@ -42,7 +42,7 @@ int conv1d_backwarddata_padnone_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -74,7 +74,7 @@ int conv1d_backwarddata_padnone_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -108,8 +108,8 @@ int conv1d_backwarddata_padnone_unaligned_s(
 
     const unsigned int col_size = (oc * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
-    float* we_ptr = (float*)_aligned_malloc(col_size * ic * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc((size_t)col_size * ic * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr || we_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);
@@ -153,7 +153,7 @@ int conv1d_backwarddata_padzero_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -185,7 +185,7 @@ int conv1d_backwarddata_padzero_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -219,8 +219,8 @@ int conv1d_backwarddata_padzero_unaligned_s(
 
     const unsigned int col_size = (oc * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
-    float* we_ptr = (float*)_aligned_malloc(col_size * ic * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc((size_t)col_size * ic * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr || we_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);
@@ -264,7 +264,7 @@ int conv1d_backwarddata_padedge_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -306,7 +306,7 @@ int conv1d_backwarddata_padedge_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc(oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -350,8 +350,8 @@ int conv1d_backwarddata_padedge_unaligned_s(
 
     const unsigned int col_size = (oc * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
-    float* col_ptr = (float*)_aligned_malloc(col_size * sizeof(float), AVX2_ALIGNMENT);
-    float* we_ptr = (float*)_aligned_malloc(col_size * ic * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
+    float* we_ptr = (float*)_aligned_malloc((size_t)col_size * ic * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr || we_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);
@@ -371,12 +371,12 @@ int conv1d_backwarddata_padedge_unaligned_s(
         }
         for (unsigned int x = 0; x < kw / 2; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr, mask);
-        
+
             matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr);
         }
         for (unsigned int x = iw + kw / 2; x < iw + kw - 1; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr, mask);
-        
+
             matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + (iw - 1) * ic);
         }
 

@@ -86,7 +86,7 @@ int vw_add_batch_d(
     }
 #endif // _DEBUG
 
-    double* u_ptr = (double*)_aligned_malloc(sg * sizeof(double), AVX2_ALIGNMENT);
+    double* u_ptr = (double*)_aligned_malloc((size_t)sg * sizeof(double), AVX2_ALIGNMENT);
     if (u_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }

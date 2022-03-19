@@ -7,7 +7,7 @@ namespace AvxBlasTest.Connection1DTest {
     [TestClass]
     public class BackwardDataPadEdgeTest {
         [TestMethod]
-        public void SForwardTest() {
+        public void SBackwardDataPadEdgeTest() {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
