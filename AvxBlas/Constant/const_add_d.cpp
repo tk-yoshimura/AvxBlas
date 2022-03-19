@@ -90,5 +90,7 @@ void AvxBlas::Constant::Add(UInt32 n, Array<double>^ x, double c, Array<double>^
     const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
-    const_add_d(n, x_ptr, c, y_ptr);
+    int ret = const_add_d(n, x_ptr, c, y_ptr);
+
+    Util::AssertReturnCode(ret);
 }

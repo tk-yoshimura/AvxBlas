@@ -252,32 +252,36 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>
 
     zeroset_s(ic * oc, w_ptr);
 
+    int ret = UNEXECUTED;
+
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) == 0) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned x32");
 #endif // _DEBUG
 
-        dense_backwardfilter_n32x_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        ret = dense_backwardfilter_n32x_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
     else if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        dense_backwardfilter_aligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        ret = dense_backwardfilter_aligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
     else if (ic <= AVX2_FLOAT_STRIDE / 2) {
 #ifdef _DEBUG
         Console::WriteLine("type leq4");
 #endif // _DEBUG
 
-        dense_backwardfilter_nleq4_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        ret = dense_backwardfilter_nleq4_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
     else {
 #ifdef _DEBUG
         Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-        dense_backwardfilter_unaligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
+        ret = dense_backwardfilter_unaligned_s(n, ic, oc, x_ptr, y_ptr, w_ptr);
     }
+
+    Util::AssertReturnCode(ret);
 }

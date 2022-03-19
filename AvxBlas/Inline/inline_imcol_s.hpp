@@ -29,7 +29,7 @@ __forceinline void imcol1d_padnone_n32x_s(
 }
 
 __forceinline void imcol1d_padnone_aligned_s(
-    const unsigned int c, 
+    const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const float* __restrict im_ptr, float* __restrict col_ptr) {
 
@@ -38,12 +38,12 @@ __forceinline void imcol1d_padnone_aligned_s(
         throw std::exception();
     }
 #endif // _DEBUG
-            
+
     copy_aligned_s(c * kw, im_ptr + c * ix, col_ptr);
 }
 
 __forceinline void imcol1d_padnone_unaligned_s(
-    const unsigned int c, 
+    const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
 
@@ -321,7 +321,7 @@ __forceinline void imcol3d_padzero_aligned_s(
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
     const float* __restrict im_ptr, float* __restrict col_ptr) {
-    
+
     for (unsigned int kz = 0, z = iz - pd; kz < kd; kz++, z++) {
         if (z < id) {
             imcol2d_padzero_aligned_s(c, kw, iw, ix, pw, kh, ih, iy, ph, im_ptr + c * iw * ih * z, col_ptr);
@@ -437,8 +437,8 @@ __forceinline float imcol1d_padedge_unaligned_s(
 
 __forceinline void imcol2d_padedge_n32x_s(
     const unsigned int c,
-    const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw, 
-    const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph, 
+    const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
+    const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const float* __restrict im_ptr, float* __restrict col_ptr) {
 
     for (unsigned int ky = 0; ky < kh; ky++) {
@@ -518,7 +518,7 @@ __forceinline void imcol3d_padedge_unaligned_s(
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
     const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
-    
+
     for (unsigned int kz = 0; kz < kd; kz++) {
         const unsigned int z = padclip(iz + kz, id, pd);
 

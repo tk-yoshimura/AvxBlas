@@ -166,13 +166,15 @@ void AvxBlas::Convolution1D::BackwardFilter(
     const float* y_ptr = (const float*)(dy->Ptr.ToPointer());
     float* w_ptr = (float*)(transpose_dw->Ptr.ToPointer());
 
+    int ret = UNEXECUTED;
+
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) == 0) {
 #ifdef _DEBUG
         Console::WriteLine("type n32x");
 #endif // _DEBUG
 
         if (padmode == PadMode::None) {
-            conv1d_backwardfilter_padnone_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, y_ptr, w_ptr);
+            ret = conv1d_backwardfilter_padnone_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, y_ptr, w_ptr);
         }
         //else if (padmode == PadMode::Zero) {
         //    conv1d_forward_padzero_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
@@ -187,7 +189,7 @@ void AvxBlas::Convolution1D::BackwardFilter(
 #endif // _DEBUG
 
         if (padmode == PadMode::None) {
-            conv1d_backwardfilter_padnone_aligned_s(n, ic, oc, iw, ow, kw, x_ptr, y_ptr, w_ptr);
+            ret = conv1d_backwardfilter_padnone_aligned_s(n, ic, oc, iw, ow, kw, x_ptr, y_ptr, w_ptr);
         }
         //else if (padmode == PadMode::Zero) {
         //    conv1d_forward_padzero_aligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
@@ -202,9 +204,7 @@ void AvxBlas::Convolution1D::BackwardFilter(
 #endif // _DEBUG
 
         if (padmode == PadMode::None) {
-            if (conv1d_backwardfilter_padnone_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, y_ptr, w_ptr) == FAILURE_BADALLOC) {
-                throw gcnew System::OutOfMemoryException();
-            }
+            ret = conv1d_backwardfilter_padnone_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, y_ptr, w_ptr);
         }
         //else if (padmode == PadMode::Zero) {
         //    if (conv1d_forward_padzero_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr) == FAILURE_BADALLOC) {
@@ -221,4 +221,6 @@ void AvxBlas::Convolution1D::BackwardFilter(
     Transform::Transpose(1, oc, kw, ic, transpose_dw, dw);
 
     transpose_dw->~Array();
+
+    Util::AssertReturnCode(ret);
 }

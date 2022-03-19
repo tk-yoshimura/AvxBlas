@@ -429,7 +429,6 @@ __forceinline void kernelfma_n3_aligned_s(
     }
 }
 
-
 __forceinline void kernelfma_n3_unaligned_s(
     const unsigned int ic, const unsigned int oc,
     const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {

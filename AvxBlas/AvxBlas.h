@@ -190,6 +190,8 @@ namespace AvxBlas {
 
         static void CheckProdOverflow(... cli::array<UInt32>^ arrays);
 
+        static void AssertReturnCode(int ret);
+
         static property bool IsSupportedAVX { bool get(); };
         static property bool IsSupportedAVX2 { bool get(); };
         static property bool IsSupportedAVX512F { bool get(); };
@@ -222,5 +224,9 @@ namespace AvxBlas {
             "The specified kernel size is invalid.";
         static initonly System::String^ InvalidDataSize =
             "The specified data size is invalid.";
+        static initonly System::String^ FailedWorkspaceAllocate =
+            "Failed to allocate workspace memory.";
+        static initonly System::String^ InvalidNativeFuncArgument =
+            "The argument of the native function is invalid.";
     };
 }

@@ -425,7 +425,6 @@ __forceinline void kernelfma_n3_aligned_d(
     }
 }
 
-
 __forceinline void kernelfma_n3_unaligned_d(
     const unsigned int ic, const unsigned int oc,
     const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {

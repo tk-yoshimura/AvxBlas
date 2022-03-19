@@ -130,16 +130,16 @@ void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<
     const double* v_ptr = (const double*)(v->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
+    int ret = UNEXECUTED;
+
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        vw_fill_aligned_d(n, stride, v_ptr, y_ptr);
-        return;
+        ret = vw_fill_aligned_d(n, stride, v_ptr, y_ptr);
     }
-
-    if (stride <= MAX_VECTORWISE_ALIGNMNET_INCX) {
+    else if (stride <= MAX_VECTORWISE_ALIGNMNET_INCX) {
         UInt32 g = Numeric::LCM(stride, AVX2_DOUBLE_STRIDE) / stride;
 
         if (n >= g * 4) {
@@ -147,16 +147,16 @@ void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            if (vw_fill_batch_d(n, g, stride, v_ptr, y_ptr) == FAILURE_BADALLOC) {
-                throw gcnew System::OutOfMemoryException();
-            }
-            return;
+            ret = vw_fill_batch_d(n, g, stride, v_ptr, y_ptr);
         }
     }
-
+    if (ret == UNEXECUTED) {
 #ifdef _DEBUG
-    Console::WriteLine("type unaligned");
+        Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    vw_fill_unaligned_d(n, stride, v_ptr, y_ptr);
+        ret = vw_fill_unaligned_d(n, stride, v_ptr, y_ptr);
+    }
+
+    Util::AssertReturnCode(ret);
 }

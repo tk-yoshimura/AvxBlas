@@ -63,7 +63,9 @@ void AvxBlas::Initialize::Clear(UInt32 n, double c, Array<double>^ y) {
 
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
-    clear_d(0, n, c, y_ptr);
+    int ret = clear_d(0, n, c, y_ptr);
+
+    Util::AssertReturnCode(ret);
 }
 
 void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, double c, Array<double>^ y) {
@@ -71,7 +73,9 @@ void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, double c, Array<double>^
 
     double* y_ptr = (double*)(y->Ptr.ToPointer());
     
-    clear_d(index, n, c, y_ptr);
+    int ret = clear_d(index, n, c, y_ptr);
+
+    Util::AssertReturnCode(ret);
 }
 
 void AvxBlas::Initialize::Zeroset(UInt32 n, Array<double>^ y) {

@@ -537,36 +537,30 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
     const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
+    int ret = UNEXECUTED;
+
     if (stride == 1u) {
 #ifdef _DEBUG
         Console::WriteLine("type stride1");
 #endif // _DEBUG
 
-        ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
-        return;
+        ret = ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
     }
-
-    if (stride == 2u) {
+    else if (stride == 2u) {
 #ifdef _DEBUG
         Console::WriteLine("type stride2");
 #endif // _DEBUG
 
-        ag_sum_stride2_d(n, samples, x_ptr, y_ptr);
-        return;
+        ret = ag_sum_stride2_d(n, samples, x_ptr, y_ptr);
     }
-
-    if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
+    else if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        if (ag_sum_aligned_d(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
-            throw gcnew System::OutOfMemoryException();
-        }
-        return;
+        ret = ag_sum_aligned_d(n, samples, stride, x_ptr, y_ptr);
     }
-
-    if (stride <= MAX_AGGREGATE_BATCHING) {
+    else if (stride <= MAX_AGGREGATE_BATCHING) {
         UInt32 g = Numeric::LCM(stride, AVX2_DOUBLE_STRIDE) / stride;
 
         if (samples >= g * 4) {
@@ -574,19 +568,16 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
             Console::WriteLine("type batch g:" + g.ToString());
 #endif // _DEBUG
 
-            if (ag_sum_batch_d(n, g, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
-                throw gcnew System::OutOfMemoryException();
-            }
-            return;
+            ret = ag_sum_batch_d(n, g, samples, stride, x_ptr, y_ptr);
         }
     }
-
+    if (ret == UNEXECUTED) {
 #ifdef _DEBUG
-    Console::WriteLine("type unaligned");
+        Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    if (ag_sum_unaligned_d(n, samples, stride, x_ptr, y_ptr) == FAILURE_BADALLOC) {
-        throw gcnew System::OutOfMemoryException();
+        ret = ag_sum_unaligned_d(n, samples, stride, x_ptr, y_ptr);
     }
-    return;
+
+    Util::AssertReturnCode(ret);
 }

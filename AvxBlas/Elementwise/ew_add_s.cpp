@@ -100,5 +100,7 @@ void AvxBlas::Elementwise::Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Arr
     const float* x2_ptr = (const float*)(x2->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
-    ew_add_s(n, x1_ptr, x2_ptr, y_ptr);
+    int ret = ew_add_s(n, x1_ptr, x2_ptr, y_ptr);
+
+    Util::AssertReturnCode(ret);
 }

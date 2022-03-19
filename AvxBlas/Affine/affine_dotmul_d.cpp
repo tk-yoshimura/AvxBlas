@@ -496,19 +496,22 @@ void AvxBlas::Affine::Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^
     const double* b_ptr = (const double*)(b->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
+    int ret = UNEXECUTED;
+
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        affine_dotmul_aligned_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
-        return;
+        ret = affine_dotmul_aligned_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-
+    else {
 #ifdef _DEBUG
-    Console::WriteLine("type unaligned");
+        Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    affine_dotmul_unaligned_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
-    return;
+        ret = affine_dotmul_unaligned_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+
+    Util::AssertReturnCode(ret);
 }

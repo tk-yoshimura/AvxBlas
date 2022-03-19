@@ -525,19 +525,22 @@ void AvxBlas::Transform::Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, 
     double* x_ptr = (double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
+    int ret = UNEXECUTED;
+
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
-        transpose_aligned_d(n, r, s, stride, x_ptr, y_ptr);
-        return;
+        ret = transpose_aligned_d(n, r, s, stride, x_ptr, y_ptr);
     }
-
+    else {
 #ifdef _DEBUG
-    Console::WriteLine("type unaligned");
+        Console::WriteLine("type unaligned");
 #endif // _DEBUG
 
-    transpose_unaligned_d(n, r, s, stride, x_ptr, y_ptr);
-    return;
+        ret = transpose_unaligned_d(n, r, s, stride, x_ptr, y_ptr);
+    }
+
+    Util::AssertReturnCode(ret);
 }

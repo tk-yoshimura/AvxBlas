@@ -3,6 +3,7 @@
 #define SUCCESS (0)
 #define FAILURE_BADPARAM (-1)
 #define FAILURE_BADALLOC (-2)
+#define UNEXECUTED (-3)
 
 #define AVX1_ALIGNMENT (16u)
 #define AVX2_ALIGNMENT (32u)

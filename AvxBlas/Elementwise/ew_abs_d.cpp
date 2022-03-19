@@ -89,5 +89,7 @@ void AvxBlas::Elementwise::Abs(UInt32 n, Array<double>^ x, Array<double>^ y) {
     const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
-    ew_abs_d(n, x_ptr, y_ptr);
+    int ret = ew_abs_d(n, x_ptr, y_ptr);
+
+    Util::AssertReturnCode(ret);
 }

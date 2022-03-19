@@ -1,4 +1,5 @@
 #include "../avxblas.h"
+#include "../constants.h"
 #include <array>
 #include <vector>
 #include <bitset>
@@ -148,6 +149,21 @@ void AvxBlas::Util::CheckProdOverflow(... cli::array<UInt32>^ arrays) {
         }
 
         a *= b;
+    }
+}
+
+void AvxBlas::Util::AssertReturnCode(int ret) {
+    if (ret == SUCCESS) {
+        return;
+    }
+    if (ret == FAILURE_BADPARAM) {
+        throw gcnew System::ArgumentException(ErrorMessage::InvalidNativeFuncArgument);
+    }
+    if (ret == FAILURE_BADALLOC) {
+        throw gcnew System::OutOfMemoryException(ErrorMessage::FailedWorkspaceAllocate);
+    }
+    if (ret == UNEXECUTED) {
+        throw gcnew System::NotImplementedException();
     }
 }
 

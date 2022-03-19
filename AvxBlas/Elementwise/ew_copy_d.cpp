@@ -80,5 +80,7 @@ void AvxBlas::Elementwise::Copy(UInt32 n, Array<double>^ x, Array<double>^ y) {
     const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
-    ew_copy_d(n, x_ptr, y_ptr);
+    int ret = ew_copy_d(n, x_ptr, y_ptr);
+
+    Util::AssertReturnCode(ret);
 }
