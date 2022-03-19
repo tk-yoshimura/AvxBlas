@@ -4,32 +4,75 @@
 #include <chrono>
 
 #include "avxblas_sandbox.h"
-#include "../AvxBlas/Inline/inline_imcol_s.hpp"
 
+// (s, c) += a * b
+__forceinline void _mm256_fasttwosum_fmadd_ps(const __m256 a, const __m256 b, __m256& s, __m256& c) {
+    __m256 tmp = s;
+    s = _mm256_fmadd_ps(a, b, s);
+    c = _mm256_add_ps(c, _mm256_fmadd_ps(a, b, _mm256_sub_ps(tmp, s)));
+}
+
+// (s, c) += a * b
+__forceinline void _mm256_twosum_fmadd_ps(const __m256 a, const __m256 b, __m256& s, __m256& c) {
+    __m256 tmp = s;
+    s = _mm256_fmadd_ps(a, b, _mm256_add_ps(c, s));
+    c = _mm256_add_ps(c, _mm256_fmadd_ps(a, b, _mm256_sub_ps(tmp, s)));
+}
 
 int main(){
-    const unsigned int n = 1, ic = 2, oc = 1, iw = 4, kw = 2, ow = iw - kw + 1;
+    const int N = 10000000;
 
-    float* x = (float*)_aligned_malloc((n * ic * iw + 7) * sizeof(float), AVX2_ALIGNMENT);
-    float* y = (float*)_aligned_malloc((n * oc * ow + 7) * sizeof(float), AVX2_ALIGNMENT);
-    float* w = (float*)_aligned_malloc((ic * kw + 7) * sizeof(float), AVX2_ALIGNMENT);
+    srand((unsigned int)time(NULL));
 
-    if (x == nullptr || y == nullptr || w == nullptr) {
-        return -1;
+    {
+        const float u = 0.1234, v = 123;
+        const double expect = (double)u * (double)v * N;
+
+        __m256 a = _mm256_set1_ps(0.1234);
+        __m256 b = _mm256_set1_ps(123);
+
+        __m256 s = _mm256_setzero_ps(), c = _mm256_setzero_ps();
+        __m256 x = _mm256_setzero_ps();
+
+        for (int i = 0; i < N; i++) {
+            x = _mm256_fmadd_ps(a, b, x);
+            _mm256_twosum_fmadd_ps(a, b, s, c);
+        }
+
+        float actual_fma = _mm256_cvtss_f32(x);
+        float actual_twosum = _mm256_cvtss_f32(s);
+
+        printf("%.15e\n", expect);
+        printf("%.7e\n", actual_twosum);
+        printf("%.7e\n\n", actual_fma);
     }
 
-    x[0] = 1; x[1] = 2; x[2] = 3; x[3] = 4; x[4] = 5; x[5] = 6; x[6] = 7; x[7] = 8;
-    w[0] = 8; w[1] = 7; w[2] = 6; w[3] = 5; w[4] = 4; w[5] = 3; w[6] = 2; w[7] = 1;
+    for (int j = 0; j < 32; j++) {
+        __m256 s = _mm256_setzero_ps(), c = _mm256_setzero_ps();
+        __m256 x = _mm256_setzero_ps();
 
-    imcol1d_padnone_unaligned_s(ic, oc, iw, 2, x, y, _mm256_setmask_ps(4));
+        double expect = 0;
 
-    for (unsigned int i = 0; i < ic * kw; i++) {
-        std::cout << y[i] << std::endl;
+        for (int i = 0; i < N; i++) {
+            float u = ((rand() % 10001) - 5000) * 0.0001f;
+            float v = (rand() % 101) - 50;
+
+            __m256 a = _mm256_set1_ps(u);
+            __m256 b = _mm256_set1_ps(v);
+
+            x = _mm256_fmadd_ps(a, b, x);
+            _mm256_twosum_fmadd_ps(a, b, s, c);
+
+            expect += (double)u * (double)v;
+        }
+
+        float actual_fma = _mm256_cvtss_f32(x);
+        float actual_twosum = _mm256_cvtss_f32(s);
+
+        printf("%.15e\n", expect);
+        printf("%.7e\n", actual_twosum);
+        printf("%.7e\n\n", actual_fma);
     }
-
-    _aligned_free(x);
-    _aligned_free(y);
-    _aligned_free(w);
 
     getchar();
 }

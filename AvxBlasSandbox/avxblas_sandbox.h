@@ -1,10 +1,6 @@
 #include <immintrin.h>
 #include <chrono>
-
-#define AVX2_ALIGNMENT (32)
-#define AVX2_FLOAT_STRIDE (8)
-#define AVX2_FLOAT_BATCH_MASK (~7u)
-#define AVX2_FLOAT_REMAIN_MASK (7u)
+#include "../AvxBlas/constants.h"
 
 extern __m256i _mm256_setmask_ps(const unsigned int n);
 extern __m128i _mm_setmask_ps(const unsigned int n);
