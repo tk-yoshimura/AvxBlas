@@ -380,23 +380,18 @@ int transpose_aligned_d(
                     index += AVX2_DOUBLE_STRIDE * 4;
                     sr -= AVX2_DOUBLE_STRIDE * 4;
                 }
-                if (sr >= AVX2_DOUBLE_STRIDE * 3) {
-                    __m256d x0 = _mm256_load_pd(x_ptr);
-                    __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                    __m256d x2 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-
-                    _mm256_stream_pd(y_ptr + offset + index, x0);
-                    _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
-                    _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 2, x2);
-                }
-                else if (sr >= AVX2_DOUBLE_STRIDE * 2) {
+                if (sr >= AVX2_DOUBLE_STRIDE * 2) {
                     __m256d x0 = _mm256_load_pd(x_ptr);
                     __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
 
                     _mm256_stream_pd(y_ptr + offset + index, x0);
                     _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
+
+                    x_ptr += AVX2_DOUBLE_STRIDE * 2;
+                    index += AVX2_DOUBLE_STRIDE * 2;
+                    sr -= AVX2_DOUBLE_STRIDE * 2;
                 }
-                else if (sr >= AVX2_DOUBLE_STRIDE) {
+                if (sr >= AVX2_DOUBLE_STRIDE) {
                     __m256d x0 = _mm256_load_pd(x_ptr);
 
                     _mm256_stream_pd(y_ptr + offset + index, x0);
@@ -467,34 +462,27 @@ int transpose_unaligned_d(
                     index += AVX2_DOUBLE_STRIDE * 4;
                     sr -= AVX2_DOUBLE_STRIDE * 4;
                 }
-                if (sr >= AVX2_DOUBLE_STRIDE * 3) {
+                if (sr >= AVX2_DOUBLE_STRIDE * 2) {
                     __m256d x0 = _mm256_loadu_pd(x_ptr);
                     __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                    __m256d x2 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-                    __m256d x3 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 3);
 
                     _mm256_storeu_pd(y_ptr + offset + index, x0);
                     _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
-                    _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 2, x2);
-                    _mm256_maskstore_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 3, mask, x3);
+
+                    x_ptr += AVX2_DOUBLE_STRIDE * 2;
+                    index += AVX2_DOUBLE_STRIDE * 2;
+                    sr -= AVX2_DOUBLE_STRIDE * 2;
                 }
-                else if (sr >= AVX2_DOUBLE_STRIDE * 2) {
+                if (sr >= AVX2_DOUBLE_STRIDE) {
                     __m256d x0 = _mm256_loadu_pd(x_ptr);
-                    __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                    __m256d x2 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
 
                     _mm256_storeu_pd(y_ptr + offset + index, x0);
-                    _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
-                    _mm256_maskstore_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 2, mask, x2);
-                }
-                else if (sr >= AVX2_DOUBLE_STRIDE) {
-                    __m256d x0 = _mm256_loadu_pd(x_ptr);
-                    __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
 
-                    _mm256_storeu_pd(y_ptr + offset + index, x0);
-                    _mm256_maskstore_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, mask, x1);
+                    x_ptr += AVX2_DOUBLE_STRIDE;
+                    index += AVX2_DOUBLE_STRIDE;
+                    sr -= AVX2_DOUBLE_STRIDE;
                 }
-                else {
+                if(sr > 0){
                     __m256d x0 = _mm256_loadu_pd(x_ptr);
 
                     _mm256_maskstore_pd(y_ptr + offset + index, mask, x0);

@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline//inline_kernelfma_s.hpp"
+#include "../Inline//inline_kernelfma_ss.hpp"
 
 using namespace System;
 
@@ -17,13 +17,20 @@ int dense_backwardfilter_n1_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc(((size_t)ic * oc + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     uint maskn = oc & AVX2_FLOAT_REMAIN_MASK;
 
     if (maskn > 0) {
         const __m256i mask = _mm256_setmask_ps(maskn);
 
         for (uint i = 0; i < n; i++) {
-            kernelfma_n1_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+            kernelfma_n1_unaligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -31,12 +38,14 @@ int dense_backwardfilter_n1_s(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n1_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n1_aligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -51,13 +60,20 @@ int dense_backwardfilter_n2_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc(((size_t)ic * oc + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     uint maskn = (oc % (AVX2_FLOAT_STRIDE / 2)) * ic;
 
     if (maskn > 0) {
         const __m256i mask = _mm256_setmask_ps(maskn);
 
         for (uint i = 0; i < n; i++) {
-            kernelfma_n2_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+            kernelfma_n2_unaligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -65,12 +81,14 @@ int dense_backwardfilter_n2_s(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n2_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n2_aligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -85,12 +103,19 @@ int dense_backwardfilter_n3_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc(((size_t)ic * oc + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     if (oc % 8 != 0) {
         uint maskn = 2 - (oc & 1);
         const __m256i mask = _mm256_setmask_ps(maskn * ic);
 
         for (uint i = 0; i < n; i++) {
-            kernelfma_n3_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+            kernelfma_n3_unaligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -98,12 +123,14 @@ int dense_backwardfilter_n3_s(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n3_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n3_aligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -118,11 +145,18 @@ int dense_backwardfilter_n4_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc(((size_t)ic * oc + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     if (oc % 2 != 0) {
         const __m256i mask = _mm256_setmask_ps((oc % 2) * ic);
 
         for (uint i = 0; i < n; i++) {
-            kernelfma_n4_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+            kernelfma_n4_unaligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -130,12 +164,14 @@ int dense_backwardfilter_n4_s(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n4_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n4_aligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -176,12 +212,21 @@ int dense_backwardfilter_n32x_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc((size_t)ic * oc * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     for (uint i = 0; i < n; i++) {
-        kernelfma_n32x_s(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_n32x_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -196,12 +241,21 @@ int dense_backwardfilter_aligned_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc((size_t)ic * oc * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     for (uint i = 0; i < n; i++) {
-        kernelfma_aligned_s(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_aligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -216,14 +270,23 @@ int dense_backwardfilter_unaligned_s(
     }
 #endif // _DEBUG
 
+    float* wc_ptr = (float*)_aligned_malloc(((size_t)ic * oc + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_s(ic * oc, w_ptr);
+    zeroset_s(ic * oc, wc_ptr);
+
     const __m256i mask = _mm256_setmask_ps(ic & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        kernelfma_unaligned_s(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+        kernelfma_unaligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -249,8 +312,6 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
     const float* y_ptr = (const float*)(dy->Ptr.ToPointer());
     float* w_ptr = (float*)(dw->Ptr.ToPointer());
-
-    zeroset_s(ic * oc, w_ptr);
 
     int ret = UNEXECUTED;
 

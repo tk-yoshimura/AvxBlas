@@ -50,16 +50,14 @@ __forceinline void zeroset_aligned_s(const unsigned int n, float* col_ptr) {
         col_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
-    if (r >= AVX2_FLOAT_STRIDE * 3) {
+    if (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_store_ps(col_ptr, fillz);
         _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE, fillz);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, fillz);
+
+        col_ptr += AVX2_FLOAT_STRIDE * 2;
+        r -= AVX2_FLOAT_STRIDE * 2;
     }
-    else if (r >= AVX2_FLOAT_STRIDE * 2) {
-        _mm256_store_ps(col_ptr, fillz);
-        _mm256_store_ps(col_ptr + AVX2_FLOAT_STRIDE, fillz);
-    }
-    else if (r >= AVX2_FLOAT_STRIDE) {
+    if (r >= AVX2_FLOAT_STRIDE) {
         _mm256_store_ps(col_ptr, fillz);
     }
 }
@@ -84,22 +82,20 @@ __forceinline void zeroset_unaligned_s(const unsigned int n, float* col_ptr, con
         col_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
-    if (r >= AVX2_FLOAT_STRIDE * 3) {
+    if (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_storeu_ps(col_ptr, fillz);
         _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE, fillz);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, fillz);
-        _mm256_maskstore_ps(col_ptr + AVX2_FLOAT_STRIDE * 3, mask, fillz);
+
+        col_ptr += AVX2_FLOAT_STRIDE * 2;
+        r -= AVX2_FLOAT_STRIDE * 2;
     }
-    else if (r >= AVX2_FLOAT_STRIDE * 2) {
+    if (r >= AVX2_FLOAT_STRIDE) {
         _mm256_storeu_ps(col_ptr, fillz);
-        _mm256_storeu_ps(col_ptr + AVX2_FLOAT_STRIDE, fillz);
-        _mm256_maskstore_ps(col_ptr + AVX2_FLOAT_STRIDE * 2, mask, fillz);
+
+        col_ptr += AVX2_FLOAT_STRIDE;
+        r -= AVX2_FLOAT_STRIDE;
     }
-    else if (r >= AVX2_FLOAT_STRIDE) {
-        _mm256_storeu_ps(col_ptr, fillz);
-        _mm256_maskstore_ps(col_ptr + AVX2_FLOAT_STRIDE, mask, fillz);
-    }
-    else {
+    if(r > 0) {
         _mm256_maskstore_ps(col_ptr, mask, fillz);
     }
 }
