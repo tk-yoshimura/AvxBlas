@@ -7,10 +7,10 @@ using namespace System;
 #pragma unmanaged
 
 int clear_d(
-    const unsigned int index, const unsigned int n, const double c,
-    double* __restrict y_ptr) {
+    const uint index, const uint n, const double c,
+    OUTPTR(double) y_ptr) {
     
-    unsigned int r = n;
+    uint r = n;
 
     y_ptr += index;
     while (r > 0) {

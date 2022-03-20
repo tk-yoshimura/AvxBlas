@@ -8,8 +8,8 @@ using namespace System;
 #pragma unmanaged
 
 int vw_fill_aligned_s(
-    const unsigned int n, const unsigned int stride,
-    const float* __restrict v_ptr, float* __restrict y_ptr) {
+    const uint n, const uint stride,
+    INPTR(float) v_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_FLOAT_REMAIN_MASK) != 0) || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -17,8 +17,8 @@ int vw_fill_aligned_s(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < stride; c += AVX2_FLOAT_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < stride; c += AVX2_FLOAT_STRIDE) {
             __m256 v = _mm256_load_ps(v_ptr + c);
 
             _mm256_stream_ps(y_ptr + c, v);
@@ -31,8 +31,8 @@ int vw_fill_aligned_s(
 }
 
 int vw_fill_unaligned_s(
-    const unsigned int n, const unsigned int stride,
-    const float* __restrict v_ptr, float* __restrict y_ptr) {
+    const uint n, const uint stride,
+    INPTR(float) v_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)v_ptr % AVX2_ALIGNMENT) != 0) {
@@ -40,12 +40,12 @@ int vw_fill_unaligned_s(
     }
 #endif // _DEBUG
 
-    const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
+    const uint sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
     const __m256i mask = _mm256_setmask_ps(sr);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
             __m256 v = _mm256_load_ps(v_ptr + c);
 
             _mm256_storeu_ps(y_ptr + c, v);
@@ -63,11 +63,11 @@ int vw_fill_unaligned_s(
 }
 
 int vw_fill_batch_s(
-    const unsigned int n, const unsigned int g, const unsigned int stride,
-    const float* __restrict v_ptr, float* __restrict y_ptr) {
+    const uint n, const uint g, const uint stride,
+    INPTR(float) v_ptr, OUTPTR(float) y_ptr) {
 
-    const unsigned int nb = n / g * g, nr = n - nb;
-    const unsigned int sg = stride * g;
+    const uint nb = n / g * g, nr = n - nb;
+    const uint sg = stride * g;
 
 #ifdef _DEBUG
     if ((sg & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -82,8 +82,8 @@ int vw_fill_batch_s(
 
     repeat_vector_s(g, stride, v_ptr, u_ptr);
 
-    for (unsigned int i = 0; i < nb; i += g) {
-        for (unsigned int c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
+    for (uint i = 0; i < nb; i += g) {
+        for (uint c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
             __m256 v = _mm256_load_ps(u_ptr + c);
 
             _mm256_stream_ps(y_ptr + c, v);
@@ -92,11 +92,11 @@ int vw_fill_batch_s(
         y_ptr += sg;
     }
     if (nr > 0) {
-        const unsigned int rem = stride * nr;
-        const unsigned int remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
+        const uint rem = stride * nr;
+        const uint remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
         const __m256i mask = _mm256_setmask_ps(remr);
 
-        for (unsigned int c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
+        for (uint c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
             __m256 v = _mm256_load_ps(u_ptr + c);
 
             _mm256_stream_ps(y_ptr + c, v);

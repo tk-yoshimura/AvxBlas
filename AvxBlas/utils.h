@@ -6,30 +6,36 @@
 
 static_assert(sizeof(float)  == 4, "sizeof float must be 4");
 static_assert(sizeof(double) == 8, "sizeof float must be 8");
+static_assert(sizeof(unsigned int) == 4, "sizeof uint must be 4");
 
-extern void repeat_vector_s(const unsigned int n, const unsigned int stride, const float* __restrict x_ptr, float* __restrict y_ptr);
-extern void repeat_vector_d(const unsigned int n, const unsigned int stride, const double* __restrict x_ptr, double* __restrict y_ptr);
+#define INPTR(type) const type* __restrict
+#define OUTPTR(type) type* __restrict
 
-extern __m128i _mm_setmask_ps(const unsigned int n);
-extern __m256i _mm256_setmask_ps(const unsigned int n);
-extern __m128i _mm_setmask_pd(const unsigned int n);
-extern __m256i _mm256_setmask_pd(const unsigned int n);
+typedef unsigned int uint;
 
-extern void zeroset_s(const unsigned int n, float* y_ptr);
-extern void zeroset_d(const unsigned int n, double* y_ptr);
+extern void repeat_vector_s(const uint n, const uint stride, INPTR(float) x_ptr, OUTPTR(float) y_ptr);
+extern void repeat_vector_d(const uint n, const uint stride, INPTR(double) x_ptr, OUTPTR(double) y_ptr);
+
+extern __m128i _mm_setmask_ps(const uint n);
+extern __m256i _mm256_setmask_ps(const uint n);
+extern __m128i _mm_setmask_pd(const uint n);
+extern __m256i _mm256_setmask_pd(const uint n);
+
+extern void zeroset_s(const uint n, float* y_ptr);
+extern void zeroset_d(const uint n, double* y_ptr);
 
 extern void align_kernel_s(
-    const unsigned int n, const unsigned int unaligned_w_size, const unsigned int aligned_w_size,
-    const float* __restrict unaligned_w_ptr, float* __restrict aligned_w_ptr);
+    const uint n, const uint unaligned_w_size, const uint aligned_w_size,
+    INPTR(float) unaligned_w_ptr, OUTPTR(float) aligned_w_ptr);
 extern void align_kernel_d(
-    const unsigned int n, const unsigned int unaligned_w_size, const unsigned int aligned_w_size,
-    const double* __restrict unaligned_w_ptr, double* __restrict aligned_w_ptr);
+    const uint n, const uint unaligned_w_size, const uint aligned_w_size,
+    INPTR(double) unaligned_w_ptr, OUTPTR(double) aligned_w_ptr);
 extern void unalign_kernel_s(
-    const unsigned int n, const unsigned int aligned_w_size, const unsigned int unaligned_w_size,
-    const float* __restrict aligned_w_ptr, float* __restrict unaligned_w_ptr);
+    const uint n, const uint aligned_w_size, const uint unaligned_w_size,
+    INPTR(float) aligned_w_ptr, OUTPTR(float) unaligned_w_ptr);
 extern void unalign_kernel_d(
-    const unsigned int n, const unsigned int aligned_w_size, const unsigned int unaligned_w_size,
-    const double* __restrict aligned_w_ptr, double* __restrict unaligned_w_ptr);
+    const uint n, const uint aligned_w_size, const uint unaligned_w_size,
+    INPTR(double) aligned_w_ptr, OUTPTR(double) unaligned_w_ptr);
 
 union _m32 {
     float f;

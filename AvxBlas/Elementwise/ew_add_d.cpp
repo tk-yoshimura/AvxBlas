@@ -7,8 +7,8 @@ using namespace System;
 #pragma unmanaged
 
 int ew_add_d(
-    const unsigned int n,
-    const double* __restrict x1_ptr, const double* __restrict x2_ptr, double* __restrict y_ptr) {
+    const uint n,
+    INPTR(double) x1_ptr, INPTR(double) x2_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x1_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)x2_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -16,7 +16,7 @@ int ew_add_d(
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         __m256d x01 = _mm256_load_pd(x1_ptr);

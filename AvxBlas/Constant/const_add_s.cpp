@@ -7,8 +7,8 @@ using namespace System;
 #pragma unmanaged
 
 int const_add_s(
-    const unsigned int n,
-    const float* __restrict x_ptr, const float c, float* __restrict y_ptr) {
+    const uint n,
+    INPTR(float) x_ptr, const float c, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -16,7 +16,7 @@ int const_add_s(
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    uint r = n;
 
     const __m256 fillc = _mm256_set1_ps(c);
 

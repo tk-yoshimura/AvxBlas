@@ -9,18 +9,18 @@ using namespace System;
 #pragma unmanaged
 
 int ag_sum_stride1_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
     const __m256d zero = _mm256_setzero_pd();
-    const unsigned int sb = samples & AVX2_DOUBLE_BATCH_MASK, sr = samples - sb;
+    const uint sb = samples & AVX2_DOUBLE_BATCH_MASK, sr = samples - sb;
     const __m256i mask = _mm256_setmask_pd(sr);
 
     if (sr > 0) {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             __m256d buf = zero;
 
-            for (unsigned int s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
+            for (uint s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
                 __m256d x = _mm256_loadu_pd(x_ptr);
 
                 buf = _mm256_add_pd(x, buf);
@@ -43,10 +43,10 @@ int ag_sum_stride1_d(
         }
     }
     else {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             __m256d buf = zero;
 
-            for (unsigned int s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
+            for (uint s = 0; s < sb; s += AVX2_DOUBLE_STRIDE) {
                 __m256d x = _mm256_load_pd(x_ptr);
 
                 buf = _mm256_add_pd(x, buf);
@@ -66,8 +66,8 @@ int ag_sum_stride1_d(
 }
 
 int ag_sum_stride2_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -76,14 +76,14 @@ int ag_sum_stride2_d(
 #endif // _DEBUG
 
     const __m256d zero = _mm256_setzero_pd();
-    const unsigned int sb = samples / 2 * 2, sr = samples - sb;
+    const uint sb = samples / 2 * 2, sr = samples - sb;
     const __m256i mask = _mm256_setmask_pd(sr * 2);
 
     if (sr > 0) {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             __m256d buf = zero;
 
-            for (unsigned int s = 0; s < sb; s += 2) {
+            for (uint s = 0; s < sb; s += 2) {
                 __m256d x = _mm256_loadu_pd(x_ptr);
 
                 buf = _mm256_add_pd(x, buf);
@@ -106,10 +106,10 @@ int ag_sum_stride2_d(
         }
     }
     else {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             __m256d buf = zero;
 
-            for (unsigned int s = 0; s < sb; s += 2) {
+            for (uint s = 0; s < sb; s += 2) {
                 __m256d x = _mm256_load_pd(x_ptr);
 
                 buf = _mm256_add_pd(x, buf);
@@ -129,16 +129,16 @@ int ag_sum_stride2_d(
 }
 
 int ag_sum_stride3_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
     const __m256d zero = _mm256_setzero_pd();
     const __m256i mask = _mm256_setmask_pd(3);
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         __m256d buf = zero;
 
-        for (unsigned int s = 0; s < samples; s++) {
+        for (uint s = 0; s < samples; s++) {
             __m256d x = _mm256_maskload_pd(x_ptr, mask);
 
             buf = _mm256_add_pd(x, buf);
@@ -155,8 +155,8 @@ int ag_sum_stride3_d(
 }
 
 int ag_sum_stride4_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -166,10 +166,10 @@ int ag_sum_stride4_d(
 
     const __m256d zero = _mm256_setzero_pd();
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         __m256d buf = zero;
 
-        for (unsigned int s = 0; s < samples; s++) {
+        for (uint s = 0; s < samples; s++) {
             __m256d x = _mm256_load_pd(x_ptr);
 
             buf = _mm256_add_pd(x, buf);
@@ -186,8 +186,8 @@ int ag_sum_stride4_d(
 }
 
 int ag_sum_stride8_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -197,10 +197,10 @@ int ag_sum_stride8_d(
 
     const __m256d zero = _mm256_setzero_pd();
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         __m256d buf0 = zero, buf1 = zero;
 
-        for (unsigned int s = 0; s < samples; s++) {
+        for (uint s = 0; s < samples; s++) {
             __m256d x0 = _mm256_load_pd(x_ptr);
             x_ptr += AVX2_DOUBLE_STRIDE;
             __m256d x1 = _mm256_load_pd(x_ptr);
@@ -220,8 +220,8 @@ int ag_sum_stride8_d(
 }
 
 int ag_sum_stride12_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -231,10 +231,10 @@ int ag_sum_stride12_d(
 
     const __m256d zero = _mm256_setzero_pd();
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         __m256d buf0 = zero, buf1 = zero, buf2 = zero;
 
-        for (unsigned int s = 0; s < samples; s++) {
+        for (uint s = 0; s < samples; s++) {
             __m256d x0 = _mm256_load_pd(x_ptr);
             x_ptr += AVX2_DOUBLE_STRIDE;
             __m256d x1 = _mm256_load_pd(x_ptr);
@@ -259,8 +259,8 @@ int ag_sum_stride12_d(
 }
 
 int ag_sum_stride16_d(
-    const unsigned int n, const unsigned int samples,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -270,10 +270,10 @@ int ag_sum_stride16_d(
 
     const __m256d zero = _mm256_setzero_pd();
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         __m256d buf0 = zero, buf1 = zero, buf2 = zero, buf3 = zero;
 
-        for (unsigned int s = 0; s < samples; s++) {
+        for (uint s = 0; s < samples; s++) {
             __m256d x0 = _mm256_load_pd(x_ptr);
             x_ptr += AVX2_DOUBLE_STRIDE;
             __m256d x1 = _mm256_load_pd(x_ptr);
@@ -303,8 +303,8 @@ int ag_sum_stride16_d(
 }
 
 int ag_sum_strideleq4_d(
-    const unsigned int n, const unsigned int samples, const unsigned int stride,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples, const uint stride,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
     if (stride == 1) {
         return ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
@@ -323,8 +323,8 @@ int ag_sum_strideleq4_d(
 }
 
 int ag_sum_aligned_d(
-    const unsigned int n, const unsigned int samples, const unsigned int stride,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples, const uint stride,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
     if (stride == AVX2_DOUBLE_STRIDE) {
         return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
@@ -352,13 +352,13 @@ int ag_sum_aligned_d(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
             _mm256_store_pd(buf + c, zero);
         }
 
-        for (unsigned int s = 0; s < samples; s++) {
-            for (unsigned int c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
+        for (uint s = 0; s < samples; s++) {
+            for (uint c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
                 __m256d x = _mm256_load_pd(x_ptr + c);
                 __m256d y = _mm256_load_pd(buf + c);
 
@@ -370,7 +370,7 @@ int ag_sum_aligned_d(
             x_ptr += stride;
         }
 
-        for (unsigned int c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
+        for (uint c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
             __m256d y = _mm256_load_pd(buf + c);
 
             _mm256_stream_pd(y_ptr + c, y);
@@ -385,14 +385,14 @@ int ag_sum_aligned_d(
 }
 
 int ag_sum_unaligned_d(
-    const unsigned int n, const unsigned int samples, const unsigned int stride,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint samples, const uint stride,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
     if (stride <= AVX2_DOUBLE_STRIDE) {
         return ag_sum_strideleq4_d(n, samples, stride, x_ptr, y_ptr);
     }
 
-    const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
+    const uint sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
     const __m256d zero = _mm256_setzero_pd();
     const __m256i mask = _mm256_setmask_pd(sr);
@@ -402,13 +402,13 @@ int ag_sum_unaligned_d(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
             _mm256_store_pd(buf + c, zero);
         }
 
-        for (unsigned int s = 0; s < samples; s++) {
-            for (unsigned int c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
+        for (uint s = 0; s < samples; s++) {
+            for (uint c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
                 __m256d x = _mm256_loadu_pd(x_ptr + c);
                 __m256d y = _mm256_load_pd(buf + c);
 
@@ -428,7 +428,7 @@ int ag_sum_unaligned_d(
             x_ptr += stride;
         }
 
-        for (unsigned int c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
+        for (uint c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
             __m256d y = _mm256_load_pd(buf + c);
 
             _mm256_storeu_pd(y_ptr + c, y);
@@ -448,10 +448,10 @@ int ag_sum_unaligned_d(
 }
 
 int ag_sum_batch_d(
-    const unsigned int n, const unsigned int g, const unsigned int samples, const unsigned int stride,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    const uint n, const uint g, const uint samples, const uint stride,
+    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
 
-    const unsigned int sg = stride * g;
+    const uint sg = stride * g;
 
 #ifdef _DEBUG
     if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0) {
@@ -459,9 +459,9 @@ int ag_sum_batch_d(
     }
 #endif // _DEBUG
 
-    const unsigned int sb = samples / g * g, sr = samples - sb;
-    const unsigned int rem = stride * sr;
-    const unsigned int remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
+    const uint sb = samples / g * g, sr = samples - sb;
+    const uint rem = stride * sr;
+    const uint remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
     const __m256i mask = _mm256_setmask_pd(remr);
 
     const __m256d zero = _mm256_setzero_pd();
@@ -471,13 +471,13 @@ int ag_sum_batch_d(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
             _mm256_store_pd(buf + c, zero);
         }
 
-        for (unsigned int s = 0; s < sb; s += g) {
-            for (unsigned int c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
+        for (uint s = 0; s < sb; s += g) {
+            for (uint c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
                 __m256d x = _mm256_loadu_pd(x_ptr + c);
                 __m256d y = _mm256_load_pd(buf + c);
 
@@ -488,7 +488,7 @@ int ag_sum_batch_d(
             x_ptr += sg;
         }
         if (sr > 0) {
-            for (unsigned int c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
+            for (uint c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
                 __m256d x = _mm256_loadu_pd(x_ptr + c);
                 __m256d y = _mm256_load_pd(buf + c);
 

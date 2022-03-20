@@ -7,8 +7,8 @@ using namespace System;
 #pragma unmanaged
 
 int const_add_d(
-    const unsigned int n,
-    const double* __restrict x_ptr, const double c, double* __restrict y_ptr) {
+    const uint n,
+    INPTR(double) x_ptr, const double c, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -16,7 +16,7 @@ int const_add_d(
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    uint r = n;
 
     const __m256d fillc = _mm256_set1_pd(c);
 

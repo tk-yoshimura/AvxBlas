@@ -8,8 +8,8 @@ using namespace System;
 #pragma unmanaged
 
 int dense_backwardfilter_n1_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 1 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -17,12 +17,12 @@ int dense_backwardfilter_n1_d(
     }
 #endif // _DEBUG
 
-    unsigned int maskn = oc & AVX2_DOUBLE_REMAIN_MASK;
+    uint maskn = oc & AVX2_DOUBLE_REMAIN_MASK;
 
     if (maskn > 0) {
         const __m256i mask = _mm256_setmask_pd(maskn);
 
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             kernelfma_n1_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr, mask);
 
             x_ptr += ic;
@@ -30,7 +30,7 @@ int dense_backwardfilter_n1_d(
         }
     }
     else {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             kernelfma_n1_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
             x_ptr += ic;
@@ -42,8 +42,8 @@ int dense_backwardfilter_n1_d(
 }
 
 int dense_backwardfilter_n2_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 2 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -51,12 +51,12 @@ int dense_backwardfilter_n2_d(
     }
 #endif // _DEBUG
 
-    unsigned int maskn = (oc % (AVX2_DOUBLE_STRIDE / 2)) * ic;
+    uint maskn = (oc % (AVX2_DOUBLE_STRIDE / 2)) * ic;
 
     if (maskn > 0) {
         const __m256i mask = _mm256_setmask_pd(maskn);
 
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             kernelfma_n2_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr, mask);
 
             x_ptr += ic;
@@ -64,7 +64,7 @@ int dense_backwardfilter_n2_d(
         }
     }
     else {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             kernelfma_n2_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
             x_ptr += ic;
@@ -76,8 +76,8 @@ int dense_backwardfilter_n2_d(
 }
 
 int dense_backwardfilter_n3_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 3 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -86,7 +86,7 @@ int dense_backwardfilter_n3_d(
 #endif // _DEBUG
 
     if (oc % 4 != 0) {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             kernelfma_n3_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
             x_ptr += ic;
@@ -94,7 +94,7 @@ int dense_backwardfilter_n3_d(
         }
     }
     else {
-        for (unsigned int i = 0; i < n; i++) {
+        for (uint i = 0; i < n; i++) {
             kernelfma_n3_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
             x_ptr += ic;
@@ -106,8 +106,8 @@ int dense_backwardfilter_n3_d(
 }
 
 int dense_backwardfilter_n4_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 4 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -115,7 +115,7 @@ int dense_backwardfilter_n4_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         kernelfma_n4_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
         x_ptr += ic;
@@ -126,8 +126,8 @@ int dense_backwardfilter_n4_d(
 }
 
 int dense_backwardfilter_nleq4_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if (ic > AVX2_DOUBLE_STRIDE || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -152,8 +152,8 @@ int dense_backwardfilter_nleq4_d(
 }
 
 int dense_backwardfilter_n16x_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if ((ic % (AVX2_DOUBLE_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -161,7 +161,7 @@ int dense_backwardfilter_n16x_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         kernelfma_n16x_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
         x_ptr += ic;
@@ -172,8 +172,8 @@ int dense_backwardfilter_n16x_d(
 }
 
 int dense_backwardfilter_aligned_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_DOUBLE_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -181,7 +181,7 @@ int dense_backwardfilter_aligned_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         kernelfma_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
 
         x_ptr += ic;
@@ -192,8 +192,8 @@ int dense_backwardfilter_aligned_d(
 }
 
 int dense_backwardfilter_unaligned_d(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict y_ptr, double* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_DOUBLE_REMAIN_MASK) == 0) {
@@ -203,7 +203,7 @@ int dense_backwardfilter_unaligned_d(
 
     const __m256i mask = _mm256_setmask_pd(ic & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
+    for (uint i = 0; i < n; i++) {
         kernelfma_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr, mask);
 
         x_ptr += ic;

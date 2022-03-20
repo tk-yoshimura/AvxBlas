@@ -8,14 +8,14 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline void copy_n32x_s(const unsigned int n, const float* __restrict im_ptr, float* __restrict col_ptr) {
+__forceinline void copy_n32x_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) col_ptr) {
 #ifdef _DEBUG
     if ((n % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         __m256 x0 = _mm256_load_ps(im_ptr);
@@ -34,14 +34,14 @@ __forceinline void copy_n32x_s(const unsigned int n, const float* __restrict im_
     }
 }
 
-__forceinline void copy_aligned_s(const unsigned int n, const float* __restrict im_ptr, float* __restrict col_ptr) {
+__forceinline void copy_aligned_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) col_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         __m256 x0 = _mm256_load_ps(im_ptr);
@@ -81,14 +81,14 @@ __forceinline void copy_aligned_s(const unsigned int n, const float* __restrict 
     }
 }
 
-__forceinline void copy_unaligned_s(const unsigned int n, const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+__forceinline void copy_unaligned_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) col_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         __m256 x0 = _mm256_loadu_ps(im_ptr);

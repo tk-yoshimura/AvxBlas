@@ -11,8 +11,8 @@ using namespace System;
 #pragma unmanaged
 
 int affine_dotmul_stride1_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -20,12 +20,12 @@ int affine_dotmul_stride1_d(
     }
 #endif // _DEBUG
 
-    const unsigned int nbb = nb & AVX2_DOUBLE_BATCH_MASK, nbr = nb - nbb;
+    const uint nbb = nb & AVX2_DOUBLE_BATCH_MASK, nbr = nb - nbb;
     const __m256i mask = _mm256_setmask_pd(nbr);
 
     if (nb <= 2) {
-        for (unsigned int i = 0; i < na; i++) {
-            for (unsigned int j = 0; j < nb; j++) {
+        for (uint i = 0; i < na; i++) {
+            for (uint j = 0; j < nb; j++) {
                 double y = a_ptr[i] * b_ptr[j];
 
                 *y_ptr = y;
@@ -34,10 +34,10 @@ int affine_dotmul_stride1_d(
         }
     }
     else if (nbr > 0) {
-        for (unsigned int i = 0; i < na; i++) {
+        for (uint i = 0; i < na; i++) {
             __m256d a = _mm256_set1_pd(a_ptr[i]);
 
-            for (unsigned int j = 0; j < nbb; j += AVX2_DOUBLE_STRIDE) {
+            for (uint j = 0; j < nbb; j += AVX2_DOUBLE_STRIDE) {
                 __m256d b = _mm256_loadu_pd(b_ptr + j);
 
                 __m256d y = _mm256_mul_pd(a, b);
@@ -58,10 +58,10 @@ int affine_dotmul_stride1_d(
         }
     }
     else {
-        for (unsigned int i = 0; i < na; i++) {
+        for (uint i = 0; i < na; i++) {
             __m256d a = _mm256_set1_pd(a_ptr[i]);
 
-            for (unsigned int j = 0; j < nbb; j += AVX2_DOUBLE_STRIDE) {
+            for (uint j = 0; j < nbb; j += AVX2_DOUBLE_STRIDE) {
                 __m256d b = _mm256_load_pd(b_ptr + j);
 
                 __m256d y = _mm256_mul_pd(a, b);
@@ -77,8 +77,8 @@ int affine_dotmul_stride1_d(
 }
 
 int affine_dotmul_stride2_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -86,13 +86,13 @@ int affine_dotmul_stride2_d(
     }
 #endif // _DEBUG
 
-    const unsigned int nbb = nb / 2 * 2, nbr = nb - nbb;
+    const uint nbb = nb / 2 * 2, nbr = nb - nbb;
     const __m256i masksrc = _mm256_setmask_pd(nbr * 2);
     const __m128i maskdst = _mm_setmask_pd(nbr);
 
     if (nb <= 2) {
-        for (unsigned int i = 0, nas = na * 2; i < nas; i += 2) {
-            for (unsigned int j = 0, nbs = nb * 2; j < nbs; j += 2) {
+        for (uint i = 0, nas = na * 2; i < nas; i += 2) {
+            for (uint j = 0, nbs = nb * 2; j < nbs; j += 2) {
                 double y = a_ptr[i] * b_ptr[j] + a_ptr[i + 1] * b_ptr[j + 1];
 
                 *y_ptr = y;
@@ -101,10 +101,10 @@ int affine_dotmul_stride2_d(
         }
     }
     else if (nbr > 0) {
-        for (unsigned int i = 0, nas = na * 2; i < nas; i += 2) {
+        for (uint i = 0, nas = na * 2; i < nas; i += 2) {
             __m256d a = _mm256_set2_pd(a_ptr[i], a_ptr[i + 1]);
 
-            for (unsigned int j = 0, nbs = nbb * 2; j < nbs; j += 4) {
+            for (uint j = 0, nbs = nbb * 2; j < nbs; j += 4) {
                 __m256d b = _mm256_loadu_pd(b_ptr + j);
 
                 __m128d y = _mm256_hadd2_pd(_mm256_mul_pd(a, b));
@@ -125,10 +125,10 @@ int affine_dotmul_stride2_d(
         }
     }
     else {
-        for (unsigned int i = 0, nas = na * 2; i < nas; i += 2) {
+        for (uint i = 0, nas = na * 2; i < nas; i += 2) {
             __m256d a = _mm256_set2_pd(a_ptr[i], a_ptr[i + 1]);
 
-            for (unsigned int j = 0, nbs = nbb * 2; j < nbs; j += 4) {
+            for (uint j = 0, nbs = nbb * 2; j < nbs; j += 4) {
                 __m256d b = _mm256_load_pd(b_ptr + j);
 
                 __m128d y = _mm256_hadd2_pd(_mm256_mul_pd(a, b));
@@ -144,15 +144,15 @@ int affine_dotmul_stride2_d(
 }
 
 int affine_dotmul_stride3_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
     const __m256i mask = _mm256_setmask_pd(3);
 
-    for (unsigned int i = 0, nas = na * 3; i < nas; i += 3) {
+    for (uint i = 0, nas = na * 3; i < nas; i += 3) {
         __m256d a = _mm256_maskload_pd(a_ptr + i, mask);
 
-        for (unsigned int j = 0, nbs = nb * 3; j < nbs; j += 3) {
+        for (uint j = 0, nbs = nb * 3; j < nbs; j += 3) {
             __m256d b = _mm256_maskload_pd(b_ptr + j, mask);
 
             double y = _mm256_sum4to1_pd(_mm256_mul_pd(a, b));
@@ -166,8 +166,8 @@ int affine_dotmul_stride3_d(
 }
 
 int affine_dotmul_stride4_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -175,10 +175,10 @@ int affine_dotmul_stride4_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0, nas = na * 4; i < nas; i += 4) {
+    for (uint i = 0, nas = na * 4; i < nas; i += 4) {
         __m256d a = _mm256_load_pd(a_ptr + i);
 
-        for (unsigned int j = 0, nbs = nb * 4; j < nbs; j += 4) {
+        for (uint j = 0, nbs = nb * 4; j < nbs; j += 4) {
             __m256d b = _mm256_load_pd(b_ptr + j);
 
             double y = _mm256_sum4to1_pd(_mm256_mul_pd(a, b));
@@ -192,8 +192,8 @@ int affine_dotmul_stride4_d(
 }
 
 int affine_dotmul_stride5to7_d(
-    const unsigned int na, const unsigned int nb, const unsigned int stride,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb, const uint stride,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE || stride >= AVX2_DOUBLE_STRIDE * 2) {
@@ -203,11 +203,11 @@ int affine_dotmul_stride5to7_d(
 
     const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
+    for (uint i = 0, nas = na * stride; i < nas; i += stride) {
         __m256d a0 = _mm256_loadu_pd(a_ptr + i);
         __m256d a1 = _mm256_maskload_pd(a_ptr + i + AVX2_DOUBLE_STRIDE, mask);
 
-        for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
+        for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             __m256d b0 = _mm256_loadu_pd(b_ptr + j);
             __m256d b1 = _mm256_maskload_pd(b_ptr + j + AVX2_DOUBLE_STRIDE, mask);
 
@@ -225,8 +225,8 @@ int affine_dotmul_stride5to7_d(
 }
 
 int affine_dotmul_stride8_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -234,11 +234,11 @@ int affine_dotmul_stride8_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0, nas = na * AVX2_DOUBLE_STRIDE * 2; i < nas; i += AVX2_DOUBLE_STRIDE * 2) {
+    for (uint i = 0, nas = na * AVX2_DOUBLE_STRIDE * 2; i < nas; i += AVX2_DOUBLE_STRIDE * 2) {
         __m256d a0 = _mm256_load_pd(a_ptr + i);
         __m256d a1 = _mm256_load_pd(a_ptr + i + AVX2_DOUBLE_STRIDE);
 
-        for (unsigned int j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 2; j < nbs; j += AVX2_DOUBLE_STRIDE * 2) {
+        for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 2; j < nbs; j += AVX2_DOUBLE_STRIDE * 2) {
             __m256d b0 = _mm256_load_pd(b_ptr + j);
             __m256d b1 = _mm256_load_pd(b_ptr + j + AVX2_DOUBLE_STRIDE);
 
@@ -256,8 +256,8 @@ int affine_dotmul_stride8_d(
 }
 
 int affine_dotmul_stride9to11_d(
-    const unsigned int na, const unsigned int nb, const unsigned int stride,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb, const uint stride,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE * 2 || stride >= AVX2_DOUBLE_STRIDE * 3) {
@@ -267,12 +267,12 @@ int affine_dotmul_stride9to11_d(
 
     const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
+    for (uint i = 0, nas = na * stride; i < nas; i += stride) {
         __m256d a0 = _mm256_loadu_pd(a_ptr + i);
         __m256d a1 = _mm256_loadu_pd(a_ptr + i + AVX2_DOUBLE_STRIDE);
         __m256d a2 = _mm256_maskload_pd(a_ptr + i + AVX2_DOUBLE_STRIDE * 2, mask);
 
-        for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
+        for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             __m256d b0 = _mm256_loadu_pd(b_ptr + j);
             __m256d b1 = _mm256_loadu_pd(b_ptr + j + AVX2_DOUBLE_STRIDE);
             __m256d b2 = _mm256_maskload_pd(b_ptr + j + AVX2_DOUBLE_STRIDE * 2, mask);
@@ -292,8 +292,8 @@ int affine_dotmul_stride9to11_d(
 }
 
 int affine_dotmul_stride12_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -301,12 +301,12 @@ int affine_dotmul_stride12_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0, nas = na * AVX2_DOUBLE_STRIDE * 3; i < nas; i += AVX2_DOUBLE_STRIDE * 3) {
+    for (uint i = 0, nas = na * AVX2_DOUBLE_STRIDE * 3; i < nas; i += AVX2_DOUBLE_STRIDE * 3) {
         __m256d a0 = _mm256_load_pd(a_ptr + i);
         __m256d a1 = _mm256_load_pd(a_ptr + i + AVX2_DOUBLE_STRIDE);
         __m256d a2 = _mm256_load_pd(a_ptr + i + AVX2_DOUBLE_STRIDE * 2);
 
-        for (unsigned int j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 3; j < nbs; j += AVX2_DOUBLE_STRIDE * 3) {
+        for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 3; j < nbs; j += AVX2_DOUBLE_STRIDE * 3) {
             __m256d b0 = _mm256_load_pd(b_ptr + j);
             __m256d b1 = _mm256_load_pd(b_ptr + j + AVX2_DOUBLE_STRIDE);
             __m256d b2 = _mm256_load_pd(b_ptr + j + AVX2_DOUBLE_STRIDE * 2);
@@ -326,8 +326,8 @@ int affine_dotmul_stride12_d(
 }
 
 int affine_dotmul_stride13to15_d(
-    const unsigned int na, const unsigned int nb, const unsigned int stride,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb, const uint stride,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE * 3 || stride >= AVX2_DOUBLE_STRIDE * 4) {
@@ -337,13 +337,13 @@ int affine_dotmul_stride13to15_d(
 
     const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
+    for (uint i = 0, nas = na * stride; i < nas; i += stride) {
         __m256d a0 = _mm256_loadu_pd(a_ptr + i);
         __m256d a1 = _mm256_loadu_pd(a_ptr + i + AVX2_DOUBLE_STRIDE);
         __m256d a2 = _mm256_loadu_pd(a_ptr + i + AVX2_DOUBLE_STRIDE * 2);
         __m256d a3 = _mm256_maskload_pd(a_ptr + i + AVX2_DOUBLE_STRIDE * 3, mask);
 
-        for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
+        for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             __m256d b0 = _mm256_loadu_pd(b_ptr + j);
             __m256d b1 = _mm256_loadu_pd(b_ptr + j + AVX2_DOUBLE_STRIDE);
             __m256d b2 = _mm256_loadu_pd(b_ptr + j + AVX2_DOUBLE_STRIDE * 2);
@@ -365,8 +365,8 @@ int affine_dotmul_stride13to15_d(
 }
 
 int affine_dotmul_stride16_d(
-    const unsigned int na, const unsigned int nb,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -374,13 +374,13 @@ int affine_dotmul_stride16_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0, nas = na * AVX2_DOUBLE_STRIDE * 4; i < nas; i += AVX2_DOUBLE_STRIDE * 4) {
+    for (uint i = 0, nas = na * AVX2_DOUBLE_STRIDE * 4; i < nas; i += AVX2_DOUBLE_STRIDE * 4) {
         __m256d a0 = _mm256_load_pd(a_ptr + i);
         __m256d a1 = _mm256_load_pd(a_ptr + i + AVX2_DOUBLE_STRIDE);
         __m256d a2 = _mm256_load_pd(a_ptr + i + AVX2_DOUBLE_STRIDE * 2);
         __m256d a3 = _mm256_load_pd(a_ptr + i + AVX2_DOUBLE_STRIDE * 3);
 
-        for (unsigned int j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 4; j < nbs; j += AVX2_DOUBLE_STRIDE * 4) {
+        for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 4; j < nbs; j += AVX2_DOUBLE_STRIDE * 4) {
             __m256d b0 = _mm256_load_pd(b_ptr + j);
             __m256d b1 = _mm256_load_pd(b_ptr + j + AVX2_DOUBLE_STRIDE);
             __m256d b2 = _mm256_load_pd(b_ptr + j + AVX2_DOUBLE_STRIDE * 2);
@@ -402,8 +402,8 @@ int affine_dotmul_stride16_d(
 }
 
 int affine_dotmul_aligned_d(
-    const unsigned int na, const unsigned int nb, const unsigned int stride,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb, const uint stride,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_DOUBLE_REMAIN_MASK) != 0) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -424,8 +424,8 @@ int affine_dotmul_aligned_d(
         return affine_dotmul_stride16_d(na, nb, a_ptr, b_ptr, y_ptr);
     }
 
-    for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
-        for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
+    for (uint i = 0, nas = na * stride; i < nas; i += stride) {
+        for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             double y = dotmul_aligned_d(stride, a_ptr + i, b_ptr + j);
 
             *y_ptr = y;
@@ -437,8 +437,8 @@ int affine_dotmul_aligned_d(
 }
 
 int affine_dotmul_unaligned_d(
-    const unsigned int na, const unsigned int nb, const unsigned int stride,
-    const double* __restrict a_ptr, const double* __restrict b_ptr, double* __restrict y_ptr) {
+    const uint na, const uint nb, const uint stride,
+    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
 
     if (stride == 1) {
         return affine_dotmul_stride1_d(na, nb, a_ptr, b_ptr, y_ptr);
@@ -461,8 +461,8 @@ int affine_dotmul_unaligned_d(
 
     const __m256i mask = _mm256_setmask_pd(stride & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0, nas = na * stride; i < nas; i += stride) {
-        for (unsigned int j = 0, nbs = nb * stride; j < nbs; j += stride) {
+    for (uint i = 0, nas = na * stride; i < nas; i += stride) {
+        for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             double y = dotmul_unaligned_d(stride, a_ptr + i, b_ptr + j, mask);
 
             *y_ptr = y;

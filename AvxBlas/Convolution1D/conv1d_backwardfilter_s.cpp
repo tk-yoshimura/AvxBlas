@@ -11,9 +11,9 @@ using namespace System;
 #pragma unmanaged
 
 int conv1d_backwardfilter_padnone_n32x_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
 
 #ifdef _DEBUG
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -27,8 +27,8 @@ int conv1d_backwardfilter_padnone_n32x_s(
     }
     zeroset_n32x_s(ic * kw * oc, w_ptr);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_n32x_s(ic, kw, iw, x, x_ptr, col_ptr);
 
             kernelfma_n32x_s(ic * kw, oc, col_ptr, y_ptr + x * oc, w_ptr);
@@ -44,9 +44,9 @@ int conv1d_backwardfilter_padnone_n32x_s(
 }
 
 int conv1d_backwardfilter_padnone_aligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -60,8 +60,8 @@ int conv1d_backwardfilter_padnone_aligned_s(
     }
     zeroset_aligned_s(ic * kw * oc, w_ptr);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_aligned_s(ic, kw, iw, x, x_ptr, col_ptr);
 
             kernelfma_aligned_s(ic * kw, oc, col_ptr, y_ptr + x * oc, w_ptr);
@@ -77,9 +77,9 @@ int conv1d_backwardfilter_padnone_aligned_s(
 }
 
 int conv1d_backwardfilter_padnone_unaligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {
@@ -87,7 +87,7 @@ int conv1d_backwardfilter_padnone_unaligned_s(
     }
 #endif // _DEBUG
 
-    const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -102,8 +102,8 @@ int conv1d_backwardfilter_padnone_unaligned_s(
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_unaligned_s(ic, kw, iw, x, x_ptr, col_ptr, mask);
 
             kernelfma_aligned_s(col_size, oc, col_ptr, y_ptr + x * oc, we_ptr);

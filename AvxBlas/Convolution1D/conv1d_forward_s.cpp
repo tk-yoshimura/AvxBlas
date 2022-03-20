@@ -12,9 +12,9 @@ using namespace System;
 #pragma region padnone
 
 int conv1d_forward_padnone_n32x_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -22,8 +22,8 @@ int conv1d_forward_padnone_n32x_s(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             matmul_n32x_s(ic * kw, oc, x_ptr + x * ic, w_ptr, y_ptr + x * oc);
         }
 
@@ -35,9 +35,9 @@ int conv1d_forward_padnone_n32x_s(
 }
 
 int conv1d_forward_padnone_aligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -45,8 +45,8 @@ int conv1d_forward_padnone_aligned_s(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             matmul_aligned_s(ic * kw, oc, x_ptr + x * ic, w_ptr, y_ptr + x * oc);
         }
 
@@ -58,9 +58,9 @@ int conv1d_forward_padnone_aligned_s(
 }
 
 int conv1d_forward_padnone_unaligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -68,7 +68,7 @@ int conv1d_forward_padnone_unaligned_s(
     }
 #endif // _DEBUG
 
-    const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -83,8 +83,8 @@ int conv1d_forward_padnone_unaligned_s(
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_unaligned_s(ic, kw, iw, x, x_ptr, col_ptr, mask);
 
             matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + x * oc);
@@ -105,9 +105,9 @@ int conv1d_forward_padnone_unaligned_s(
 #pragma region padzero
 
 int conv1d_forward_padzero_n32x_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -120,8 +120,8 @@ int conv1d_forward_padzero_n32x_s(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padzero_n32x_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_n32x_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
@@ -137,9 +137,9 @@ int conv1d_forward_padzero_n32x_s(
 }
 
 int conv1d_forward_padzero_aligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -152,8 +152,8 @@ int conv1d_forward_padzero_aligned_s(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padzero_aligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_aligned_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
@@ -169,9 +169,9 @@ int conv1d_forward_padzero_aligned_s(
 }
 
 int conv1d_forward_padzero_unaligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -179,7 +179,7 @@ int conv1d_forward_padzero_unaligned_s(
     }
 #endif // _DEBUG
 
-    const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -194,8 +194,8 @@ int conv1d_forward_padzero_unaligned_s(
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padzero_unaligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr, mask);
 
             matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + x * oc);
@@ -216,9 +216,9 @@ int conv1d_forward_padzero_unaligned_s(
 #pragma region padedge
 
 int conv1d_forward_padedge_n32x_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -231,8 +231,8 @@ int conv1d_forward_padedge_n32x_s(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padedge_n32x_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_n32x_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
@@ -248,9 +248,9 @@ int conv1d_forward_padedge_n32x_s(
 }
 
 int conv1d_forward_padedge_aligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -263,8 +263,8 @@ int conv1d_forward_padedge_aligned_s(
         return FAILURE_BADALLOC;
     }
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padedge_aligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
 
             matmul_aligned_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + x * oc);
@@ -280,9 +280,9 @@ int conv1d_forward_padedge_aligned_s(
 }
 
 int conv1d_forward_padedge_unaligned_s(
-    const unsigned int n, const unsigned int ic, const unsigned int oc,
-    const unsigned int iw, const unsigned int ow, const unsigned int kw,
-    const float* __restrict x_ptr, const float* __restrict w_ptr, float* __restrict y_ptr) {
+    const uint n, const uint ic, const uint oc,
+    const uint iw, const uint ow, const uint kw,
+    INPTR(float) x_ptr, INPTR(float) w_ptr, OUTPTR(float) y_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -290,7 +290,7 @@ int conv1d_forward_padedge_unaligned_s(
     }
 #endif // _DEBUG
 
-    const unsigned int col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -305,8 +305,8 @@ int conv1d_forward_padedge_unaligned_s(
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int x = 0; x < ow; x++) {
+    for (uint i = 0; i < n; i++) {
+        for (uint x = 0; x < ow; x++) {
             imcol1d_padedge_unaligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr, mask);
 
             matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + x * oc);

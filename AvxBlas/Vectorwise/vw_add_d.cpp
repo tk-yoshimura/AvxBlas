@@ -8,8 +8,8 @@ using namespace System;
 #pragma unmanaged
 
 int vw_add_aligned_d(
-    const unsigned int n, const unsigned int stride,
-    const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
+    const uint n, const uint stride,
+    INPTR(double) x_ptr, INPTR(double) v_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_DOUBLE_REMAIN_MASK) != 0) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -17,8 +17,8 @@ int vw_add_aligned_d(
     }
 #endif // _DEBUG
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < stride; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
             __m256d v = _mm256_load_pd(v_ptr + c);
 
@@ -35,8 +35,8 @@ int vw_add_aligned_d(
 }
 
 int vw_add_unaligned_d(
-    const unsigned int n, const unsigned int stride,
-    const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
+    const uint n, const uint stride,
+    INPTR(double) x_ptr, INPTR(double) v_ptr, OUTPTR(double) y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)v_ptr % AVX2_ALIGNMENT) != 0) {
@@ -44,12 +44,12 @@ int vw_add_unaligned_d(
     }
 #endif // _DEBUG
 
-    const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
+    const uint sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
     const __m256i mask = _mm256_setmask_pd(sr);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_loadu_pd(x_ptr + c);
             __m256d v = _mm256_load_pd(v_ptr + c);
 
@@ -74,11 +74,11 @@ int vw_add_unaligned_d(
 }
 
 int vw_add_batch_d(
-    const unsigned int n, const unsigned int g, const unsigned int stride,
-    const double* __restrict x_ptr, const double* __restrict v_ptr, double* __restrict y_ptr) {
+    const uint n, const uint g, const uint stride,
+    INPTR(double) x_ptr, INPTR(double) v_ptr, OUTPTR(double) y_ptr) {
 
-    const unsigned int nb = n / g * g, nr = n - nb;
-    const unsigned int sg = stride * g;
+    const uint nb = n / g * g, nr = n - nb;
+    const uint sg = stride * g;
 
 #ifdef _DEBUG
     if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -93,8 +93,8 @@ int vw_add_batch_d(
 
     repeat_vector_d(g, stride, v_ptr, u_ptr);
 
-    for (unsigned int i = 0; i < nb; i += g) {
-        for (unsigned int c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < nb; i += g) {
+        for (uint c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
             __m256d v = _mm256_load_pd(u_ptr + c);
 
@@ -107,11 +107,11 @@ int vw_add_batch_d(
         y_ptr += sg;
     }
     if (nr > 0) {
-        const unsigned int rem = stride * nr;
-        const unsigned int remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
+        const uint rem = stride * nr;
+        const uint remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
         const __m256i mask = _mm256_setmask_pd(remr);
 
-        for (unsigned int c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
+        for (uint c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
             __m256d v = _mm256_load_pd(u_ptr + c);
 
