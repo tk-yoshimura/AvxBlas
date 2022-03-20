@@ -8,7 +8,7 @@ using namespace System;
 
 int clear_s(
     const uint index, const uint n, const float c,
-    OUTPTR(float) y_ptr) {
+    outfloats y_ptr) {
 
     uint r = n;
 

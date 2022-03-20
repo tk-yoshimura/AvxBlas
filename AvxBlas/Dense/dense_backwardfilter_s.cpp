@@ -9,7 +9,7 @@ using namespace System;
 
 int dense_backwardfilter_n1_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 1 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -43,7 +43,7 @@ int dense_backwardfilter_n1_s(
 
 int dense_backwardfilter_n2_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 2 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -77,7 +77,7 @@ int dense_backwardfilter_n2_s(
 
 int dense_backwardfilter_n3_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 3 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -110,7 +110,7 @@ int dense_backwardfilter_n3_s(
 
 int dense_backwardfilter_n4_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 4 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -142,7 +142,7 @@ int dense_backwardfilter_n4_s(
 
 int dense_backwardfilter_nleq4_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic > AVX2_FLOAT_STRIDE / 2 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -168,7 +168,7 @@ int dense_backwardfilter_nleq4_s(
 
 int dense_backwardfilter_n32x_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -188,7 +188,7 @@ int dense_backwardfilter_n32x_s(
 
 int dense_backwardfilter_aligned_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -208,7 +208,7 @@ int dense_backwardfilter_aligned_s(
 
 int dense_backwardfilter_unaligned_s(
     const uint n, const uint ic, const uint oc,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {

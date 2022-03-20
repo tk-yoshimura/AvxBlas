@@ -8,7 +8,7 @@ using namespace System;
 
 int ew_copy_d(
     const uint n,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     if (x_ptr == y_ptr) {
         return SUCCESS;

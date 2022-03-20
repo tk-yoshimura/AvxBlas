@@ -9,7 +9,7 @@ using namespace System;
 
 int ew_abs_s(
     const uint n,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {

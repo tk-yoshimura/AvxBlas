@@ -8,7 +8,7 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline void copy_n32x_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) col_ptr) {
+__forceinline void copy_n32x_s(const uint n, infloats im_ptr, outfloats col_ptr) {
 #ifdef _DEBUG
     if ((n % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -34,7 +34,7 @@ __forceinline void copy_n32x_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) 
     }
 }
 
-__forceinline void copy_aligned_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) col_ptr) {
+__forceinline void copy_aligned_s(const uint n, infloats im_ptr, outfloats col_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -81,7 +81,7 @@ __forceinline void copy_aligned_s(const uint n, INPTR(float) im_ptr, OUTPTR(floa
     }
 }
 
-__forceinline void copy_unaligned_s(const uint n, INPTR(float) im_ptr, OUTPTR(float) col_ptr, const __m256i mask) {
+__forceinline void copy_unaligned_s(const uint n, infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();

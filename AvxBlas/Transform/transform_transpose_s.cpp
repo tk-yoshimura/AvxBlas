@@ -8,7 +8,7 @@ using namespace System;
 
 int transpose_stride1_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     for (uint th = 0; th < n; th++) {
 
@@ -31,7 +31,7 @@ int transpose_stride1_s(
 
 int transpose_stride2_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     for (uint th = 0; th < n; th++) {
 
@@ -55,7 +55,7 @@ int transpose_stride2_s(
 
 int transpose_stride3_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     const __m128i mask = _mm_setmask_ps(3);
 
@@ -82,7 +82,7 @@ int transpose_stride3_s(
 
 int transpose_stride4_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -113,7 +113,7 @@ int transpose_stride4_s(
 
 int transpose_stride5to7_s(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE / 2 || stride >= AVX2_FLOAT_STRIDE) {
@@ -146,7 +146,7 @@ int transpose_stride5to7_s(
 
 int transpose_stride8_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -177,7 +177,7 @@ int transpose_stride8_s(
 
 int transpose_stride9to15_s(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE || stride >= AVX2_FLOAT_STRIDE * 2) {
@@ -212,7 +212,7 @@ int transpose_stride9to15_s(
 
 int transpose_stride16_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -245,7 +245,7 @@ int transpose_stride16_s(
 
 int transpose_stride17to23_s(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE * 2 || stride >= AVX2_FLOAT_STRIDE * 3) {
@@ -282,7 +282,7 @@ int transpose_stride17to23_s(
 
 int transpose_stride24_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -317,7 +317,7 @@ int transpose_stride24_s(
 
 int transpose_stride25to31_s(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE * 3 || stride >= AVX2_FLOAT_STRIDE * 4) {
@@ -356,7 +356,7 @@ int transpose_stride25to31_s(
 
 int transpose_stride32_s(
     const uint n, const uint r, const uint s,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -393,7 +393,7 @@ int transpose_stride32_s(
 
 int transpose_aligned_s(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_FLOAT_REMAIN_MASK) != 0) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -472,7 +472,7 @@ int transpose_aligned_s(
 
 int transpose_unaligned_s(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0) {

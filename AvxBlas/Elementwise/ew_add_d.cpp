@@ -8,7 +8,7 @@ using namespace System;
 
 int ew_add_d(
     const uint n,
-    INPTR(double) x1_ptr, INPTR(double) x2_ptr, OUTPTR(double) y_ptr) {
+    indoubles x1_ptr, indoubles x2_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x1_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)x2_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {

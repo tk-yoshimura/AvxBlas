@@ -9,7 +9,7 @@ using namespace System;
 
 int dense_backwardfilter_n1_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 1 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -43,7 +43,7 @@ int dense_backwardfilter_n1_d(
 
 int dense_backwardfilter_n2_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 2 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -77,7 +77,7 @@ int dense_backwardfilter_n2_d(
 
 int dense_backwardfilter_n3_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 3 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -107,7 +107,7 @@ int dense_backwardfilter_n3_d(
 
 int dense_backwardfilter_n4_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 4 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -127,7 +127,7 @@ int dense_backwardfilter_n4_d(
 
 int dense_backwardfilter_nleq4_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if (ic > AVX2_DOUBLE_STRIDE || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -153,7 +153,7 @@ int dense_backwardfilter_nleq4_d(
 
 int dense_backwardfilter_n16x_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if ((ic % (AVX2_DOUBLE_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -173,7 +173,7 @@ int dense_backwardfilter_n16x_d(
 
 int dense_backwardfilter_aligned_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_DOUBLE_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -193,7 +193,7 @@ int dense_backwardfilter_aligned_d(
 
 int dense_backwardfilter_unaligned_d(
     const uint n, const uint ic, const uint oc,
-    INPTR(double) x_ptr, INPTR(double) y_ptr, OUTPTR(double) w_ptr) {
+    indoubles x_ptr, indoubles y_ptr, outdoubles w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_DOUBLE_REMAIN_MASK) == 0) {

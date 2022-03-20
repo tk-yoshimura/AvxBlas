@@ -8,7 +8,7 @@ using namespace System;
 
 int transpose_stride1_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     for (uint th = 0; th < n; th++) {
 
@@ -31,7 +31,7 @@ int transpose_stride1_d(
 
 int transpose_stride2_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -62,7 +62,7 @@ int transpose_stride2_d(
 
 int transpose_stride3_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     const __m256i mask = _mm256_setmask_pd(3);
 
@@ -89,7 +89,7 @@ int transpose_stride3_d(
 
 int transpose_stride4_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -120,7 +120,7 @@ int transpose_stride4_d(
 
 int transpose_stride5to7_d(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE || stride >= AVX2_DOUBLE_STRIDE * 2) {
@@ -155,7 +155,7 @@ int transpose_stride5to7_d(
 
 int transpose_stride8_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -188,7 +188,7 @@ int transpose_stride8_d(
 
 int transpose_stride9to11_d(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE * 2 || stride >= AVX2_DOUBLE_STRIDE * 3) {
@@ -225,7 +225,7 @@ int transpose_stride9to11_d(
 
 int transpose_stride12_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -260,7 +260,7 @@ int transpose_stride12_d(
 
 int transpose_stride13to15_d(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE * 3 || stride >= AVX2_DOUBLE_STRIDE * 4) {
@@ -299,7 +299,7 @@ int transpose_stride13to15_d(
 
 int transpose_stride16_d(
     const uint n, const uint r, const uint s,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -336,7 +336,7 @@ int transpose_stride16_d(
 
 int transpose_aligned_d(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_DOUBLE_REMAIN_MASK) != 0) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -415,7 +415,7 @@ int transpose_aligned_d(
 
 int transpose_unaligned_d(
     const uint n, const uint r, const uint s, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0) {

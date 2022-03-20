@@ -3,7 +3,7 @@
 
 #pragma unmanaged
 
-void zeroset_s(const unsigned int n, float* y_ptr) {
+void zeroset_s(const unsigned int n, outfloats y_ptr) {
     unsigned int r = n;
 
     while (r > 0) {
@@ -47,7 +47,7 @@ void zeroset_s(const unsigned int n, float* y_ptr) {
     }
 }
 
-void zeroset_d(const unsigned int n, double* y_ptr) {
+void zeroset_d(const unsigned int n, outdoubles y_ptr) {
     unsigned int r = n;
 
     while (r > 0) {

@@ -8,7 +8,7 @@ using namespace System;
 
 int ew_copy_s(
     const uint n,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     if (x_ptr == y_ptr) {
         return SUCCESS;

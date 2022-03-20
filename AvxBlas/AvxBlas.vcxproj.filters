@@ -126,6 +126,9 @@
     <ClInclude Include="Inline\inline_kernelfma_ss.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">

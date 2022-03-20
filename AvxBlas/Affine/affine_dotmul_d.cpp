@@ -12,7 +12,7 @@ using namespace System;
 
 int affine_dotmul_stride1_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -78,7 +78,7 @@ int affine_dotmul_stride1_d(
 
 int affine_dotmul_stride2_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -145,7 +145,7 @@ int affine_dotmul_stride2_d(
 
 int affine_dotmul_stride3_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
     const __m256i mask = _mm256_setmask_pd(3);
 
@@ -167,7 +167,7 @@ int affine_dotmul_stride3_d(
 
 int affine_dotmul_stride4_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -193,7 +193,7 @@ int affine_dotmul_stride4_d(
 
 int affine_dotmul_stride5to7_d(
     const uint na, const uint nb, const uint stride,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE || stride >= AVX2_DOUBLE_STRIDE * 2) {
@@ -226,7 +226,7 @@ int affine_dotmul_stride5to7_d(
 
 int affine_dotmul_stride8_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -257,7 +257,7 @@ int affine_dotmul_stride8_d(
 
 int affine_dotmul_stride9to11_d(
     const uint na, const uint nb, const uint stride,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE * 2 || stride >= AVX2_DOUBLE_STRIDE * 3) {
@@ -293,7 +293,7 @@ int affine_dotmul_stride9to11_d(
 
 int affine_dotmul_stride12_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -327,7 +327,7 @@ int affine_dotmul_stride12_d(
 
 int affine_dotmul_stride13to15_d(
     const uint na, const uint nb, const uint stride,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_DOUBLE_STRIDE * 3 || stride >= AVX2_DOUBLE_STRIDE * 4) {
@@ -366,7 +366,7 @@ int affine_dotmul_stride13to15_d(
 
 int affine_dotmul_stride16_d(
     const uint na, const uint nb,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -403,7 +403,7 @@ int affine_dotmul_stride16_d(
 
 int affine_dotmul_aligned_d(
     const uint na, const uint nb, const uint stride,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_DOUBLE_REMAIN_MASK) != 0) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -438,7 +438,7 @@ int affine_dotmul_aligned_d(
 
 int affine_dotmul_unaligned_d(
     const uint na, const uint nb, const uint stride,
-    INPTR(double) a_ptr, INPTR(double) b_ptr, OUTPTR(double) y_ptr) {
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
     if (stride == 1) {
         return affine_dotmul_stride1_d(na, nb, a_ptr, b_ptr, y_ptr);

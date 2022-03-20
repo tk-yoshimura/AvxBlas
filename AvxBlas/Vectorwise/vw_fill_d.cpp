@@ -9,7 +9,7 @@ using namespace System;
 
 int vw_fill_aligned_d(
     const uint n, const uint stride,
-    INPTR(double) v_ptr, OUTPTR(double) y_ptr) {
+    indoubles v_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_DOUBLE_REMAIN_MASK) != 0) || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -32,7 +32,7 @@ int vw_fill_aligned_d(
 
 int vw_fill_unaligned_d(
     const uint n, const uint stride,
-    INPTR(double) v_ptr, OUTPTR(double) y_ptr) {
+    indoubles v_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)v_ptr % AVX2_ALIGNMENT) != 0) {
@@ -64,7 +64,7 @@ int vw_fill_unaligned_d(
 
 int vw_fill_batch_d(
     const uint n, const uint g, const uint stride,
-    INPTR(double) v_ptr, OUTPTR(double) y_ptr) {
+    indoubles v_ptr, outdoubles y_ptr) {
 
     const uint nb = n / g * g, nr = n - nb;
     const uint sg = stride * g;

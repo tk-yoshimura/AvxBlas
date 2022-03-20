@@ -12,7 +12,7 @@ using namespace System;
 
 int affine_dotmul_stride1_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -78,7 +78,7 @@ int affine_dotmul_stride1_s(
 
 int affine_dotmul_stride2_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -145,7 +145,7 @@ int affine_dotmul_stride2_s(
 
 int affine_dotmul_stride3_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
     const __m128i mask = _mm_setmask_ps(3);
 
@@ -167,7 +167,7 @@ int affine_dotmul_stride3_s(
 
 int affine_dotmul_stride4_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX1_ALIGNMENT) != 0) {
@@ -193,7 +193,7 @@ int affine_dotmul_stride4_s(
 
 int affine_dotmul_stride5to7_s(
     const uint na, const uint nb, const uint stride,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE / 2 || stride >= AVX2_FLOAT_STRIDE) {
@@ -221,7 +221,7 @@ int affine_dotmul_stride5to7_s(
 
 int affine_dotmul_stride8_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -247,7 +247,7 @@ int affine_dotmul_stride8_s(
 
 int affine_dotmul_stride9to15_s(
     const uint na, const uint nb, const uint stride,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE || stride >= AVX2_FLOAT_STRIDE * 2) {
@@ -280,7 +280,7 @@ int affine_dotmul_stride9to15_s(
 
 int affine_dotmul_stride16_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -311,7 +311,7 @@ int affine_dotmul_stride16_s(
 
 int affine_dotmul_stride17to23_s(
     const uint na, const uint nb, const uint stride,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE * 2 || stride >= AVX2_FLOAT_STRIDE * 3) {
@@ -347,7 +347,7 @@ int affine_dotmul_stride17to23_s(
 
 int affine_dotmul_stride24_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -381,7 +381,7 @@ int affine_dotmul_stride24_s(
 
 int affine_dotmul_stride25to31_s(
     const uint na, const uint nb, const uint stride,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE * 3 || stride >= AVX2_FLOAT_STRIDE * 4) {
@@ -420,7 +420,7 @@ int affine_dotmul_stride25to31_s(
 
 int affine_dotmul_stride32_s(
     const uint na, const uint nb,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -457,7 +457,7 @@ int affine_dotmul_stride32_s(
 
 int affine_dotmul_aligned_s(
     const uint na, const uint nb, const uint stride,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_FLOAT_REMAIN_MASK) != 0) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
@@ -492,7 +492,7 @@ int affine_dotmul_aligned_s(
 
 int affine_dotmul_unaligned_s(
     const uint na, const uint nb, const uint stride,
-    INPTR(float) a_ptr, INPTR(float) b_ptr, OUTPTR(float) y_ptr) {
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
     if (stride == 1) {
         return affine_dotmul_stride1_s(na, nb, a_ptr, b_ptr, y_ptr);

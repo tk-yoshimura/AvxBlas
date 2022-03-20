@@ -11,7 +11,7 @@ using namespace System;
 
 void conv1d_transpose_kernel_s(
     const unsigned ic, const unsigned oc, const unsigned kw,
-    INPTR(float) w_ptr, OUTPTR(float) wt_ptr) {
+    infloats w_ptr, outfloats wt_ptr) {
 
     uint src_index = 0;
 
@@ -34,7 +34,7 @@ void conv1d_transpose_kernel_s(
 int conv1d_backwarddata_padnone_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -66,7 +66,7 @@ int conv1d_backwarddata_padnone_n32x_s(
 int conv1d_backwarddata_padnone_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -98,7 +98,7 @@ int conv1d_backwarddata_padnone_aligned_s(
 int conv1d_backwarddata_padnone_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -145,7 +145,7 @@ int conv1d_backwarddata_padnone_unaligned_s(
 int conv1d_backwarddata_padzero_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -177,7 +177,7 @@ int conv1d_backwarddata_padzero_n32x_s(
 int conv1d_backwarddata_padzero_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -209,7 +209,7 @@ int conv1d_backwarddata_padzero_aligned_s(
 int conv1d_backwarddata_padzero_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -256,7 +256,7 @@ int conv1d_backwarddata_padzero_unaligned_s(
 int conv1d_backwarddata_padedge_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -298,7 +298,7 @@ int conv1d_backwarddata_padedge_n32x_s(
 int conv1d_backwarddata_padedge_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -340,7 +340,7 @@ int conv1d_backwarddata_padedge_aligned_s(
 int conv1d_backwarddata_padedge_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) y_ptr, INPTR(float) w_ptr, OUTPTR(float) x_ptr) {
+    infloats y_ptr, infloats w_ptr, outfloats x_ptr) {
 
 #ifdef _DEBUG
     if ((oc & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {

@@ -13,7 +13,7 @@ using namespace System;
 int conv1d_backwardfilter_padnone_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -46,7 +46,7 @@ int conv1d_backwardfilter_padnone_n32x_s(
 int conv1d_backwardfilter_padnone_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -79,7 +79,7 @@ int conv1d_backwardfilter_padnone_aligned_s(
 int conv1d_backwardfilter_padnone_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
-    INPTR(float) x_ptr, INPTR(float) y_ptr, OUTPTR(float) w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {

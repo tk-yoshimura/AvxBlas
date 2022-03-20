@@ -117,6 +117,7 @@
     <ClInclude Include="Inline\inline_sum_d.hpp" />
     <ClInclude Include="Inline\inline_zeroset_s.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="types.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

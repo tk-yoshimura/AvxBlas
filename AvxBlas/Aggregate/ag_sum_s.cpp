@@ -10,7 +10,7 @@ using namespace System;
 
 int ag_sum_stride1_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     const __m256 zero = _mm256_setzero_ps();
     const uint sb = samples & AVX2_FLOAT_BATCH_MASK, sr = samples - sb;
@@ -67,7 +67,7 @@ int ag_sum_stride1_s(
 
 int ag_sum_stride2_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     const __m256 zero = _mm256_setzero_ps();
     const uint sb = samples / 4 * 4, sr = samples - sb;
@@ -125,7 +125,7 @@ int ag_sum_stride2_s(
 
 int ag_sum_stride3_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     const __m256 zero = _mm256_setzero_ps();
     const uint sb = samples / 2 * 2, sr = samples - sb;
@@ -162,7 +162,7 @@ int ag_sum_stride3_s(
 
 int ag_sum_stride4_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -225,7 +225,7 @@ int ag_sum_stride4_s(
 
 int ag_sum_stride5to7_s(
     const uint n, const uint samples, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (stride <= AVX2_FLOAT_STRIDE / 2 || stride >= AVX2_FLOAT_STRIDE) {
@@ -257,7 +257,7 @@ int ag_sum_stride5to7_s(
 
 int ag_sum_stride8_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -288,7 +288,7 @@ int ag_sum_stride8_s(
 
 int ag_sum_stride16_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -322,7 +322,7 @@ int ag_sum_stride16_s(
 
 int ag_sum_stride24_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -361,7 +361,7 @@ int ag_sum_stride24_s(
 
 int ag_sum_stride32_s(
     const uint n, const uint samples,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -405,7 +405,7 @@ int ag_sum_stride32_s(
 
 int ag_sum_strideleq8_s(
     const uint n, const uint samples, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     if (stride == 1) {
         return ag_sum_stride1_s(n, samples, x_ptr, y_ptr);
@@ -431,7 +431,7 @@ int ag_sum_strideleq8_s(
 
 int ag_sum_aligned_s(
     const uint n, const uint samples, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     if (stride == AVX2_FLOAT_STRIDE) {
         return ag_sum_stride8_s(n, samples, x_ptr, y_ptr);
@@ -493,7 +493,7 @@ int ag_sum_aligned_s(
 
 int ag_sum_unaligned_s(
     const uint n, const uint samples, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     if (stride <= AVX2_FLOAT_STRIDE) {
         return ag_sum_strideleq8_s(n, samples, stride, x_ptr, y_ptr);
@@ -556,7 +556,7 @@ int ag_sum_unaligned_s(
 
 int ag_sum_batch_s(
     const uint n, const uint g, const uint samples, const uint stride,
-    INPTR(float) x_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     const uint sg = stride * g;
 

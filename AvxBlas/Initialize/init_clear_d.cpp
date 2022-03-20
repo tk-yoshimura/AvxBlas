@@ -8,7 +8,7 @@ using namespace System;
 
 int clear_d(
     const uint index, const uint n, const double c,
-    OUTPTR(double) y_ptr) {
+    outdoubles y_ptr) {
     
     uint r = n;
 

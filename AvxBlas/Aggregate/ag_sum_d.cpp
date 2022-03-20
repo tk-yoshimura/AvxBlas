@@ -10,7 +10,7 @@ using namespace System;
 
 int ag_sum_stride1_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     const __m256d zero = _mm256_setzero_pd();
     const uint sb = samples & AVX2_DOUBLE_BATCH_MASK, sr = samples - sb;
@@ -67,7 +67,7 @@ int ag_sum_stride1_d(
 
 int ag_sum_stride2_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
@@ -130,7 +130,7 @@ int ag_sum_stride2_d(
 
 int ag_sum_stride3_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     const __m256d zero = _mm256_setzero_pd();
     const __m256i mask = _mm256_setmask_pd(3);
@@ -156,7 +156,7 @@ int ag_sum_stride3_d(
 
 int ag_sum_stride4_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -187,7 +187,7 @@ int ag_sum_stride4_d(
 
 int ag_sum_stride8_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -221,7 +221,7 @@ int ag_sum_stride8_d(
 
 int ag_sum_stride12_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -260,7 +260,7 @@ int ag_sum_stride12_d(
 
 int ag_sum_stride16_d(
     const uint n, const uint samples,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -304,7 +304,7 @@ int ag_sum_stride16_d(
 
 int ag_sum_strideleq4_d(
     const uint n, const uint samples, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     if (stride == 1) {
         return ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
@@ -324,7 +324,7 @@ int ag_sum_strideleq4_d(
 
 int ag_sum_aligned_d(
     const uint n, const uint samples, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     if (stride == AVX2_DOUBLE_STRIDE) {
         return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
@@ -386,7 +386,7 @@ int ag_sum_aligned_d(
 
 int ag_sum_unaligned_d(
     const uint n, const uint samples, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     if (stride <= AVX2_DOUBLE_STRIDE) {
         return ag_sum_strideleq4_d(n, samples, stride, x_ptr, y_ptr);
@@ -449,7 +449,7 @@ int ag_sum_unaligned_d(
 
 int ag_sum_batch_d(
     const uint n, const uint g, const uint samples, const uint stride,
-    INPTR(double) x_ptr, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     const uint sg = stride * g;
 

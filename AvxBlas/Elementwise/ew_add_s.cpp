@@ -8,7 +8,7 @@ using namespace System;
 
 int ew_add_s(
     const uint n,
-    INPTR(float) x1_ptr, INPTR(float) x2_ptr, OUTPTR(float) y_ptr) {
+    infloats x1_ptr, infloats x2_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x1_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)x2_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {

@@ -8,7 +8,7 @@ using namespace System;
 
 int const_add_s(
     const uint n,
-    INPTR(float) x_ptr, const float c, OUTPTR(float) y_ptr) {
+    infloats x_ptr, const float c, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {

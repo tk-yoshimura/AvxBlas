@@ -9,7 +9,7 @@ using namespace System;
 
 int vw_add_aligned_s(
     const uint n, const uint stride,
-    INPTR(float) x_ptr, INPTR(float) v_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, infloats v_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((stride & AVX2_FLOAT_REMAIN_MASK) != 0) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)v_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
@@ -36,7 +36,7 @@ int vw_add_aligned_s(
 
 int vw_add_unaligned_s(
     const uint n, const uint stride,
-    INPTR(float) x_ptr, INPTR(float) v_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, infloats v_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)v_ptr % AVX2_ALIGNMENT) != 0) {
@@ -75,7 +75,7 @@ int vw_add_unaligned_s(
 
 int vw_add_batch_s(
     const uint n, const uint g, const uint stride,
-    INPTR(float) x_ptr, INPTR(float) v_ptr, OUTPTR(float) y_ptr) {
+    infloats x_ptr, infloats v_ptr, outfloats y_ptr) {
 
     const uint nb = n / g * g, nr = n - nb;
     const uint sg = stride * g;

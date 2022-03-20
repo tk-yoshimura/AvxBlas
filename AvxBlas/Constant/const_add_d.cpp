@@ -8,7 +8,7 @@ using namespace System;
 
 int const_add_d(
     const uint n,
-    INPTR(double) x_ptr, const double c, OUTPTR(double) y_ptr) {
+    indoubles x_ptr, const double c, outdoubles y_ptr) {
 
 #ifdef _DEBUG
     if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
