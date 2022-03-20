@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline/inline_ope.hpp"
+#include "../Inline/inline_ope_d.hpp"
 
 using namespace System;
 

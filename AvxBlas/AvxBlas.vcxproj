@@ -109,6 +109,7 @@
     <ClInclude Include="Inline\inline_kernelfma_s.hpp" />
     <ClInclude Include="Inline\inline_matmul_d.hpp" />
     <ClInclude Include="Inline\inline_matmul_s.hpp" />
+    <ClInclude Include="Inline\inline_ope_d.hpp" />
     <ClInclude Include="Inline\inline_set_d.hpp" />
     <ClInclude Include="Inline\inline_sum_d.hpp" />
     <ClInclude Include="Inline\inline_zeroset_s.hpp" />
@@ -148,7 +149,7 @@
     <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Initialize\init_cctor.cpp" />
     <ClInclude Include="Inline\inline_dotmul_s.hpp" />
-    <ClInclude Include="Inline\inline_ope.hpp" />
+    <ClInclude Include="Inline\inline_ope_s.hpp" />
     <ClInclude Include="Inline\inline_set_s.hpp" />
     <ClInclude Include="Inline\inline_sum_s.hpp" />
     <ClCompile Include="Transform\transform_cctor.cpp" />
