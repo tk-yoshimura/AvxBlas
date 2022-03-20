@@ -36,22 +36,15 @@ __forceinline void kernelfma_n1_aligned_ss(
         __m256 s3 = _mm256_load_ps(ws_ptr + AVX2_FLOAT_STRIDE * 3);
         __m256 c3 = _mm256_load_ps(wc_ptr + AVX2_FLOAT_STRIDE * 3);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2),
-            s2, c2
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 3),
-            s3, c3
-        );
+        __m256 y0 = _mm256_load_ps(src_ptr);
+        __m256 y1 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
+        _mm256_kahanfma_ps(x, y1, s1, c1);
+        _mm256_kahanfma_ps(x, y2, s2, c2);
+        _mm256_kahanfma_ps(x, y3, s3, c3);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -73,14 +66,11 @@ __forceinline void kernelfma_n1_aligned_ss(
         __m256 s1 = _mm256_load_ps(ws_ptr + AVX2_FLOAT_STRIDE);
         __m256 c1 = _mm256_load_ps(wc_ptr + AVX2_FLOAT_STRIDE);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE),
-            s1, c1
-        );
+        __m256 y0 = _mm256_load_ps(src_ptr);
+        __m256 y1 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
+        _mm256_kahanfma_ps(x, y1, s1, c1);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -96,10 +86,9 @@ __forceinline void kernelfma_n1_aligned_ss(
         __m256 s0 = _mm256_load_ps(ws_ptr);
         __m256 c0 = _mm256_load_ps(wc_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_load_ps(src_ptr),
-            s0, c0
-        );
+        __m256 y0 = _mm256_load_ps(src_ptr);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -131,22 +120,15 @@ __forceinline void kernelfma_n1_unaligned_ss(
         __m256 s3 = _mm256_loadu_ps(ws_ptr + AVX2_FLOAT_STRIDE * 3);
         __m256 c3 = _mm256_loadu_ps(wc_ptr + AVX2_FLOAT_STRIDE * 3);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2),
-            s2, c2
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 3),
-            s3, c3
-        );
+        __m256 y0 = _mm256_loadu_ps(src_ptr);
+        __m256 y1 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
+        _mm256_kahanfma_ps(x, y1, s1, c1);
+        _mm256_kahanfma_ps(x, y2, s2, c2);
+        _mm256_kahanfma_ps(x, y3, s3, c3);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -168,14 +150,11 @@ __forceinline void kernelfma_n1_unaligned_ss(
         __m256 s1 = _mm256_loadu_ps(ws_ptr + AVX2_FLOAT_STRIDE);
         __m256 c1 = _mm256_loadu_ps(wc_ptr + AVX2_FLOAT_STRIDE);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE),
-            s1, c1
-        );
+        __m256 y0 = _mm256_loadu_ps(src_ptr);
+        __m256 y1 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
+        _mm256_kahanfma_ps(x, y1, s1, c1);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -191,10 +170,9 @@ __forceinline void kernelfma_n1_unaligned_ss(
         __m256 s0 = _mm256_loadu_ps(ws_ptr);
         __m256 c0 = _mm256_loadu_ps(wc_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr),
-            s0, c0
-        );
+        __m256 y0 = _mm256_loadu_ps(src_ptr);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -208,10 +186,9 @@ __forceinline void kernelfma_n1_unaligned_ss(
         __m256 s0 = _mm256_loadu_ps(ws_ptr);
         __m256 c0 = _mm256_loadu_ps(wc_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_loadu_ps(src_ptr),
-            s0, c0
-        );
+        __m256 y0 = _mm256_loadu_ps(src_ptr);
+
+        _mm256_kahanfma_ps(x, y0, s0, c0);
 
         _mm256_maskstore_ps(ws_ptr, mask, s0);
         _mm256_maskstore_ps(wc_ptr, mask, c0);
@@ -246,22 +223,10 @@ __forceinline void kernelfma_n2_aligned_ss(
         __m256 y01 = _mm256_loadu_ps(src_ptr);
         __m256 y23 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y01),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm1_ps(y01),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y23),
-            s2, c2
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm1_ps(y23),
-            s3, c3
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y23), s2, c2);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y23), s3, c3);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -285,14 +250,8 @@ __forceinline void kernelfma_n2_aligned_ss(
 
         __m256 y01 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y01),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm1_ps(y01),
-            s1, c1
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -310,10 +269,7 @@ __forceinline void kernelfma_n2_aligned_ss(
 
         __m256 y0 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y0),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y0), s0, c0);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -348,22 +304,10 @@ __forceinline void kernelfma_n2_unaligned_ss(
         __m256 y01 = _mm256_loadu_ps(src_ptr);
         __m256 y23 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y01),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm1_ps(y01),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y23),
-            s2, c2
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm1_ps(y23),
-            s3, c3
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y23), s2, c2);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y23), s3, c3);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -387,14 +331,8 @@ __forceinline void kernelfma_n2_unaligned_ss(
 
         __m256 y01 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y01),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm1_ps(y01),
-            s1, c1
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -412,10 +350,7 @@ __forceinline void kernelfma_n2_unaligned_ss(
 
         __m256 y0 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y0),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y0), s0, c0);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -431,10 +366,7 @@ __forceinline void kernelfma_n2_unaligned_ss(
 
         __m256 y0 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate2_imm0_ps(y0),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y0), s0, c0);
 
         _mm256_maskstore_ps(ws_ptr, mask, s0);
         _mm256_maskstore_ps(wc_ptr, mask, c0);
@@ -475,18 +407,9 @@ __forceinline void kernelfma_n3_aligned_ss(
 
         __m256 y = _mm256_load_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x0, _mm256_permutevar8x32_ps(y, __perm_y0),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x1, _mm256_permutevar8x32_ps(y, __perm_y1),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x2, _mm256_permutevar8x32_ps(y, __perm_y2),
-            s2, c2
-        );
+        _mm256_kahanfma_ps(x0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
+        _mm256_kahanfma_ps(x1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
+        _mm256_kahanfma_ps(x2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -538,18 +461,9 @@ __forceinline void kernelfma_n3_unaligned_ss(
 
         __m256 y = _mm256_load_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x0, _mm256_permutevar8x32_ps(y, __perm_y0),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x1, _mm256_permutevar8x32_ps(y, __perm_y1),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x2, _mm256_permutevar8x32_ps(y, __perm_y2),
-            s2, c2
-        );
+        _mm256_kahanfma_ps(x0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
+        _mm256_kahanfma_ps(x1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
+        _mm256_kahanfma_ps(x2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -571,14 +485,8 @@ __forceinline void kernelfma_n3_unaligned_ss(
 
         __m256 y01 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate3_imm0_ps(y01),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_and_ps(_mm256_dilate3_imm1_ps(y01), __mask6),
-            s1, c1
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate3_imm0_ps(y01), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_and_ps(_mm256_dilate3_imm1_ps(y01), __mask6), s1, c1);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -596,10 +504,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
 
         __m256 y0 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_and_ps(_mm256_dilate3_imm0_ps(y0), __mask6),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_and_ps(_mm256_dilate3_imm0_ps(y0), __mask6), s0, c0);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -615,10 +520,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
 
         __m256 y0 = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate3_imm0_ps(y0),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate3_imm0_ps(y0), s0, c0);
 
         _mm256_maskstore_ps(ws_ptr, mask, s0);
         _mm256_maskstore_ps(wc_ptr, mask, c0);
@@ -652,22 +554,10 @@ __forceinline void kernelfma_n4_aligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm1_ps(y),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm2_ps(y),
-            s2, c2
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm3_ps(y),
-            s3, c3
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm2_ps(y), s2, c2);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm3_ps(y), s3, c3);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -691,14 +581,8 @@ __forceinline void kernelfma_n4_aligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm1_ps(y),
-            s1, c1
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -716,10 +600,7 @@ __forceinline void kernelfma_n4_aligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
 
         _mm256_store_ps(ws_ptr, s0);
         _mm256_store_ps(wc_ptr, c0);
@@ -753,22 +634,10 @@ __forceinline void kernelfma_n4_unaligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm1_ps(y),
-            s1, c1
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm2_ps(y),
-            s2, c2
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm3_ps(y),
-            s3, c3
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm2_ps(y), s2, c2);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm3_ps(y), s3, c3);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -792,14 +661,8 @@ __forceinline void kernelfma_n4_unaligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm1_ps(y),
-            s1, c1
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -817,10 +680,7 @@ __forceinline void kernelfma_n4_unaligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
 
         _mm256_storeu_ps(ws_ptr, s0);
         _mm256_storeu_ps(wc_ptr, c0);
@@ -836,10 +696,7 @@ __forceinline void kernelfma_n4_unaligned_ss(
 
         __m256 y = _mm256_loadu_ps(src_ptr);
 
-        _mm256_kahanfma_ps(
-            x, _mm256_dilate4_imm0_ps(y),
-            s0, c0
-        );
+        _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
 
         _mm256_maskstore_ps(ws_ptr, mask, s0);
         _mm256_maskstore_ps(wc_ptr, mask, c0);
@@ -873,22 +730,15 @@ __forceinline void kernelfma_n32x_ss(
             __m256 s3 = _mm256_load_ps(ws_ptr + AVX2_FLOAT_STRIDE * 3);
             __m256 c3 = _mm256_load_ps(wc_ptr + AVX2_FLOAT_STRIDE * 3);
 
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2), y,
-                s2, c2
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 3), y,
-                s3, c3
-            );
+            __m256 x0 = _mm256_load_ps(src_ptr);
+            __m256 x1 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE);
+            __m256 x2 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+            __m256 x3 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 3);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
+            _mm256_kahanfma_ps(x2, y, s2, c2);
+            _mm256_kahanfma_ps(x3, y, s3, c3);
 
             _mm256_store_ps(ws_ptr, s0);
             _mm256_store_ps(wc_ptr, c0);
@@ -934,22 +784,15 @@ __forceinline void kernelfma_aligned_ss(
             __m256 s3 = _mm256_load_ps(ws_ptr + AVX2_FLOAT_STRIDE * 3);
             __m256 c3 = _mm256_load_ps(wc_ptr + AVX2_FLOAT_STRIDE * 3);
 
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2), y,
-                s2, c2
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 3), y,
-                s3, c3
-            );
+            __m256 x0 = _mm256_load_ps(src_ptr);
+            __m256 x1 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE);
+            __m256 x2 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+            __m256 x3 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 3);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
+            _mm256_kahanfma_ps(x2, y, s2, c2);
+            _mm256_kahanfma_ps(x3, y, s3, c3);
 
             _mm256_store_ps(ws_ptr, s0);
             _mm256_store_ps(wc_ptr, c0);
@@ -973,18 +816,13 @@ __forceinline void kernelfma_aligned_ss(
             __m256 s2 = _mm256_load_ps(ws_ptr + AVX2_FLOAT_STRIDE * 2);
             __m256 c2 = _mm256_load_ps(wc_ptr + AVX2_FLOAT_STRIDE * 2);
 
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2), y,
-                s2, c2
-            );
+            __m256 x0 = _mm256_load_ps(src_ptr);
+            __m256 x1 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE);
+            __m256 x2 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
+            _mm256_kahanfma_ps(x2, y, s2, c2);
 
             _mm256_store_ps(ws_ptr, s0);
             _mm256_store_ps(wc_ptr, c0);
@@ -999,14 +837,11 @@ __forceinline void kernelfma_aligned_ss(
             __m256 s1 = _mm256_load_ps(ws_ptr + AVX2_FLOAT_STRIDE);
             __m256 c1 = _mm256_load_ps(wc_ptr + AVX2_FLOAT_STRIDE);
 
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
+            __m256 x0 = _mm256_load_ps(src_ptr);
+            __m256 x1 = _mm256_load_ps(src_ptr + AVX2_FLOAT_STRIDE);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
 
             _mm256_store_ps(ws_ptr, s0);
             _mm256_store_ps(wc_ptr, c0);
@@ -1017,10 +852,9 @@ __forceinline void kernelfma_aligned_ss(
             __m256 s0 = _mm256_load_ps(ws_ptr);
             __m256 c0 = _mm256_load_ps(wc_ptr);
 
-            _mm256_kahanfma_ps(
-                _mm256_load_ps(src_ptr), y,
-                s0, c0
-            );
+            __m256 x0 = _mm256_load_ps(src_ptr);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
 
             _mm256_store_ps(ws_ptr, s0);
             _mm256_store_ps(wc_ptr, c0);
@@ -1057,22 +891,15 @@ __forceinline void kernelfma_unaligned_ss(
             __m256 s3 = _mm256_loadu_ps(ws_ptr + AVX2_FLOAT_STRIDE * 3);
             __m256 c3 = _mm256_loadu_ps(wc_ptr + AVX2_FLOAT_STRIDE * 3);
 
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2), y,
-                s2, c2
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 3), y,
-                s3, c3
-            );
+            __m256 x0 = _mm256_loadu_ps(src_ptr);
+            __m256 x1 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
+            __m256 x2 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+            __m256 x3 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 3);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
+            _mm256_kahanfma_ps(x2, y, s2, c2);
+            _mm256_kahanfma_ps(x3, y, s3, c3);
 
             _mm256_storeu_ps(ws_ptr, s0);
             _mm256_storeu_ps(wc_ptr, c0);
@@ -1098,22 +925,15 @@ __forceinline void kernelfma_unaligned_ss(
             __m256 s3 = _mm256_loadu_ps(ws_ptr + AVX2_FLOAT_STRIDE * 3);
             __m256 c3 = _mm256_loadu_ps(wc_ptr + AVX2_FLOAT_STRIDE * 3);
 
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2), y,
-                s2, c2
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 3), y,
-                s3, c3
-            );
+            __m256 x0 = _mm256_loadu_ps(src_ptr);
+            __m256 x1 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
+            __m256 x2 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+            __m256 x3 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 3);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
+            _mm256_kahanfma_ps(x2, y, s2, c2);
+            _mm256_kahanfma_ps(x3, y, s3, c3);
 
             _mm256_storeu_ps(ws_ptr, s0);
             _mm256_storeu_ps(wc_ptr, c0);
@@ -1132,18 +952,13 @@ __forceinline void kernelfma_unaligned_ss(
             __m256 s2 = _mm256_loadu_ps(ws_ptr + AVX2_FLOAT_STRIDE * 2);
             __m256 c2 = _mm256_loadu_ps(wc_ptr + AVX2_FLOAT_STRIDE * 2);
 
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2), y,
-                s2, c2
-            );
+            __m256 x0 = _mm256_loadu_ps(src_ptr);
+            __m256 x1 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
+            __m256 x2 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE * 2);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
+            _mm256_kahanfma_ps(x2, y, s2, c2);
 
             _mm256_storeu_ps(ws_ptr, s0);
             _mm256_storeu_ps(wc_ptr, c0);
@@ -1158,14 +973,11 @@ __forceinline void kernelfma_unaligned_ss(
             __m256 s1 = _mm256_loadu_ps(ws_ptr + AVX2_FLOAT_STRIDE);
             __m256 c1 = _mm256_loadu_ps(wc_ptr + AVX2_FLOAT_STRIDE);
 
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr), y,
-                s0, c0
-            );
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE), y,
-                s1, c1
-            );
+            __m256 x0 = _mm256_loadu_ps(src_ptr);
+            __m256 x1 = _mm256_loadu_ps(src_ptr + AVX2_FLOAT_STRIDE);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
+            _mm256_kahanfma_ps(x1, y, s1, c1);
 
             _mm256_storeu_ps(ws_ptr, s0);
             _mm256_storeu_ps(wc_ptr, c0);
@@ -1176,10 +988,9 @@ __forceinline void kernelfma_unaligned_ss(
             __m256 s0 = _mm256_loadu_ps(ws_ptr);
             __m256 c0 = _mm256_loadu_ps(wc_ptr);
 
-            _mm256_kahanfma_ps(
-                _mm256_loadu_ps(src_ptr), y,
-                s0, c0
-            );
+            __m256 x0 = _mm256_loadu_ps(src_ptr);
+
+            _mm256_kahanfma_ps(x0, y, s0, c0);
 
             _mm256_maskstore_ps(ws_ptr, mask, s0);
             _mm256_maskstore_ps(wc_ptr, mask, c0);
