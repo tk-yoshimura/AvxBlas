@@ -6,7 +6,7 @@
 
 void repeat_vector_s(
     const unsigned int n, const unsigned int stride,
-    const float* __restrict x_ptr, float* __restrict y_ptr) {
+    infloats x_ptr, outfloats y_ptr) {
 
     const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
@@ -30,7 +30,7 @@ void repeat_vector_s(
 
 void repeat_vector_d(
     const unsigned int n, const unsigned int stride,
-    const double* __restrict x_ptr, double* __restrict y_ptr) {
+    indoubles x_ptr, outdoubles y_ptr) {
 
     const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 

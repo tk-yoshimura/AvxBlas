@@ -12,7 +12,7 @@
 
 __forceinline void kernelfma_n1_aligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 1 || (oc & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -105,7 +105,7 @@ __forceinline void kernelfma_n1_aligned_s(
 
 __forceinline void kernelfma_n1_unaligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if (ic != 1 || (oc & AVX2_FLOAT_REMAIN_MASK) == 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -194,7 +194,7 @@ __forceinline void kernelfma_n1_unaligned_s(
 
 __forceinline void kernelfma_n2_aligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 2 || (oc % (AVX2_FLOAT_STRIDE / 2)) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -287,7 +287,7 @@ __forceinline void kernelfma_n2_aligned_s(
 
 __forceinline void kernelfma_n2_unaligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if (ic != 2 || (oc % (AVX2_FLOAT_STRIDE / 2)) == 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -376,7 +376,7 @@ __forceinline void kernelfma_n2_unaligned_s(
 
 __forceinline void kernelfma_n3_aligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 3 || (oc % 8) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -431,7 +431,7 @@ __forceinline void kernelfma_n3_aligned_s(
 
 __forceinline void kernelfma_n3_unaligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if (ic != 3 || (oc % 8) == 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -528,7 +528,7 @@ __forceinline void kernelfma_n3_unaligned_s(
 
 __forceinline void kernelfma_n4_aligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if (ic != 4 || (oc % 2) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -621,7 +621,7 @@ __forceinline void kernelfma_n4_aligned_s(
 
 __forceinline void kernelfma_n4_unaligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if (ic != 4 || (oc % 2) == 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -710,7 +710,7 @@ __forceinline void kernelfma_n4_unaligned_s(
 
 __forceinline void kernelfma_n32x_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -760,7 +760,7 @@ __forceinline void kernelfma_n32x_s(
 
 __forceinline void kernelfma_aligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
@@ -857,7 +857,7 @@ __forceinline void kernelfma_aligned_s(
 
 __forceinline void kernelfma_unaligned_s(
     const unsigned int ic, const unsigned int oc,
-    const float* __restrict x_ptr, const float* __restrict y_ptr, float* __restrict w_ptr, const __m256i mask) {
+    infloats x_ptr, infloats y_ptr, outfloats w_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {

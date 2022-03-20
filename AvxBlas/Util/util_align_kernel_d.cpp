@@ -11,7 +11,7 @@ using namespace System;
 
 void align_kernel_d(
     const unsigned int n, const unsigned int unaligned_w_size, const unsigned int aligned_w_size,
-    const double* __restrict unaligned_w_ptr, double* __restrict aligned_w_ptr) {
+    indoubles unaligned_w_ptr, outdoubles aligned_w_ptr) {
 
 #ifdef _DEBUG
     if (((unaligned_w_size + AVX2_DOUBLE_REMAIN_MASK) & AVX2_DOUBLE_BATCH_MASK) != aligned_w_size || unaligned_w_size == aligned_w_size ||
@@ -45,7 +45,7 @@ void align_kernel_d(
 
 void unalign_kernel_d(
     const unsigned int n, const unsigned int aligned_w_size, const unsigned int unaligned_w_size,
-    const double* __restrict aligned_w_ptr, double* __restrict unaligned_w_ptr) {
+    indoubles aligned_w_ptr, outdoubles unaligned_w_ptr) {
 
 #ifdef _DEBUG
     if (((unaligned_w_size + AVX2_DOUBLE_REMAIN_MASK) & AVX2_DOUBLE_BATCH_MASK) != aligned_w_size || unaligned_w_size == aligned_w_size ||

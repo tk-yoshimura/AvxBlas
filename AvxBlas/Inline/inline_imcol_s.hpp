@@ -17,7 +17,7 @@
 __forceinline void imcol1d_padnone_n32x_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
 #ifdef _DEBUG
     if ((c % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
@@ -31,7 +31,7 @@ __forceinline void imcol1d_padnone_n32x_s(
 __forceinline void imcol1d_padnone_aligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
 #ifdef _DEBUG
     if ((c & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
@@ -45,7 +45,7 @@ __forceinline void imcol1d_padnone_aligned_s(
 __forceinline void imcol1d_padnone_unaligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
@@ -60,7 +60,7 @@ __forceinline void imcol2d_padnone_n32x_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const unsigned int kh, const unsigned int ih, const unsigned int iy,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     im_ptr += c * iw * iy;
 
@@ -76,7 +76,7 @@ __forceinline void imcol2d_padnone_aligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const unsigned int kh, const unsigned int ih, const unsigned int iy,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     im_ptr += c * iw * iy;
 
@@ -92,7 +92,7 @@ __forceinline void imcol2d_padnone_unaligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const unsigned int kh, const unsigned int ih, const unsigned int iy,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
     im_ptr += c * iw * iy;
 
@@ -109,7 +109,7 @@ __forceinline void imcol3d_padnone_n32x_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const unsigned int kh, const unsigned int ih, const unsigned int iy,
     const unsigned int kd, const unsigned int id, const unsigned int iz,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     im_ptr += c * iw * ih * iz;
 
@@ -126,7 +126,7 @@ __forceinline void imcol3d_padnone_aligned_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const unsigned int kh, const unsigned int ih, const unsigned int iy,
     const unsigned int kd, const unsigned int id, const unsigned int iz,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     im_ptr += c * iw * ih * iz;
 
@@ -143,7 +143,7 @@ __forceinline void imcol3d_padnone_unaligned_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix,
     const unsigned int kh, const unsigned int ih, const unsigned int iy,
     const unsigned int kd, const unsigned int id, const unsigned int iz,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
     im_ptr += c * iw * ih * iz;
 
@@ -162,7 +162,7 @@ __forceinline void imcol3d_padnone_unaligned_s(
 __forceinline void imcol1d_padzero_n32x_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
 #ifdef _DEBUG
     if ((c % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
@@ -189,7 +189,7 @@ __forceinline void imcol1d_padzero_n32x_s(
 __forceinline void imcol1d_padzero_aligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
 #ifdef _DEBUG
     if ((c & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
@@ -216,7 +216,7 @@ __forceinline void imcol1d_padzero_aligned_s(
 __forceinline float imcol1d_padzero_unaligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
@@ -246,7 +246,7 @@ __forceinline void imcol2d_padzero_n32x_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int ky = 0, y = iy - ph; ky < kh; ky++, y++) {
         if (y < ih) {
@@ -264,7 +264,7 @@ __forceinline void imcol2d_padzero_aligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int ky = 0, y = iy - ph; ky < kh; ky++, y++) {
         if (y < ih) {
@@ -282,7 +282,7 @@ __forceinline void imcol2d_padzero_unaligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
     for (unsigned int ky = 0, y = iy - ph; ky < kh; ky++, y++) {
         if (y < ih) {
@@ -301,7 +301,7 @@ __forceinline void imcol3d_padzero_n32x_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int kz = 0, z = iz - pd; kz < kd; kz++, z++) {
         if (z < id) {
@@ -320,7 +320,7 @@ __forceinline void imcol3d_padzero_aligned_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int kz = 0, z = iz - pd; kz < kd; kz++, z++) {
         if (z < id) {
@@ -339,7 +339,7 @@ __forceinline void imcol3d_padzero_unaligned_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
     for (unsigned int kz = 0, z = iz - pd; kz < kd; kz++, z++) {
         if (z < id) {
@@ -361,7 +361,7 @@ __forceinline void imcol3d_padzero_unaligned_s(
 __forceinline void imcol1d_padedge_n32x_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
 #ifdef _DEBUG
     if ((c % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
@@ -386,7 +386,7 @@ __forceinline void imcol1d_padedge_n32x_s(
 __forceinline void imcol1d_padedge_aligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
 #ifdef _DEBUG
     if ((c & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)im_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)col_ptr % AVX2_ALIGNMENT) != 0) {
@@ -411,7 +411,7 @@ __forceinline void imcol1d_padedge_aligned_s(
 __forceinline float imcol1d_padedge_unaligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
     if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
@@ -439,7 +439,7 @@ __forceinline void imcol2d_padedge_n32x_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int ky = 0; ky < kh; ky++) {
         const unsigned int y = padclip(iy + ky, ih, ph);
@@ -454,7 +454,7 @@ __forceinline void imcol2d_padedge_aligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int ky = 0; ky < kh; ky++) {
         const unsigned int y = padclip(iy + ky, ih, ph);
@@ -469,7 +469,7 @@ __forceinline void imcol2d_padedge_unaligned_s(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
     for (unsigned int ky = 0; ky < kh; ky++) {
         const unsigned int y = padclip(iy + ky, ih, ph);
@@ -485,7 +485,7 @@ __forceinline void imcol3d_padedge_n32x_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int kz = 0; kz < kd; kz++) {
         const unsigned int z = padclip(iz + kz, id, pd);
@@ -501,7 +501,7 @@ __forceinline void imcol3d_padedge_aligned_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
-    const float* __restrict im_ptr, float* __restrict col_ptr) {
+    infloats im_ptr, outfloats col_ptr) {
 
     for (unsigned int kz = 0; kz < kd; kz++) {
         const unsigned int z = padclip(iz + kz, id, pd);
@@ -517,7 +517,7 @@ __forceinline void imcol3d_padedge_unaligned_s(
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     const unsigned int kh, const unsigned int ih, const unsigned int iy, const unsigned int ph,
     const unsigned int kd, const unsigned int id, const unsigned int iz, const unsigned int pd,
-    const float* __restrict im_ptr, float* __restrict col_ptr, const __m256i mask) {
+    infloats im_ptr, outfloats col_ptr, const __m256i mask) {
 
     for (unsigned int kz = 0; kz < kd; kz++) {
         const unsigned int z = padclip(iz + kz, id, pd);

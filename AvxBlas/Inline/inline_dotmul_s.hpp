@@ -9,7 +9,7 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline float dotmul_n32x_s(const unsigned int n, const float* __restrict x_ptr, const float* __restrict y_ptr) {
+__forceinline float dotmul_n32x_s(const unsigned int n, infloats x_ptr, infloats y_ptr) {
 #ifdef _DEBUG
     if (n <= 0 || (n % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -20,20 +20,40 @@ __forceinline float dotmul_n32x_s(const unsigned int n, const float* __restrict 
     unsigned int r = n;
 
     {
-        s0 = _mm256_mul_ps(_mm256_load_ps(x_ptr), _mm256_load_ps(y_ptr));
-        s1 = _mm256_mul_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE));
-        s2 = _mm256_mul_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2));
-        s3 = _mm256_mul_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 3));
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 x3 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        __m256 y0 = _mm256_load_ps(y_ptr);
+        __m256 y1 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        s0 = _mm256_mul_ps(x0, y0);
+        s1 = _mm256_mul_ps(x1, y1);
+        s2 = _mm256_mul_ps(x2, y2);
+        s3 = _mm256_mul_ps(x3, y3);
 
         x_ptr += AVX2_FLOAT_STRIDE * 4;
         y_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        s0 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr), _mm256_load_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
-        s2 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2), s2);
-        s3 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 3), s3);
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 x3 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        __m256 y0 = _mm256_load_ps(y_ptr);
+        __m256 y1 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
+        s2 = _mm256_fmadd_ps(x2, y2, s2);
+        s3 = _mm256_fmadd_ps(x3, y3, s3);
 
         x_ptr += AVX2_FLOAT_STRIDE * 4;
         y_ptr += AVX2_FLOAT_STRIDE * 4;
@@ -45,7 +65,7 @@ __forceinline float dotmul_n32x_s(const unsigned int n, const float* __restrict 
     return ret;
 }
 
-__forceinline float dotmul_aligned_s(const unsigned int n, const float* __restrict x_ptr, const float* __restrict y_ptr) {
+__forceinline float dotmul_aligned_s(const unsigned int n, infloats x_ptr, infloats y_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -56,26 +76,54 @@ __forceinline float dotmul_aligned_s(const unsigned int n, const float* __restri
     unsigned int r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        s0 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr), _mm256_load_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
-        s2 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2), s2);
-        s3 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 3), s3);
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 x3 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        __m256 y0 = _mm256_load_ps(y_ptr);
+        __m256 y1 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
+        s2 = _mm256_fmadd_ps(x2, y2, s2);
+        s3 = _mm256_fmadd_ps(x3, y3, s3);
 
         x_ptr += AVX2_FLOAT_STRIDE * 4;
         y_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
-    if (r == AVX2_FLOAT_STRIDE * 3) {
-        s0 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr), _mm256_load_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
-        s2 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2), s2);
+    if (r >= AVX2_FLOAT_STRIDE * 3) {
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+
+        __m256 y0 = _mm256_load_ps(y_ptr);
+        __m256 y1 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE * 2);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
+        s2 = _mm256_fmadd_ps(x2, y2, s2);
     }
-    else if (r == AVX2_FLOAT_STRIDE * 2) {
-        s0 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr), _mm256_load_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
+    else if (r >= AVX2_FLOAT_STRIDE * 2) {
+        __m256 x0 = _mm256_load_ps(x_ptr);
+        __m256 x1 = _mm256_load_ps(x_ptr + AVX2_FLOAT_STRIDE);
+
+        __m256 y0 = _mm256_load_ps(y_ptr);
+        __m256 y1 = _mm256_load_ps(y_ptr + AVX2_FLOAT_STRIDE);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
     }
-    else if (r == AVX2_FLOAT_STRIDE) {
-        s0 = _mm256_fmadd_ps(_mm256_load_ps(x_ptr), _mm256_load_ps(y_ptr), s0);
+    else if (r >= AVX2_FLOAT_STRIDE) {
+        __m256 x0 = _mm256_load_ps(x_ptr);
+
+        __m256 y0 = _mm256_load_ps(y_ptr);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
     }
 
     float ret = _mm256_sum32to1_ps(s0, s1, s2, s3);
@@ -83,7 +131,7 @@ __forceinline float dotmul_aligned_s(const unsigned int n, const float* __restri
     return ret;
 }
 
-__forceinline float dotmul_unaligned_s(const unsigned int n, const float* __restrict x_ptr, const float* __restrict y_ptr, const __m256i mask) {
+__forceinline float dotmul_unaligned_s(const unsigned int n, infloats x_ptr, infloats y_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();
@@ -94,32 +142,70 @@ __forceinline float dotmul_unaligned_s(const unsigned int n, const float* __rest
     unsigned int r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr), _mm256_loadu_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
-        s2 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE * 2), _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE * 2), s2);
-        s3 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE * 3), _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE * 3), s3);
+        __m256 x0 = _mm256_loadu_ps(x_ptr);
+        __m256 x1 = _mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 x3 = _mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        __m256 y0 = _mm256_loadu_ps(y_ptr);
+        __m256 y1 = _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE * 3);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
+        s2 = _mm256_fmadd_ps(x2, y2, s2);
+        s3 = _mm256_fmadd_ps(x3, y3, s3);
 
         x_ptr += AVX2_FLOAT_STRIDE * 4;
         y_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
     if (r >= AVX2_FLOAT_STRIDE * 3) {
-        s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr), _mm256_loadu_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
-        s2 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE * 2), _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE * 2), s2);
-        s3 = _mm256_fmadd_ps(_mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE * 3, mask), _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE * 3, mask), s3);
+        __m256 x0 = _mm256_loadu_ps(x_ptr);
+        __m256 x1 = _mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 x3 = _mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE * 3, mask);
+
+        __m256 y0 = _mm256_loadu_ps(y_ptr);
+        __m256 y1 = _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE * 2);
+        __m256 y3 = _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE * 3, mask);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
+        s2 = _mm256_fmadd_ps(x2, y2, s2);
+        s3 = _mm256_fmadd_ps(x3, y3, s3);
     }
     else if (r >= AVX2_FLOAT_STRIDE * 2) {
-        s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr), _mm256_loadu_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE), _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE), s1);
-        s2 = _mm256_fmadd_ps(_mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE * 2, mask), _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE * 2, mask), s2);
+        __m256 x0 = _mm256_loadu_ps(x_ptr);
+        __m256 x1 = _mm256_loadu_ps(x_ptr + AVX2_FLOAT_STRIDE);
+        __m256 x2 = _mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE * 2, mask);
+
+        __m256 y0 = _mm256_loadu_ps(y_ptr);
+        __m256 y1 = _mm256_loadu_ps(y_ptr + AVX2_FLOAT_STRIDE);
+        __m256 y2 = _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE * 2, mask);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
+        s2 = _mm256_fmadd_ps(x2, y2, s2);
     }
     else if (r >= AVX2_FLOAT_STRIDE) {
-        s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x_ptr), _mm256_loadu_ps(y_ptr), s0);
-        s1 = _mm256_fmadd_ps(_mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE, mask), _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE, mask), s1);
+        __m256 x0 = _mm256_loadu_ps(x_ptr);
+        __m256 x1 = _mm256_maskload_ps(x_ptr + AVX2_FLOAT_STRIDE, mask);
+
+        __m256 y0 = _mm256_loadu_ps(y_ptr);
+        __m256 y1 = _mm256_maskload_ps(y_ptr + AVX2_FLOAT_STRIDE, mask);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
+        s1 = _mm256_fmadd_ps(x1, y1, s1);
     }
     else {
-        s0 = _mm256_fmadd_ps(_mm256_maskload_ps(x_ptr, mask), _mm256_maskload_ps(y_ptr, mask), s0);
+        __m256 x0 = _mm256_maskload_ps(x_ptr, mask);
+
+        __m256 y0 = _mm256_maskload_ps(y_ptr, mask);
+
+        s0 = _mm256_fmadd_ps(x0, y0, s0);
     }
 
     float ret = _mm256_sum32to1_ps(s0, s1, s2, s3);

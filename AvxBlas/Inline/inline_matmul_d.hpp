@@ -11,7 +11,7 @@
 
 __forceinline void matmul_n16x_d(
     const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict w_ptr, double* __restrict y_ptr) {
+    indoubles x_ptr, indoubles w_ptr, outdoubles y_ptr) {
 
     for (unsigned int i = 0; i < oc; i++) {
         double y = dotmul_n16x_d(ic, x_ptr, w_ptr);
@@ -25,7 +25,7 @@ __forceinline void matmul_n16x_d(
 
 __forceinline void matmul_aligned_d(
     const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict w_ptr, double* __restrict y_ptr) {
+    indoubles x_ptr, indoubles w_ptr, outdoubles y_ptr) {
 
     for (unsigned int i = 0; i < oc; i++) {
         double y = dotmul_aligned_d(ic, x_ptr, w_ptr);
@@ -39,7 +39,7 @@ __forceinline void matmul_aligned_d(
 
 __forceinline double matmul_unaligned_d(
     const unsigned int ic, const unsigned int oc,
-    const double* __restrict x_ptr, const double* __restrict w_ptr, double* __restrict y_ptr, const __m256i mask) {
+    indoubles x_ptr, indoubles w_ptr, outdoubles y_ptr, const __m256i mask) {
 
     for (unsigned int i = 0; i < oc; i++) {
         double y = dotmul_unaligned_d(ic, x_ptr, w_ptr, mask);
