@@ -187,3 +187,49 @@ __forceinline void _mm256_maskstore_x4_ps(outfloats ptr, __m256 x0, __m256 x1, _
     _mm256_storeu_ps(ptr + AVX2_FLOAT_STRIDE * 2, x2);
     _mm256_maskstore_ps(ptr + AVX2_FLOAT_STRIDE * 3, mask, x3);
 }
+
+__forceinline void _mm256_stream_x1_ps(outfloats ptr, __m256 x0) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    _mm256_stream_ps(ptr, x0);
+}
+
+__forceinline void _mm256_stream_x2_ps(outfloats ptr, __m256 x0, __m256 x1) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    _mm256_stream_ps(ptr, x0);
+    _mm256_stream_ps(ptr + AVX2_FLOAT_STRIDE, x1);
+}
+
+__forceinline void _mm256_stream_x3_ps(outfloats ptr, __m256 x0, __m256 x1, __m256 x2) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    _mm256_stream_ps(ptr, x0);
+    _mm256_stream_ps(ptr + AVX2_FLOAT_STRIDE, x1);
+    _mm256_stream_ps(ptr + AVX2_FLOAT_STRIDE * 2, x2);
+}
+
+__forceinline void _mm256_stream_x4_ps(outfloats ptr, __m256 x0, __m256 x1, __m256 x2, __m256 x3) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    _mm256_stream_ps(ptr, x0);
+    _mm256_stream_ps(ptr + AVX2_FLOAT_STRIDE, x1);
+    _mm256_stream_ps(ptr + AVX2_FLOAT_STRIDE * 2, x2);
+    _mm256_stream_ps(ptr + AVX2_FLOAT_STRIDE * 3, x3);
+}

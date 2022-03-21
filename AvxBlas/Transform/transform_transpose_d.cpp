@@ -1,6 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
+#include "../Inline/inline_loadstore_xn_d.hpp"
 
 using namespace System;
 
@@ -136,11 +137,9 @@ int transpose_stride5to7_d(
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256d x0 = _mm256_loadu_pd(x_ptr);
-                __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-
-                _mm256_storeu_pd(y_ptr + offset, x0);
-                _mm256_maskstore_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE, mask, x1);
+                __m256d x0, x1;
+                _mm256_loadu_x2_pd(x_ptr, x0, x1);
+                _mm256_maskstore_x2_pd(y_ptr + offset, x0, x1, mask);
 
                 x_ptr += stride;
                 offset += r * stride;
@@ -169,11 +168,9 @@ int transpose_stride8_d(
             uint offset = k * AVX2_DOUBLE_STRIDE * 2;
 
             for (uint j = 0; j < s; j++) {
-                __m256d x0 = _mm256_load_pd(x_ptr);
-                __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-
-                _mm256_stream_pd(y_ptr + offset, x0);
-                _mm256_stream_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE, x1);
+                __m256d x0, x1;
+                _mm256_load_x2_pd(x_ptr, x0, x1);
+                _mm256_stream_x2_pd(y_ptr + offset, x0, x1);
 
                 x_ptr += AVX2_DOUBLE_STRIDE * 2;
                 offset += r * AVX2_DOUBLE_STRIDE * 2;
@@ -204,13 +201,9 @@ int transpose_stride9to11_d(
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256d x0 = _mm256_loadu_pd(x_ptr);
-                __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                __m256d x2 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-
-                _mm256_storeu_pd(y_ptr + offset, x0);
-                _mm256_storeu_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE, x1);
-                _mm256_maskstore_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE * 2, mask, x2);
+                __m256d x0, x1, x2;
+                _mm256_loadu_x3_pd(x_ptr, x0, x1, x2);
+                _mm256_maskstore_x3_pd(y_ptr + offset, x0, x1, x2, mask);
 
                 x_ptr += stride;
                 offset += r * stride;
@@ -239,13 +232,9 @@ int transpose_stride12_d(
             uint offset = k * AVX2_DOUBLE_STRIDE * 3;
 
             for (uint j = 0; j < s; j++) {
-                __m256d x0 = _mm256_load_pd(x_ptr);
-                __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                __m256d x2 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-
-                _mm256_stream_pd(y_ptr + offset, x0);
-                _mm256_stream_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE, x1);
-                _mm256_stream_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE * 2, x2);
+                __m256d x0, x1, x2;
+                _mm256_load_x3_pd(x_ptr, x0, x1, x2);
+                _mm256_stream_x3_pd(y_ptr + offset, x0, x1, x2);
 
                 x_ptr += AVX2_DOUBLE_STRIDE * 3;
                 offset += r * AVX2_DOUBLE_STRIDE * 3;
@@ -276,15 +265,9 @@ int transpose_stride13to15_d(
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256d x0 = _mm256_loadu_pd(x_ptr);
-                __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                __m256d x2 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-                __m256d x3 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 3);
-
-                _mm256_storeu_pd(y_ptr + offset, x0);
-                _mm256_storeu_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE, x1);
-                _mm256_storeu_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE * 2, x2);
-                _mm256_maskstore_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE * 3, mask, x3);
+                __m256d x0, x1, x2, x3;
+                _mm256_loadu_x4_pd(x_ptr, x0, x1, x2, x3);
+                _mm256_maskstore_x4_pd(y_ptr + offset, x0, x1, x2, x3, mask);
 
                 x_ptr += stride;
                 offset += r * stride;
@@ -313,15 +296,9 @@ int transpose_stride16_d(
             uint offset = k * AVX2_DOUBLE_STRIDE * 4;
 
             for (uint j = 0; j < s; j++) {
-                __m256d x0 = _mm256_load_pd(x_ptr);
-                __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                __m256d x2 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-                __m256d x3 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 3);
-
-                _mm256_stream_pd(y_ptr + offset, x0);
-                _mm256_stream_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE, x1);
-                _mm256_stream_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE * 2, x2);
-                _mm256_stream_pd(y_ptr + offset + AVX2_DOUBLE_STRIDE * 3, x3);
+                __m256d x0, x1, x2, x3;
+                _mm256_load_x4_pd(x_ptr, x0, x1, x2, x3);
+                _mm256_stream_x4_pd(y_ptr + offset, x0, x1, x2, x3);
 
                 x_ptr += AVX2_DOUBLE_STRIDE * 4;
                 offset += r * AVX2_DOUBLE_STRIDE * 4;
@@ -366,33 +343,27 @@ int transpose_aligned_d(
                 uint sr = stride, index = 0;
 
                 while (sr >= AVX2_DOUBLE_STRIDE * 4) {
-                    __m256d x0 = _mm256_load_pd(x_ptr);
-                    __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                    __m256d x2 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-                    __m256d x3 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE * 3);
-
-                    _mm256_stream_pd(y_ptr + offset + index, x0);
-                    _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
-                    _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 2, x2);
-                    _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 3, x3);
+                    __m256d x0, x1, x2, x3;
+                    _mm256_load_x4_pd(x_ptr, x0, x1, x2, x3);
+                    _mm256_stream_x4_pd(y_ptr + offset + index, x0, x1, x2, x3);
 
                     x_ptr += AVX2_DOUBLE_STRIDE * 4;
                     index += AVX2_DOUBLE_STRIDE * 4;
                     sr -= AVX2_DOUBLE_STRIDE * 4;
                 }
                 if (sr >= AVX2_DOUBLE_STRIDE * 2) {
-                    __m256d x0 = _mm256_load_pd(x_ptr);
-                    __m256d x1 = _mm256_load_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-
-                    _mm256_stream_pd(y_ptr + offset + index, x0);
-                    _mm256_stream_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
+                    __m256d x0, x1;
+                    _mm256_load_x2_pd(x_ptr, x0, x1);
+                    _mm256_stream_x2_pd(y_ptr + offset + index, x0, x1);
 
                     x_ptr += AVX2_DOUBLE_STRIDE * 2;
                     index += AVX2_DOUBLE_STRIDE * 2;
                     sr -= AVX2_DOUBLE_STRIDE * 2;
                 }
                 if (sr >= AVX2_DOUBLE_STRIDE) {
-                    __m256d x0 = _mm256_load_pd(x_ptr);
+                    __m256d x0;
+                    _mm256_load_x1_pd(x_ptr, x0);
+                    _mm256_stream_x1_pd(y_ptr + offset + index, x0);
 
                     _mm256_stream_pd(y_ptr + offset + index, x0);
                 }
@@ -448,35 +419,27 @@ int transpose_unaligned_d(
                 uint sr = stride, index = 0;
 
                 while (sr >= AVX2_DOUBLE_STRIDE * 4) {
-                    __m256d x0 = _mm256_loadu_pd(x_ptr);
-                    __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-                    __m256d x2 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 2);
-                    __m256d x3 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE * 3);
-
-                    _mm256_storeu_pd(y_ptr + offset + index, x0);
-                    _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
-                    _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 2, x2);
-                    _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE * 3, x3);
+                    __m256d x0, x1, x2, x3;
+                    _mm256_loadu_x4_pd(x_ptr, x0, x1, x2, x3);
+                    _mm256_storeu_x4_pd(y_ptr + offset + index, x0, x1, x2, x3);
 
                     x_ptr += AVX2_DOUBLE_STRIDE * 4;
                     index += AVX2_DOUBLE_STRIDE * 4;
                     sr -= AVX2_DOUBLE_STRIDE * 4;
                 }
                 if (sr >= AVX2_DOUBLE_STRIDE * 2) {
-                    __m256d x0 = _mm256_loadu_pd(x_ptr);
-                    __m256d x1 = _mm256_loadu_pd(x_ptr + AVX2_DOUBLE_STRIDE);
-
-                    _mm256_storeu_pd(y_ptr + offset + index, x0);
-                    _mm256_storeu_pd(y_ptr + offset + index + AVX2_DOUBLE_STRIDE, x1);
+                    __m256d x0, x1;
+                    _mm256_loadu_x2_pd(x_ptr, x0, x1);
+                    _mm256_storeu_x2_pd(y_ptr + offset + index, x0, x1);
 
                     x_ptr += AVX2_DOUBLE_STRIDE * 2;
                     index += AVX2_DOUBLE_STRIDE * 2;
                     sr -= AVX2_DOUBLE_STRIDE * 2;
                 }
                 if (sr >= AVX2_DOUBLE_STRIDE) {
-                    __m256d x0 = _mm256_loadu_pd(x_ptr);
-
-                    _mm256_storeu_pd(y_ptr + offset + index, x0);
+                    __m256d x0;
+                    _mm256_loadu_x1_pd(x_ptr, x0);
+                    _mm256_storeu_x1_pd(y_ptr + offset + index, x0);
 
                     x_ptr += AVX2_DOUBLE_STRIDE;
                     index += AVX2_DOUBLE_STRIDE;

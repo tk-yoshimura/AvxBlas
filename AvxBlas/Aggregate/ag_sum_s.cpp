@@ -2,6 +2,7 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_sum_s.hpp"
+#include "../Inline/inline_loadstore_xn_s.hpp"
 #include <memory.h>
 
 using namespace System;
@@ -286,6 +287,40 @@ int ag_sum_stride8_s(
     return SUCCESS;
 }
 
+int ag_sum_stride9to15_s(
+    const uint n, const uint samples, const uint stride,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride <= AVX2_FLOAT_STRIDE || stride >= AVX2_FLOAT_STRIDE * 2) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256 zero = _mm256_setzero_ps();
+    const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
+
+    for (uint i = 0; i < n; i++) {
+        __m256 buf0 = zero, buf1 = zero;
+
+        for (uint s = 0; s < samples; s++) {
+            __m256 x0, x1;
+            _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
+
+            buf0 = _mm256_add_ps(x0, buf0);
+            buf1 = _mm256_add_ps(x1, buf1);
+
+            x_ptr += stride;
+        }
+
+        _mm256_maskstore_x2_ps(y_ptr, buf0, buf1, mask);
+
+        y_ptr += stride;
+    }
+
+    return SUCCESS;
+}
+
 int ag_sum_stride16_s(
     const uint n, const uint samples,
     infloats x_ptr, outfloats y_ptr) {
@@ -302,19 +337,53 @@ int ag_sum_stride16_s(
         __m256 buf0 = zero, buf1 = zero;
 
         for (uint s = 0; s < samples; s++) {
-            __m256 x0 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
-            __m256 x1 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
+            __m256 x0, x1;
+            _mm256_load_x2_ps(x_ptr, x0, x1);
 
             buf0 = _mm256_add_ps(x0, buf0);
             buf1 = _mm256_add_ps(x1, buf1);
+
+            x_ptr += AVX2_FLOAT_STRIDE * 2;
         }
 
-        _mm256_stream_ps(y_ptr, buf0);
-        y_ptr += AVX2_FLOAT_STRIDE;
-        _mm256_stream_ps(y_ptr, buf1);
-        y_ptr += AVX2_FLOAT_STRIDE;
+        _mm256_stream_x2_ps(y_ptr, buf0, buf1);
+
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
+    }
+
+    return SUCCESS;
+}
+
+int ag_sum_stride17to23_s(
+    const uint n, const uint samples, const uint stride,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride <= AVX2_FLOAT_STRIDE * 2 || stride >= AVX2_FLOAT_STRIDE * 3) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256 zero = _mm256_setzero_ps();
+    const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
+
+    for (uint i = 0; i < n; i++) {
+        __m256 buf0 = zero, buf1 = zero, buf2 = zero;
+
+        for (uint s = 0; s < samples; s++) {
+            __m256 x0, x1, x2;
+            _mm256_maskload_x3_ps(x_ptr, x0, x1, x2, mask);
+
+            buf0 = _mm256_add_ps(x0, buf0);
+            buf1 = _mm256_add_ps(x1, buf1);
+            buf2 = _mm256_add_ps(x2, buf2);
+
+            x_ptr += stride;
+        }
+
+        _mm256_maskstore_x3_ps(y_ptr, buf0, buf1, buf2, mask);
+
+        y_ptr += stride;
     }
 
     return SUCCESS;
@@ -336,24 +405,55 @@ int ag_sum_stride24_s(
         __m256 buf0 = zero, buf1 = zero, buf2 = zero;
 
         for (uint s = 0; s < samples; s++) {
-            __m256 x0 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
-            __m256 x1 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
-            __m256 x2 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
+            __m256 x0, x1, x2;
+            _mm256_load_x3_ps(x_ptr, x0, x1, x2);
 
             buf0 = _mm256_add_ps(x0, buf0);
             buf1 = _mm256_add_ps(x1, buf1);
             buf2 = _mm256_add_ps(x2, buf2);
+
+            x_ptr += AVX2_FLOAT_STRIDE * 3;
         }
 
-        _mm256_stream_ps(y_ptr, buf0);
-        y_ptr += AVX2_FLOAT_STRIDE;
-        _mm256_stream_ps(y_ptr, buf1);
-        y_ptr += AVX2_FLOAT_STRIDE;
-        _mm256_stream_ps(y_ptr, buf2);
-        y_ptr += AVX2_FLOAT_STRIDE;
+        _mm256_stream_x3_ps(y_ptr, buf0, buf1, buf2);
+
+        y_ptr += AVX2_FLOAT_STRIDE * 3;
+    }
+
+    return SUCCESS;
+}
+
+int ag_sum_stride25to31_s(
+    const uint n, const uint samples, const uint stride,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride <= AVX2_FLOAT_STRIDE * 3 || stride >= AVX2_FLOAT_STRIDE * 4) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256 zero = _mm256_setzero_ps();
+    const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
+
+    for (uint i = 0; i < n; i++) {
+        __m256 buf0 = zero, buf1 = zero, buf2 = zero, buf3 = zero;
+
+        for (uint s = 0; s < samples; s++) {
+            __m256 x0, x1, x2, x3;
+            _mm256_maskload_x4_ps(x_ptr, x0, x1, x2, x3, mask);
+
+            buf0 = _mm256_add_ps(x0, buf0);
+            buf1 = _mm256_add_ps(x1, buf1);
+            buf2 = _mm256_add_ps(x2, buf2);
+            buf3 = _mm256_add_ps(x3, buf3);
+
+            x_ptr += stride;
+        }
+
+        _mm256_maskstore_x4_ps(y_ptr, buf0, buf1, buf2, buf3, mask);
+
+        y_ptr += stride;
     }
 
     return SUCCESS;
@@ -375,29 +475,20 @@ int ag_sum_stride32_s(
         __m256 buf0 = zero, buf1 = zero, buf2 = zero, buf3 = zero;
 
         for (uint s = 0; s < samples; s++) {
-            __m256 x0 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
-            __m256 x1 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
-            __m256 x2 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
-            __m256 x3 = _mm256_load_ps(x_ptr);
-            x_ptr += AVX2_FLOAT_STRIDE;
+            __m256 x0, x1, x2, x3;
+            _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
 
             buf0 = _mm256_add_ps(x0, buf0);
             buf1 = _mm256_add_ps(x1, buf1);
             buf2 = _mm256_add_ps(x2, buf2);
             buf3 = _mm256_add_ps(x3, buf3);
+
+            x_ptr += AVX2_FLOAT_STRIDE * 4;
         }
 
-        _mm256_stream_ps(y_ptr, buf0);
-        y_ptr += AVX2_FLOAT_STRIDE;
-        _mm256_stream_ps(y_ptr, buf1);
-        y_ptr += AVX2_FLOAT_STRIDE;
-        _mm256_stream_ps(y_ptr, buf2);
-        y_ptr += AVX2_FLOAT_STRIDE;
-        _mm256_stream_ps(y_ptr, buf3);
-        y_ptr += AVX2_FLOAT_STRIDE;
+        _mm256_stream_x4_ps(y_ptr, buf0, buf1, buf2, buf3);
+
+        y_ptr += AVX2_FLOAT_STRIDE * 4;
     }
 
     return SUCCESS;
@@ -497,6 +588,15 @@ int ag_sum_unaligned_s(
 
     if (stride <= AVX2_FLOAT_STRIDE) {
         return ag_sum_strideleq8_s(n, samples, stride, x_ptr, y_ptr);
+    }
+    if (stride <= AVX2_FLOAT_STRIDE * 2) {
+        return ag_sum_stride9to15_s(n, samples, stride, x_ptr, y_ptr);
+    }
+    if (stride <= AVX2_FLOAT_STRIDE * 3) {
+        return ag_sum_stride17to23_s(n, samples, stride, x_ptr, y_ptr);
+    }
+    if (stride <= AVX2_FLOAT_STRIDE * 4) {
+        return ag_sum_stride25to31_s(n, samples, stride, x_ptr, y_ptr);
     }
 
     const uint sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;

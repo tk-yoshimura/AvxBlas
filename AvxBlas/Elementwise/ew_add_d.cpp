@@ -1,6 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
+#include "../Inline/inline_loadstore_xn_d.hpp"
 
 using namespace System;
 
@@ -19,24 +20,16 @@ int ew_add_d(
     uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
-        __m256d x01 = _mm256_load_pd(x1_ptr);
-        __m256d x02 = _mm256_load_pd(x2_ptr);
-        __m256d x11 = _mm256_load_pd(x1_ptr + AVX2_DOUBLE_STRIDE);
-        __m256d x12 = _mm256_load_pd(x2_ptr + AVX2_DOUBLE_STRIDE);
-        __m256d x21 = _mm256_load_pd(x1_ptr + AVX2_DOUBLE_STRIDE * 2);
-        __m256d x22 = _mm256_load_pd(x2_ptr + AVX2_DOUBLE_STRIDE * 2);
-        __m256d x31 = _mm256_load_pd(x1_ptr + AVX2_DOUBLE_STRIDE * 3);
-        __m256d x32 = _mm256_load_pd(x2_ptr + AVX2_DOUBLE_STRIDE * 3);
+        __m256d x01, x11, x21, x31, x02, x12, x22, x32;
+        _mm256_load_x4_pd(x1_ptr, x01, x11, x21, x31);
+        _mm256_load_x4_pd(x2_ptr, x02, x12, x22, x32);
 
         __m256d y0 = _mm256_add_pd(x01, x02);
         __m256d y1 = _mm256_add_pd(x11, x12);
         __m256d y2 = _mm256_add_pd(x21, x22);
         __m256d y3 = _mm256_add_pd(x31, x32);
 
-        _mm256_stream_pd(y_ptr, y0);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE, y1);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE * 2, y2);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE * 3, y3);
+        _mm256_stream_x4_pd(y_ptr, y0, y1, y2, y3);
 
         x1_ptr += AVX2_DOUBLE_STRIDE * 4;
         x2_ptr += AVX2_DOUBLE_STRIDE * 4;
@@ -44,16 +37,14 @@ int ew_add_d(
         r -= AVX2_DOUBLE_STRIDE * 4;
     }
     if (r >= AVX2_DOUBLE_STRIDE * 2) {
-        __m256d x01 = _mm256_load_pd(x1_ptr);
-        __m256d x02 = _mm256_load_pd(x2_ptr);
-        __m256d x11 = _mm256_load_pd(x1_ptr + AVX2_DOUBLE_STRIDE);
-        __m256d x12 = _mm256_load_pd(x2_ptr + AVX2_DOUBLE_STRIDE);
+        __m256d x01, x11, x02, x12;
+        _mm256_load_x2_pd(x1_ptr, x01, x11);
+        _mm256_load_x2_pd(x2_ptr, x02, x12);
 
         __m256d y0 = _mm256_add_pd(x01, x02);
         __m256d y1 = _mm256_add_pd(x11, x12);
 
-        _mm256_stream_pd(y_ptr, y0);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE, y1);
+        _mm256_stream_x2_pd(y_ptr, y0, y1);
 
         x1_ptr += AVX2_DOUBLE_STRIDE * 2;
         x2_ptr += AVX2_DOUBLE_STRIDE * 2;
@@ -61,12 +52,13 @@ int ew_add_d(
         r -= AVX2_DOUBLE_STRIDE * 2;
     }
     if (r >= AVX2_DOUBLE_STRIDE) {
-        __m256d x01 = _mm256_load_pd(x1_ptr);
-        __m256d x02 = _mm256_load_pd(x2_ptr);
+        __m256d x01, x02;
+        _mm256_load_x1_pd(x1_ptr, x01);
+        _mm256_load_x1_pd(x2_ptr, x02);
 
         __m256d y0 = _mm256_add_pd(x01, x02);
 
-        _mm256_stream_pd(y_ptr, y0);
+        _mm256_stream_x1_pd(y_ptr, y0);
 
         x1_ptr += AVX2_DOUBLE_STRIDE;
         x2_ptr += AVX2_DOUBLE_STRIDE;

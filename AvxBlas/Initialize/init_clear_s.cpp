@@ -1,6 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
+#include "../Inline/inline_loadstore_xn_s.hpp"
 
 using namespace System;
 
@@ -26,23 +27,19 @@ int clear_s(
     const __m256 fillc = _mm256_set1_ps(c);
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        _mm256_stream_ps(y_ptr, fillc);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, fillc);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 2, fillc);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 3, fillc);
+        _mm256_stream_x4_ps(y_ptr, fillc, fillc, fillc, fillc);
 
         y_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
     if (r >= AVX2_FLOAT_STRIDE * 2) {
-        _mm256_stream_ps(y_ptr, fillc);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, fillc);
+        _mm256_stream_x2_ps(y_ptr, fillc, fillc);
 
         y_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE * 2;
     }
     if (r >= AVX2_FLOAT_STRIDE) {
-        _mm256_stream_ps(y_ptr, fillc);
+        _mm256_stream_x1_ps(y_ptr, fillc);
 
         y_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE;
