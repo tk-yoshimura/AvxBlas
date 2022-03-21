@@ -33,6 +33,9 @@
     <ClCompile Include="Tests\dotmul_test.cpp">
       <Filter>Source\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Tests\fma_test.cpp">
+      <Filter>Source\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas_sandbox.h">
