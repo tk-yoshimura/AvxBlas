@@ -30,7 +30,7 @@ int const_add_d(
         __m256d y2 = _mm256_add_pd(x2, fillc);
         __m256d y3 = _mm256_add_pd(x3, fillc);
 
-        _mm256_stream_x4_pd(y_ptr, x0, x1, x2, x3);
+        _mm256_stream_x4_pd(y_ptr, y0, y1, y2, y3);
 
         x_ptr += AVX2_DOUBLE_STRIDE * 4;
         y_ptr += AVX2_DOUBLE_STRIDE * 4;
@@ -43,7 +43,7 @@ int const_add_d(
         __m256d y0 = _mm256_add_pd(x0, fillc);
         __m256d y1 = _mm256_add_pd(x1, fillc);
 
-        _mm256_stream_x2_pd(y_ptr, x0, x1);
+        _mm256_stream_x2_pd(y_ptr, y0, y1);
 
         x_ptr += AVX2_DOUBLE_STRIDE * 2;
         y_ptr += AVX2_DOUBLE_STRIDE * 2;
@@ -55,7 +55,7 @@ int const_add_d(
 
         __m256d y0 = _mm256_add_pd(x0, fillc);
 
-        _mm256_stream_x1_pd(y_ptr, x0);
+        _mm256_stream_x1_pd(y_ptr, y0);
 
         x_ptr += AVX2_DOUBLE_STRIDE;
         y_ptr += AVX2_DOUBLE_STRIDE;

@@ -1,5 +1,7 @@
 #include "../constants.h"
 #include "../utils.h"
+#include "../Inline/inline_loadstore_xn_s.hpp"
+#include "../Inline/inline_loadstore_xn_d.hpp"
 
 #pragma unmanaged
 
@@ -19,23 +21,19 @@ void zeroset_s(const unsigned int n, outfloats y_ptr) {
     const __m256 fillz = _mm256_setzero_ps();
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        _mm256_stream_ps(y_ptr, fillz);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, fillz);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 2, fillz);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE * 3, fillz);
+        _mm256_stream_x4_ps(y_ptr, fillz, fillz, fillz, fillz);
 
         y_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
     }
     if (r >= AVX2_FLOAT_STRIDE * 2) {
-        _mm256_stream_ps(y_ptr, fillz);
-        _mm256_stream_ps(y_ptr + AVX2_FLOAT_STRIDE, fillz);
+        _mm256_stream_x2_ps(y_ptr, fillz, fillz);
 
         y_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE * 2;
     }
     if (r >= AVX2_FLOAT_STRIDE) {
-        _mm256_stream_ps(y_ptr, fillz);
+        _mm256_stream_x1_ps(y_ptr, fillz);
 
         y_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE;
@@ -63,23 +61,19 @@ void zeroset_d(const unsigned int n, outdoubles y_ptr) {
     const __m256d fillz = _mm256_setzero_pd();
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
-        _mm256_stream_pd(y_ptr, fillz);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE, fillz);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE * 2, fillz);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE * 3, fillz);
+        _mm256_stream_x4_pd(y_ptr, fillz, fillz, fillz, fillz);
 
         y_ptr += AVX2_DOUBLE_STRIDE * 4;
         r -= AVX2_DOUBLE_STRIDE * 4;
     }
     if (r >= AVX2_DOUBLE_STRIDE * 2) {
-        _mm256_stream_pd(y_ptr, fillz);
-        _mm256_stream_pd(y_ptr + AVX2_DOUBLE_STRIDE, fillz);
+        _mm256_stream_x2_pd(y_ptr, fillz, fillz);
 
         y_ptr += AVX2_DOUBLE_STRIDE * 2;
         r -= AVX2_DOUBLE_STRIDE * 2;
     }
     if (r >= AVX2_DOUBLE_STRIDE) {
-        _mm256_stream_pd(y_ptr, fillz);
+        _mm256_stream_x1_pd(y_ptr, fillz);
 
         y_ptr += AVX2_DOUBLE_STRIDE;
         r -= AVX2_DOUBLE_STRIDE;

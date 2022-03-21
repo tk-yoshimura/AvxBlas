@@ -30,7 +30,7 @@ int const_add_s(
         __m256 y2 = _mm256_add_ps(x2, fillc);
         __m256 y3 = _mm256_add_ps(x3, fillc);
 
-        _mm256_stream_x4_ps(y_ptr, x0, x1, x2, x3);
+        _mm256_stream_x4_ps(y_ptr, y0, y1, y2, y3);
 
         x_ptr += AVX2_FLOAT_STRIDE * 4;
         y_ptr += AVX2_FLOAT_STRIDE * 4;
@@ -43,7 +43,7 @@ int const_add_s(
         __m256 y0 = _mm256_add_ps(x0, fillc);
         __m256 y1 = _mm256_add_ps(x1, fillc);
 
-        _mm256_stream_x2_ps(y_ptr, x0, x1);
+        _mm256_stream_x2_ps(y_ptr, y0, y1);
 
         x_ptr += AVX2_FLOAT_STRIDE * 2;
         y_ptr += AVX2_FLOAT_STRIDE * 2;
@@ -55,7 +55,7 @@ int const_add_s(
 
         __m256 y0 = _mm256_add_ps(x0, fillc);
 
-        _mm256_stream_x1_ps(y_ptr, x0);
+        _mm256_stream_x1_ps(y_ptr, y0);
 
         x_ptr += AVX2_FLOAT_STRIDE;
         y_ptr += AVX2_FLOAT_STRIDE;

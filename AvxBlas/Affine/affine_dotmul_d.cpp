@@ -209,7 +209,7 @@ int affine_dotmul_stride5to7_d(
         _mm256_maskload_x2_pd(a_ptr + i, a0, a1, mask);
 
         for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
-            _mm256_maskload_x2_pd(b_ptr + i, b0, b1, mask);
+            _mm256_maskload_x2_pd(b_ptr + j, b0, b1, mask);
 
             __m256d ab0 = _mm256_mul_pd(a0, b0);
             __m256d ab1 = _mm256_mul_pd(a1, b1);
@@ -240,7 +240,7 @@ int affine_dotmul_stride8_d(
         _mm256_load_x2_pd(a_ptr + i, a0, a1);
 
         for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 2; j < nbs; j += AVX2_DOUBLE_STRIDE * 2) {
-            _mm256_load_x2_pd(b_ptr + i, b0, b1);
+            _mm256_load_x2_pd(b_ptr + j, b0, b1);
 
             __m256d ab0 = _mm256_mul_pd(a0, b0);
             __m256d ab1 = _mm256_mul_pd(a1, b1);
@@ -273,7 +273,7 @@ int affine_dotmul_stride9to11_d(
         _mm256_maskload_x3_pd(a_ptr + i, a0, a1, a2, mask);
 
         for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
-            _mm256_maskload_x3_pd(b_ptr + i, b0, b1, b2, mask);
+            _mm256_maskload_x3_pd(b_ptr + j, b0, b1, b2, mask);
 
             __m256d ab0 = _mm256_mul_pd(a0, b0);
             __m256d ab1 = _mm256_mul_pd(a1, b1);
@@ -305,7 +305,7 @@ int affine_dotmul_stride12_d(
         _mm256_load_x3_pd(a_ptr + i, a0, a1, a2);
 
         for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 3; j < nbs; j += AVX2_DOUBLE_STRIDE * 3) {
-            _mm256_load_x3_pd(b_ptr + i, b0, b1, b2);
+            _mm256_load_x3_pd(b_ptr + j, b0, b1, b2);
 
             __m256d ab0 = _mm256_mul_pd(a0, b0);
             __m256d ab1 = _mm256_mul_pd(a1, b1);
@@ -339,7 +339,7 @@ int affine_dotmul_stride13to15_d(
         _mm256_maskload_x4_pd(a_ptr + i, a0, a1, a2, a3, mask);
 
         for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
-            _mm256_maskload_x4_pd(b_ptr + i, b0, b1, b2, b3, mask);
+            _mm256_maskload_x4_pd(b_ptr + j, b0, b1, b2, b3, mask);
 
             __m256d ab0 = _mm256_mul_pd(a0, b0);
             __m256d ab1 = _mm256_mul_pd(a1, b1);
@@ -372,7 +372,7 @@ int affine_dotmul_stride16_d(
         _mm256_load_x4_pd(a_ptr + i, a0, a1, a2, a3);
         
         for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 4; j < nbs; j += AVX2_DOUBLE_STRIDE * 4) {
-            _mm256_load_x4_pd(b_ptr + i, b0, b1, b2, b3);
+            _mm256_load_x4_pd(b_ptr + j, b0, b1, b2, b3);
 
             __m256d ab0 = _mm256_mul_pd(a0, b0);
             __m256d ab1 = _mm256_mul_pd(a1, b1);
