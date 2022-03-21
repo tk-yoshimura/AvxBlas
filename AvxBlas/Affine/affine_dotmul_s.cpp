@@ -262,7 +262,7 @@ int affine_dotmul_stride9to15_s(
 
     for (uint i = 0, nas = na * stride; i < nas; i += stride) {
         _mm256_maskload_x2_ps(a_ptr + i, a0, a1, mask);
-        
+
         for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             _mm256_maskload_x2_ps(b_ptr + j, b0, b1, mask);
 
@@ -392,7 +392,7 @@ int affine_dotmul_stride25to31_s(
 
     for (uint i = 0, nas = na * stride; i < nas; i += stride) {
         _mm256_maskload_x4_ps(a_ptr + i, a0, a1, a2, a3, mask);
-        
+
         for (uint j = 0, nbs = nb * stride; j < nbs; j += stride) {
             _mm256_maskload_x4_ps(b_ptr + j, b0, b1, b2, b3, mask);
 

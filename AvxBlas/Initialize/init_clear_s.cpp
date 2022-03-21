@@ -14,7 +14,7 @@ int clear_s(
     uint r = n;
 
     y_ptr += index;
-    while(r > 0) {
+    while (r > 0) {
         if (((size_t)y_ptr % AVX2_ALIGNMENT) == 0) {
             break;
         }
@@ -23,7 +23,7 @@ int clear_s(
         y_ptr++;
         r--;
     }
-    
+
     const __m256 fillc = _mm256_set1_ps(c);
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
@@ -69,7 +69,7 @@ void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, float c, Array<float>^ y
     Util::CheckOutOfRange(index, n, y);
 
     float* y_ptr = (float*)(y->Ptr.ToPointer());
-    
+
     int ret = clear_s(index, n, c, y_ptr);
 
     Util::AssertReturnCode(ret);

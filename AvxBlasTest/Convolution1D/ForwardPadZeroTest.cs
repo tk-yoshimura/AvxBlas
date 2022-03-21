@@ -38,7 +38,7 @@ namespace AvxBlasTest.Connection1DTest {
                                 CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
                                 AssertError.Tolerance(y_expect, y_actual, 1e-8f, 1e-6f, ref max_err, $"NG {ic},{oc},{iw},{kw},{n}");
-                                
+
                                 Console.WriteLine($"OK: {ic},{oc},{iw},{kw},{n}");
                             }
                         }
@@ -59,7 +59,7 @@ namespace AvxBlasTest.Connection1DTest {
                 for (int th = 0; th < batch; th++) {
                     for (int ox = 0; ox < outw; ox++) {
                         int ix = kx + ox - kwidth / 2;
-                        
+
                         for (int outch = 0; outch < outchannels; outch++) {
                             double sum = y[outch, ox, th];
 

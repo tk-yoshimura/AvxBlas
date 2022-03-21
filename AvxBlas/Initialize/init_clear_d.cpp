@@ -10,7 +10,7 @@ using namespace System;
 int clear_d(
     const uint index, const uint n, const double c,
     outdoubles y_ptr) {
-    
+
     uint r = n;
 
     y_ptr += index;
@@ -69,7 +69,7 @@ void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, double c, Array<double>^
     Util::CheckOutOfRange(index, n, y);
 
     double* y_ptr = (double*)(y->Ptr.ToPointer());
-    
+
     int ret = clear_d(index, n, c, y_ptr);
 
     Util::AssertReturnCode(ret);

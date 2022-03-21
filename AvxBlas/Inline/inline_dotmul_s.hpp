@@ -63,7 +63,7 @@ __forceinline float dotmul_aligned_s(const unsigned int n, infloats x_ptr, inflo
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 s0 = _mm256_setzero_ps(), s1 = _mm256_setzero_ps(), s2 = _mm256_setzero_ps(), s3 = _mm256_setzero_ps();
-    
+
     unsigned int r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {

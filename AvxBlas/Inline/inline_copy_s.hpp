@@ -84,7 +84,7 @@ __forceinline void copy_unaligned_s(const uint n, infloats x_ptr, outfloats y_pt
     if (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_loadu_x2_ps(x_ptr, x0, x1);
         _mm256_storeu_x2_ps(y_ptr, x0, x1);
-        
+
         x_ptr += AVX2_FLOAT_STRIDE * 2;
         y_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE * 2;
@@ -97,7 +97,7 @@ __forceinline void copy_unaligned_s(const uint n, infloats x_ptr, outfloats y_pt
         y_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE;
     }
-    if(r > 0){
+    if (r > 0) {
         _mm256_loadu_x1_ps(x_ptr, x0);
         _mm256_maskstore_x1_ps(y_ptr, x0, mask);
     }

@@ -30,7 +30,7 @@ namespace AvxBlasTest.Connection1DTest {
                                 Array<float> x_tensor = new(ic * iw * n);
 
                                 Convolution1D.BackwardData(n, ic, oc, iw, kw, PadMode.Zero, y_tensor, w_tensor, x_tensor);
-                                
+
                                 float[] x_expect = x.ToFloatArray();
                                 float[] x_actual = x_tensor;
 

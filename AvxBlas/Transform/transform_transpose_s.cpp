@@ -197,7 +197,7 @@ int transpose_stride9to15_s(
                 __m256 x0, x1;
                 _mm256_loadu_x2_ps(x_ptr, x0, x1);
                 _mm256_maskstore_x2_ps(y_ptr + offset, x0, x1, mask);
-              
+
                 x_ptr += stride;
                 offset += r * stride;
             }
@@ -506,7 +506,7 @@ int transpose_unaligned_s(
                     index += AVX2_FLOAT_STRIDE;
                     sr -= AVX2_FLOAT_STRIDE;
                 }
-                if(sr > 0){
+                if (sr > 0) {
                     __m256 x0 = _mm256_loadu_ps(x_ptr);
 
                     _mm256_maskstore_ps(y_ptr + offset + index, mask, x0);

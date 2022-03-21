@@ -85,7 +85,7 @@ __forceinline void zeroset_unaligned_s(const unsigned int n, outfloats y_ptr, co
         y_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE;
     }
-    if(r > 0) {
+    if (r > 0) {
         _mm256_maskstore_x1_ps(y_ptr, fillz, mask);
     }
 }

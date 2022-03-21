@@ -28,8 +28,8 @@ namespace AvxBlasTest.Connection1DTest {
 
                                 Filter1D gw = Reference(x, gy, (int)kw);
 
-                                Array<float> x_tensor =  xval;
-                                Array<float> gy_tensor =  gyval;
+                                Array<float> x_tensor = xval;
+                                Array<float> gy_tensor = gyval;
 
                                 Array<float> gw_tensor = new(ic * oc * kw);
 

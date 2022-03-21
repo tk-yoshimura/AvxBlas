@@ -25,7 +25,7 @@ void align_kernel_s(
     for (unsigned int i = 0; i < n; i++) {
         unsigned int r = unaligned_w_size;
 
-        while(r >= AVX2_FLOAT_STRIDE) {
+        while (r >= AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_loadu_ps(unaligned_w_ptr);
             _mm256_store_ps(aligned_w_ptr, x);
 

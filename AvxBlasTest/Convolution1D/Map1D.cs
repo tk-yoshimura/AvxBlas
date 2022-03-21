@@ -93,7 +93,7 @@ namespace AvxBlasTest.Connection1DTest {
         public float[] ToFloatArray() {
             return val.Select((v) => (float)v).ToArray();
         }
-                
+
         public double[] ToDoubleArray() {
             return (double[])val.Clone();
         }

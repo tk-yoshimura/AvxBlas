@@ -652,7 +652,7 @@ __forceinline void kernelfma_aligned_ss(
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
             _mm256_kahanfma_ps(x2, y, s2, c2);
-            
+
             _mm256_store_x3_ps(ws_ptr, s0, s1, s2);
             _mm256_store_x3_ps(wc_ptr, c0, c1, c2);
         }

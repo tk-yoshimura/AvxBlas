@@ -4,6 +4,7 @@
 #include "../Inline/inline_set_d.hpp"
 #include "../Inline/inline_sum_d.hpp"
 #include "../Inline/inline_dotmul_d.hpp"
+#include "../Inline/inline_loadstore_xn_d.hpp"
 #include <memory.h>
 
 using namespace System;
@@ -370,7 +371,7 @@ int affine_dotmul_stride16_d(
 
     for (uint i = 0, nas = na * AVX2_DOUBLE_STRIDE * 4; i < nas; i += AVX2_DOUBLE_STRIDE * 4) {
         _mm256_load_x4_pd(a_ptr + i, a0, a1, a2, a3);
-        
+
         for (uint j = 0, nbs = nb * AVX2_DOUBLE_STRIDE * 4; j < nbs; j += AVX2_DOUBLE_STRIDE * 4) {
             _mm256_load_x4_pd(b_ptr + j, b0, b1, b2, b3);
 

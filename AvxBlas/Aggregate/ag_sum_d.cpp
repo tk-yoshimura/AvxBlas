@@ -236,7 +236,7 @@ int ag_sum_stride8_d(
         __m256d buf0 = zero, buf1 = zero;
 
         for (uint s = 0; s < samples; s++) {
-            __m256d x0, x1;            
+            __m256d x0, x1;
             _mm256_load_x2_pd(x_ptr, x0, x1);
 
             buf0 = _mm256_add_pd(x0, buf0);

@@ -445,7 +445,7 @@ int transpose_unaligned_d(
                     index += AVX2_DOUBLE_STRIDE;
                     sr -= AVX2_DOUBLE_STRIDE;
                 }
-                if(sr > 0){
+                if (sr > 0) {
                     __m256d x0 = _mm256_loadu_pd(x_ptr);
 
                     _mm256_maskstore_pd(y_ptr + offset + index, mask, x0);
