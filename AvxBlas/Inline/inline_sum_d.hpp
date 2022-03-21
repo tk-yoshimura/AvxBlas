@@ -48,6 +48,27 @@ __forceinline double _mm256_sum16to1_pd(const __m256d x, const __m256d y, const 
     return ret;
 }
 
+// e0,...,e11 -> e0+e3+...+e9,e1+e4+...+e10,e2+e5+...+e11,zero
+__forceinline __m256d _mm256_sum12to3_pd(const __m256d x0, const __m256d x1, const __m256d x2) {
+    const __m256d _mask_1 = _mm256_castsi256_pd(_mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0));
+    const __m256d _mask_2 = _mm256_castsi256_pd(_mm256_setr_epi32(0, 0, 0, 0, 0, 0, ~0u, ~0u));
+
+    const __m256d y0 = x0;
+    const __m256d y1 = _mm256_permute4x64_pd(x1, _MM_PERM_ABDC);
+    const __m256d y2 = _mm256_permute4x64_pd(x2, _MM_PERM_ADCB);
+
+    const __m256d z0 = _mm256_permute4x64_pd(_mm256_and_pd(y0, _mask_2), _MM_PERM_AAAD);
+    const __m256d z1 = _mm256_permute4x64_pd(_mm256_and_pd(y1, _mask_2), _MM_PERM_AADA);
+    const __m256d z2 = _mm256_permute4x64_pd(_mm256_and_pd(y2, _mask_2), _MM_PERM_ADAA);
+
+    const __m256d w0 = _mm256_and_pd(_mm256_add_pd(y0, _mm256_add_pd(y1, y2)), _mask_1);
+    const __m256d w1 = _mm256_add_pd(z0, _mm256_add_pd(z1, z2));
+
+    const __m256d ret = _mm256_add_pd(w0, w1);
+
+    return ret;
+}
+
 // e0,e1,e2,e3 -> e0+e1,e2+e3
 __forceinline __m128d _mm256_hadd2_pd(const __m256d x) {
     const __m128d lo = _mm256_castpd256_pd128(x);

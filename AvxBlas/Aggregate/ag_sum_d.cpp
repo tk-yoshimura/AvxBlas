@@ -134,21 +134,52 @@ int ag_sum_stride3_d(
     indoubles x_ptr, outdoubles y_ptr) {
 
     const __m256d zero = _mm256_setzero_pd();
-    const __m256i mask = _mm256_setmask_pd(3);
+
+    const __m256i maskload = _mm256_setmask_pd((3 * samples) & AVX2_DOUBLE_REMAIN_MASK);
+    const __m256i maskstore = _mm256_setmask_pd(3);
 
     for (uint i = 0; i < n; i++) {
-        __m256d buf = zero;
+        __m256d buf0 = zero, buf1 = zero, buf2 = zero;
+        uint r = samples;
 
-        for (uint s = 0; s < samples; s++) {
-            __m256d x = _mm256_maskload_pd(x_ptr, mask);
+        while (r >= 4) {
+            __m256d x0, x1, x2;
+            _mm256_loadu_x3_pd(x_ptr, x0, x1, x2);
 
-            buf = _mm256_add_pd(x, buf);
+            buf0 = _mm256_add_pd(x0, buf0);
+            buf1 = _mm256_add_pd(x1, buf1);
+            buf2 = _mm256_add_pd(x2, buf2);
 
-            x_ptr += 3;
+            x_ptr += 12;
+            r -= 4;
+        }
+        if (r >= 3) { // 3 * r >= AVX2_DOUBLE_STRIDE * 2
+            __m256d x0, x1, x2;
+            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, maskload);
+
+            buf0 = _mm256_add_pd(x0, buf0);
+            buf1 = _mm256_add_pd(x1, buf1);
+            buf2 = _mm256_add_pd(x2, buf2);
+        }
+        else if (r >= 2) { // 3 * r >= AVX2_DOUBLE_STRIDE
+            __m256d x0, x1;
+            _mm256_maskload_x2_pd(x_ptr, x0, x1, maskload);
+
+            buf0 = _mm256_add_pd(x0, buf0);
+            buf1 = _mm256_add_pd(x1, buf1);
+        }
+        else if (r >= 1) {
+            __m256d x0;
+            _mm256_maskload_x1_pd(x_ptr, x0, maskload);
+
+            buf0 = _mm256_add_pd(x0, buf0);
         }
 
-        _mm256_maskstore_pd(y_ptr, mask, buf);
+        __m256d y = _mm256_sum12to3_pd(buf0, buf1, buf2);
 
+        _mm256_maskstore_pd(y_ptr, maskstore, y);
+
+        x_ptr += 3 * r;
         y_ptr += 3;
     }
 
@@ -652,6 +683,13 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
 #endif // _DEBUG
 
         ret = ag_sum_stride2_d(n, samples, x_ptr, y_ptr);
+    }
+    else if (stride == 3u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride3");
+#endif // _DEBUG
+
+        ret = ag_sum_stride3_d(n, samples, x_ptr, y_ptr);
     }
     else if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG

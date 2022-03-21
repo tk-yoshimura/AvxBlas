@@ -129,32 +129,52 @@ int ag_sum_stride3_s(
     infloats x_ptr, outfloats y_ptr) {
 
     const __m256 zero = _mm256_setzero_ps();
-    const uint sb = samples / 2 * 2, sr = samples - sb;
-    const __m128i mask3 = _mm_setmask_ps(3);
-    const __m256i mask6 = _mm256_setmask_ps(6);
+
+    const __m256i maskload = _mm256_setmask_ps((3 * samples) & AVX2_FLOAT_REMAIN_MASK);
+    const __m128i maskstore = _mm_setmask_ps(3);
 
     for (uint i = 0; i < n; i++) {
-        __m256 buf = zero;
+        __m256 buf0 = zero, buf1 = zero, buf2 = zero;
+        uint r = samples;
 
-        for (uint s = 0; s < sb; s += 2) {
-            __m256 x = _mm256_maskload_ps(x_ptr, mask6);
+        while (r >= 8) {
+            __m256 x0, x1, x2;
+            _mm256_loadu_x3_ps(x_ptr, x0, x1, x2);
 
-            buf = _mm256_add_ps(x, buf);
+            buf0 = _mm256_add_ps(x0, buf0);
+            buf1 = _mm256_add_ps(x1, buf1);
+            buf2 = _mm256_add_ps(x2, buf2);
 
-            x_ptr += 6;
+            x_ptr += 24;
+            r -= 8;
         }
-        if (sr > 0) {
-            __m256 x = _mm256_castps128_ps256(_mm_maskload_ps(x_ptr, mask3));
+        if (r >= 6) { // 3 * r >= AVX2_FLOAT_STRIDE * 2
+            __m256 x0, x1, x2;
+            _mm256_maskload_x3_ps(x_ptr, x0, x1, x2, maskload);
 
-            buf = _mm256_add_ps(x, buf);
+            buf0 = _mm256_add_ps(x0, buf0);
+            buf1 = _mm256_add_ps(x1, buf1);
+            buf2 = _mm256_add_ps(x2, buf2);
+        }
+        else if (r >= 3) { // 3 * r >= AVX2_FLOAT_STRIDE
+            __m256 x0, x1;
+            _mm256_maskload_x2_ps(x_ptr, x0, x1, maskload);
 
-            x_ptr += 3;
+            buf0 = _mm256_add_ps(x0, buf0);
+            buf1 = _mm256_add_ps(x1, buf1);
+        }
+        else if (r >= 1) {
+            __m256 x0;
+            _mm256_maskload_x1_ps(x_ptr, x0, maskload);
+
+            buf0 = _mm256_add_ps(x0, buf0);
         }
 
-        __m128 y = _mm256_sum6to3_ps(buf);
+        __m128 y = _mm256_sum24to3_ps(buf0, buf1, buf2);
 
-        _mm_maskstore_ps(y_ptr, mask3, y);
+        _mm_maskstore_ps(y_ptr, maskstore, y);
 
+        x_ptr += 3 * r;
         y_ptr += 3;
     }
 
@@ -759,6 +779,13 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
 #endif // _DEBUG
 
         ret = ag_sum_stride2_s(n, samples, x_ptr, y_ptr);
+    }
+    else if (stride == 3u) {
+#ifdef _DEBUG
+        Console::WriteLine("type stride3");
+#endif // _DEBUG
+
+        ret = ag_sum_stride3_s(n, samples, x_ptr, y_ptr);
     }
     else if (stride == 4u) {
 #ifdef _DEBUG
