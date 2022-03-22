@@ -70,7 +70,7 @@ int ag_sum_stride2_s(
     infloats x_ptr, outfloats y_ptr) {
 
     const __m256 zero = _mm256_setzero_ps();
-    const uint maskn = (samples % (AVX2_FLOAT_STRIDE / 2)) * 2;
+    const uint maskn = (2 * samples) & AVX2_FLOAT_REMAIN_MASK;
     const __m256i mask = _mm256_setmask_ps(maskn);
     const __m128i mask2 = _mm_setmask_ps(2);
 
@@ -199,7 +199,7 @@ int ag_sum_stride4_s(
 #endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
-    const uint maskn = (samples % (AVX2_FLOAT_STRIDE / 4)) * 4;
+    const uint maskn = (4 * samples) & AVX2_FLOAT_REMAIN_MASK;
     const __m256i mask = _mm256_setmask_ps(maskn);
     const __m256i mask4 = _mm256_setmask_ps(4);
 
@@ -240,6 +240,101 @@ int ag_sum_stride4_s(
         _mm_stream_ps(y_ptr, y);
 
         y_ptr += AVX2_FLOAT_STRIDE / 2;
+    }
+
+    return SUCCESS;
+}
+
+int ag_sum_stride5_s(
+    const uint n, const uint samples,
+    infloats x_ptr, outfloats y_ptr) {
+
+    const __m256 zero = _mm256_setzero_ps();
+    const uint maskn = (5 * samples) & AVX2_FLOAT_REMAIN_MASK;
+    const __m256i mask = _mm256_setmask_ps(maskn);
+    const __m256i mask5 = _mm256_setmask_ps(5);
+
+    for (uint i = 0; i < n; i++) {
+        __m256 s0 = zero, s1 = zero, s2 = zero, s3 = zero, s4 = zero;
+        uint r = samples;
+
+        if (((size_t)x_ptr % AVX2_ALIGNMENT) == 0) {
+            while (r >= AVX2_FLOAT_STRIDE) {
+                __m256 x0, x1, x2, x3, x4;
+                _mm256_load_x5_ps(x_ptr, x0, x1, x2, x3, x4);
+
+                s0 = _mm256_add_ps(x0, s0);
+                s1 = _mm256_add_ps(x1, s1);
+                s2 = _mm256_add_ps(x2, s2);
+                s3 = _mm256_add_ps(x3, s3);
+                s4 = _mm256_add_ps(x4, s4);
+
+                x_ptr += AVX2_FLOAT_STRIDE * 5;
+                r -= AVX2_FLOAT_STRIDE;
+            }
+        }
+        else {
+            while (r >= AVX2_FLOAT_STRIDE) {
+                __m256 x0, x1, x2, x3, x4;
+                _mm256_loadu_x5_ps(x_ptr, x0, x1, x2, x3, x4);
+
+                s0 = _mm256_add_ps(x0, s0);
+                s1 = _mm256_add_ps(x1, s1);
+                s2 = _mm256_add_ps(x2, s2);
+                s3 = _mm256_add_ps(x3, s3);
+                s4 = _mm256_add_ps(x4, s4);
+
+                x_ptr += AVX2_FLOAT_STRIDE * 5;
+                r -= AVX2_FLOAT_STRIDE;
+            }
+        }
+        if (r >= 7) { // 5 * r >= AVX2_FLOAT_STRIDE * 4
+            __m256 x0, x1, x2, x3, x4;
+            _mm256_maskload_x5_ps(x_ptr, x0, x1, x2, x3, x4, mask);
+
+            s0 = _mm256_add_ps(x0, s0);
+            s1 = _mm256_add_ps(x1, s1);
+            s2 = _mm256_add_ps(x2, s2);
+            s3 = _mm256_add_ps(x3, s3);
+            s4 = _mm256_add_ps(x4, s4);
+        }
+        else if (r >= 5) { // 5 * r >= AVX2_FLOAT_STRIDE * 3
+            __m256 x0, x1, x2, x3;
+            _mm256_maskload_x4_ps(x_ptr, x0, x1, x2, x3, mask);
+
+            s0 = _mm256_add_ps(x0, s0);
+            s1 = _mm256_add_ps(x1, s1);
+            s2 = _mm256_add_ps(x2, s2);
+            s3 = _mm256_add_ps(x3, s3);
+        }
+        else if (r >= 4) { // 5 * r >= AVX2_FLOAT_STRIDE * 2
+            __m256 x0, x1, x2;
+            _mm256_maskload_x3_ps(x_ptr, x0, x1, x2, mask);
+
+            s0 = _mm256_add_ps(x0, s0);
+            s1 = _mm256_add_ps(x1, s1);
+            s2 = _mm256_add_ps(x2, s2);
+        }
+        else if (r >= 2) { // 5 * r >= AVX2_FLOAT_STRIDE
+            __m256 x0, x1;
+            _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
+
+            s0 = _mm256_add_ps(x0, s0);
+            s1 = _mm256_add_ps(x1, s1);
+        }
+        else if (r >= 1) {
+            __m256 x0;
+            _mm256_maskload_x1_ps(x_ptr, x0, mask);
+
+            s0 = _mm256_add_ps(x0, s0);
+        }
+
+        __m256 y = _mm256_sum40to5_ps(s0, s1, s2, s3, s4);
+
+        _mm256_maskstore_ps(y_ptr, mask5, y);
+
+        x_ptr += 5 * r;
+        y_ptr += 5;
     }
 
     return SUCCESS;
@@ -317,18 +412,12 @@ int ag_sum_stride6_s(
     return SUCCESS;
 }
 
-int ag_sum_stride5to7_s(
-    const uint n, const uint samples, const uint stride,
+int ag_sum_stride7_s(
+    const uint n, const uint samples,
     infloats x_ptr, outfloats y_ptr) {
 
-#ifdef _DEBUG
-    if (stride <= AVX2_FLOAT_STRIDE / 2 || stride >= AVX2_FLOAT_STRIDE) {
-        return FAILURE_BADPARAM;
-    }
-#endif // _DEBUG
-
     const __m256 zero = _mm256_setzero_ps();
-    const __m256i mask = _mm256_setmask_ps(stride);
+    const __m256i mask = _mm256_setmask_ps(7);
 
     for (uint i = 0; i < n; i++) {
         __m256 s = zero;
@@ -338,12 +427,12 @@ int ag_sum_stride5to7_s(
 
             s = _mm256_add_ps(x, s);
 
-            x_ptr += stride;
+            x_ptr += 7;
         }
 
         _mm256_maskstore_ps(y_ptr, mask, s);
 
-        y_ptr += stride;
+        y_ptr += 7;
     }
 
     return SUCCESS;
@@ -603,11 +692,14 @@ int ag_sum_strideleq8_s(
     else if (stride == 4) {
         return ag_sum_stride4_s(n, samples, x_ptr, y_ptr);
     }
+    else if (stride == 5) {
+        return ag_sum_stride5_s(n, samples, x_ptr, y_ptr);
+    }
     else if (stride == 6) {
         return ag_sum_stride6_s(n, samples, x_ptr, y_ptr);
     }
-    else if (stride < AVX2_FLOAT_STRIDE) {
-        return ag_sum_stride5to7_s(n, samples, stride, x_ptr, y_ptr);
+    else if (stride == 7) {
+        return ag_sum_stride7_s(n, samples, x_ptr, y_ptr);
     }
     else if (stride == AVX2_FLOAT_STRIDE) {
         return ag_sum_stride8_s(n, samples, x_ptr, y_ptr);
@@ -842,9 +934,9 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
 
     int ret = UNEXECUTED;
 
-    if (stride <= 8u) {
+    if (stride <= 6u) {
 #ifdef _DEBUG
-        Console::WriteLine("type leq8");
+        Console::WriteLine("type leq6");
 #endif // _DEBUG
 
         ret = ag_sum_strideleq8_s(n, samples, stride, x_ptr, y_ptr);
