@@ -149,14 +149,29 @@ __forceinline __m256dx2 _mm256_sum20to5_pd(const __m256d x0, const __m256d x1, c
     return ret;
 }
 
+// e0,...,e11 -> e0+e6,e1+e7,e2+e8,e3+e9,e4+e10,e5+e11,_,_
+__forceinline __m256dx2 _mm256_sum12to6_pd(const __m256d x0, const __m256d x1, const __m256d x2) {
+    const __m256d y1 = _mm256_permute4x64_pd(x1, _MM_PERM_BADC);
+    const __m256d y2 = _mm256_permute4x64_pd(x2, _MM_PERM_BADC);
+
+    const __m256d z0 = x0;
+    const __m256d z1 = _mm256_blend_pd(y1, y2, 0b1100);
+    const __m256d z2 = _mm256_blend_pd(y1, y2, 0b0011);
+
+    const __m256d lo = _mm256_add_pd(z0, z1);
+    const __m256d hi = _mm256_add_pd(x1, y2);
+
+    __m256dx2 ret(lo, hi);
+
+    return ret;
+}
+
 int main(){
     __m256d x0 = _mm256_setr_pd(11, 12, 13, 14);
-    __m256d x1 = _mm256_setr_pd(15, 21, 22, 23);
-    __m256d x2 = _mm256_setr_pd(24, 25, 31, 32);
-    __m256d x3 = _mm256_setr_pd(33, 34, 35, 41);
-    __m256d x4 = _mm256_setr_pd(42, 43, 44, 45);
-
-    __m256dx2 ret = _mm256_sum20to5_pd(x0, x1, x2, x3, x4);
+    __m256d x1 = _mm256_setr_pd(15, 16, 21, 22);
+    __m256d x2 = _mm256_setr_pd(23, 24, 25, 26);
+    
+    __m256dx2 ret = _mm256_sum12to6_pd(x0, x1, x2);
 
     getchar();
 }

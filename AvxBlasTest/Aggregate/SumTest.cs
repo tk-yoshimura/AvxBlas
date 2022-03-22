@@ -14,11 +14,11 @@ namespace AvxBlasTest.AggregateTest {
                     0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
 
                 foreach (uint samples in new uint[] {
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
+                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                     15u, 16u, 17u, 63u, 64u, 65u, 255u, 256u, 257u }) {
 
                     foreach (uint stride in new uint[] {
-                        0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 11u, 12u, 13u,
+                        0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                         15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u,
                         63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
@@ -61,11 +61,11 @@ namespace AvxBlasTest.AggregateTest {
                     0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
 
                 foreach (uint samples in new uint[] {
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u,
+                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                     15u, 16u, 17u, 63u, 64u, 65u, 255u, 256u, 257u }) {
 
                     foreach (uint stride in new uint[] {
-                        0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 11u, 12u, 13u,
+                        0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                         15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u,
                         63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
