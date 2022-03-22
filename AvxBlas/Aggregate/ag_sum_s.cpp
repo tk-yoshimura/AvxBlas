@@ -861,53 +861,53 @@ int ag_sum_batch_s(
 
     const __m256 zero = _mm256_setzero_ps();
 
-    float* buf = (float*)_aligned_malloc((size_t)sg * sizeof(float), AVX2_ALIGNMENT);
-    if (buf == nullptr) {
+    float* s_ptr = (float*)_aligned_malloc((size_t)sg * sizeof(float), AVX2_ALIGNMENT);
+    if (s_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
 
     for (uint i = 0; i < n; i++) {
         for (uint c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
-            _mm256_store_ps(buf + c, zero);
+            _mm256_store_ps(s_ptr + c, zero);
         }
 
         for (uint s = 0; s < sb; s += g) {
             for (uint c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
                 __m256 x = _mm256_loadu_ps(x_ptr + c);
-                __m256 y = _mm256_load_ps(buf + c);
+                __m256 y = _mm256_load_ps(s_ptr + c);
 
                 y = _mm256_add_ps(x, y);
 
-                _mm256_store_ps(buf + c, y);
+                _mm256_store_ps(s_ptr + c, y);
             }
             x_ptr += sg;
         }
         if (sr > 0) {
             for (uint c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
                 __m256 x = _mm256_loadu_ps(x_ptr + c);
-                __m256 y = _mm256_load_ps(buf + c);
+                __m256 y = _mm256_load_ps(s_ptr + c);
 
                 y = _mm256_add_ps(x, y);
 
-                _mm256_store_ps(buf + c, y);
+                _mm256_store_ps(s_ptr + c, y);
             }
             if (remr > 0) {
                 __m256 x = _mm256_maskload_ps(x_ptr + remb, mask);
-                __m256 y = _mm256_load_ps(buf + remb);
+                __m256 y = _mm256_load_ps(s_ptr + remb);
 
                 y = _mm256_add_ps(x, y);
 
-                _mm256_store_ps(buf + remb, y);
+                _mm256_store_ps(s_ptr + remb, y);
             }
             x_ptr += rem;
         }
 
-        ag_sum_unaligned_s(1, g, stride, buf, y_ptr);
+        ag_sum_unaligned_s(1, g, stride, s_ptr, y_ptr);
 
         y_ptr += stride;
     }
 
-    _aligned_free(buf);
+    _aligned_free(s_ptr);
 
     return SUCCESS;
 }
@@ -936,7 +936,7 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
 
     if (stride <= 6u) {
 #ifdef _DEBUG
-        Console::WriteLine("type leq6");
+        Console::WriteLine("type strideleq6");
 #endif // _DEBUG
 
         ret = ag_sum_strideleq8_s(n, samples, stride, x_ptr, y_ptr);
