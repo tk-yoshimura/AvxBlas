@@ -135,8 +135,8 @@ int ag_sum_stride3_d(
 
     const __m256d zero = _mm256_setzero_pd();
 
-    const __m256i maskload = _mm256_setmask_pd((3 * samples) & AVX2_DOUBLE_REMAIN_MASK);
-    const __m256i maskstore = _mm256_setmask_pd(3);
+    const __m256i mask = _mm256_setmask_pd((3 * samples) & AVX2_DOUBLE_REMAIN_MASK);
+    const __m256i mask3 = _mm256_setmask_pd(3);
 
     for (uint i = 0; i < n; i++) {
         __m256d buf0 = zero, buf1 = zero, buf2 = zero;
@@ -155,7 +155,7 @@ int ag_sum_stride3_d(
         }
         if (r >= 3) { // 3 * r >= AVX2_DOUBLE_STRIDE * 2
             __m256d x0, x1, x2;
-            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, maskload);
+            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
 
             buf0 = _mm256_add_pd(x0, buf0);
             buf1 = _mm256_add_pd(x1, buf1);
@@ -163,21 +163,21 @@ int ag_sum_stride3_d(
         }
         else if (r >= 2) { // 3 * r >= AVX2_DOUBLE_STRIDE
             __m256d x0, x1;
-            _mm256_maskload_x2_pd(x_ptr, x0, x1, maskload);
+            _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
 
             buf0 = _mm256_add_pd(x0, buf0);
             buf1 = _mm256_add_pd(x1, buf1);
         }
         else if (r >= 1) {
             __m256d x0;
-            _mm256_maskload_x1_pd(x_ptr, x0, maskload);
+            _mm256_maskload_x1_pd(x_ptr, x0, mask);
 
             buf0 = _mm256_add_pd(x0, buf0);
         }
 
         __m256d y = _mm256_sum12to3_pd(buf0, buf1, buf2);
 
-        _mm256_maskstore_pd(y_ptr, maskstore, y);
+        _mm256_maskstore_pd(y_ptr, mask3, y);
 
         x_ptr += 3 * r;
         y_ptr += 3;
