@@ -54,6 +54,20 @@ __forceinline void _mm256_load_x4_pd(indoubles ptr, __m256d& x0, __m256d& x1, __
     x3 = _mm256_load_pd(ptr + AVX2_DOUBLE_STRIDE * 3);
 }
 
+__forceinline void _mm256_load_x5_pd(indoubles ptr, __m256d& x0, __m256d& x1, __m256d& x2, __m256d& x3, __m256d& x4) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    x0 = _mm256_load_pd(ptr);
+    x1 = _mm256_load_pd(ptr + AVX2_DOUBLE_STRIDE);
+    x2 = _mm256_load_pd(ptr + AVX2_DOUBLE_STRIDE * 2);
+    x3 = _mm256_load_pd(ptr + AVX2_DOUBLE_STRIDE * 3);
+    x4 = _mm256_load_pd(ptr + AVX2_DOUBLE_STRIDE * 4);
+}
+
 __forceinline void _mm256_loadu_x1_pd(indoubles ptr, __m256d& x0) {
     x0 = _mm256_loadu_pd(ptr);
 }
@@ -76,6 +90,14 @@ __forceinline void _mm256_loadu_x4_pd(indoubles ptr, __m256d& x0, __m256d& x1, _
     x3 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 3);
 }
 
+__forceinline void _mm256_loadu_x5_pd(indoubles ptr, __m256d& x0, __m256d& x1, __m256d& x2, __m256d& x3, __m256d& x4) {
+    x0 = _mm256_loadu_pd(ptr);
+    x1 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE);
+    x2 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 2);
+    x3 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 3);
+    x4 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 4);
+}
+
 __forceinline void _mm256_maskload_x1_pd(indoubles ptr, __m256d& x0, const __m256i mask) {
     x0 = _mm256_maskload_pd(ptr, mask);
 }
@@ -96,6 +118,14 @@ __forceinline void _mm256_maskload_x4_pd(indoubles ptr, __m256d& x0, __m256d& x1
     x1 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE);
     x2 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 2);
     x3 = _mm256_maskload_pd(ptr + AVX2_DOUBLE_STRIDE * 3, mask);
+}
+
+__forceinline void _mm256_maskload_x5_pd(indoubles ptr, __m256d& x0, __m256d& x1, __m256d& x2, __m256d& x3, __m256d& x4, const __m256i mask) {
+    x0 = _mm256_loadu_pd(ptr);
+    x1 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE);
+    x2 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 2);
+    x3 = _mm256_loadu_pd(ptr + AVX2_DOUBLE_STRIDE * 3);
+    x4 = _mm256_maskload_pd(ptr + AVX2_DOUBLE_STRIDE * 4, mask);
 }
 
 __forceinline void _mm256_store_x1_pd(outdoubles ptr, __m256d x0) {

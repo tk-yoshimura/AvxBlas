@@ -218,6 +218,85 @@ int ag_sum_stride4_d(
     return SUCCESS;
 }
 
+int ag_sum_stride5_d(
+    const uint n, const uint samples,
+    indoubles x_ptr, outdoubles y_ptr) {
+
+    const __m256d zero = _mm256_setzero_pd();
+    const uint maskn = (5 * samples) & AVX2_DOUBLE_REMAIN_MASK;
+    const __m256i mask = _mm256_setmask_pd(maskn);
+    const __m256i mask1 = _mm256_setmask_pd(1);
+
+    for (uint i = 0; i < n; i++) {
+        __m256d s0 = zero, s1 = zero, s2 = zero, s3 = zero, s4 = zero;
+        uint r = samples;
+
+        if (((size_t)x_ptr % AVX2_ALIGNMENT) == 0) {
+            while (r >= AVX2_DOUBLE_STRIDE) {
+                __m256d x0, x1, x2, x3, x4;
+                _mm256_load_x5_pd(x_ptr, x0, x1, x2, x3, x4);
+
+                s0 = _mm256_add_pd(x0, s0);
+                s1 = _mm256_add_pd(x1, s1);
+                s2 = _mm256_add_pd(x2, s2);
+                s3 = _mm256_add_pd(x3, s3);
+                s4 = _mm256_add_pd(x4, s4);
+
+                x_ptr += AVX2_DOUBLE_STRIDE * 5;
+                r -= AVX2_DOUBLE_STRIDE;
+            }
+        }
+        else {
+            while (r >= AVX2_DOUBLE_STRIDE) {
+                __m256d x0, x1, x2, x3, x4;
+                _mm256_loadu_x5_pd(x_ptr, x0, x1, x2, x3, x4);
+
+                s0 = _mm256_add_pd(x0, s0);
+                s1 = _mm256_add_pd(x1, s1);
+                s2 = _mm256_add_pd(x2, s2);
+                s3 = _mm256_add_pd(x3, s3);
+                s4 = _mm256_add_pd(x4, s4);
+
+                x_ptr += AVX2_DOUBLE_STRIDE * 5;
+                r -= AVX2_DOUBLE_STRIDE;
+            }
+        }
+        if (r >= 3) { // 5 * r >= AVX2_DOUBLE_STRIDE * 3
+            __m256d x0, x1, x2, x3;
+            _mm256_maskload_x4_pd(x_ptr, x0, x1, x2, x3, mask);
+
+            s0 = _mm256_add_pd(x0, s0);
+            s1 = _mm256_add_pd(x1, s1);
+            s2 = _mm256_add_pd(x2, s2);
+            s3 = _mm256_add_pd(x3, s3);
+        }
+        else if (r >= 2) { // 5 * r >= AVX2_DOUBLE_STRIDE * 2
+            __m256d x0, x1, x2;
+            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
+
+            s0 = _mm256_add_pd(x0, s0);
+            s1 = _mm256_add_pd(x1, s1);
+            s2 = _mm256_add_pd(x2, s2);
+        }
+        else if (r >= 1) { // 5 * r >= AVX2_DOUBLE_STRIDE
+            __m256d x0, x1;
+            _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
+
+            s0 = _mm256_add_pd(x0, s0);
+            s1 = _mm256_add_pd(x1, s1);
+        }
+
+        __m256dx2 y = _mm256_sum20to5_pd(s0, s1, s2, s3, s4);
+
+        _mm256_maskstore_x2_pd(y_ptr, y.lo, y.hi, mask1);
+
+        x_ptr += 5 * r;
+        y_ptr += 5;
+    }
+
+    return SUCCESS;
+}
+
 int ag_sum_stride5to7_d(
     const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
@@ -425,7 +504,7 @@ int ag_sum_stride16_d(
     return SUCCESS;
 }
 
-int ag_sum_strideleq4_d(
+int ag_sum_strideleq5_d(
     const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
@@ -438,8 +517,11 @@ int ag_sum_strideleq4_d(
     else if (stride == 3) {
         return ag_sum_stride3_d(n, samples, x_ptr, y_ptr);
     }
-    else if (stride == AVX2_DOUBLE_STRIDE) {
+    else if (stride == 4) {
         return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
+    }
+    else if (stride == 5) {
+        return ag_sum_stride5_d(n, samples, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;
@@ -511,8 +593,8 @@ int ag_sum_unaligned_d(
     const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
-    if (stride <= AVX2_DOUBLE_STRIDE) {
-        return ag_sum_strideleq4_d(n, samples, stride, x_ptr, y_ptr);
+    if (stride <= 5) {
+        return ag_sum_strideleq5_d(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride <= AVX2_DOUBLE_STRIDE * 2) {
         return ag_sum_stride5to7_d(n, samples, stride, x_ptr, y_ptr);
@@ -671,12 +753,12 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
 
     int ret = UNEXECUTED;
 
-    if (stride <= 4u) {
+    if (stride <= 5u) {
 #ifdef _DEBUG
-        Console::WriteLine("type strideleq4");
+        Console::WriteLine("type strideleq5");
 #endif // _DEBUG
 
-        ret = ag_sum_strideleq4_d(n, samples, stride, x_ptr, y_ptr);
+        ret = ag_sum_strideleq5_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG

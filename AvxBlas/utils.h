@@ -28,17 +28,3 @@ extern void unalign_kernel_s(
 extern void unalign_kernel_d(
     const uint n, const uint aligned_w_size, const uint unaligned_w_size,
     indoubles aligned_w_ptr, outdoubles unaligned_w_ptr);
-
-union _m32 {
-    float f;
-    unsigned __int32 i;
-
-    constexpr _m32(unsigned __int32 i) : i(i) { }
-};
-
-union _m64 {
-    double f;
-    unsigned __int64 i;
-
-    constexpr _m64(unsigned __int64 i) : i(i) { }
-};

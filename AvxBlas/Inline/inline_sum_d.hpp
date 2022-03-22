@@ -69,6 +69,32 @@ __forceinline __m256d _mm256_sum12to3_pd(const __m256d x0, const __m256d x1, con
     return ret;
 }
 
+// e0,...,e19 -> e0+e5+...+e15,e1+e6+...+e16,e2+e7+...+e17,e3+e8+...+e18,e4+e9+...+e19,_,_,_
+__forceinline __m256dx2 _mm256_sum20to5_pd(const __m256d x0, const __m256d x1, const __m256d x2, const __m256d x3, const __m256d x4) {
+    const __m256d y1 = _mm256_permute4x64_pd(x1, _MM_PERM_ADCB);
+    const __m256d y2 = _mm256_permute4x64_pd(x2, _MM_PERM_ABDC);
+    const __m256d y3 = _mm256_permute4x64_pd(x3, _MM_PERM_BACD);
+    const __m256d y4 = _mm256_permute4x64_pd(x4, _MM_PERM_CBAD);
+
+    const __m256d z0 = x0;
+    const __m256d z1 = _mm256_blend_pd(y1, y4, 0b1000);
+    const __m256d z2 = _mm256_blend_pd(y2, y4, 0b0100);
+    const __m256d z3 = _mm256_blend_pd(y3, y4, 0b0010);
+
+    const __m256d w0 = _mm256_blend_pd(y1, y2, 0b0100);
+    const __m256d w1 = _mm256_blend_pd(y3, y4, 0b0001);
+    const __m256d wc = _mm256_blend_pd(w0, w1, 0b0011);
+    const __m256d wa = _mm256_permute4x64_pd(_mm256_hadd_pd(wc, wc), _MM_PERM_DBCA);
+    const __m256d wb = _mm256_hadd_pd(wa, wa);
+
+    const __m256d lo = _mm256_add_pd(_mm256_add_pd(z0, z1), _mm256_add_pd(z2, z3));
+    const __m256d hi = wb;
+
+    __m256dx2 ret(lo, hi);
+
+    return ret;
+}
+
 // e0,e1,e2,e3 -> e0+e1,e2+e3
 __forceinline __m128d _mm256_hadd2_pd(const __m256d x) {
     const __m128d lo = _mm256_castpd256_pd128(x);

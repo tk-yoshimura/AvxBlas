@@ -1,3 +1,5 @@
+#pragma once
+
 #include <immintrin.h>
 #include <chrono>
 #include "../AvxBlas/constants.h"
@@ -30,3 +32,9 @@ extern float dotmul_stride16_s(
 extern float dotmul_stride32_s(
     const unsigned int n,
     const float* __restrict x1_ptr, const float* __restrict x2_ptr);
+
+struct __m256dx2 {
+    __m256d lo, hi;
+
+    constexpr __m256dx2(__m256d lo, __m256d hi) : lo(lo), hi(hi) { }
+};
