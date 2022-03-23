@@ -370,11 +370,8 @@ void AvxBlas::Convolution1D::Forward(
         return;
     }
 
-    Array<float>^ transpose_w = gcnew Array<float>(w->Length, false);
-    Transform::Transpose(1, kw, oc, ic, w, transpose_w);
-
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
-    const float* w_ptr = (const float*)(transpose_w->Ptr.ToPointer());
+    const float* w_ptr = (const float*)(w->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 
     int ret = UNEXECUTED;
@@ -424,8 +421,6 @@ void AvxBlas::Convolution1D::Forward(
             ret = conv1d_forward_padedge_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
         }
     }
-
-    transpose_w->~Array();
 
     Util::AssertReturnCode(ret);
 }

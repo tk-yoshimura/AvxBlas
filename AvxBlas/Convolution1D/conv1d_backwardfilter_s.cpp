@@ -160,11 +160,9 @@ void AvxBlas::Convolution1D::BackwardFilter(
     Util::CheckLength(n * oc * ow, dy);
     Util::CheckLength(ic * oc * kw, dw);
 
-    Array<float>^ transpose_dw = gcnew Array<float>(dw->Length, false);
-
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
     const float* y_ptr = (const float*)(dy->Ptr.ToPointer());
-    float* w_ptr = (float*)(transpose_dw->Ptr.ToPointer());
+    float* w_ptr = (float*)(dw->Ptr.ToPointer());
 
     int ret = UNEXECUTED;
 
@@ -217,10 +215,6 @@ void AvxBlas::Convolution1D::BackwardFilter(
         //    }
         //}
     }
-
-    Transform::Transpose(1, oc, kw, ic, transpose_dw, dw);
-
-    transpose_dw->~Array();
 
     Util::AssertReturnCode(ret);
 }

@@ -15,8 +15,8 @@ void conv1d_transpose_kernel_s(
 
     uint src_index = 0;
 
-    for (uint kx = 0, rkx = kw - 1; kx < kw; kx++, rkx--) {
-        for (uint j = 0; j < oc; j++) {
+    for (uint j = 0; j < oc; j++) {
+        for (uint kx = 0, rkx = kw - 1; kx < kw; kx++, rkx--) {
             uint dst_index = j + oc * rkx;
 
             for (uint i = 0; i < ic; i++) {

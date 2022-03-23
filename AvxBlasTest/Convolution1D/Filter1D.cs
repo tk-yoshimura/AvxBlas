@@ -10,12 +10,12 @@ namespace AvxBlasTest.Connection1DTest {
         public int KernelWidth { private set; get; }
         public int Length => InChannels * OutChannels * KernelWidth;
 
-        public Filter1D(int inchannels, int outchannels, int kwidth, float[] val = null) {
+        public Filter1D(int inchannels, int kwidth, int outchannels, float[] val = null) {
             if (kwidth < 1 || inchannels < 1 || outchannels < 1) {
                 throw new ArgumentException();
             }
 
-            int length = checked(inchannels * outchannels * kwidth);
+            int length = checked(inchannels * kwidth * outchannels);
 
             if (!(val is null) && val.Length != length) {
                 throw new ArgumentException(null, nameof(val));
@@ -27,12 +27,12 @@ namespace AvxBlasTest.Connection1DTest {
             this.OutChannels = outchannels;
         }
 
-        public Filter1D(int inchannels, int outchannels, int kwidth, double[] val) {
+        public Filter1D(int inchannels, int kwidth, int outchannels, double[] val) {
             if (kwidth < 1 || inchannels < 1 || outchannels < 1) {
                 throw new ArgumentException();
             }
 
-            int length = checked(inchannels * outchannels * kwidth);
+            int length = checked(inchannels * kwidth * outchannels);
 
             if (!(val is null) && val.Length != length) {
                 throw new ArgumentException(null, nameof(val));
@@ -44,20 +44,20 @@ namespace AvxBlasTest.Connection1DTest {
             this.OutChannels = outchannels;
         }
 
-        public double this[int inch, int outch, int kx] {
+        public double this[int inch, int kx, int outch] {
             get {
-                if (kx < 0 || kx >= KernelWidth || inch < 0 || inch >= InChannels || outch < 0 || outch >= OutChannels) {
+                if (inch < 0 || inch >= InChannels || kx < 0 || kx >= KernelWidth || outch < 0 || outch >= OutChannels) {
                     throw new IndexOutOfRangeException();
                 }
 
-                return val[inch + InChannels * (outch + OutChannels * kx)];
+                return val[inch + InChannels * (kx + KernelWidth * outch)];
             }
             set {
-                if (kx < 0 || kx >= KernelWidth || inch < 0 || inch >= InChannels || outch < 0 || outch >= OutChannels) {
+                if (inch < 0 || inch >= InChannels || kx < 0 || kx >= KernelWidth || outch < 0 || outch >= OutChannels) {
                     throw new IndexOutOfRangeException();
                 }
 
-                val[inch + InChannels * (outch + OutChannels * kx)] = value;
+                val[inch + InChannels * (kx + KernelWidth * outch)] = value;
             }
         }
 
