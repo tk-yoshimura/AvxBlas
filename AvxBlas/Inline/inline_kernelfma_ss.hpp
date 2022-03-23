@@ -295,7 +295,7 @@ __forceinline void kernelfma_n3_aligned_ss(
     infloats x_ptr, infloats y_ptr, outfloats ws_ptr, outfloats wc_ptr) {
 
 #ifdef _DEBUG
-    if (ic != 3 || (oc % 8) != 0 || ((size_t)ws_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)wc_ptr % AVX2_ALIGNMENT) != 0) {
+    if (ic != 3 || (oc % AVX2_FLOAT_STRIDE) != 0 || ((size_t)ws_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)wc_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
@@ -340,7 +340,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
     infloats x_ptr, infloats y_ptr, outfloats ws_ptr, outfloats wc_ptr, const __m256i mask) {
 
 #ifdef _DEBUG
-    if (ic != 3 || (oc % 8) == 0) {
+    if (ic != 3 || (oc % AVX2_FLOAT_STRIDE) == 0) {
         throw std::exception();
     }
 #endif // _DEBUG

@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline//inline_kernelfma_d.hpp"
+#include "../Inline/inline_kernelfma_dd.hpp"
 
 using namespace System;
 
@@ -17,13 +17,20 @@ int dense_backwardfilter_n1_d(
     }
 #endif // _DEBUG
 
+    double* wc_ptr = (double*)_aligned_malloc(((size_t)ic * oc + AVX2_DOUBLE_STRIDE) * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
     uint maskn = oc & AVX2_DOUBLE_REMAIN_MASK;
 
     if (maskn > 0) {
         const __m256i mask = _mm256_setmask_pd(maskn);
 
         for (uint i = 0; i < n; i++) {
-            kernelfma_n1_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+            kernelfma_n1_unaligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -31,12 +38,14 @@ int dense_backwardfilter_n1_d(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n1_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n1_aligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -51,13 +60,20 @@ int dense_backwardfilter_n2_d(
     }
 #endif // _DEBUG
 
+    double* wc_ptr = (double*)_aligned_malloc(((size_t)ic * oc + AVX2_DOUBLE_STRIDE) * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
     uint maskn = (oc % (AVX2_DOUBLE_STRIDE / 2)) * ic;
 
     if (maskn > 0) {
         const __m256i mask = _mm256_setmask_pd(maskn);
 
         for (uint i = 0; i < n; i++) {
-            kernelfma_n2_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+            kernelfma_n2_unaligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -65,12 +81,14 @@ int dense_backwardfilter_n2_d(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n2_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n2_aligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -85,9 +103,16 @@ int dense_backwardfilter_n3_d(
     }
 #endif // _DEBUG
 
-    if (oc % 4 != 0) {
+    double* wc_ptr = (double*)_aligned_malloc(((size_t)ic * oc + AVX2_DOUBLE_STRIDE) * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
+    if (oc % AVX2_DOUBLE_STRIDE != 0) {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n3_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n3_unaligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
@@ -95,12 +120,14 @@ int dense_backwardfilter_n3_d(
     }
     else {
         for (uint i = 0; i < n; i++) {
-            kernelfma_n3_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
+            kernelfma_n3_aligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
             x_ptr += ic;
             y_ptr += oc;
         }
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -115,12 +142,21 @@ int dense_backwardfilter_n4_d(
     }
 #endif // _DEBUG
 
+    double* wc_ptr = (double*)_aligned_malloc((size_t)ic * oc * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
     for (uint i = 0; i < n; i++) {
-        kernelfma_n4_d(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_n4_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -161,12 +197,21 @@ int dense_backwardfilter_n16x_d(
     }
 #endif // _DEBUG
 
+    double* wc_ptr = (double*)_aligned_malloc((size_t)ic * oc * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
     for (uint i = 0; i < n; i++) {
-        kernelfma_n16x_d(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_n16x_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -181,12 +226,21 @@ int dense_backwardfilter_aligned_d(
     }
 #endif // _DEBUG
 
+    double* wc_ptr = (double*)_aligned_malloc((size_t)ic * oc * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
     for (uint i = 0; i < n; i++) {
-        kernelfma_aligned_d(ic, oc, x_ptr, y_ptr, w_ptr);
+        kernelfma_aligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -201,14 +255,23 @@ int dense_backwardfilter_unaligned_d(
     }
 #endif // _DEBUG
 
+    double* wc_ptr = (double*)_aligned_malloc(((size_t)ic * oc + AVX2_DOUBLE_STRIDE) * sizeof(double), AVX2_ALIGNMENT);
+    if (wc_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+    zeroset_d(ic * oc, w_ptr);
+    zeroset_d(ic * oc, wc_ptr);
+
     const __m256i mask = _mm256_setmask_pd(ic & AVX2_DOUBLE_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        kernelfma_unaligned_d(ic, oc, x_ptr, y_ptr, w_ptr, mask);
+        kernelfma_unaligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
         x_ptr += ic;
         y_ptr += oc;
     }
+
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -234,8 +297,6 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<double
     const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     const double* y_ptr = (const double*)(dy->Ptr.ToPointer());
     double* w_ptr = (double*)(dw->Ptr.ToPointer());
-
-    zeroset_d(ic * oc, w_ptr);
 
     int ret = UNEXECUTED;
 

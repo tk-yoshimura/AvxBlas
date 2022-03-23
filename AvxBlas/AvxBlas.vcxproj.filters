@@ -75,10 +75,7 @@
     <ClInclude Include="Inline\inline_sum_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_kernelfma_s.hpp">
-      <Filter>Source\Inline</Filter>
-    </ClInclude>
-    <ClInclude Include="Inline\inline_kernelfma_d.hpp">
+    <ClInclude Include="Inline\inline_kernelfma_dd.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_sum_d.hpp">
@@ -123,9 +120,6 @@
     <ClInclude Include="Inline\inline_kahan_d.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
-    <ClInclude Include="Inline\inline_kernelfma_ss.hpp">
-      <Filter>Source\Inline</Filter>
-    </ClInclude>
     <ClInclude Include="types.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -133,6 +127,18 @@
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_loadstore_xn_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_zeroset_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_copy_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_imcol_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_kernelfma_ss.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
   </ItemGroup>

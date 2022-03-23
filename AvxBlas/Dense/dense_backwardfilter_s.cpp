@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline//inline_kernelfma_ss.hpp"
+#include "../Inline/inline_kernelfma_ss.hpp"
 
 using namespace System;
 
@@ -110,7 +110,7 @@ int dense_backwardfilter_n3_s(
     zeroset_s(ic * oc, w_ptr);
     zeroset_s(ic * oc, wc_ptr);
 
-    if (oc % 8 != 0) {
+    if (oc % AVX2_FLOAT_STRIDE != 0) {
         uint maskn = 2 - (oc & 1);
         const __m256i mask = _mm256_setmask_ps(maskn * ic);
 

@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline//inline_kernelfma_ss.hpp"
+#include "../Inline/inline_kernelfma_ss.hpp"
 #include "../Inline/inline_numeric.hpp"
 #include "../Inline/inline_matmul_s.hpp"
 #include "../Inline/inline_imcol_s.hpp"
