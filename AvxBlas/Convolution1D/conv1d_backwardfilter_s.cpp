@@ -1,7 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline//inline_kernelfma_s.hpp"
+#include "../Inline//inline_kernelfma_ss.hpp"
 #include "../Inline/inline_numeric.hpp"
 #include "../Inline/inline_matmul_s.hpp"
 #include "../Inline/inline_imcol_s.hpp"
@@ -9,6 +9,8 @@
 using namespace System;
 
 #pragma unmanaged
+
+#pragma region padnone
 
 int conv1d_backwardfilter_padnone_n32x_s(
     const uint n, const uint ic, const uint oc,
@@ -22,16 +24,21 @@ int conv1d_backwardfilter_padnone_n32x_s(
 #endif // _DEBUG
 
     float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
-    if (col_ptr == nullptr) {
+    float* wc_ptr = (float*)_aligned_malloc((size_t)ic * kw * oc * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr || wc_ptr == nullptr) {
+        if (col_ptr != nullptr) _aligned_free(col_ptr);
+        if (wc_ptr != nullptr) _aligned_free(wc_ptr);
+
         return FAILURE_BADALLOC;
     }
     zeroset_n32x_s(ic * kw * oc, w_ptr);
+    zeroset_n32x_s(ic * kw * oc, wc_ptr);
 
     for (uint i = 0; i < n; i++) {
         for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_n32x_s(ic, kw, iw, x, x_ptr, col_ptr);
 
-            kernelfma_n32x_s(ic * kw, oc, col_ptr, y_ptr + x * oc, w_ptr);
+            kernelfma_n32x_ss(ic * kw, oc, col_ptr, y_ptr + x * oc, w_ptr, wc_ptr);
         }
 
         x_ptr += ic * iw;
@@ -39,6 +46,7 @@ int conv1d_backwardfilter_padnone_n32x_s(
     }
 
     _aligned_free(col_ptr);
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -55,16 +63,21 @@ int conv1d_backwardfilter_padnone_aligned_s(
 #endif // _DEBUG
 
     float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
-    if (col_ptr == nullptr) {
+    float* wc_ptr = (float*)_aligned_malloc((size_t)ic * kw * oc * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr || wc_ptr == nullptr) {
+        if (col_ptr != nullptr) _aligned_free(col_ptr);
+        if (wc_ptr != nullptr) _aligned_free(wc_ptr);
+
         return FAILURE_BADALLOC;
     }
     zeroset_aligned_s(ic * kw * oc, w_ptr);
+    zeroset_aligned_s(ic * kw * oc, wc_ptr);
 
     for (uint i = 0; i < n; i++) {
         for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_aligned_s(ic, kw, iw, x, x_ptr, col_ptr);
 
-            kernelfma_aligned_s(ic * kw, oc, col_ptr, y_ptr + x * oc, w_ptr);
+            kernelfma_aligned_ss(ic * kw, oc, col_ptr, y_ptr + x * oc, w_ptr, wc_ptr);
         }
 
         x_ptr += ic * iw;
@@ -72,6 +85,7 @@ int conv1d_backwardfilter_padnone_aligned_s(
     }
 
     _aligned_free(col_ptr);
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
@@ -91,14 +105,17 @@ int conv1d_backwardfilter_padnone_unaligned_s(
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
-    if (col_ptr == nullptr || we_ptr == nullptr) {
+    float* wc_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr || we_ptr == nullptr || wc_ptr == nullptr) {
         if (col_ptr != nullptr) _aligned_free(col_ptr);
         if (we_ptr != nullptr) _aligned_free(we_ptr);
+        if (wc_ptr != nullptr) _aligned_free(wc_ptr);
 
         return FAILURE_BADALLOC;
     }
     zeroset_aligned_s(col_size, col_ptr);
     zeroset_aligned_s(col_size * oc, we_ptr);
+    zeroset_aligned_s(col_size * oc, wc_ptr);
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
@@ -106,7 +123,7 @@ int conv1d_backwardfilter_padnone_unaligned_s(
         for (uint x = 0; x < ow; x++) {
             imcol1d_padnone_unaligned_s(ic, kw, iw, x, x_ptr, col_ptr, mask);
 
-            kernelfma_aligned_s(col_size, oc, col_ptr, y_ptr + x * oc, we_ptr);
+            kernelfma_aligned_ss(col_size, oc, col_ptr, y_ptr + x * oc, we_ptr, wc_ptr);
         }
 
         x_ptr += ic * iw;
@@ -117,9 +134,12 @@ int conv1d_backwardfilter_padnone_unaligned_s(
 
     _aligned_free(col_ptr);
     _aligned_free(we_ptr);
+    _aligned_free(wc_ptr);
 
     return SUCCESS;
 }
+
+#pragma endregion padnone
 
 #pragma managed
 
