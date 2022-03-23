@@ -1,8 +1,11 @@
 #include "../avxblas.h"
 #include "../constants.h"
+#include "../utils.h"
 
 #include <stdlib.h>
 #include <memory.h>
+
+#pragma managed
 
 using namespace System::Runtime::InteropServices;
 
@@ -258,6 +261,15 @@ generic <typename T>
 void AvxBlas::Array<T>::Zeroset(UInt32 index, UInt32 count) {
     void* ptr = (void*)(Ptr.ToInt64() + ElementSize * static_cast<long long>(index));
 
+    if (T::typeid == float::typeid) {
+        zeroset_s(count, (float*)ptr);
+        return;
+    }
+    if (T::typeid == double::typeid) {
+        zeroset_d(count, (double*)ptr);
+        return;
+    }
+
     memset(ptr, 0, static_cast<size_t>(count) * ElementSize);
 }
 
@@ -280,6 +292,15 @@ void AvxBlas::Array<T>::Copy(Array^ src_array, Array^ dst_array, UInt32 count) {
     void* src_ptr = src_array->Ptr.ToPointer();
     void* dst_ptr = dst_array->Ptr.ToPointer();
 
+    if (T::typeid == float::typeid) {
+        copy_s(count, (float*)src_ptr, (float*)dst_ptr);
+        return;
+    }
+    if (T::typeid == double::typeid) {
+        copy_d(count, (double*)src_ptr, (double*)dst_ptr);
+        return;
+    }
+
     memcpy_s(dst_ptr, static_cast<rsize_t>(count) * ElementSize, src_ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
@@ -294,6 +315,15 @@ void AvxBlas::Array<T>::Copy(Array^ src_array, UInt32 src_index, Array^ dst_arra
 
     void* src_ptr = (void*)(src_array->Ptr.ToInt64() + ElementSize * static_cast<long long>(src_index));
     void* dst_ptr = (void*)(dst_array->Ptr.ToInt64() + ElementSize * static_cast<long long>(dst_index));
+
+    if (T::typeid == float::typeid) {
+        copy_s(count, (float*)src_ptr, (float*)dst_ptr);
+        return;
+    }
+    if (T::typeid == double::typeid) {
+        copy_d(count, (double*)src_ptr, (double*)dst_ptr);
+        return;
+    }
 
     memcpy_s(dst_ptr, static_cast<rsize_t>(count) * ElementSize, src_ptr, static_cast<rsize_t>(count) * ElementSize);
 }

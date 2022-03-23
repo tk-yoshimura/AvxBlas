@@ -16,6 +16,9 @@ extern __m256i _mm256_setmask_pd(const uint n);
 extern void zeroset_s(const uint n, outfloats y_ptr);
 extern void zeroset_d(const uint n, outdoubles y_ptr);
 
+extern void copy_s(const uint n, infloats x_ptr, outfloats y_ptr);
+extern void copy_d(const uint n, indoubles x_ptr, outdoubles y_ptr);
+
 extern void align_kernel_s(
     const uint n, const uint unaligned_w_size, const uint aligned_w_size,
     infloats unaligned_w_ptr, outfloats aligned_w_ptr);

@@ -23,7 +23,7 @@ namespace AvxBlasTest.DenseTest {
 
                         Array<float> x_tensor = xval;
                         Array<float> w_tensor = wval;
-                        Array<float> y_tensor = new(oc * n);
+                        Array<float> y_tensor = new(oc * n, zeroset: false);
 
                         Dense.Forward(n, ic, oc, x_tensor, w_tensor, y_tensor);
 
@@ -60,7 +60,7 @@ namespace AvxBlasTest.DenseTest {
 
                         Array<double> x_tensor = xval;
                         Array<double> w_tensor = wval;
-                        Array<double> y_tensor = new(oc * n);
+                        Array<double> y_tensor = new(oc * n, zeroset: false);
 
                         Dense.Forward(n, ic, oc, x_tensor, w_tensor, y_tensor);
 

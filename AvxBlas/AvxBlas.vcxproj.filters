@@ -281,6 +281,9 @@
     <ClCompile Include="Util\util_align_kernel_d.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
+    <ClCompile Include="Util\util_copy.cpp">
+      <Filter>Source\Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

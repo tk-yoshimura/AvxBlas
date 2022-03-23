@@ -24,7 +24,7 @@ namespace AvxBlasTest.DenseTest {
                         Array<float> x_tensor = xval;
                         Array<float> y_tensor = yval;
 
-                        Array<float> gw_tensor = new(ic * oc);
+                        Array<float> gw_tensor = new(ic * oc, zeroset: false);
 
                         Dense.BackwardFilter(n, ic, oc, x_tensor, y_tensor, gw_tensor);
 
@@ -62,7 +62,7 @@ namespace AvxBlasTest.DenseTest {
                         Array<double> x_tensor = xval;
                         Array<double> y_tensor = yval;
 
-                        Array<double> gw_tensor = new(ic * oc);
+                        Array<double> gw_tensor = new(ic * oc, zeroset: false);
 
                         Dense.BackwardFilter(n, ic, oc, x_tensor, y_tensor, gw_tensor);
 
