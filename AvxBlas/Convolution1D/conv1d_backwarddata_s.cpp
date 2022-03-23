@@ -434,7 +434,7 @@ void AvxBlas::Convolution1D::BackwardData(
     Util::CheckDuplicateArray(dx, w, dy);
 
     if (kw == 1) {
-        Dense::BackwardData(n * ow, ic, oc, dy, w, dx);
+        Dense::BackwardData(n * iw, ic, oc, dy, w, dx);
         return;
     }
 

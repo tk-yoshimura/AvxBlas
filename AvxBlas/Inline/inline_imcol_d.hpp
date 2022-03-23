@@ -213,7 +213,7 @@ __forceinline void imcol1d_padzero_aligned_d(
     }
 }
 
-__forceinline double imcol1d_padzero_unaligned_d(
+__forceinline void imcol1d_padzero_unaligned_d(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     indoubles im_ptr, outdoubles col_ptr, const __m256i mask) {
@@ -408,7 +408,7 @@ __forceinline void imcol1d_padedge_aligned_d(
     }
 }
 
-__forceinline double imcol1d_padedge_unaligned_d(
+__forceinline void imcol1d_padedge_unaligned_d(
     const unsigned int c,
     const unsigned int kw, const unsigned int iw, const unsigned int ix, const unsigned int pw,
     indoubles im_ptr, outdoubles col_ptr, const __m256i mask) {

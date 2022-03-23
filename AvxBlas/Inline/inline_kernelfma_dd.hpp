@@ -338,7 +338,7 @@ __forceinline void kernelfma_n3_unaligned_dd(
     }
 #endif // _DEBUG
 
-    const __m256i __mask3 = _mm256_setmask_pd(3);
+    const __m256i __mask3 = _mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0);
 
     const __m256d x = _mm256_set3_pd(x_ptr[0], x_ptr[1], x_ptr[2]);
     const __m256d x0 = _mm256_setr_pd(x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[0]);

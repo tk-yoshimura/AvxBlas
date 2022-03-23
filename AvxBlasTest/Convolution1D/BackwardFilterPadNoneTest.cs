@@ -41,9 +41,9 @@ namespace AvxBlasTest.Connection1DTest {
                                 CollectionAssert.AreEqual(xval, (float[])x_tensor);
                                 CollectionAssert.AreEqual(gyval, (float[])gy_tensor);
 
-                                AssertError.Tolerance(gw_expect, gw_actual, 1e-6f, 1e-4f, ref max_err, $"mismatch value {ic},{oc},{kw},{iw},{n}");
+                                AssertError.Tolerance(gw_expect, gw_actual, 1e-6f, 1e-4f, ref max_err, $"NG {ic},{oc},{kw},{iw},{n}");
 
-                                Console.WriteLine($"pass: {ic},{oc},{kw},{iw},{n}");
+                                Console.WriteLine($"OK: {ic},{oc},{kw},{iw},{n}");
                             }
                         }
                     }
