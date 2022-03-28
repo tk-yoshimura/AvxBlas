@@ -10,8 +10,14 @@ using namespace System;
 #pragma unmanaged
 
 int ag_sum_stride1_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 1) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256d zero = _mm256_setzero_pd();
     const uint maskn = samples & AVX2_DOUBLE_REMAIN_MASK;
@@ -60,11 +66,11 @@ int ag_sum_stride1_d(
 }
 
 int ag_sum_stride2_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
+    if ((stride != 2) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -116,8 +122,14 @@ int ag_sum_stride2_d(
 }
 
 int ag_sum_stride3_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 3) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256d zero = _mm256_setzero_pd();
 
@@ -188,11 +200,11 @@ int ag_sum_stride3_d(
 }
 
 int ag_sum_stride4_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != 4) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -219,8 +231,14 @@ int ag_sum_stride4_d(
 }
 
 int ag_sum_stride5_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 5) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256d zero = _mm256_setzero_pd();
     const uint maskn = (5 * samples) & AVX2_DOUBLE_REMAIN_MASK;
@@ -298,8 +316,14 @@ int ag_sum_stride5_d(
 }
 
 int ag_sum_stride6_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 6) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256d zero = _mm256_setzero_pd();
     const uint maskn = (6 * samples) & AVX2_DOUBLE_REMAIN_MASK;
@@ -356,8 +380,14 @@ int ag_sum_stride6_d(
 }
 
 int ag_sum_stride7_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 7) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256d zero = _mm256_setzero_pd();
     const __m256i mask3 = _mm256_setmask_pd(3);
@@ -384,11 +414,11 @@ int ag_sum_stride7_d(
 }
 
 int ag_sum_stride8_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE * 2) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -452,11 +482,11 @@ int ag_sum_stride9to11_d(
 }
 
 int ag_sum_stride12_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE * 3) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -522,11 +552,11 @@ int ag_sum_stride13to15_d(
 }
 
 int ag_sum_stride16_d(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE * 4) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -561,28 +591,28 @@ int ag_sum_strideleq8_d(
     indoubles x_ptr, outdoubles y_ptr) {
 
     if (stride == 1) {
-        return ag_sum_stride1_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride1_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 2) {
-        return ag_sum_stride2_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride2_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 3) {
-        return ag_sum_stride3_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride3_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 4) {
-        return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride4_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 5) {
-        return ag_sum_stride5_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride5_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 6) {
-        return ag_sum_stride6_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride6_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 7) {
-        return ag_sum_stride7_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride7_d(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 8) {
-        return ag_sum_stride8_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_d(n, samples, stride, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;
@@ -593,16 +623,16 @@ int ag_sum_aligned_d(
     indoubles x_ptr, outdoubles y_ptr) {
 
     if (stride == AVX2_DOUBLE_STRIDE) {
-        return ag_sum_stride4_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride4_d(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride == AVX2_DOUBLE_STRIDE * 2) {
-        return ag_sum_stride8_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_d(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride == AVX2_DOUBLE_STRIDE * 3) {
-        return ag_sum_stride12_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride12_d(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride == AVX2_DOUBLE_STRIDE * 4) {
-        return ag_sum_stride16_d(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride16_d(n, samples, stride, x_ptr, y_ptr);
     }
 
 #ifdef _DEBUG
@@ -719,76 +749,6 @@ int ag_sum_unaligned_d(
     return SUCCESS;
 }
 
-int ag_sum_batch_d(
-    const uint n, const uint g, const uint samples, const uint stride,
-    indoubles x_ptr, outdoubles y_ptr) {
-
-    const uint sg = stride * g;
-
-#ifdef _DEBUG
-    if ((sg & AVX2_DOUBLE_REMAIN_MASK) != 0) {
-        return FAILURE_BADPARAM;
-    }
-#endif // _DEBUG
-
-    const uint sb = samples / g * g, sr = samples - sb;
-    const uint rem = stride * sr;
-    const uint remb = rem & AVX2_DOUBLE_BATCH_MASK, remr = rem - remb;
-    const __m256i mask = _mm256_setmask_pd(remr);
-
-    const __m256d zero = _mm256_setzero_pd();
-
-    double* s_ptr = (double*)_aligned_malloc((size_t)sg * sizeof(double), AVX2_ALIGNMENT);
-    if (s_ptr == nullptr) {
-        return FAILURE_BADALLOC;
-    }
-
-    for (uint i = 0; i < n; i++) {
-        for (uint c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
-            _mm256_store_pd(s_ptr + c, zero);
-        }
-
-        for (uint s = 0; s < sb; s += g) {
-            for (uint c = 0; c < sg; c += AVX2_DOUBLE_STRIDE) {
-                __m256d x = _mm256_loadu_pd(x_ptr + c);
-                __m256d y = _mm256_load_pd(s_ptr + c);
-
-                y = _mm256_add_pd(x, y);
-
-                _mm256_store_pd(s_ptr + c, y);
-            }
-            x_ptr += sg;
-        }
-        if (sr > 0) {
-            for (uint c = 0; c < remb; c += AVX2_DOUBLE_STRIDE) {
-                __m256d x = _mm256_loadu_pd(x_ptr + c);
-                __m256d y = _mm256_load_pd(s_ptr + c);
-
-                y = _mm256_add_pd(x, y);
-
-                _mm256_store_pd(s_ptr + c, y);
-            }
-            if (remr > 0) {
-                __m256d x = _mm256_maskload_pd(x_ptr + remb, mask);
-                __m256d y = _mm256_load_pd(s_ptr + remb);
-
-                y = _mm256_add_pd(x, y);
-
-                _mm256_store_pd(s_ptr + remb, y);
-            }
-            x_ptr += rem;
-        }
-
-        ag_sum_unaligned_d(1, g, stride, s_ptr, y_ptr);
-
-        y_ptr += stride;
-    }
-
-    _aligned_free(s_ptr);
-
-    return SUCCESS;
-}
-
 #pragma managed
 
 void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y) {
@@ -811,32 +771,14 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
 
     int ret = UNEXECUTED;
 
-    if (stride <= 6u) {
-#ifdef _DEBUG
-        Console::WriteLine("type strideleq6");
-#endif // _DEBUG
-
-        ret = ag_sum_strideleq8_d(n, samples, stride, x_ptr, y_ptr);
-    }
-    else if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
+    if ((stride & AVX2_DOUBLE_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
         ret = ag_sum_aligned_d(n, samples, stride, x_ptr, y_ptr);
     }
-    else if (stride <= MAX_AGGREGATE_BATCHING) {
-        UInt32 g = Numeric::LCM(stride, AVX2_DOUBLE_STRIDE) / stride;
-
-        if (samples >= g * 4) {
-#ifdef _DEBUG
-            Console::WriteLine("type batch g:" + g.ToString());
-#endif // _DEBUG
-
-            ret = ag_sum_batch_d(n, g, samples, stride, x_ptr, y_ptr);
-        }
-    }
-    if (ret == UNEXECUTED) {
+    else {
 #ifdef _DEBUG
         Console::WriteLine("type unaligned");
 #endif // _DEBUG

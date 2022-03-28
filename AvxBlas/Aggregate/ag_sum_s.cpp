@@ -10,12 +10,12 @@ using namespace System;
 #pragma unmanaged
 
 int ag_sum_stride1_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
-        throw std::exception();
+    if ((stride != 1) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
 
@@ -66,8 +66,14 @@ int ag_sum_stride1_s(
 }
 
 int ag_sum_stride2_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 2) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
     const uint maskn = (2 * samples) & AVX2_FLOAT_REMAIN_MASK;
@@ -117,8 +123,14 @@ int ag_sum_stride2_s(
 }
 
 int ag_sum_stride3_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 3) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
     const uint maskn = (3 * samples) & AVX2_FLOAT_REMAIN_MASK;
@@ -189,11 +201,11 @@ int ag_sum_stride3_s(
 }
 
 int ag_sum_stride4_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
+    if ((stride != 4) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -246,8 +258,14 @@ int ag_sum_stride4_s(
 }
 
 int ag_sum_stride5_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 5) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
     const uint maskn = (5 * samples) & AVX2_FLOAT_REMAIN_MASK;
@@ -341,8 +359,14 @@ int ag_sum_stride5_s(
 }
 
 int ag_sum_stride6_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride != 6) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
     const uint maskn = (6 * samples) & AVX2_FLOAT_REMAIN_MASK;
@@ -413,8 +437,14 @@ int ag_sum_stride6_s(
 }
 
 int ag_sum_stride7_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 7) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256 zero = _mm256_setzero_ps();
     const __m256i mask = _mm256_setmask_ps(7);
@@ -439,11 +469,11 @@ int ag_sum_stride7_s(
 }
 
 int ag_sum_stride8_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -504,11 +534,11 @@ int ag_sum_stride9to15_s(
 }
 
 int ag_sum_stride16_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 2) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -572,11 +602,11 @@ int ag_sum_stride17to23_s(
 }
 
 int ag_sum_stride24_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 3) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -642,11 +672,11 @@ int ag_sum_stride25to31_s(
 }
 
 int ag_sum_stride32_s(
-    const uint n, const uint samples,
+    const uint n, const uint samples, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 4) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -681,28 +711,28 @@ int ag_sum_strideleq8_s(
     infloats x_ptr, outfloats y_ptr) {
 
     if (stride == 1) {
-        return ag_sum_stride1_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride1_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 2) {
-        return ag_sum_stride2_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride2_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 3) {
-        return ag_sum_stride3_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride3_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 4) {
-        return ag_sum_stride4_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride4_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 5) {
-        return ag_sum_stride5_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride5_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 6) {
-        return ag_sum_stride6_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride6_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == 7) {
-        return ag_sum_stride7_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride7_s(n, samples, stride, x_ptr, y_ptr);
     }
     else if (stride == AVX2_FLOAT_STRIDE) {
-        return ag_sum_stride8_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_s(n, samples, stride, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;
@@ -713,16 +743,16 @@ int ag_sum_aligned_s(
     infloats x_ptr, outfloats y_ptr) {
 
     if (stride == AVX2_FLOAT_STRIDE) {
-        return ag_sum_stride8_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride8_s(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride == AVX2_FLOAT_STRIDE * 2) {
-        return ag_sum_stride16_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride16_s(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride == AVX2_FLOAT_STRIDE * 3) {
-        return ag_sum_stride24_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride24_s(n, samples, stride, x_ptr, y_ptr);
     }
     if (stride == AVX2_FLOAT_STRIDE * 4) {
-        return ag_sum_stride32_s(n, samples, x_ptr, y_ptr);
+        return ag_sum_stride32_s(n, samples, stride, x_ptr, y_ptr);
     }
 
 #ifdef _DEBUG
@@ -842,76 +872,6 @@ int ag_sum_unaligned_s(
     return SUCCESS;
 }
 
-int ag_sum_batch_s(
-    const uint n, const uint g, const uint samples, const uint stride,
-    infloats x_ptr, outfloats y_ptr) {
-
-    const uint sg = stride * g;
-
-#ifdef _DEBUG
-    if ((sg & AVX2_FLOAT_REMAIN_MASK) != 0) {
-        return FAILURE_BADPARAM;
-    }
-#endif // _DEBUG
-
-    const uint sb = samples / g * g, sr = samples - sb;
-    const uint rem = stride * sr;
-    const uint remb = rem & AVX2_FLOAT_BATCH_MASK, remr = rem - remb;
-    const __m256i mask = _mm256_setmask_ps(remr);
-
-    const __m256 zero = _mm256_setzero_ps();
-
-    float* s_ptr = (float*)_aligned_malloc((size_t)sg * sizeof(float), AVX2_ALIGNMENT);
-    if (s_ptr == nullptr) {
-        return FAILURE_BADALLOC;
-    }
-
-    for (uint i = 0; i < n; i++) {
-        for (uint c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
-            _mm256_store_ps(s_ptr + c, zero);
-        }
-
-        for (uint s = 0; s < sb; s += g) {
-            for (uint c = 0; c < sg; c += AVX2_FLOAT_STRIDE) {
-                __m256 x = _mm256_loadu_ps(x_ptr + c);
-                __m256 y = _mm256_load_ps(s_ptr + c);
-
-                y = _mm256_add_ps(x, y);
-
-                _mm256_store_ps(s_ptr + c, y);
-            }
-            x_ptr += sg;
-        }
-        if (sr > 0) {
-            for (uint c = 0; c < remb; c += AVX2_FLOAT_STRIDE) {
-                __m256 x = _mm256_loadu_ps(x_ptr + c);
-                __m256 y = _mm256_load_ps(s_ptr + c);
-
-                y = _mm256_add_ps(x, y);
-
-                _mm256_store_ps(s_ptr + c, y);
-            }
-            if (remr > 0) {
-                __m256 x = _mm256_maskload_ps(x_ptr + remb, mask);
-                __m256 y = _mm256_load_ps(s_ptr + remb);
-
-                y = _mm256_add_ps(x, y);
-
-                _mm256_store_ps(s_ptr + remb, y);
-            }
-            x_ptr += rem;
-        }
-
-        ag_sum_unaligned_s(1, g, stride, s_ptr, y_ptr);
-
-        y_ptr += stride;
-    }
-
-    _aligned_free(s_ptr);
-
-    return SUCCESS;
-}
-
 #pragma managed
 
 void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y) {
@@ -934,32 +894,14 @@ void AvxBlas::Aggregate::Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<floa
 
     int ret = UNEXECUTED;
 
-    if (stride <= 6u) {
-#ifdef _DEBUG
-        Console::WriteLine("type strideleq6");
-#endif // _DEBUG
-
-        ret = ag_sum_strideleq8_s(n, samples, stride, x_ptr, y_ptr);
-    }
-    else if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
+    if ((stride & AVX2_FLOAT_REMAIN_MASK) == 0u) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG
 
         ret = ag_sum_aligned_s(n, samples, stride, x_ptr, y_ptr);
     }
-    else if (stride <= MAX_AGGREGATE_BATCHING) {
-        UInt32 g = Numeric::LCM(stride, AVX2_FLOAT_STRIDE) / stride;
-
-        if (samples >= g * 4) {
-#ifdef _DEBUG
-            Console::WriteLine("type batch g:" + g.ToString());
-#endif // _DEBUG
-
-            ret = ag_sum_batch_s(n, g, samples, stride, x_ptr, y_ptr);
-        }
-    }
-    if (ret == UNEXECUTED) {
+    else {
 #ifdef _DEBUG
         Console::WriteLine("type unaligned");
 #endif // _DEBUG
