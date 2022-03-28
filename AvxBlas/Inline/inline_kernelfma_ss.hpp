@@ -304,13 +304,8 @@ __forceinline void kernelfma_n3_aligned_ss(
     const __m256i __perm_y1 = _mm256_setr_epi32(2, 3, 3, 3, 4, 4, 4, 5);
     const __m256i __perm_y2 = _mm256_setr_epi32(5, 5, 6, 6, 6, 7, 7, 7);
 
-    const __m256i __perm_x1 = _mm256_setr_epi32(2, 0, 1, 2, 3, 4, 5, 0);
-    const __m256i __perm_x2 = _mm256_setr_epi32(1, 2, 0, 1, 2, 3, 4, 5);
-
-    const __m256 x0 = _mm256_setr_ps(x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[0], x_ptr[1]);
-    const __m256 x1 = _mm256_permutevar8x32_ps(x0, __perm_x1);
-    const __m256 x2 = _mm256_permutevar8x32_ps(x0, __perm_x2);
-
+    const __m256x3 x = _mm256_set3_ps(x_ptr[0], x_ptr[1], x_ptr[2]);
+    
     __m256 s0, s1, s2, c0, c1, c2, y;
 
     unsigned r = oc;
@@ -321,9 +316,9 @@ __forceinline void kernelfma_n3_aligned_ss(
         _mm256_load_x3_ps(wc_ptr, c0, c1, c2);
         _mm256_load_x1_ps(src_ptr, y);
 
-        _mm256_kahanfma_ps(x0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
-        _mm256_kahanfma_ps(x1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
-        _mm256_kahanfma_ps(x2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
+        _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
+        _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
+        _mm256_kahanfma_ps(x.imm2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
 
         _mm256_store_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_store_x3_ps(wc_ptr, c0, c1, c2);
@@ -349,15 +344,8 @@ __forceinline void kernelfma_n3_unaligned_ss(
     const __m256i __perm_y1 = _mm256_setr_epi32(2, 3, 3, 3, 4, 4, 4, 5);
     const __m256i __perm_y2 = _mm256_setr_epi32(5, 5, 6, 6, 6, 7, 7, 7);
 
-    const __m256i __perm_x1 = _mm256_setr_epi32(2, 0, 1, 2, 3, 4, 5, 0);
-    const __m256i __perm_x2 = _mm256_setr_epi32(1, 2, 0, 1, 2, 3, 4, 5);
-    const __m256 __mask6 = _mm256_castsi256_ps(_mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0));
-
-    const __m256 x = _mm256_set3_ps(x_ptr[0], x_ptr[1], x_ptr[2]);
-    const __m256 x0 = _mm256_setr_ps(x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[0], x_ptr[1]);
-    const __m256 x1 = _mm256_permutevar8x32_ps(x0, __perm_x1);
-    const __m256 x2 = _mm256_permutevar8x32_ps(x0, __perm_x2);
-
+    const __m256x3 x = _mm256_set3_ps(x_ptr[0], x_ptr[1], x_ptr[2]);
+    
     __m256 s0, s1, s2, c0, c1, c2, y;
 
     unsigned r = oc;
@@ -368,9 +356,9 @@ __forceinline void kernelfma_n3_unaligned_ss(
         _mm256_loadu_x3_ps(wc_ptr, c0, c1, c2);
         _mm256_loadu_x1_ps(src_ptr, y);
 
-        _mm256_kahanfma_ps(x0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
-        _mm256_kahanfma_ps(x1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
-        _mm256_kahanfma_ps(x2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
+        _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
+        _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
+        _mm256_kahanfma_ps(x.imm2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
 
         _mm256_storeu_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_storeu_x3_ps(wc_ptr, c0, c1, c2);
@@ -380,53 +368,38 @@ __forceinline void kernelfma_n3_unaligned_ss(
         wc_ptr += AVX2_FLOAT_STRIDE * 3;
         r -= AVX2_FLOAT_STRIDE;
     }
-    if (r >= 5) { // 3 * r >= 6 + AVX2_FLOAT_STRIDE
-        s0 = _mm256_loadu_ps(ws_ptr);
-        c0 = _mm256_loadu_ps(wc_ptr);
-        s1 = _mm256_loadu_ps(ws_ptr + 6);
-        c1 = _mm256_loadu_ps(wc_ptr + 6);
+    if (r >= 6) { // 3 * r >= AVX2_FLOAT_STRIDE * 2
+        _mm256_loadu_x3_ps(ws_ptr, s0, s1, s2);
+        _mm256_loadu_x3_ps(wc_ptr, c0, c1, c2);
+        _mm256_loadu_x1_ps(src_ptr, y);
 
-        y = _mm256_loadu_ps(src_ptr);
+        _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
+        _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
+        _mm256_kahanfma_ps(x.imm2, _mm256_permutevar8x32_ps(y, __perm_y2), s2, c2);
 
-        _mm256_kahanfma_ps(x, _mm256_dilate3_imm0_ps(y), s0, c0);
-        _mm256_kahanfma_ps(x, _mm256_and_ps(_mm256_dilate3_imm1_ps(y), __mask6), s1, c1);
-
-        _mm256_storeu_ps(ws_ptr, s0);
-        _mm256_storeu_ps(wc_ptr, c0);
-        _mm256_storeu_ps(ws_ptr + 6, s1);
-        _mm256_storeu_ps(wc_ptr + 6, c1);
-
-        src_ptr += 4;
-        ws_ptr += 12;
-        wc_ptr += 12;
-        r -= 4;
+        _mm256_maskstore_x3_ps(ws_ptr, s0, s1, s2, mask);
+        _mm256_maskstore_x3_ps(wc_ptr, c0, c1, c2, mask);
     }
-    if (r >= 3) { // 3 * r >= AVX_FLOAT_STRIDE
-        s0 = _mm256_loadu_ps(ws_ptr);
-        c0 = _mm256_loadu_ps(wc_ptr);
+    else if (r >= 3) { // 3 * r >= AVX2_FLOAT_STRIDE
+        _mm256_loadu_x2_ps(ws_ptr, s0, s1);
+        _mm256_loadu_x2_ps(wc_ptr, c0, c1);
+        _mm256_loadu_x1_ps(src_ptr, y);
 
-        y = _mm256_loadu_ps(src_ptr);
+        _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
+        _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
 
-        _mm256_kahanfma_ps(x, _mm256_and_ps(_mm256_dilate3_imm0_ps(y), __mask6), s0, c0);
-
-        _mm256_storeu_ps(ws_ptr, s0);
-        _mm256_storeu_ps(wc_ptr, c0);
-
-        src_ptr += 2;
-        ws_ptr += 6;
-        wc_ptr += 6;
-        r -= 2;
+        _mm256_maskstore_x2_ps(ws_ptr, s0, s1, mask);
+        _mm256_maskstore_x2_ps(wc_ptr, c0, c1, mask);
     }
-    if (r > 0) {
-        s0 = _mm256_loadu_ps(ws_ptr);
-        c0 = _mm256_loadu_ps(wc_ptr);
+    else if (r >= 1) {
+        _mm256_loadu_x1_ps(ws_ptr, s0);
+        _mm256_loadu_x1_ps(wc_ptr, c0);
+        _mm256_loadu_x1_ps(src_ptr, y);
 
-        y = _mm256_loadu_ps(src_ptr);
+        _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
 
-        _mm256_kahanfma_ps(x, _mm256_dilate3_imm0_ps(y), s0, c0);
-
-        _mm256_maskstore_ps(ws_ptr, mask, s0);
-        _mm256_maskstore_ps(wc_ptr, mask, c0);
+        _mm256_maskstore_x1_ps(ws_ptr, s0, mask);
+        _mm256_maskstore_x1_ps(wc_ptr, c0, mask);
     }
 }
 

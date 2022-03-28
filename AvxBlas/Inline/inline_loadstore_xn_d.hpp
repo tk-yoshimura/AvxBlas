@@ -174,6 +174,20 @@ __forceinline void _mm256_store_x4_pd(outdoubles ptr, __m256d x0, __m256d x1, __
     _mm256_store_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
 }
 
+__forceinline void _mm256_store_x5_pd(outdoubles ptr, __m256d x0, __m256d x1, __m256d x2, __m256d x3, __m256d x4) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    _mm256_store_pd(ptr, x0);
+    _mm256_store_pd(ptr + AVX2_DOUBLE_STRIDE, x1);
+    _mm256_store_pd(ptr + AVX2_DOUBLE_STRIDE * 2, x2);
+    _mm256_store_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
+    _mm256_store_pd(ptr + AVX2_DOUBLE_STRIDE * 4, x4);
+}
+
 __forceinline void _mm256_storeu_x1_pd(outdoubles ptr, __m256d x0) {
     _mm256_storeu_pd(ptr, x0);
 }
@@ -196,6 +210,14 @@ __forceinline void _mm256_storeu_x4_pd(outdoubles ptr, __m256d x0, __m256d x1, _
     _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
 }
 
+__forceinline void _mm256_storeu_x5_pd(outdoubles ptr, __m256d x0, __m256d x1, __m256d x2, __m256d x3, __m256d x4) {
+    _mm256_storeu_pd(ptr, x0);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE, x1);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 2, x2);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 4, x4);
+}
+
 __forceinline void _mm256_maskstore_x1_pd(outdoubles ptr, __m256d x0, const __m256i mask) {
     _mm256_maskstore_pd(ptr, mask, x0);
 }
@@ -216,6 +238,14 @@ __forceinline void _mm256_maskstore_x4_pd(outdoubles ptr, __m256d x0, __m256d x1
     _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE, x1);
     _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 2, x2);
     _mm256_maskstore_pd(ptr + AVX2_DOUBLE_STRIDE * 3, mask, x3);
+}
+
+__forceinline void _mm256_maskstore_x5_pd(outdoubles ptr, __m256d x0, __m256d x1, __m256d x2, __m256d x3, __m256d x4, const __m256i mask) {
+    _mm256_storeu_pd(ptr, x0);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE, x1);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 2, x2);
+    _mm256_storeu_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
+    _mm256_maskstore_pd(ptr + AVX2_DOUBLE_STRIDE * 4, mask, x4);
 }
 
 __forceinline void _mm256_stream_x1_pd(outdoubles ptr, __m256d x0) {
@@ -262,4 +292,18 @@ __forceinline void _mm256_stream_x4_pd(outdoubles ptr, __m256d x0, __m256d x1, _
     _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE, x1);
     _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE * 2, x2);
     _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
+}
+
+__forceinline void _mm256_stream_x5_pd(outdoubles ptr, __m256d x0, __m256d x1, __m256d x2, __m256d x3, __m256d x4) {
+#ifdef _DEBUG
+    if (((size_t)ptr % AVX2_ALIGNMENT) != 0) {
+        throw std::exception();
+    }
+#endif // _DEBUG
+
+    _mm256_stream_pd(ptr, x0);
+    _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE, x1);
+    _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE * 2, x2);
+    _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE * 3, x3);
+    _mm256_stream_pd(ptr + AVX2_DOUBLE_STRIDE * 4, x4);
 }

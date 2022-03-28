@@ -127,6 +127,11 @@ void AvxBlas::Vectorwise::Fill(UInt32 n, UInt32 stride, Array<float>^ v, Array<f
 
     Util::CheckDuplicateArray(v, y);
 
+    if (stride == 1u) {
+        Initialize::Clear(n, v[0], y);
+        return;
+    }
+
     const float* v_ptr = (const float*)(v->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());
 

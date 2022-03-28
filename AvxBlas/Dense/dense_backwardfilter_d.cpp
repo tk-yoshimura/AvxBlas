@@ -111,8 +111,10 @@ int dense_backwardfilter_n3_d(
     zeroset_d(ic * oc, wc_ptr);
 
     if (oc % AVX2_DOUBLE_STRIDE != 0) {
+        const __m256i mask = _mm256_setmask_pd((ic * oc) & AVX2_DOUBLE_REMAIN_MASK);
+
         for (uint i = 0; i < n; i++) {
-            kernelfma_n3_unaligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr);
+            kernelfma_n3_unaligned_dd(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);
 
             x_ptr += ic;
             y_ptr += oc;

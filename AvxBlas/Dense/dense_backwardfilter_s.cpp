@@ -111,8 +111,7 @@ int dense_backwardfilter_n3_s(
     zeroset_s(ic * oc, wc_ptr);
 
     if (oc % AVX2_FLOAT_STRIDE != 0) {
-        uint maskn = 2 - (oc & 1);
-        const __m256i mask = _mm256_setmask_ps(maskn * ic);
+        const __m256i mask = _mm256_setmask_ps((ic * oc) & AVX2_FLOAT_REMAIN_MASK);
 
         for (uint i = 0; i < n; i++) {
             kernelfma_n3_unaligned_ss(ic, oc, x_ptr, y_ptr, w_ptr, wc_ptr, mask);

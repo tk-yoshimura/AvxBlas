@@ -288,7 +288,7 @@ int ag_sum_stride5_d(
 
         __m256dx2 y = _mm256_sum20to5_pd(s0, s1, s2, s3, s4);
 
-        _mm256_maskstore_x2_pd(y_ptr, y.lo, y.hi, mask1);
+        _mm256_maskstore_x2_pd(y_ptr, y.imm0, y.imm1, mask1);
 
         x_ptr += 5 * r;
         y_ptr += 5;
@@ -346,7 +346,7 @@ int ag_sum_stride6_d(
 
         __m256dx2 y = _mm256_sum12to6_pd(s0, s1, s2);
 
-        _mm256_maskstore_x2_pd(y_ptr, y.lo, y.hi, mask2);
+        _mm256_maskstore_x2_pd(y_ptr, y.imm0, y.imm1, mask2);
 
         x_ptr += 6 * r;
         y_ptr += 6;
