@@ -63,8 +63,8 @@ namespace AvxBlasTest.Connection2DTest {
             Map2D x = new(inchannels, iw, ih, batch);
 
             for (int th = 0; th < batch; th++) {
-                for (int kx = 0; kx < kw; kx++) {
-                    for (int ky = 0; ky < kh; ky++) {
+                for (int ky = 0; ky < kh; ky++) {
+                    for (int kx = 0; kx < kw; kx++) {
                         for (int oy = 0; oy < oh; oy++) {
                             for (int ox = 0; ox < ow; ox++) {
                                 for (int outch = 0; outch < outchannels; outch++) {

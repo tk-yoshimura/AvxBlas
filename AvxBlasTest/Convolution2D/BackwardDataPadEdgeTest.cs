@@ -65,7 +65,6 @@ namespace AvxBlasTest.Connection2DTest {
                         for (int oy = 0; oy < outh; oy++) {
                             int iy = Math.Min(ih - 1, Math.Max(0, ky + oy - kh / 2));
 
-
                             for (int ox = 0; ox < outw; ox++) {
                                 int ix = Math.Min(iw - 1, Math.Max(0, kx + ox - kw / 2));
 

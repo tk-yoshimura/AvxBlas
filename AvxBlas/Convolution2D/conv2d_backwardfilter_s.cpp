@@ -473,8 +473,8 @@ void AvxBlas::Convolution2D::BackwardFilter(
     Util::CheckLength(n * oc * ow * oh, dy);
     Util::CheckLength(ic * oc * kw * kh, dw);
 
-    if (kw == 1) {
-        Dense::BackwardFilter(n * iw, ic, oc, x, dy, dw);
+    if (kw == 1 && kh == 1) {
+        Dense::BackwardFilter(n * iw * ih, ic, oc, x, dy, dw);
         return;
     }
 
