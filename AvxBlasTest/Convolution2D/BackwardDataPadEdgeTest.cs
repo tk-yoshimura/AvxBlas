@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.Connection1DTest {
+namespace AvxBlasTest.Connection2DTest {
     [TestClass]
     public class BackwardDataPadEdgeTest {
         [TestMethod]
@@ -11,36 +11,36 @@ namespace AvxBlasTest.Connection1DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach (uint iw in new int[] { 1, 2, 3, 4, 5, 8, 15, 16, 17, 28, 30, 32 }) {
-                    foreach (uint kw in new int[] { 3, 5, 7 }) {
-                        uint ow = iw;
+                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 2), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
+                    foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 3), (3, 1), (3, 3), (3, 5), (5, 3), (7, 7) }) {
+                        uint ow = iw, oh = ih;
 
-                        foreach (uint ic in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
-                            foreach (uint oc in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
-                                float[] yval = (new float[ow * oc * n]).Select((_, idx) => (idx + 1) * 1e-3f).ToArray();
-                                float[] wval = (new float[kw * ic * oc]).Select((_, idx) => (idx + 1) * 1e-3f).Reverse().ToArray();
+                        foreach ((uint ic, uint oc) in new (uint, uint)[] { (1, 1), (2, 3), (3, 2), (4, 5), (5, 4), (8, 10), (10, 8),
+                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (15, 64), (64, 15) }) {
 
-                                Map1D y = new((int)oc, (int)ow, (int)n, yval);
-                                Filter1D w = new((int)ic, (int)kw, (int)oc, wval);
+                            float[] yval = (new float[ow * oh * oc * n]).Select((_, idx) => idx * 1e-3f).ToArray();
+                            float[] wval = (new float[kw * kh * ic * oc]).Select((_, idx) => (idx + 1) * 1e-3f).Reverse().ToArray();
 
-                                Map1D x = Reference(y, w, (int)iw, (int)kw);
+                            Map2D y = new((int)oc, (int)ow, (int)oh, (int)n, yval);
+                            Filter2D w = new((int)ic, (int)kw, (int)kh, (int)oc, wval);
 
-                                Array<float> y_tensor = yval;
-                                Array<float> w_tensor = wval;
-                                Array<float> x_tensor = new(ic * iw * n, zeroset: false);
+                            Map2D x = Reference(y, w, (int)iw, (int)kw, (int)ih, (int)kh);
 
-                                Convolution1D.BackwardData(n, ic, oc, iw, kw, PadMode.Edge, y_tensor, w_tensor, x_tensor);
+                            Array<float> y_tensor = yval;
+                            Array<float> w_tensor = wval;
+                            Array<float> x_tensor = new(ic * iw * ih * n, zeroset: false);
 
-                                float[] x_expect = x.ToFloatArray();
-                                float[] x_actual = x_tensor;
+                            Convolution2D.BackwardData(n, ic, oc, iw, ih, kw, kh, PadMode.Edge, y_tensor, w_tensor, x_tensor);
 
-                                CollectionAssert.AreEqual(yval, (float[])y_tensor);
-                                CollectionAssert.AreEqual(wval, (float[])w_tensor);
+                            float[] x_expect = x.ToFloatArray();
+                            float[] x_actual = x_tensor;
 
-                                AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{kw},{n}");
+                            CollectionAssert.AreEqual(yval, (float[])y_tensor);
+                            CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                                Console.WriteLine($"OK: {ic},{oc},{kw},{iw},{n}");
-                            }
+                            AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
+
+                            Console.WriteLine($"OK: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
                         }
                     }
                 }
@@ -49,26 +49,33 @@ namespace AvxBlasTest.Connection1DTest {
             Console.WriteLine($"maxerr:{max_err}");
         }
 
-        public static Map1D Reference(Map1D y, Filter1D w, int iw, int kw) {
+        public static Map2D Reference(Map2D y, Filter2D w, int iw, int kw, int ih, int kh) {
             int inchannels = w.InChannels, outchannels = w.OutChannels, batch = y.Batch;
-            int ow = iw;
+            int outw = iw, outh = ih;
 
-            if (y.Width != ow) {
+            if (y.Width != outw || y.Height != outh) {
                 throw new ArgumentException("mismatch shape");
             }
 
-            Map1D x = new(inchannels, iw, batch);
+            Map2D x = new(inchannels, iw, ih, batch);
 
             for (int th = 0; th < batch; th++) {
-                for (int kx = 0; kx < kw; kx++) {
-                    for (int ox = 0; ox < ow; ox++) {
-                        int ix = Math.Min(iw - 1, Math.Max(0, kx + ox - kw / 2));
+                for (int ky = 0; ky < kh; ky++) {
+                    for (int kx = 0; kx < kw; kx++) {
+                        for (int oy = 0; oy < outh; oy++) {
+                            int iy = Math.Min(ih - 1, Math.Max(0, ky + oy - kh / 2));
 
-                        for (int outch = 0; outch < outchannels; outch++) {
-                            double v = y[outch, ox, th];
 
-                            for (int inch = 0; inch < inchannels; inch++) {
-                                x[inch, ix, th] += v * w[inch, kx, outch];
+                            for (int ox = 0; ox < outw; ox++) {
+                                int ix = Math.Min(iw - 1, Math.Max(0, kx + ox - kw / 2));
+
+                                for (int outch = 0; outch < outchannels; outch++) {
+                                    double v = y[outch, ox, oy, th];
+
+                                    for (int inch = 0; inch < inchannels; inch++) {
+                                        x[inch, ix, iy, th] += v * w[inch, kx, ky, outch];
+                                    }
+                                }
                             }
                         }
                     }
@@ -80,16 +87,17 @@ namespace AvxBlasTest.Connection1DTest {
 
         [TestMethod]
         public void ReferenceTest() {
-            int inchannels = 7, outchannels = 11, kwidth = 3, inwidth = 13, batch = 2;
-            int outwidth = inwidth;
+            int inchannels = 7, outchannels = 11;
+            int kwidth = 3, kheight = 5, inwidth = 9, inheight = 13, batch = 2;
+            int outwidth = inwidth, outheight = inheight;
 
-            float[] yval = (new float[outwidth * outchannels * batch]).Select((_, idx) => idx * 1e-3f).ToArray();
-            float[] wval = (new float[kwidth * outchannels * inchannels]).Select((_, idx) => idx * 1e-3f).Reverse().ToArray();
+            float[] yval = (new float[outwidth * outheight * outchannels * batch]).Select((_, idx) => idx * 1e-3f).ToArray();
+            float[] wval = (new float[kwidth * kheight * outchannels * inchannels]).Select((_, idx) => idx * 1e-3f).Reverse().ToArray();
 
-            Map1D y = new(outchannels, outwidth, batch, yval);
-            Filter1D w = new(inchannels, kwidth, outchannels, wval);
+            Map2D y = new(outchannels, outwidth, outheight, batch, yval);
+            Filter2D w = new(inchannels, kwidth, kheight, outchannels, wval);
 
-            Map1D x = Reference(y, w, inwidth, kwidth);
+            Map2D x = Reference(y, w, inwidth, kwidth, inheight, kheight);
 
             float[] x_expect = {
                 2.843500000e-02f, 2.814900000e-02f, 2.786300000e-02f, 2.757700000e-02f, 2.729100000e-02f, 2.700500000e-02f, 2.671900000e-02f,

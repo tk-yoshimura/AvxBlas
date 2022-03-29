@@ -1,63 +1,60 @@
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.Connection1DTest {
-    public class Filter1D {
+namespace AvxBlasTest {
+    public class Filter0D {
         private readonly double[] val;
 
         public int InChannels { private set; get; }
         public int OutChannels { private set; get; }
-        public int KernelWidth { private set; get; }
-        public int Length => InChannels * OutChannels * KernelWidth;
+        public int Length => InChannels * OutChannels;
 
-        public Filter1D(int inchannels, int kwidth, int outchannels, float[] val = null) {
-            if (kwidth < 1 || inchannels < 1 || outchannels < 1) {
+        public Filter0D(int inchannels, int outchannels, float[] val = null) {
+            if (inchannels < 1 || outchannels < 1) {
                 throw new ArgumentException();
             }
 
-            int length = checked(inchannels * kwidth * outchannels);
+            int length = checked(inchannels * outchannels);
 
             if (!(val is null) && val.Length != length) {
                 throw new ArgumentException(null, nameof(val));
             }
 
             this.val = (val is null) ? new double[length] : val.Select((v) => (double)v).ToArray();
-            this.KernelWidth = kwidth;
             this.InChannels = inchannels;
             this.OutChannels = outchannels;
         }
 
-        public Filter1D(int inchannels, int kwidth, int outchannels, double[] val) {
-            if (kwidth < 1 || inchannels < 1 || outchannels < 1) {
+        public Filter0D(int inchannels, int outchannels, double[] val) {
+            if (inchannels < 1 || outchannels < 1) {
                 throw new ArgumentException();
             }
 
-            int length = checked(inchannels * kwidth * outchannels);
+            int length = checked(inchannels * outchannels);
 
             if (!(val is null) && val.Length != length) {
                 throw new ArgumentException(null, nameof(val));
             }
 
             this.val = (val is null) ? new double[length] : (double[])val.Clone();
-            this.KernelWidth = kwidth;
             this.InChannels = inchannels;
             this.OutChannels = outchannels;
         }
 
-        public double this[int inch, int kx, int outch] {
+        public double this[int inch, int outch] {
             get {
-                if (inch < 0 || inch >= InChannels || kx < 0 || kx >= KernelWidth || outch < 0 || outch >= OutChannels) {
+                if (inch < 0 || inch >= InChannels || outch < 0 || outch >= OutChannels) {
                     throw new IndexOutOfRangeException();
                 }
 
-                return val[inch + InChannels * (kx + KernelWidth * outch)];
+                return val[inch + InChannels * outch];
             }
             set {
-                if (inch < 0 || inch >= InChannels || kx < 0 || kx >= KernelWidth || outch < 0 || outch >= OutChannels) {
+                if (inch < 0 || inch >= InChannels || outch < 0 || outch >= OutChannels) {
                     throw new IndexOutOfRangeException();
                 }
 
-                val[inch + InChannels * (kx + KernelWidth * outch)] = value;
+                val[inch + InChannels * outch] = value;
             }
         }
 
@@ -70,20 +67,19 @@ namespace AvxBlasTest.Connection1DTest {
             }
         }
 
-        public static bool operator ==(Filter1D filter1, Filter1D filter2) {
-            if (filter1.KernelWidth != filter2.KernelWidth) return false;
+        public static bool operator ==(Filter0D filter1, Filter0D filter2) {
             if (filter1.InChannels != filter2.InChannels) return false;
             if (filter1.OutChannels != filter2.OutChannels) return false;
 
             return filter1.val.SequenceEqual(filter2.val);
         }
 
-        public static bool operator !=(Filter1D filter1, Filter1D filter2) {
+        public static bool operator !=(Filter0D filter1, Filter0D filter2) {
             return !(filter1 == filter2);
         }
 
         public override bool Equals(object obj) {
-            return obj is Filter1D filter && this == filter;
+            return obj is Filter0D filter && this == filter;
         }
 
         public override int GetHashCode() {

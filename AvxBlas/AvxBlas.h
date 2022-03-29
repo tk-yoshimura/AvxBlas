@@ -162,6 +162,26 @@ namespace AvxBlas {
         //                           PadMode padmode, Array<double>^ x, Array<double>^ dy, Array<double>^ dw);
     };
 
+    public ref class Convolution2D abstract sealed {
+        static Convolution2D();
+
+        public:
+        static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
+                            PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
+        //static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
+        //                    PadMode padmode, Array<double>^ x, Array<double>^ w, Array<double>^ y);
+
+        static void BackwardData(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
+                                 PadMode padmode, Array<float>^ dy, Array<float>^ w, Array<float>^ dx);
+        //static void BackwardData(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
+        //                         PadMode padmode, Array<double>^ dy, Array<double>^ w, Array<double>^ dx);
+
+        static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
+                                   PadMode padmode, Array<float>^ x, Array<float>^ dy, Array<float>^ dw);
+        //static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
+        //                           PadMode padmode, Array<double>^ x, Array<double>^ dy, Array<double>^ dw);
+    };
+
     public ref class Initialize abstract sealed {
         static Initialize();
 

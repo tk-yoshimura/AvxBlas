@@ -49,6 +49,9 @@
     <Filter Include="Source\Convolution1D">
       <UniqueIdentifier>{57cb5677-237b-41bf-a8ac-c577a4005d74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Convolution2D">
+      <UniqueIdentifier>{f29015e4-3062-4518-93a0-02cf79c8625c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -283,6 +286,18 @@
     </ClCompile>
     <ClCompile Include="Util\util_copy.cpp">
       <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution2D\conv2d_forward_s.cpp">
+      <Filter>Source\Convolution2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution2D\conv2d_backwarddata_s.cpp">
+      <Filter>Source\Convolution2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution2D\conv2d_backwardfilter_s.cpp">
+      <Filter>Source\Convolution2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolution2D\conv2d_cctor.cpp">
+      <Filter>Source\Convolution2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

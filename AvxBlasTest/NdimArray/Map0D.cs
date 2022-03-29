@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.DenseTest {
+namespace AvxBlasTest {
     public class Map0D {
         private readonly double[] val;
 

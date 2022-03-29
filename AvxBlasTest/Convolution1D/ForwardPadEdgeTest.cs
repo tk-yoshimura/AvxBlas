@@ -37,7 +37,7 @@ namespace AvxBlasTest.Connection1DTest {
                                 CollectionAssert.AreEqual(xval, (float[])x_tensor);
                                 CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                                AssertError.Tolerance(y_expect, y_actual, 1e-8f, 1e-6f, ref max_err, $"NG {ic},{oc},{iw},{kw},{n}");
+                                AssertError.Tolerance(y_expect, y_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{kw},{n}");
 
                                 Console.WriteLine($"OK: {ic},{oc},{iw},{kw},{n}");
                             }
@@ -49,16 +49,16 @@ namespace AvxBlasTest.Connection1DTest {
             Console.WriteLine($"maxerr:{max_err}");
         }
 
-        public static Map1D Reference(Map1D x, Filter1D w, int kwidth) {
+        public static Map1D Reference(Map1D x, Filter1D w, int kw) {
             int inchannels = x.Channels, outchannels = w.OutChannels, batch = x.Batch;
-            int inw = x.Width, outw = inw;
+            int iw = x.Width, ow = iw;
 
-            Map1D y = new(outchannels, outw, batch);
+            Map1D y = new(outchannels, ow, batch);
 
-            for (int kx = 0; kx < kwidth; kx++) {
-                for (int th = 0; th < batch; th++) {
-                    for (int ox = 0; ox < outw; ox++) {
-                        int ix = Math.Min(inw - 1, Math.Max(0, kx + ox - kwidth / 2));
+            for (int th = 0; th < batch; th++) {
+                for (int kx = 0; kx < kw; kx++) {
+                    for (int ox = 0; ox < ow; ox++) {
+                        int ix = Math.Min(iw - 1, Math.Max(0, kx + ox - kw / 2));
 
                         for (int outch = 0; outch < outchannels; outch++) {
                             double sum = y[outch, ox, th];
@@ -81,7 +81,6 @@ namespace AvxBlasTest.Connection1DTest {
         [TestMethod]
         public void ReferenceTest() {
             int inchannels = 7, outchannels = 11, kwidth = 3, inwidth = 13, batch = 2;
-            int outwidth = inwidth - kwidth + 1;
 
             float[] xval = (new float[batch * inwidth * inchannels]).Select((_, idx) => idx * 1e-3f).ToArray();
             float[] wval = (new float[kwidth * outchannels * inchannels]).Select((_, idx) => idx * 1e-3f).Reverse().ToArray();

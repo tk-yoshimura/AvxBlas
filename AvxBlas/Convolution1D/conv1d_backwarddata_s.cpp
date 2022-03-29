@@ -51,7 +51,7 @@ int conv1d_backwarddata_padnone_n32x_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_n32x_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
 
-            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * x);
         }
 
         x_ptr += ic * iw;
@@ -83,7 +83,7 @@ int conv1d_backwarddata_padnone_aligned_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_aligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
 
-            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * x);
         }
 
         x_ptr += ic * iw;
@@ -125,7 +125,7 @@ int conv1d_backwarddata_padnone_unaligned_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr, mask);
 
-            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + x * ic);
+            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * x);
         }
 
         x_ptr += ic * iw;
@@ -162,7 +162,7 @@ int conv1d_backwarddata_padzero_n32x_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_n32x_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr);
 
-            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * x);
         }
 
         x_ptr += ic * iw;
@@ -194,7 +194,7 @@ int conv1d_backwarddata_padzero_aligned_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_aligned_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr);
 
-            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * x);
         }
 
         x_ptr += ic * iw;
@@ -236,7 +236,7 @@ int conv1d_backwarddata_padzero_unaligned_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr, mask);
 
-            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + x * ic);
+            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * x);
         }
 
         x_ptr += ic * iw;
@@ -273,7 +273,7 @@ int conv1d_backwarddata_padedge_n32x_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_n32x_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr);
 
-            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * x);
         }
         for (uint x = 0; x < kw / 2; x++) {
             imcol1d_padzero_n32x_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
@@ -283,7 +283,7 @@ int conv1d_backwarddata_padedge_n32x_s(
         for (uint x = iw + kw / 2; x < iw + kw - 1; x++) {
             imcol1d_padzero_n32x_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
 
-            matmuladd_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + (iw - 1) * ic);
+            matmuladd_n32x_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * (iw - 1));
         }
 
         x_ptr += ic * iw;
@@ -315,7 +315,7 @@ int conv1d_backwarddata_padedge_aligned_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_aligned_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr);
 
-            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + x * ic);
+            matmul_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * x);
         }
         for (uint x = 0; x < kw / 2; x++) {
             imcol1d_padzero_aligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
@@ -325,7 +325,7 @@ int conv1d_backwarddata_padedge_aligned_s(
         for (uint x = iw + kw / 2; x < iw + kw - 1; x++) {
             imcol1d_padzero_aligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr);
 
-            matmuladd_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + (iw - 1) * ic);
+            matmuladd_aligned_s(oc * kw, ic, col_ptr, w_ptr, x_ptr + ic * (iw - 1));
         }
 
         x_ptr += ic * iw;
@@ -367,7 +367,7 @@ int conv1d_backwarddata_padedge_unaligned_s(
         for (uint x = 0; x < iw; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw / 2, y_ptr, col_ptr, mask);
 
-            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + x * ic);
+            matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * x);
         }
         for (uint x = 0; x < kw / 2; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr, mask);
@@ -377,7 +377,7 @@ int conv1d_backwarddata_padedge_unaligned_s(
         for (uint x = iw + kw / 2; x < iw + kw - 1; x++) {
             imcol1d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, y_ptr, col_ptr, mask);
 
-            matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + (iw - 1) * ic);
+            matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * (iw - 1));
         }
 
         x_ptr += ic * iw;
@@ -413,7 +413,7 @@ void AvxBlas::Convolution1D::BackwardData(
     if (kw == 1 && padmode != PadMode::None) {
         throw gcnew System::ArgumentException(ErrorMessage::InvalidKernelSize);
     }
-    if (iw > MAX_DATA_SIZE) {
+    if (iw > MAX_MAP_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 

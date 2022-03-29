@@ -141,6 +141,10 @@
     <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp" />
     <ClCompile Include="Convolution1D\conv1d_cctor.cpp" />
     <ClCompile Include="Convolution1D\conv1d_forward_s.cpp" />
+    <ClCompile Include="Convolution2D\conv2d_backwarddata_s.cpp" />
+    <ClCompile Include="Convolution2D\conv2d_backwardfilter_s.cpp" />
+    <ClCompile Include="Convolution2D\conv2d_cctor.cpp" />
+    <ClCompile Include="Convolution2D\conv2d_forward_s.cpp" />
     <ClCompile Include="Dense\dense_backwarddata_d.cpp" />
     <ClCompile Include="Dense\dense_backwarddata_s.cpp" />
     <ClCompile Include="Dense\dense_backwardfilter_d.cpp" />

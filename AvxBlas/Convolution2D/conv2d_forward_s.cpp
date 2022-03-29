@@ -11,9 +11,10 @@ using namespace System;
 
 #pragma region padnone
 
-int conv1d_forward_padnone_n32x_s(
+int conv2d_forward_padnone_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -22,21 +23,33 @@ int conv1d_forward_padnone_n32x_s(
     }
 #endif // _DEBUG
 
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * kh * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            matmul_n32x_s(ic * kw, oc, x_ptr + ic * x, w_ptr, y_ptr + oc * x);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padnone_n32x_s(ic, kw, iw, x, kh, ih, y, x_ptr, col_ptr);
+
+                matmul_n32x_s(ic * kw * kh, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
+
+    _aligned_free(col_ptr);
 
     return SUCCESS;
 }
 
-int conv1d_forward_padnone_aligned_s(
+int conv2d_forward_padnone_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -45,21 +58,33 @@ int conv1d_forward_padnone_aligned_s(
     }
 #endif // _DEBUG
 
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * kh * sizeof(float), AVX2_ALIGNMENT);
+    if (col_ptr == nullptr) {
+        return FAILURE_BADALLOC;
+    }
+
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            matmul_aligned_s(ic * kw, oc, x_ptr + ic * x, w_ptr, y_ptr + oc * x);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padnone_aligned_s(ic, kw, iw, x, kh, ih, y, x_ptr, col_ptr);
+
+                matmul_aligned_s(ic * kw * kh, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
+
+    _aligned_free(col_ptr);
 
     return SUCCESS;
 }
 
-int conv1d_forward_padnone_unaligned_s(
+int conv2d_forward_padnone_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -68,7 +93,7 @@ int conv1d_forward_padnone_unaligned_s(
     }
 #endif // _DEBUG
 
-    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw * kh + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -79,19 +104,21 @@ int conv1d_forward_padnone_unaligned_s(
         return FAILURE_BADALLOC;
     }
     zeroset_aligned_s(col_size, col_ptr);
-    align_kernel_s(oc, ic * kw, col_size, w_ptr, we_ptr);
+    align_kernel_s(oc, ic * kw * kh, col_size, w_ptr, we_ptr);
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padnone_unaligned_s(ic, kw, iw, x, x_ptr, col_ptr, mask);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padnone_unaligned_s(ic, kw, iw, x, kh, ih, y, x_ptr, col_ptr, mask);
 
-            matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + oc * x);
+                matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -104,9 +131,10 @@ int conv1d_forward_padnone_unaligned_s(
 
 #pragma region padzero
 
-int conv1d_forward_padzero_n32x_s(
+int conv2d_forward_padzero_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -115,20 +143,22 @@ int conv1d_forward_padzero_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * kh * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padzero_n32x_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padzero_n32x_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr);
 
-            matmul_n32x_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + oc * x);
+                matmul_n32x_s(ic * kw * kh, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -136,9 +166,10 @@ int conv1d_forward_padzero_n32x_s(
     return SUCCESS;
 }
 
-int conv1d_forward_padzero_aligned_s(
+int conv2d_forward_padzero_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -147,20 +178,22 @@ int conv1d_forward_padzero_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * kh * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padzero_aligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padzero_aligned_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr);
 
-            matmul_aligned_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + oc * x);
+                matmul_aligned_s(ic * kw * kh, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -168,9 +201,10 @@ int conv1d_forward_padzero_aligned_s(
     return SUCCESS;
 }
 
-int conv1d_forward_padzero_unaligned_s(
+int conv2d_forward_padzero_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -179,7 +213,7 @@ int conv1d_forward_padzero_unaligned_s(
     }
 #endif // _DEBUG
 
-    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw * kh + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -190,19 +224,21 @@ int conv1d_forward_padzero_unaligned_s(
         return FAILURE_BADALLOC;
     }
     zeroset_aligned_s(col_size, col_ptr);
-    align_kernel_s(oc, ic * kw, col_size, w_ptr, we_ptr);
+    align_kernel_s(oc, ic * kw * kh, col_size, w_ptr, we_ptr);
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padzero_unaligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr, mask);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padzero_unaligned_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr, mask);
 
-            matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + oc * x);
+                matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -215,9 +251,10 @@ int conv1d_forward_padzero_unaligned_s(
 
 #pragma region padedge
 
-int conv1d_forward_padedge_n32x_s(
+int conv2d_forward_padedge_n32x_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -226,20 +263,22 @@ int conv1d_forward_padedge_n32x_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * kh * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padedge_n32x_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padedge_n32x_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr);
 
-            matmul_n32x_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + oc * x);
+                matmul_n32x_s(ic * kw * kh, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -247,9 +286,10 @@ int conv1d_forward_padedge_n32x_s(
     return SUCCESS;
 }
 
-int conv1d_forward_padedge_aligned_s(
+int conv2d_forward_padedge_aligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -258,20 +298,22 @@ int conv1d_forward_padedge_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)ic * kw * kh * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padedge_aligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padedge_aligned_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr);
 
-            matmul_aligned_s(ic * kw, oc, col_ptr, w_ptr, y_ptr + oc * x);
+                matmul_aligned_s(ic * kw * kh, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -279,9 +321,10 @@ int conv1d_forward_padedge_aligned_s(
     return SUCCESS;
 }
 
-int conv1d_forward_padedge_unaligned_s(
+int conv2d_forward_padedge_unaligned_s(
     const uint n, const uint ic, const uint oc,
     const uint iw, const uint ow, const uint kw,
+    const uint ih, const uint oh, const uint kh,
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -290,7 +333,7 @@ int conv1d_forward_padedge_unaligned_s(
     }
 #endif // _DEBUG
 
-    const uint col_size = (ic * kw + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
+    const uint col_size = (ic * kw * kh + AVX2_FLOAT_REMAIN_MASK) & AVX2_FLOAT_BATCH_MASK;
 
     float* col_ptr = (float*)_aligned_malloc((size_t)col_size * sizeof(float), AVX2_ALIGNMENT);
     float* we_ptr = (float*)_aligned_malloc((size_t)col_size * oc * sizeof(float), AVX2_ALIGNMENT);
@@ -301,19 +344,21 @@ int conv1d_forward_padedge_unaligned_s(
         return FAILURE_BADALLOC;
     }
     zeroset_aligned_s(col_size, col_ptr);
-    align_kernel_s(oc, ic * kw, col_size, w_ptr, we_ptr);
+    align_kernel_s(oc, ic * kw * kh, col_size, w_ptr, we_ptr);
 
     const __m256i mask = _mm256_setmask_ps((ic * kw) & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        for (uint x = 0; x < ow; x++) {
-            imcol1d_padedge_unaligned_s(ic, kw, iw, x, kw / 2, x_ptr, col_ptr, mask);
+        for (uint y = 0; y < oh; y++) {
+            for (uint x = 0; x < ow; x++) {
+                imcol2d_padedge_unaligned_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr, mask);
 
-            matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + oc * x);
+                matmul_aligned_s(col_size, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+            }
         }
 
-        x_ptr += ic * iw;
-        y_ptr += oc * ow;
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
@@ -326,8 +371,8 @@ int conv1d_forward_padedge_unaligned_s(
 
 #pragma managed
 
-void AvxBlas::Convolution1D::Forward(
-    UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
+void AvxBlas::Convolution2D::Forward(
+    UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
     PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y) {
 
     if (!Enum::IsDefined(PadMode::typeid, padmode)) {
@@ -342,31 +387,35 @@ void AvxBlas::Convolution1D::Forward(
     if ((kw & 1) == 0 || kw > MAX_KERNEL_SIZE || ((iw < kw) && padmode == PadMode::None)) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
     }
-    if (kw == 1 && padmode != PadMode::None) {
+    if ((kh & 1) == 0 || kh > MAX_KERNEL_SIZE || ((ih < kh) && padmode == PadMode::None)) {
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
+    }
+    if (kw == 1 && kh == 1 && padmode != PadMode::None) {
         throw gcnew System::ArgumentException(ErrorMessage::InvalidKernelSize);
     }
-    if (iw > MAX_MAP_SIZE) {
+    if (iw > MAX_MAP_SIZE || ih > MAX_MAP_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 
-    if (n <= 0 || ic <= 0 || oc <= 0 || iw <= 0) {
+    if (n <= 0 || ic <= 0 || oc <= 0 || iw <= 0 || ih <= 0) {
         return;
     }
 
     UInt32 ow = padmode == PadMode::None ? (iw - kw + 1) : iw;
+    UInt32 oh = padmode == PadMode::None ? (ih - kh + 1) : ih;
 
-    Util::CheckProdOverflow(n, ic, iw);
-    Util::CheckProdOverflow(n, oc, ow);
-    Util::CheckProdOverflow(ic, oc, kw);
+    Util::CheckProdOverflow(n, ic, iw, ih);
+    Util::CheckProdOverflow(n, oc, ow, oh);
+    Util::CheckProdOverflow(ic, oc, kw, kh);
 
-    Util::CheckLength(n * ic * iw, x);
-    Util::CheckLength(n * oc * ow, y);
-    Util::CheckLength(ic * oc * kw, w);
+    Util::CheckLength(n * ic * iw * ih, x);
+    Util::CheckLength(n * oc * ow * oh, y);
+    Util::CheckLength(ic * oc * kw * kh, w);
 
     Util::CheckDuplicateArray(x, w, y);
 
-    if (kw == 1) {
-        Dense::Forward(n * iw, ic, oc, x, w, y);
+    if (kw == 1 && kh == 1) {
+        Dense::Forward(n * iw * ih, ic, oc, x, w, y);
         return;
     }
 
@@ -382,13 +431,13 @@ void AvxBlas::Convolution1D::Forward(
 #endif // _DEBUG
 
         if (padmode == PadMode::None) {
-            ret = conv1d_forward_padnone_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padnone_n32x_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
         else if (padmode == PadMode::Zero) {
-            ret = conv1d_forward_padzero_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padzero_n32x_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
         else if (padmode == PadMode::Edge) {
-            ret = conv1d_forward_padedge_n32x_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padedge_n32x_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
     }
     else if ((ic & AVX2_FLOAT_REMAIN_MASK) == 0) {
@@ -397,13 +446,13 @@ void AvxBlas::Convolution1D::Forward(
 #endif // _DEBUG
 
         if (padmode == PadMode::None) {
-            ret = conv1d_forward_padnone_aligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padnone_aligned_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
         else if (padmode == PadMode::Zero) {
-            ret = conv1d_forward_padzero_aligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padzero_aligned_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
         else if (padmode == PadMode::Edge) {
-            ret = conv1d_forward_padedge_aligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padedge_aligned_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
     }
     else {
@@ -412,13 +461,13 @@ void AvxBlas::Convolution1D::Forward(
 #endif // _DEBUG
 
         if (padmode == PadMode::None) {
-            ret = conv1d_forward_padnone_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padnone_unaligned_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
         else if (padmode == PadMode::Zero) {
-            ret = conv1d_forward_padzero_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padzero_unaligned_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
         else if (padmode == PadMode::Edge) {
-            ret = conv1d_forward_padedge_unaligned_s(n, ic, oc, iw, ow, kw, x_ptr, w_ptr, y_ptr);
+            ret = conv2d_forward_padedge_unaligned_s(n, ic, oc, iw, ow, kw, ih, oh, kh, x_ptr, w_ptr, y_ptr);
         }
     }
 
