@@ -353,7 +353,7 @@ int conv2d_forward_padedge_unaligned_s(
             for (uint x = 0; x < ow; x++) {
                 imcol2d_padedge_unaligned_s(ic, kw, iw, x, kw / 2, kh, ih, y, kh / 2, x_ptr, col_ptr, mask);
 
-                matmul_aligned_s(col_size, oc, col_ptr, w_ptr, y_ptr + oc * (x + ow * y));
+                matmul_aligned_s(col_size, oc, col_ptr, we_ptr, y_ptr + oc * (x + ow * y));
             }
         }
 

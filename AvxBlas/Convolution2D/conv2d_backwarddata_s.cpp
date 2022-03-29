@@ -364,7 +364,7 @@ int conv2d_backwarddata_padedge_aligned_s(
     }
 #endif // _DEBUG
 
-    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * sizeof(float), AVX2_ALIGNMENT);
+    float* col_ptr = (float*)_aligned_malloc((size_t)oc * kw * kh * sizeof(float), AVX2_ALIGNMENT);
     if (col_ptr == nullptr) {
         return FAILURE_BADALLOC;
     }
@@ -463,53 +463,56 @@ int conv2d_backwarddata_padedge_unaligned_s(
             for (uint x = 0; x < iw; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw / 2, kh, oh, y, kh / 2, y_ptr, col_ptr, mask);
 
-                matmul_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * (x + iw * y));
+                matmul_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * (x + iw * y));
             }
             for (uint x = 0; x < kw / 2; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, kh, oh, y, kh / 2, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * iw * y);
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * iw * y);
             }
             for (uint x = iw + kw / 2; x < iw + kw - 1; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, kh, oh, y, kh / 2, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * ((iw - 1) + iw * y));
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * ((iw - 1) + iw * y));
             }
         }
         for (uint y = 0; y < kh / 2; y++) {
             for (uint x = 0; x < iw; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw / 2, kh, oh, y, kh - 1, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * x);
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * x);
             }
             for (uint x = 0; x < kw / 2; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, kh, oh, y, kh - 1, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr);
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr);
             }
             for (uint x = iw + kw / 2; x < iw + kw - 1; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, kh, oh, y, kh - 1, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * (iw - 1));
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * (iw - 1));
             }
         }
         for (uint y = ih + kh / 2; y < ih + kh - 1; y++) {
             for (uint x = 0; x < iw; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw / 2, kh, oh, y, kh - 1, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * (x + iw * (ih - 1)));
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * (x + iw * (ih - 1)));
             }
             for (uint x = 0; x < kw / 2; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, kh, oh, y, kh - 1, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * iw * (ih - 1));
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * iw * (ih - 1));
             }
             for (uint x = iw + kw / 2; x < iw + kw - 1; x++) {
                 imcol2d_padzero_unaligned_s(oc, kw, ow, x, kw - 1, kh, oh, y, kh - 1, y_ptr, col_ptr, mask);
 
-                matmuladd_aligned_s(col_size, ic, col_ptr, w_ptr, x_ptr + ic * ((iw - 1) + iw * (ih - 1)));
+                matmuladd_aligned_s(col_size, ic, col_ptr, we_ptr, x_ptr + ic * ((iw - 1) + iw * (ih - 1)));
             }
         }
+
+        x_ptr += ic * iw * ih;
+        y_ptr += oc * ow * oh;
     }
 
     _aligned_free(col_ptr);
