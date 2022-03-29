@@ -362,7 +362,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
         wc_ptr += AVX2_FLOAT_STRIDE * 3;
         r -= AVX2_FLOAT_STRIDE;
     }
-    if (r >= 6) { // 3 * r >= AVX2_FLOAT_STRIDE * 2
+    if (r > AVX2_FLOAT_STRIDE * 2 / 3) {
         _mm256_loadu_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_loadu_x3_ps(wc_ptr, c0, c1, c2);
         _mm256_loadu_x1_ps(y_ptr, y);
@@ -374,7 +374,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
         _mm256_maskstore_x3_ps(ws_ptr, s0, s1, s2, mask);
         _mm256_maskstore_x3_ps(wc_ptr, c0, c1, c2, mask);
     }
-    else if (r >= 3) { // 3 * r >= AVX2_FLOAT_STRIDE
+    else if (r > AVX2_FLOAT_STRIDE / 3) {
         _mm256_loadu_x2_ps(ws_ptr, s0, s1);
         _mm256_loadu_x2_ps(wc_ptr, c0, c1);
         _mm256_loadu_x1_ps(y_ptr, y);
@@ -385,7 +385,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
         _mm256_maskstore_x2_ps(ws_ptr, s0, s1, mask);
         _mm256_maskstore_x2_ps(wc_ptr, c0, c1, mask);
     }
-    else if (r >= 1) {
+    else if (r > 0) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
         _mm256_loadu_x1_ps(y_ptr, y);

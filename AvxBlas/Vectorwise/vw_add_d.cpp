@@ -82,7 +82,7 @@ int vw_add_stride3_d(
         y_ptr += AVX2_DOUBLE_STRIDE * 3;
         r -= AVX2_DOUBLE_STRIDE;
     }
-    if (r >= 3) { // 3 * r >= AVX2_DOUBLE_STRIDE * 2
+    if (r > AVX2_DOUBLE_STRIDE * 2 / 3) {
         _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
@@ -91,7 +91,7 @@ int vw_add_stride3_d(
 
         _mm256_maskstore_x3_pd(y_ptr, y0, y1, y2, mask);
     }
-    else if (r >= 2) { // 3 * r >= AVX2_DOUBLE_STRIDE
+    else if (r > AVX2_DOUBLE_STRIDE / 3) {
         _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
@@ -99,7 +99,7 @@ int vw_add_stride3_d(
 
         _mm256_maskstore_x2_pd(y_ptr, y0, y1, mask);
     }
-    else if (r >= 1) {
+    else if (r > 0) {
         _mm256_maskload_x1_pd(x_ptr, x0, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
@@ -176,7 +176,7 @@ int vw_add_stride5_d(
         y_ptr += AVX2_DOUBLE_STRIDE * 5;
         r -= AVX2_DOUBLE_STRIDE;
     }
-    if (r >= 3) { // 5 * r >= AVX2_DOUBLE_STRIDE * 3
+    if (r > AVX2_DOUBLE_STRIDE * 3 / 5) {
         _mm256_maskload_x4_pd(x_ptr, x0, x1, x2, x3, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
@@ -186,7 +186,7 @@ int vw_add_stride5_d(
 
         _mm256_maskstore_x4_pd(y_ptr, y0, y1, y2, y3, mask);
     }
-    else if (r >= 2) { // 5 * r >= AVX2_DOUBLE_STRIDE * 2
+    else if (r > AVX2_DOUBLE_STRIDE * 2 / 5) {
         _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
@@ -195,7 +195,7 @@ int vw_add_stride5_d(
 
         _mm256_maskstore_x3_pd(y_ptr, y0, y1, y2, mask);
     }
-    else if (r >= 1) { // 5 * r >= AVX2_DOUBLE_STRIDE
+    else if (r > 0) {
         _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
@@ -240,7 +240,7 @@ int vw_add_stride6_d(
         y_ptr += AVX2_DOUBLE_STRIDE * 3;
         r -= AVX2_DOUBLE_STRIDE / 2;
     }
-    if (r >= 1) { // 6 * r >= AVX2_DOUBLE_STRIDE
+    if (r > 0) { 
         _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
 
         y0 = _mm256_add_pd(x0, v.imm0);
