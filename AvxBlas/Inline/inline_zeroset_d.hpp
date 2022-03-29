@@ -9,16 +9,16 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline void zeroset_n16x_d(const unsigned int n, outdoubles y_ptr) {
+__forceinline void zeroset_n16x_d(const uint n, outdoubles y_ptr) {
 #ifdef _DEBUG
     if ((n % (AVX2_DOUBLE_STRIDE * 4)) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    const __m256d fillz = _mm256_setzero_pd();
 
-    __m256d fillz = _mm256_setzero_pd();
+    uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         _mm256_store_x4_pd(y_ptr, fillz, fillz, fillz, fillz);
@@ -28,16 +28,16 @@ __forceinline void zeroset_n16x_d(const unsigned int n, outdoubles y_ptr) {
     }
 }
 
-__forceinline void zeroset_aligned_d(const unsigned int n, outdoubles y_ptr) {
+__forceinline void zeroset_aligned_d(const uint n, outdoubles y_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_DOUBLE_REMAIN_MASK) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    const __m256d fillz = _mm256_setzero_pd();
 
-    __m256d fillz = _mm256_setzero_pd();
+    uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         _mm256_store_x4_pd(y_ptr, fillz, fillz, fillz, fillz);
@@ -56,16 +56,16 @@ __forceinline void zeroset_aligned_d(const unsigned int n, outdoubles y_ptr) {
     }
 }
 
-__forceinline void zeroset_unaligned_d(const unsigned int n, outdoubles y_ptr, const __m256i mask) {
+__forceinline void zeroset_unaligned_d(const uint n, outdoubles y_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_DOUBLE_REMAIN_MASK) == 0) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    unsigned int r = n;
+    const __m256d fillz = _mm256_setzero_pd();
 
-    __m256d fillz = _mm256_setzero_pd();
+    uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         _mm256_storeu_x4_pd(y_ptr, fillz, fillz, fillz, fillz);

@@ -21,10 +21,11 @@ int ew_copy_s(
     }
 #endif // _DEBUG
 
+    __m256 x0, x1, x2, x3;
+
     uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        __m256 x0, x1, x2, x3;
         _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
 
         _mm256_stream_x4_ps(y_ptr, x0, x1, x2, x3);
@@ -34,7 +35,6 @@ int ew_copy_s(
         r -= AVX2_FLOAT_STRIDE * 4;
     }
     if (r >= AVX2_FLOAT_STRIDE * 2) {
-        __m256 x0, x1;
         _mm256_load_x2_ps(x_ptr, x0, x1);
 
         _mm256_stream_x2_ps(y_ptr, x0, x1);
@@ -44,7 +44,6 @@ int ew_copy_s(
         r -= AVX2_FLOAT_STRIDE * 2;
     }
     if (r >= AVX2_FLOAT_STRIDE) {
-        __m256 x0;
         _mm256_load_x1_ps(x_ptr, x0);
 
         _mm256_stream_x1_ps(y_ptr, x0);
@@ -56,9 +55,9 @@ int ew_copy_s(
     if (r > 0) {
         const __m256i mask = _mm256_setmask_ps(r);
 
-        __m256 x = _mm256_maskload_ps(x_ptr, mask);
+        x0 = _mm256_maskload_ps(x_ptr, mask);
 
-        _mm256_maskstore_ps(y_ptr, mask, x);
+        _mm256_maskstore_ps(y_ptr, mask, x0);
     }
 
     return SUCCESS;

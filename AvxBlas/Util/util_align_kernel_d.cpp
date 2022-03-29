@@ -10,7 +10,7 @@ using namespace System;
 #pragma unmanaged
 
 void align_kernel_d(
-    const unsigned int n, const unsigned int unaligned_w_size, const unsigned int aligned_w_size,
+    const uint n, const uint unaligned_w_size, const uint aligned_w_size,
     indoubles unaligned_w_ptr, outdoubles aligned_w_ptr) {
 
 #ifdef _DEBUG
@@ -22,8 +22,8 @@ void align_kernel_d(
 
     const __m256i mask = _mm256_setmask_pd(unaligned_w_size & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
-        unsigned int r = unaligned_w_size;
+    for (uint i = 0; i < n; i++) {
+        uint r = unaligned_w_size;
 
         while (r >= AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_loadu_pd(unaligned_w_ptr);
@@ -44,7 +44,7 @@ void align_kernel_d(
 }
 
 void unalign_kernel_d(
-    const unsigned int n, const unsigned int aligned_w_size, const unsigned int unaligned_w_size,
+    const uint n, const uint aligned_w_size, const uint unaligned_w_size,
     indoubles aligned_w_ptr, outdoubles unaligned_w_ptr) {
 
 #ifdef _DEBUG
@@ -56,8 +56,8 @@ void unalign_kernel_d(
 
     const __m256i mask = _mm256_setmask_ps(unaligned_w_size & AVX2_DOUBLE_REMAIN_MASK);
 
-    for (unsigned int i = 0; i < n; i++) {
-        unsigned int r = unaligned_w_size;
+    for (uint i = 0; i < n; i++) {
+        uint r = unaligned_w_size;
 
         while (r >= AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(aligned_w_ptr);

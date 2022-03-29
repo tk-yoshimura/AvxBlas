@@ -12,11 +12,11 @@ using namespace System;
 #pragma unmanaged
 
 int affine_dotmul_stride1_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != 1) || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -78,11 +78,11 @@ int affine_dotmul_stride1_s(
 }
 
 int affine_dotmul_stride2_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
+    if ((stride != 2) || ((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -145,8 +145,14 @@ int affine_dotmul_stride2_s(
 }
 
 int affine_dotmul_stride3_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 3) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m128i mask = _mm_setmask_ps(3);
 
@@ -167,11 +173,11 @@ int affine_dotmul_stride3_s(
 }
 
 int affine_dotmul_stride4_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX1_ALIGNMENT) != 0) {
+    if ((stride != 4) || ((size_t)a_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -221,11 +227,11 @@ int affine_dotmul_stride5to7_s(
 }
 
 int affine_dotmul_stride8_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -280,11 +286,11 @@ int affine_dotmul_stride9to15_s(
 }
 
 int affine_dotmul_stride16_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 2) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -345,11 +351,11 @@ int affine_dotmul_stride17to23_s(
 }
 
 int affine_dotmul_stride24_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 3) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -412,11 +418,11 @@ int affine_dotmul_stride25to31_s(
 }
 
 int affine_dotmul_stride32_s(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 4) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -444,6 +450,32 @@ int affine_dotmul_stride32_s(
     return SUCCESS;
 }
 
+int affine_dotmul_strideleq8_s(
+    const uint na, const uint nb, const uint stride,
+    infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
+
+    if (stride == 1) {
+        return affine_dotmul_stride1_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 2) {
+        return affine_dotmul_stride2_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 3) {
+        return affine_dotmul_stride3_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 4) {
+        return affine_dotmul_stride4_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride < 8) {
+        return affine_dotmul_stride5to7_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 8) {
+        return affine_dotmul_stride8_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+
+    return FAILURE_BADPARAM;
+}
+
 int affine_dotmul_aligned_s(
     const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
@@ -454,17 +486,17 @@ int affine_dotmul_aligned_s(
     }
 #endif // _DEBUG
 
-    if (stride == 8) {
-        return affine_dotmul_stride8_s(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE) {
+        return affine_dotmul_stride8_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 16) {
-        return affine_dotmul_stride16_s(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE * 2) {
+        return affine_dotmul_stride16_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 24) {
-        return affine_dotmul_stride24_s(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE * 3) {
+        return affine_dotmul_stride24_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 32) {
-        return affine_dotmul_stride32_s(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE * 4) {
+        return affine_dotmul_stride32_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
 
     for (uint i = 0, nas = na * stride; i < nas; i += stride) {
@@ -483,28 +515,16 @@ int affine_dotmul_unaligned_s(
     const uint na, const uint nb, const uint stride,
     infloats a_ptr, infloats b_ptr, outfloats y_ptr) {
 
-    if (stride == 1) {
-        return affine_dotmul_stride1_s(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride <= AVX2_FLOAT_STRIDE) {
+        return affine_dotmul_strideleq8_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 2) {
-        return affine_dotmul_stride2_s(na, nb, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride == 3) {
-        return affine_dotmul_stride3_s(na, nb, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride == 4) {
-        return affine_dotmul_stride4_s(na, nb, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride < 8) {
-        return affine_dotmul_stride5to7_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride < 16) {
+    if (stride <= AVX2_FLOAT_STRIDE * 2) {
         return affine_dotmul_stride9to15_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride < 24) {
+    if (stride <= AVX2_FLOAT_STRIDE * 3) {
         return affine_dotmul_stride17to23_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride < 32) {
+    if (stride <= AVX2_FLOAT_STRIDE * 4) {
         return affine_dotmul_stride25to31_s(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
 

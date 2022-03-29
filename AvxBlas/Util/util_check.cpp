@@ -100,7 +100,7 @@ void AvxBlas::Util::CheckLength(UInt32 length, ...cli::array<Array<T>^>^ arrays)
     }
 
     for each (Array<T> ^ array in arrays) {
-        if (length > (unsigned int)array->Length) {
+        if (length > array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::ErrorMessage::InvalidArrayLength);
         }
     }
@@ -117,7 +117,7 @@ void AvxBlas::Util::CheckOutOfRange(UInt32 index, UInt32 length, ...cli::array<A
     }
 
     for each (Array<T> ^ array in arrays) {
-        if (index >= (unsigned int)array->Length || index + length > (unsigned int)array->Length) {
+        if (index >= array->Length || index + length > array->Length) {
             throw gcnew System::IndexOutOfRangeException(AvxBlas::ErrorMessage::InvalidArrayLength);
         }
     }

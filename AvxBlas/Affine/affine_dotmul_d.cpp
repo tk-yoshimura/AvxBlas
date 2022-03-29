@@ -12,11 +12,11 @@ using namespace System;
 #pragma unmanaged
 
 int affine_dotmul_stride1_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != 1) || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -78,11 +78,11 @@ int affine_dotmul_stride1_d(
 }
 
 int affine_dotmul_stride2_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
+    if ((stride != 2) || ((size_t)b_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -145,8 +145,14 @@ int affine_dotmul_stride2_d(
 }
 
 int affine_dotmul_stride3_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 3) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     const __m256i mask = _mm256_setmask_pd(3);
 
@@ -167,11 +173,11 @@ int affine_dotmul_stride3_d(
 }
 
 int affine_dotmul_stride4_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -226,11 +232,11 @@ int affine_dotmul_stride5to7_d(
 }
 
 int affine_dotmul_stride8_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE * 2) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -291,11 +297,11 @@ int affine_dotmul_stride9to11_d(
 }
 
 int affine_dotmul_stride12_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE * 3) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -358,11 +364,11 @@ int affine_dotmul_stride13to15_d(
 }
 
 int affine_dotmul_stride16_d(
-    const uint na, const uint nb,
+    const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_DOUBLE_STRIDE * 4) || ((size_t)a_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)b_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -390,6 +396,32 @@ int affine_dotmul_stride16_d(
     return SUCCESS;
 }
 
+int affine_dotmul_strideleq8_d(
+    const uint na, const uint nb, const uint stride,
+    indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
+
+    if (stride == 1) {
+        return affine_dotmul_stride1_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 2) {
+        return affine_dotmul_stride2_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 3) {
+        return affine_dotmul_stride3_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 4) {
+        return affine_dotmul_stride4_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride < 8) {
+        return affine_dotmul_stride5to7_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+    if (stride == 8) {
+        return affine_dotmul_stride8_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
+    }
+
+    return FAILURE_BADPARAM;
+}
+
 int affine_dotmul_aligned_d(
     const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
@@ -400,17 +432,17 @@ int affine_dotmul_aligned_d(
     }
 #endif // _DEBUG
 
-    if (stride == 4) {
-        return affine_dotmul_stride4_d(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_DOUBLE_STRIDE) {
+        return affine_dotmul_stride4_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 8) {
-        return affine_dotmul_stride8_d(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_DOUBLE_STRIDE * 2) {
+        return affine_dotmul_stride8_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 12) {
-        return affine_dotmul_stride12_d(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_DOUBLE_STRIDE * 3) {
+        return affine_dotmul_stride12_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 16) {
-        return affine_dotmul_stride16_d(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride == AVX2_DOUBLE_STRIDE * 4) {
+        return affine_dotmul_stride16_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
 
     for (uint i = 0, nas = na * stride; i < nas; i += stride) {
@@ -429,22 +461,13 @@ int affine_dotmul_unaligned_d(
     const uint na, const uint nb, const uint stride,
     indoubles a_ptr, indoubles b_ptr, outdoubles y_ptr) {
 
-    if (stride == 1) {
-        return affine_dotmul_stride1_d(na, nb, a_ptr, b_ptr, y_ptr);
+    if (stride <= AVX2_DOUBLE_STRIDE * 2) {
+        return affine_dotmul_strideleq8_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride == 2) {
-        return affine_dotmul_stride2_d(na, nb, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride == 3) {
-        return affine_dotmul_stride3_d(na, nb, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride < 8) {
-        return affine_dotmul_stride5to7_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
-    }
-    if (stride < 12) {
+    if (stride <= AVX2_DOUBLE_STRIDE * 3) {
         return affine_dotmul_stride9to11_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
-    if (stride < 16) {
+    if (stride < AVX2_DOUBLE_STRIDE * 4) {
         return affine_dotmul_stride13to15_d(na, nb, stride, a_ptr, b_ptr, y_ptr);
     }
 

@@ -18,16 +18,18 @@ int ew_abs_s(
     }
 #endif // _DEBUG
 
+    __m256 x0, x1, x2, x3;
+    __m256 y0, y1, y2, y3;
+
     uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
-        __m256 x0, x1, x2, x3;
         _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
 
-        __m256 y0 = _mm256_abs_ps(x0);
-        __m256 y1 = _mm256_abs_ps(x1);
-        __m256 y2 = _mm256_abs_ps(x2);
-        __m256 y3 = _mm256_abs_ps(x3);
+        y0 = _mm256_abs_ps(x0);
+        y1 = _mm256_abs_ps(x1);
+        y2 = _mm256_abs_ps(x2);
+        y3 = _mm256_abs_ps(x3);
 
         _mm256_stream_x4_ps(y_ptr, y0, y1, y2, y3);
 
@@ -36,11 +38,10 @@ int ew_abs_s(
         r -= AVX2_FLOAT_STRIDE * 4;
     }
     if (r >= AVX2_FLOAT_STRIDE * 2) {
-        __m256 x0, x1;
         _mm256_load_x2_ps(x_ptr, x0, x1);
 
-        __m256 y0 = _mm256_abs_ps(x0);
-        __m256 y1 = _mm256_abs_ps(x1);
+        y0 = _mm256_abs_ps(x0);
+        y1 = _mm256_abs_ps(x1);
 
         _mm256_stream_x2_ps(y_ptr, y0, y1);
 
@@ -49,10 +50,9 @@ int ew_abs_s(
         r -= AVX2_FLOAT_STRIDE * 2;
     }
     if (r >= AVX2_FLOAT_STRIDE) {
-        __m256 x0;
         _mm256_load_x1_ps(x_ptr, x0);
 
-        __m256 y0 = _mm256_abs_ps(x0);
+        y0 = _mm256_abs_ps(x0);
 
         _mm256_stream_x1_ps(y_ptr, y0);
 
@@ -63,11 +63,11 @@ int ew_abs_s(
     if (r > 0) {
         const __m256i mask = _mm256_setmask_ps(r);
 
-        __m256 x = _mm256_maskload_ps(x_ptr, mask);
+        x0 = _mm256_maskload_ps(x_ptr, mask);
 
-        __m256 y = _mm256_abs_ps(x);
+        y0 = _mm256_abs_ps(x0);
 
-        _mm256_maskstore_ps(y_ptr, mask, y);
+        _mm256_maskstore_ps(y_ptr, mask, y0);
     }
 
     return SUCCESS;

@@ -5,15 +5,15 @@
 #pragma unmanaged
 
 void repeat_vector_s(
-    const unsigned int n, const unsigned int stride,
+    const uint n, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
-    const unsigned int sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
+    const uint sb = stride & AVX2_FLOAT_BATCH_MASK, sr = stride - sb;
 
     const __m256i mask = _mm256_setmask_ps(sr);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < sb; c += AVX2_FLOAT_STRIDE) {
             __m256 x = _mm256_load_ps(x_ptr + c);
 
             _mm256_storeu_ps(y_ptr + c, x);
@@ -29,15 +29,15 @@ void repeat_vector_s(
 }
 
 void repeat_vector_d(
-    const unsigned int n, const unsigned int stride,
+    const uint n, const uint stride,
     indoubles x_ptr, outdoubles y_ptr) {
 
-    const unsigned int sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
+    const uint sb = stride & AVX2_DOUBLE_BATCH_MASK, sr = stride - sb;
 
     const __m256i mask = _mm256_setmask_pd(sr);
 
-    for (unsigned int i = 0; i < n; i++) {
-        for (unsigned int c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
+    for (uint i = 0; i < n; i++) {
+        for (uint c = 0; c < sb; c += AVX2_DOUBLE_STRIDE) {
             __m256d x = _mm256_load_pd(x_ptr + c);
 
             _mm256_storeu_pd(y_ptr + c, x);

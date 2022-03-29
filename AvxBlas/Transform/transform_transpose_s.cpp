@@ -8,8 +8,14 @@ using namespace System;
 #pragma unmanaged
 
 int transpose_stride1_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 1) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     for (uint th = 0; th < n; th++) {
 
@@ -31,8 +37,14 @@ int transpose_stride1_s(
 }
 
 int transpose_stride2_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 2) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
     for (uint th = 0; th < n; th++) {
 
@@ -55,10 +67,18 @@ int transpose_stride2_s(
 }
 
 int transpose_stride3_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
+#ifdef _DEBUG
+    if (stride != 3) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
     const __m128i mask = _mm_setmask_ps(3);
+
+    __m128 x;
 
     for (uint th = 0; th < n; th++) {
 
@@ -66,7 +86,7 @@ int transpose_stride3_s(
             uint offset = k * 3;
 
             for (uint j = 0; j < s; j++) {
-                __m128 x = _mm_loadu_ps(x_ptr);
+                x = _mm_loadu_ps(x_ptr);
 
                 _mm_maskstore_ps(y_ptr + offset, mask, x);
 
@@ -82,14 +102,16 @@ int transpose_stride3_s(
 }
 
 int transpose_stride4_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
+    if ((stride != 4) || ((size_t)x_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    __m128 x;
 
     for (uint th = 0; th < n; th++) {
 
@@ -97,7 +119,7 @@ int transpose_stride4_s(
             uint offset = k * 4;
 
             for (uint j = 0; j < s; j++) {
-                __m128 x = _mm_load_ps(x_ptr);
+                x = _mm_load_ps(x_ptr);
 
                 _mm_stream_ps(y_ptr + offset, x);
 
@@ -124,13 +146,15 @@ int transpose_stride5to7_s(
 
     const __m256i mask = _mm256_setmask_ps(stride);
 
+    __m256 x;
+
     for (uint th = 0; th < n; th++) {
 
         for (uint k = 0; k < r; k++) {
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x = _mm256_loadu_ps(x_ptr);
+                x = _mm256_loadu_ps(x_ptr);
 
                 _mm256_maskstore_ps(y_ptr + offset, mask, x);
 
@@ -146,14 +170,16 @@ int transpose_stride5to7_s(
 }
 
 int transpose_stride8_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    __m256 x;
 
     for (uint th = 0; th < n; th++) {
 
@@ -161,7 +187,7 @@ int transpose_stride8_s(
             uint offset = k * AVX2_FLOAT_STRIDE;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x = _mm256_load_ps(x_ptr);
+                x = _mm256_load_ps(x_ptr);
 
                 _mm256_stream_ps(y_ptr + offset, x);
 
@@ -188,13 +214,14 @@ int transpose_stride9to15_s(
 
     const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
 
+    __m256 x0, x1;
+
     for (uint th = 0; th < n; th++) {
 
         for (uint k = 0; k < r; k++) {
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x0, x1;
                 _mm256_loadu_x2_ps(x_ptr, x0, x1);
                 _mm256_maskstore_x2_ps(y_ptr + offset, x0, x1, mask);
 
@@ -210,14 +237,16 @@ int transpose_stride9to15_s(
 }
 
 int transpose_stride16_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 2) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    __m256 x0, x1;
 
     for (uint th = 0; th < n; th++) {
 
@@ -225,7 +254,6 @@ int transpose_stride16_s(
             uint offset = k * AVX2_FLOAT_STRIDE * 2;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x0, x1;
                 _mm256_load_x2_ps(x_ptr, x0, x1);
                 _mm256_stream_x2_ps(y_ptr + offset, x0, x1);
 
@@ -252,13 +280,14 @@ int transpose_stride17to23_s(
 
     const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
 
+    __m256 x0, x1, x2;
+
     for (uint th = 0; th < n; th++) {
 
         for (uint k = 0; k < r; k++) {
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x0, x1, x2;
                 _mm256_loadu_x3_ps(x_ptr, x0, x1, x2);
                 _mm256_maskstore_x3_ps(y_ptr + offset, x0, x1, x2, mask);
 
@@ -274,14 +303,16 @@ int transpose_stride17to23_s(
 }
 
 int transpose_stride24_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 3) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    __m256 x0, x1, x2;
 
     for (uint th = 0; th < n; th++) {
 
@@ -289,7 +320,6 @@ int transpose_stride24_s(
             uint offset = k * AVX2_FLOAT_STRIDE * 3;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x0, x1, x2;
                 _mm256_load_x3_ps(x_ptr, x0, x1, x2);
                 _mm256_stream_x3_ps(y_ptr + offset, x0, x1, x2);
 
@@ -316,13 +346,14 @@ int transpose_stride25to31_s(
 
     const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
 
+    __m256 x0, x1, x2, x3;
+
     for (uint th = 0; th < n; th++) {
 
         for (uint k = 0; k < r; k++) {
             uint offset = k * stride;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x0, x1, x2, x3;
                 _mm256_loadu_x4_ps(x_ptr, x0, x1, x2, x3);
                 _mm256_maskstore_x4_ps(y_ptr + offset, x0, x1, x2, x3, mask);
 
@@ -338,14 +369,16 @@ int transpose_stride25to31_s(
 }
 
 int transpose_stride32_s(
-    const uint n, const uint r, const uint s,
+    const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((stride != AVX2_FLOAT_STRIDE * 4) || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
+
+    __m256 x0, x1, x2, x3;
 
     for (uint th = 0; th < n; th++) {
 
@@ -353,7 +386,6 @@ int transpose_stride32_s(
             uint offset = k * AVX2_FLOAT_STRIDE * 4;
 
             for (uint j = 0; j < s; j++) {
-                __m256 x0, x1, x2, x3;
                 _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
                 _mm256_stream_x4_ps(y_ptr + offset, x0, x1, x2, x3);
 
@@ -368,6 +400,32 @@ int transpose_stride32_s(
     return SUCCESS;
 }
 
+int transpose_strideleq8_s(
+    const uint n, const uint r, const uint s, const uint stride,
+    infloats x_ptr, outfloats y_ptr) {
+
+    if (stride == 1) {
+        return transpose_stride1_s(n, r, s, stride, x_ptr, y_ptr);
+    }
+    if (stride == 2) {
+        return transpose_stride2_s(n, r, s, stride, x_ptr, y_ptr);
+    }
+    if (stride == 3) {
+        return transpose_stride3_s(n, r, s, stride, x_ptr, y_ptr);
+    }
+    if (stride == 4) {
+        return transpose_stride4_s(n, r, s, stride, x_ptr, y_ptr);
+    }
+    if (stride < 8) {
+        return transpose_stride5to7_s(n, r, s, stride, x_ptr, y_ptr);
+    }
+    if (stride == 8) {
+        return transpose_stride8_s(n, r, s, stride, x_ptr, y_ptr);
+    }
+
+    return FAILURE_BADPARAM;
+}
+
 int transpose_aligned_s(
     const uint n, const uint r, const uint s, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
@@ -378,18 +436,20 @@ int transpose_aligned_s(
     }
 #endif // _DEBUG
 
-    if (stride == 8) {
-        return transpose_stride8_s(n, r, s, x_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE) {
+        return transpose_stride8_s(n, r, s, stride, x_ptr, y_ptr);
     }
-    if (stride == 16) {
-        return transpose_stride16_s(n, r, s, x_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE * 2) {
+        return transpose_stride16_s(n, r, s, stride, x_ptr, y_ptr);
     }
-    if (stride == 24) {
-        return transpose_stride24_s(n, r, s, x_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE * 3) {
+        return transpose_stride24_s(n, r, s, stride, x_ptr, y_ptr);
     }
-    if (stride == 32) {
-        return transpose_stride32_s(n, r, s, x_ptr, y_ptr);
+    if (stride == AVX2_FLOAT_STRIDE * 4) {
+        return transpose_stride32_s(n, r, s, stride, x_ptr, y_ptr);
     }
+
+    __m256 x0, x1, x2, x3;
 
     for (uint th = 0; th < n; th++) {
 
@@ -400,7 +460,6 @@ int transpose_aligned_s(
                 uint sr = stride, index = 0;
 
                 while (sr >= AVX2_FLOAT_STRIDE * 4) {
-                    __m256 x0, x1, x2, x3;
                     _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
                     _mm256_stream_x4_ps(y_ptr + offset + index, x0, x1, x2, x3);
 
@@ -409,7 +468,6 @@ int transpose_aligned_s(
                     sr -= AVX2_FLOAT_STRIDE * 4;
                 }
                 if (sr >= AVX2_FLOAT_STRIDE * 2) {
-                    __m256 x0, x1;
                     _mm256_load_x2_ps(x_ptr, x0, x1);
                     _mm256_stream_x2_ps(y_ptr + offset + index, x0, x1);
 
@@ -418,7 +476,6 @@ int transpose_aligned_s(
                     sr -= AVX2_FLOAT_STRIDE * 2;
                 }
                 if (sr >= AVX2_FLOAT_STRIDE) {
-                    __m256 x0;
                     _mm256_load_x1_ps(x_ptr, x0);
                     _mm256_stream_x1_ps(y_ptr + offset + index, x0);
                 }
@@ -444,32 +501,22 @@ int transpose_unaligned_s(
     }
 #endif // _DEBUG
 
-    if (stride == 1) {
-        return transpose_stride1_s(n, r, s, x_ptr, y_ptr);
+    if (stride <= AVX2_FLOAT_STRIDE) {
+        return transpose_strideleq8_s(n, r, s, stride, x_ptr, y_ptr);
     }
-    if (stride == 2) {
-        return transpose_stride2_s(n, r, s, x_ptr, y_ptr);
-    }
-    if (stride == 3) {
-        return transpose_stride3_s(n, r, s, x_ptr, y_ptr);
-    }
-    if (stride == 4) {
-        return transpose_stride4_s(n, r, s, x_ptr, y_ptr);
-    }
-    if (stride < 8) {
-        return transpose_stride5to7_s(n, r, s, stride, x_ptr, y_ptr);
-    }
-    if (stride < 16) {
+    if (stride <= AVX2_FLOAT_STRIDE * 2) {
         return transpose_stride9to15_s(n, r, s, stride, x_ptr, y_ptr);
     }
-    if (stride < 24) {
+    if (stride <= AVX2_FLOAT_STRIDE * 3) {
         return transpose_stride17to23_s(n, r, s, stride, x_ptr, y_ptr);
     }
-    if (stride < 32) {
+    if (stride <= AVX2_FLOAT_STRIDE * 4) {
         return transpose_stride25to31_s(n, r, s, stride, x_ptr, y_ptr);
     }
 
     const __m256i mask = _mm256_setmask_ps(stride & AVX2_FLOAT_REMAIN_MASK);
+
+    __m256 x0, x1, x2, x3;
 
     for (uint th = 0; th < n; th++) {
 
@@ -480,7 +527,6 @@ int transpose_unaligned_s(
                 uint sr = stride, index = 0;
 
                 while (sr >= AVX2_FLOAT_STRIDE * 4) {
-                    __m256 x0, x1, x2, x3;
                     _mm256_loadu_x4_ps(x_ptr, x0, x1, x2, x3);
                     _mm256_storeu_x4_ps(y_ptr + offset + index, x0, x1, x2, x3);
 

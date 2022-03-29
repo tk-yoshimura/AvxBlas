@@ -17,17 +17,19 @@ int ew_add_d(
     }
 #endif // _DEBUG
 
+    __m256d x01, x11, x21, x31, x02, x12, x22, x32;
+    __m256d y0, y1, y2, y3;
+
     uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
-        __m256d x01, x11, x21, x31, x02, x12, x22, x32;
         _mm256_load_x4_pd(x1_ptr, x01, x11, x21, x31);
         _mm256_load_x4_pd(x2_ptr, x02, x12, x22, x32);
 
-        __m256d y0 = _mm256_add_pd(x01, x02);
-        __m256d y1 = _mm256_add_pd(x11, x12);
-        __m256d y2 = _mm256_add_pd(x21, x22);
-        __m256d y3 = _mm256_add_pd(x31, x32);
+        y0 = _mm256_add_pd(x01, x02);
+        y1 = _mm256_add_pd(x11, x12);
+        y2 = _mm256_add_pd(x21, x22);
+        y3 = _mm256_add_pd(x31, x32);
 
         _mm256_stream_x4_pd(y_ptr, y0, y1, y2, y3);
 
@@ -37,12 +39,11 @@ int ew_add_d(
         r -= AVX2_DOUBLE_STRIDE * 4;
     }
     if (r >= AVX2_DOUBLE_STRIDE * 2) {
-        __m256d x01, x11, x02, x12;
         _mm256_load_x2_pd(x1_ptr, x01, x11);
         _mm256_load_x2_pd(x2_ptr, x02, x12);
 
-        __m256d y0 = _mm256_add_pd(x01, x02);
-        __m256d y1 = _mm256_add_pd(x11, x12);
+        y0 = _mm256_add_pd(x01, x02);
+        y1 = _mm256_add_pd(x11, x12);
 
         _mm256_stream_x2_pd(y_ptr, y0, y1);
 
@@ -52,11 +53,10 @@ int ew_add_d(
         r -= AVX2_DOUBLE_STRIDE * 2;
     }
     if (r >= AVX2_DOUBLE_STRIDE) {
-        __m256d x01, x02;
         _mm256_load_x1_pd(x1_ptr, x01);
         _mm256_load_x1_pd(x2_ptr, x02);
 
-        __m256d y0 = _mm256_add_pd(x01, x02);
+        y0 = _mm256_add_pd(x01, x02);
 
         _mm256_stream_x1_pd(y_ptr, y0);
 
@@ -68,12 +68,12 @@ int ew_add_d(
     if (r > 0) {
         const __m256i mask = _mm256_setmask_pd(r);
 
-        __m256d x1 = _mm256_maskload_pd(x1_ptr, mask);
-        __m256d x2 = _mm256_maskload_pd(x2_ptr, mask);
+        x01 = _mm256_maskload_pd(x1_ptr, mask);
+        x02 = _mm256_maskload_pd(x2_ptr, mask);
 
-        __m256d y = _mm256_add_pd(x1, x2);
+        y0 = _mm256_add_pd(x01, x02);
 
-        _mm256_maskstore_pd(y_ptr, mask, y);
+        _mm256_maskstore_pd(y_ptr, mask, y0);
     }
 
     return SUCCESS;

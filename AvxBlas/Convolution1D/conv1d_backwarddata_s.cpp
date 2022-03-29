@@ -10,7 +10,7 @@ using namespace System;
 #pragma unmanaged
 
 void conv1d_transpose_kernel_s(
-    const unsigned ic, const unsigned oc, const unsigned kw,
+    const uint ic, const uint oc, const uint kw,
     infloats w_ptr, outfloats wt_ptr) {
 
     uint src_index = 0;

@@ -25,13 +25,12 @@ __forceinline void kernelfma_n1_aligned_ss(
     const __m256 x = _mm256_set1_ps(x_ptr[0]);
     __m256 s0, s1, s2, s3, c0, c1, c2, c3, y0, y1, y2, y3;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         _mm256_load_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_load_x4_ps(wc_ptr, c0, c1, c2, c3);
-        _mm256_load_x4_ps(src_ptr, y0, y1, y2, y3);
+        _mm256_load_x4_ps(y_ptr, y0, y1, y2, y3);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
         _mm256_kahanfma_ps(x, y1, s1, c1);
@@ -41,7 +40,7 @@ __forceinline void kernelfma_n1_aligned_ss(
         _mm256_store_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_store_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-        src_ptr += AVX2_FLOAT_STRIDE * 4;
+        y_ptr += AVX2_FLOAT_STRIDE * 4;
         ws_ptr += AVX2_FLOAT_STRIDE * 4;
         wc_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
@@ -49,7 +48,7 @@ __forceinline void kernelfma_n1_aligned_ss(
     if (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_load_x2_ps(ws_ptr, s0, s1);
         _mm256_load_x2_ps(wc_ptr, c0, c1);
-        _mm256_load_x2_ps(src_ptr, y0, y1);
+        _mm256_load_x2_ps(y_ptr, y0, y1);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
         _mm256_kahanfma_ps(x, y1, s1, c1);
@@ -57,7 +56,7 @@ __forceinline void kernelfma_n1_aligned_ss(
         _mm256_store_x2_ps(ws_ptr, s0, s1);
         _mm256_store_x2_ps(wc_ptr, c0, c1);
 
-        src_ptr += AVX2_FLOAT_STRIDE * 2;
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
         ws_ptr += AVX2_FLOAT_STRIDE * 2;
         wc_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE * 2;
@@ -65,7 +64,7 @@ __forceinline void kernelfma_n1_aligned_ss(
     if (r >= AVX2_FLOAT_STRIDE) {
         _mm256_load_x1_ps(ws_ptr, s0);
         _mm256_load_x1_ps(wc_ptr, c0);
-        _mm256_load_x1_ps(src_ptr, y0);
+        _mm256_load_x1_ps(y_ptr, y0);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
 
@@ -87,13 +86,12 @@ __forceinline void kernelfma_n1_unaligned_ss(
     const __m256 x = _mm256_set1_ps(x_ptr[0]);
     __m256 s0, s1, s2, s3, c0, c1, c2, c3, y0, y1, y2, y3;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         _mm256_loadu_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_loadu_x4_ps(wc_ptr, c0, c1, c2, c3);
-        _mm256_loadu_x4_ps(src_ptr, y0, y1, y2, y3);
+        _mm256_loadu_x4_ps(y_ptr, y0, y1, y2, y3);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
         _mm256_kahanfma_ps(x, y1, s1, c1);
@@ -103,7 +101,7 @@ __forceinline void kernelfma_n1_unaligned_ss(
         _mm256_storeu_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_storeu_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-        src_ptr += AVX2_FLOAT_STRIDE * 4;
+        y_ptr += AVX2_FLOAT_STRIDE * 4;
         ws_ptr += AVX2_FLOAT_STRIDE * 4;
         wc_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 4;
@@ -111,7 +109,7 @@ __forceinline void kernelfma_n1_unaligned_ss(
     if (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_loadu_x2_ps(ws_ptr, s0, s1);
         _mm256_loadu_x2_ps(wc_ptr, c0, c1);
-        _mm256_loadu_x2_ps(src_ptr, y0, y1);
+        _mm256_loadu_x2_ps(y_ptr, y0, y1);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
         _mm256_kahanfma_ps(x, y1, s1, c1);
@@ -119,7 +117,7 @@ __forceinline void kernelfma_n1_unaligned_ss(
         _mm256_storeu_x2_ps(ws_ptr, s0, s1);
         _mm256_storeu_x2_ps(wc_ptr, c0, c1);
 
-        src_ptr += AVX2_FLOAT_STRIDE * 2;
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
         ws_ptr += AVX2_FLOAT_STRIDE * 2;
         wc_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE * 2;
@@ -127,14 +125,14 @@ __forceinline void kernelfma_n1_unaligned_ss(
     if (r >= AVX2_FLOAT_STRIDE) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y0);
+        _mm256_loadu_x1_ps(y_ptr, y0);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
 
         _mm256_storeu_x1_ps(ws_ptr, s0);
         _mm256_storeu_x1_ps(wc_ptr, c0);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE;
         wc_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE;
@@ -142,7 +140,7 @@ __forceinline void kernelfma_n1_unaligned_ss(
     if (r > 0) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y0);
+        _mm256_loadu_x1_ps(y_ptr, y0);
 
         _mm256_kahanfma_ps(x, y0, s0, c0);
 
@@ -164,13 +162,12 @@ __forceinline void kernelfma_n2_aligned_ss(
     const __m256 x = _mm256_set2_ps(x_ptr[0], x_ptr[1]);
     __m256 s0, s1, s2, s3, c0, c1, c2, c3, y01, y23;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_load_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_load_x4_ps(wc_ptr, c0, c1, c2, c3);
-        _mm256_loadu_x2_ps(src_ptr, y01, y23);
+        _mm256_loadu_x2_ps(y_ptr, y01, y23);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
@@ -180,7 +177,7 @@ __forceinline void kernelfma_n2_aligned_ss(
         _mm256_store_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_store_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-        src_ptr += AVX2_FLOAT_STRIDE * 2;
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
         ws_ptr += AVX2_FLOAT_STRIDE * 4;
         wc_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 2;
@@ -188,7 +185,7 @@ __forceinline void kernelfma_n2_aligned_ss(
     if (r >= AVX2_FLOAT_STRIDE) {
         _mm256_load_x2_ps(ws_ptr, s0, s1);
         _mm256_load_x2_ps(wc_ptr, c0, c1);
-        _mm256_loadu_x1_ps(src_ptr, y01);
+        _mm256_loadu_x1_ps(y_ptr, y01);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
@@ -196,7 +193,7 @@ __forceinline void kernelfma_n2_aligned_ss(
         _mm256_store_x2_ps(ws_ptr, s0, s1);
         _mm256_store_x2_ps(wc_ptr, c0, c1);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE * 2;
         wc_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE;
@@ -204,7 +201,7 @@ __forceinline void kernelfma_n2_aligned_ss(
     if (r >= AVX2_FLOAT_STRIDE / 2) {
         _mm256_load_x1_ps(ws_ptr, s0);
         _mm256_load_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y01);
+        _mm256_loadu_x1_ps(y_ptr, y01);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
 
@@ -226,13 +223,12 @@ __forceinline void kernelfma_n2_unaligned_ss(
     const __m256 x = _mm256_set2_ps(x_ptr[0], x_ptr[1]);
     __m256 s0, s1, s2, s3, c0, c1, c2, c3, y01, y23;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE * 2) {
         _mm256_loadu_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_loadu_x4_ps(wc_ptr, c0, c1, c2, c3);
-        _mm256_loadu_x2_ps(src_ptr, y01, y23);
+        _mm256_loadu_x2_ps(y_ptr, y01, y23);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
@@ -242,7 +238,7 @@ __forceinline void kernelfma_n2_unaligned_ss(
         _mm256_storeu_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_storeu_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-        src_ptr += AVX2_FLOAT_STRIDE * 2;
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
         ws_ptr += AVX2_FLOAT_STRIDE * 4;
         wc_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE * 2;
@@ -250,7 +246,7 @@ __forceinline void kernelfma_n2_unaligned_ss(
     if (r >= AVX2_FLOAT_STRIDE) {
         _mm256_loadu_x2_ps(ws_ptr, s0, s1);
         _mm256_loadu_x2_ps(wc_ptr, c0, c1);
-        _mm256_loadu_x1_ps(src_ptr, y01);
+        _mm256_loadu_x1_ps(y_ptr, y01);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm1_ps(y01), s1, c1);
@@ -258,7 +254,7 @@ __forceinline void kernelfma_n2_unaligned_ss(
         _mm256_storeu_x2_ps(ws_ptr, s0, s1);
         _mm256_storeu_x2_ps(wc_ptr, c0, c1);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE * 2;
         wc_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE;
@@ -266,14 +262,14 @@ __forceinline void kernelfma_n2_unaligned_ss(
     if (r >= AVX2_FLOAT_STRIDE / 2) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y01);
+        _mm256_loadu_x1_ps(y_ptr, y01);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
 
         _mm256_storeu_x1_ps(ws_ptr, s0);
         _mm256_storeu_x1_ps(wc_ptr, c0);
 
-        src_ptr += AVX2_FLOAT_STRIDE / 2;
+        y_ptr += AVX2_FLOAT_STRIDE / 2;
         ws_ptr += AVX2_FLOAT_STRIDE;
         wc_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE / 2;
@@ -281,7 +277,7 @@ __forceinline void kernelfma_n2_unaligned_ss(
     if (r > 0) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y01);
+        _mm256_loadu_x1_ps(y_ptr, y01);
 
         _mm256_kahanfma_ps(x, _mm256_dilate2_imm0_ps(y01), s0, c0);
 
@@ -305,16 +301,15 @@ __forceinline void kernelfma_n3_aligned_ss(
     const __m256i __perm_y2 = _mm256_setr_epi32(5, 5, 6, 6, 6, 7, 7, 7);
 
     const __m256x3 x = _mm256_set3_ps(x_ptr[0], x_ptr[1], x_ptr[2]);
-    
+
     __m256 s0, s1, s2, c0, c1, c2, y;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE) {
         _mm256_load_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_load_x3_ps(wc_ptr, c0, c1, c2);
-        _mm256_load_x1_ps(src_ptr, y);
+        _mm256_load_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
         _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
@@ -323,7 +318,7 @@ __forceinline void kernelfma_n3_aligned_ss(
         _mm256_store_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_store_x3_ps(wc_ptr, c0, c1, c2);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE * 3;
         wc_ptr += AVX2_FLOAT_STRIDE * 3;
         r -= AVX2_FLOAT_STRIDE;
@@ -345,16 +340,15 @@ __forceinline void kernelfma_n3_unaligned_ss(
     const __m256i __perm_y2 = _mm256_setr_epi32(5, 5, 6, 6, 6, 7, 7, 7);
 
     const __m256x3 x = _mm256_set3_ps(x_ptr[0], x_ptr[1], x_ptr[2]);
-    
+
     __m256 s0, s1, s2, c0, c1, c2, y;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE) {
         _mm256_loadu_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_loadu_x3_ps(wc_ptr, c0, c1, c2);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
         _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
@@ -363,7 +357,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
         _mm256_storeu_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_storeu_x3_ps(wc_ptr, c0, c1, c2);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE * 3;
         wc_ptr += AVX2_FLOAT_STRIDE * 3;
         r -= AVX2_FLOAT_STRIDE;
@@ -371,7 +365,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
     if (r >= 6) { // 3 * r >= AVX2_FLOAT_STRIDE * 2
         _mm256_loadu_x3_ps(ws_ptr, s0, s1, s2);
         _mm256_loadu_x3_ps(wc_ptr, c0, c1, c2);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
         _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
@@ -383,7 +377,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
     else if (r >= 3) { // 3 * r >= AVX2_FLOAT_STRIDE
         _mm256_loadu_x2_ps(ws_ptr, s0, s1);
         _mm256_loadu_x2_ps(wc_ptr, c0, c1);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
         _mm256_kahanfma_ps(x.imm1, _mm256_permutevar8x32_ps(y, __perm_y1), s1, c1);
@@ -394,7 +388,7 @@ __forceinline void kernelfma_n3_unaligned_ss(
     else if (r >= 1) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x.imm0, _mm256_permutevar8x32_ps(y, __perm_y0), s0, c0);
 
@@ -416,13 +410,12 @@ __forceinline void kernelfma_n4_aligned_ss(
     const __m256 x = _mm256_set4_ps(x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[3]);
     __m256 s0, s1, s2, s3, c0, c1, c2, c3, y;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE) {
         _mm256_load_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_load_x4_ps(wc_ptr, c0, c1, c2, c3);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
@@ -432,7 +425,7 @@ __forceinline void kernelfma_n4_aligned_ss(
         _mm256_store_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_store_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE * 4;
         wc_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE;
@@ -440,7 +433,7 @@ __forceinline void kernelfma_n4_aligned_ss(
     if (r >= AVX2_FLOAT_STRIDE / 2) {
         _mm256_load_x2_ps(ws_ptr, s0, s1);
         _mm256_load_x2_ps(wc_ptr, c0, c1);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
@@ -448,7 +441,7 @@ __forceinline void kernelfma_n4_aligned_ss(
         _mm256_store_x2_ps(ws_ptr, s0, s1);
         _mm256_store_x2_ps(wc_ptr, c0, c1);
 
-        src_ptr += AVX2_FLOAT_STRIDE / 2;
+        y_ptr += AVX2_FLOAT_STRIDE / 2;
         ws_ptr += AVX2_FLOAT_STRIDE * 2;
         wc_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE / 2;
@@ -456,7 +449,7 @@ __forceinline void kernelfma_n4_aligned_ss(
     if (r >= AVX2_FLOAT_STRIDE / 4) {
         _mm256_load_x1_ps(ws_ptr, s0);
         _mm256_load_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
 
@@ -478,13 +471,12 @@ __forceinline void kernelfma_n4_unaligned_ss(
     const __m256 x = _mm256_set4_ps(x_ptr[0], x_ptr[1], x_ptr[2], x_ptr[3]);
     __m256 s0, s1, s2, s3, c0, c1, c2, c3, y;
 
-    unsigned r = oc;
-    const float* src_ptr = y_ptr;
+    uint r = oc;
 
     while (r >= AVX2_FLOAT_STRIDE) {
         _mm256_loadu_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_loadu_x4_ps(wc_ptr, c0, c1, c2, c3);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
@@ -494,7 +486,7 @@ __forceinline void kernelfma_n4_unaligned_ss(
         _mm256_storeu_x4_ps(ws_ptr, s0, s1, s2, s3);
         _mm256_storeu_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-        src_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
         ws_ptr += AVX2_FLOAT_STRIDE * 4;
         wc_ptr += AVX2_FLOAT_STRIDE * 4;
         r -= AVX2_FLOAT_STRIDE;
@@ -502,7 +494,7 @@ __forceinline void kernelfma_n4_unaligned_ss(
     if (r >= AVX2_FLOAT_STRIDE / 2) {
         _mm256_loadu_x2_ps(ws_ptr, s0, s1);
         _mm256_loadu_x2_ps(wc_ptr, c0, c1);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm1_ps(y), s1, c1);
@@ -510,7 +502,7 @@ __forceinline void kernelfma_n4_unaligned_ss(
         _mm256_storeu_x2_ps(ws_ptr, s0, s1);
         _mm256_storeu_x2_ps(wc_ptr, c0, c1);
 
-        src_ptr += AVX2_FLOAT_STRIDE / 2;
+        y_ptr += AVX2_FLOAT_STRIDE / 2;
         ws_ptr += AVX2_FLOAT_STRIDE * 2;
         wc_ptr += AVX2_FLOAT_STRIDE * 2;
         r -= AVX2_FLOAT_STRIDE / 2;
@@ -518,14 +510,14 @@ __forceinline void kernelfma_n4_unaligned_ss(
     if (r >= AVX2_FLOAT_STRIDE / 4) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
 
         _mm256_storeu_x1_ps(ws_ptr, s0);
         _mm256_storeu_x1_ps(wc_ptr, c0);
 
-        src_ptr += AVX2_FLOAT_STRIDE / 4;
+        y_ptr += AVX2_FLOAT_STRIDE / 4;
         ws_ptr += AVX2_FLOAT_STRIDE;
         wc_ptr += AVX2_FLOAT_STRIDE;
         r -= AVX2_FLOAT_STRIDE / 4;
@@ -533,7 +525,7 @@ __forceinline void kernelfma_n4_unaligned_ss(
     if (r > 0) {
         _mm256_loadu_x1_ps(ws_ptr, s0);
         _mm256_loadu_x1_ps(wc_ptr, c0);
-        _mm256_loadu_x1_ps(src_ptr, y);
+        _mm256_loadu_x1_ps(y_ptr, y);
 
         _mm256_kahanfma_ps(x, _mm256_dilate4_imm0_ps(y), s0, c0);
 
@@ -557,13 +549,13 @@ __forceinline void kernelfma_n32x_ss(
         const __m256 y = _mm256_set1_ps(y_ptr[i]);
         __m256 s0, s1, s2, s3, c0, c1, c2, c3, x0, x1, x2, x3;
 
-        unsigned r = ic;
-        const float* src_ptr = x_ptr;
+        uint r = ic;
+        const float* xc_ptr = x_ptr;
 
         while (r >= AVX2_FLOAT_STRIDE * 4) {
             _mm256_load_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_load_x4_ps(wc_ptr, c0, c1, c2, c3);
-            _mm256_load_x4_ps(src_ptr, x0, x1, x2, x3);
+            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -573,7 +565,7 @@ __forceinline void kernelfma_n32x_ss(
             _mm256_store_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_store_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-            src_ptr += AVX2_FLOAT_STRIDE * 4;
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
             ws_ptr += AVX2_FLOAT_STRIDE * 4;
             wc_ptr += AVX2_FLOAT_STRIDE * 4;
             r -= AVX2_FLOAT_STRIDE * 4;
@@ -596,13 +588,13 @@ __forceinline void kernelfma_aligned_ss(
         const __m256 y = _mm256_set1_ps(y_ptr[i]);
         __m256 s0, s1, s2, s3, c0, c1, c2, c3, x0, x1, x2, x3;
 
-        unsigned r = ic;
-        const float* src_ptr = x_ptr;
+        uint r = ic;
+        const float* xc_ptr = x_ptr;
 
         while (r >= AVX2_FLOAT_STRIDE * 4) {
             _mm256_load_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_load_x4_ps(wc_ptr, c0, c1, c2, c3);
-            _mm256_load_x4_ps(src_ptr, x0, x1, x2, x3);
+            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -612,7 +604,7 @@ __forceinline void kernelfma_aligned_ss(
             _mm256_store_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_store_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-            src_ptr += AVX2_FLOAT_STRIDE * 4;
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
             ws_ptr += AVX2_FLOAT_STRIDE * 4;
             wc_ptr += AVX2_FLOAT_STRIDE * 4;
             r -= AVX2_FLOAT_STRIDE * 4;
@@ -620,7 +612,7 @@ __forceinline void kernelfma_aligned_ss(
         if (r >= AVX2_FLOAT_STRIDE * 3) {
             _mm256_load_x3_ps(ws_ptr, s0, s1, s2);
             _mm256_load_x3_ps(wc_ptr, c0, c1, c2);
-            _mm256_load_x3_ps(src_ptr, x0, x1, x2);
+            _mm256_load_x3_ps(xc_ptr, x0, x1, x2);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -632,7 +624,7 @@ __forceinline void kernelfma_aligned_ss(
         else if (r >= AVX2_FLOAT_STRIDE * 2) {
             _mm256_load_x2_ps(ws_ptr, s0, s1);
             _mm256_load_x2_ps(wc_ptr, c0, c1);
-            _mm256_load_x2_ps(src_ptr, x0, x1);
+            _mm256_load_x2_ps(xc_ptr, x0, x1);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -643,7 +635,7 @@ __forceinline void kernelfma_aligned_ss(
         else if (r >= AVX2_FLOAT_STRIDE) {
             _mm256_load_x1_ps(ws_ptr, s0);
             _mm256_load_x1_ps(wc_ptr, c0);
-            _mm256_load_x1_ps(src_ptr, x0);
+            _mm256_load_x1_ps(xc_ptr, x0);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
 
@@ -670,13 +662,13 @@ __forceinline void kernelfma_unaligned_ss(
         const __m256 y = _mm256_set1_ps(y_ptr[i]);
         __m256 s0, s1, s2, s3, c0, c1, c2, c3, x0, x1, x2, x3;
 
-        unsigned r = ic;
-        const float* src_ptr = x_ptr;
+        uint r = ic;
+        const float* xc_ptr = x_ptr;
 
         while (r >= AVX2_FLOAT_STRIDE * 4) {
             _mm256_loadu_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_loadu_x4_ps(wc_ptr, c0, c1, c2, c3);
-            _mm256_loadu_x4_ps(src_ptr, x0, x1, x2, x3);
+            _mm256_loadu_x4_ps(xc_ptr, x0, x1, x2, x3);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -686,7 +678,7 @@ __forceinline void kernelfma_unaligned_ss(
             _mm256_storeu_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_storeu_x4_ps(wc_ptr, c0, c1, c2, c3);
 
-            src_ptr += AVX2_FLOAT_STRIDE * 4;
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
             ws_ptr += AVX2_FLOAT_STRIDE * 4;
             wc_ptr += AVX2_FLOAT_STRIDE * 4;
             r -= AVX2_FLOAT_STRIDE * 4;
@@ -694,7 +686,7 @@ __forceinline void kernelfma_unaligned_ss(
         if (r >= AVX2_FLOAT_STRIDE * 3) {
             _mm256_loadu_x4_ps(ws_ptr, s0, s1, s2, s3);
             _mm256_loadu_x4_ps(wc_ptr, c0, c1, c2, c3);
-            _mm256_loadu_x4_ps(src_ptr, x0, x1, x2, x3);
+            _mm256_loadu_x4_ps(xc_ptr, x0, x1, x2, x3);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -707,7 +699,7 @@ __forceinline void kernelfma_unaligned_ss(
         else if (r >= AVX2_FLOAT_STRIDE * 2) {
             _mm256_loadu_x3_ps(ws_ptr, s0, s1, s2);
             _mm256_loadu_x3_ps(wc_ptr, c0, c1, c2);
-            _mm256_loadu_x3_ps(src_ptr, x0, x1, x2);
+            _mm256_loadu_x3_ps(xc_ptr, x0, x1, x2);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -719,7 +711,7 @@ __forceinline void kernelfma_unaligned_ss(
         else if (r >= AVX2_FLOAT_STRIDE) {
             _mm256_loadu_x2_ps(ws_ptr, s0, s1);
             _mm256_loadu_x2_ps(wc_ptr, c0, c1);
-            _mm256_loadu_x2_ps(src_ptr, x0, x1);
+            _mm256_loadu_x2_ps(xc_ptr, x0, x1);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
             _mm256_kahanfma_ps(x1, y, s1, c1);
@@ -730,7 +722,7 @@ __forceinline void kernelfma_unaligned_ss(
         else {
             _mm256_loadu_x1_ps(ws_ptr, s0);
             _mm256_loadu_x1_ps(wc_ptr, c0);
-            _mm256_loadu_x1_ps(src_ptr, x0);
+            _mm256_loadu_x1_ps(xc_ptr, x0);
 
             _mm256_kahanfma_ps(x0, y, s0, c0);
 

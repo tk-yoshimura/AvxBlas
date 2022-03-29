@@ -10,7 +10,7 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline double dotmul_n16x_d(const unsigned int n, indoubles x_ptr, indoubles y_ptr) {
+__forceinline double dotmul_n16x_d(const uint n, indoubles x_ptr, indoubles y_ptr) {
 #ifdef _DEBUG
     if (n <= 0 || (n % (AVX2_DOUBLE_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -20,7 +20,7 @@ __forceinline double dotmul_n16x_d(const unsigned int n, indoubles x_ptr, indoub
     __m256d x0, x1, x2, x3, y0, y1, y2, y3;
     __m256d s0, s1, s2, s3;
 
-    unsigned int r = n;
+    uint r = n;
 
     {
         _mm256_load_x4_pd(x_ptr, x0, x1, x2, x3);
@@ -54,7 +54,7 @@ __forceinline double dotmul_n16x_d(const unsigned int n, indoubles x_ptr, indoub
     return ret;
 }
 
-__forceinline double dotmul_aligned_d(const unsigned int n, indoubles x_ptr, indoubles y_ptr) {
+__forceinline double dotmul_aligned_d(const uint n, indoubles x_ptr, indoubles y_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_DOUBLE_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -64,7 +64,7 @@ __forceinline double dotmul_aligned_d(const unsigned int n, indoubles x_ptr, ind
     __m256d x0, x1, x2, x3, y0, y1, y2, y3;
     __m256d s0 = _mm256_setzero_pd(), s1 = _mm256_setzero_pd(), s2 = _mm256_setzero_pd(), s3 = _mm256_setzero_pd();
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         _mm256_load_x4_pd(x_ptr, x0, x1, x2, x3);
@@ -106,7 +106,7 @@ __forceinline double dotmul_aligned_d(const unsigned int n, indoubles x_ptr, ind
     return ret;
 }
 
-__forceinline double dotmul_unaligned_d(const unsigned int n, indoubles x_ptr, indoubles y_ptr, const __m256i mask) {
+__forceinline double dotmul_unaligned_d(const uint n, indoubles x_ptr, indoubles y_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_DOUBLE_REMAIN_MASK) == 0) {
         throw std::exception();
@@ -116,7 +116,7 @@ __forceinline double dotmul_unaligned_d(const unsigned int n, indoubles x_ptr, i
     __m256d x0, x1, x2, x3, y0, y1, y2, y3;
     __m256d s0 = _mm256_setzero_pd(), s1 = _mm256_setzero_pd(), s2 = _mm256_setzero_pd(), s3 = _mm256_setzero_pd();
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_DOUBLE_STRIDE * 4) {
         _mm256_loadu_x4_pd(x_ptr, x0, x1, x2, x3);

@@ -10,7 +10,7 @@
 #include <exception>
 #endif // _DEBUG
 
-__forceinline float dotmul_n32x_s(const unsigned int n, infloats x_ptr, infloats y_ptr) {
+__forceinline float dotmul_n32x_s(const uint n, infloats x_ptr, infloats y_ptr) {
 #ifdef _DEBUG
     if (n <= 0 || (n % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -20,7 +20,7 @@ __forceinline float dotmul_n32x_s(const unsigned int n, infloats x_ptr, infloats
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 s0, s1, s2, s3;
 
-    unsigned int r = n;
+    uint r = n;
 
     {
         _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
@@ -54,7 +54,7 @@ __forceinline float dotmul_n32x_s(const unsigned int n, infloats x_ptr, infloats
     return ret;
 }
 
-__forceinline float dotmul_aligned_s(const unsigned int n, infloats x_ptr, infloats y_ptr) {
+__forceinline float dotmul_aligned_s(const uint n, infloats x_ptr, infloats y_ptr) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         throw std::exception();
@@ -64,7 +64,7 @@ __forceinline float dotmul_aligned_s(const unsigned int n, infloats x_ptr, inflo
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 s0 = _mm256_setzero_ps(), s1 = _mm256_setzero_ps(), s2 = _mm256_setzero_ps(), s3 = _mm256_setzero_ps();
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
@@ -106,7 +106,7 @@ __forceinline float dotmul_aligned_s(const unsigned int n, infloats x_ptr, inflo
     return ret;
 }
 
-__forceinline float dotmul_unaligned_s(const unsigned int n, infloats x_ptr, infloats y_ptr, const __m256i mask) {
+__forceinline float dotmul_unaligned_s(const uint n, infloats x_ptr, infloats y_ptr, const __m256i mask) {
 #ifdef _DEBUG
     if ((n & AVX2_FLOAT_REMAIN_MASK) == 0) {
         throw std::exception();
@@ -116,7 +116,7 @@ __forceinline float dotmul_unaligned_s(const unsigned int n, infloats x_ptr, inf
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 s0 = _mm256_setzero_ps(), s1 = _mm256_setzero_ps(), s2 = _mm256_setzero_ps(), s3 = _mm256_setzero_ps();
 
-    unsigned int r = n;
+    uint r = n;
 
     while (r >= AVX2_FLOAT_STRIDE * 4) {
         _mm256_loadu_x4_ps(x_ptr, x0, x1, x2, x3);

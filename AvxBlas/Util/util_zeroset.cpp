@@ -5,8 +5,8 @@
 
 #pragma unmanaged
 
-void zeroset_s(const unsigned int n, outfloats y_ptr) {
-    unsigned int r = n;
+void zeroset_s(const uint n, outfloats y_ptr) {
+    uint r = n;
 
     while (r > 0) {
         if (((size_t)y_ptr % AVX2_ALIGNMENT) == 0) {
@@ -45,8 +45,8 @@ void zeroset_s(const unsigned int n, outfloats y_ptr) {
     }
 }
 
-void zeroset_d(const unsigned int n, outdoubles y_ptr) {
-    unsigned int r = n;
+void zeroset_d(const uint n, outdoubles y_ptr) {
+    uint r = n;
 
     while (r > 0) {
         if (((size_t)y_ptr % AVX2_ALIGNMENT) == 0) {

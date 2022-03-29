@@ -5,8 +5,8 @@
 
 #pragma unmanaged
 
-void copy_s(const unsigned int n, infloats x_ptr, outfloats y_ptr) {
-    unsigned int r = n;
+void copy_s(const uint n, infloats x_ptr, outfloats y_ptr) {
+    uint r = n;
 
     while (r > 0) {
         if (((size_t)y_ptr % AVX2_ALIGNMENT) == 0) {
@@ -82,8 +82,8 @@ void copy_s(const unsigned int n, infloats x_ptr, outfloats y_ptr) {
     }
 }
 
-void copy_d(const unsigned int n, indoubles x_ptr, outdoubles y_ptr) {
-    unsigned int r = n;
+void copy_d(const uint n, indoubles x_ptr, outdoubles y_ptr) {
+    uint r = n;
 
     while (r > 0) {
         if (((size_t)y_ptr % AVX2_ALIGNMENT) == 0) {
