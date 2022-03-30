@@ -18,32 +18,32 @@ namespace AvxBlasTest.Connection1DTest {
                         }
                         uint ow = iw - kw + 1;
 
-                        foreach (uint ic in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
-                            foreach (uint oc in new int[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
-                                float[] xval = (new float[ic * iw * n]).Select((_, idx) => (idx + 1) * 1e-3f).ToArray();
-                                float[] wval = (new float[ic * oc * kw]).Select((_, idx) => (idx + 1) * 1e-3f).Reverse().ToArray();
+                        foreach ((uint ic, uint oc) in new (uint, uint)[] { (1, 1), (2, 3), (3, 2), (4, 5), (5, 4), (8, 10), (10, 8),
+                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (15, 64), (64, 15) }) {
 
-                                Map1D x = new((int)ic, (int)iw, (int)n, xval);
-                                Filter1D w = new((int)ic, (int)kw, (int)oc, wval);
+                            float[] xval = (new float[ic * iw * n]).Select((_, idx) => (idx + 1) * 1e-3f).ToArray();
+                            float[] wval = (new float[ic * oc * kw]).Select((_, idx) => (idx + 1) * 1e-3f).Reverse().ToArray();
 
-                                Map1D y = Reference(x, w, (int)kw);
+                            Map1D x = new((int)ic, (int)iw, (int)n, xval);
+                            Filter1D w = new((int)ic, (int)kw, (int)oc, wval);
 
-                                Array<float> x_tensor = xval;
-                                Array<float> w_tensor = wval;
-                                Array<float> y_tensor = new(oc * ow * n, zeroset: false);
+                            Map1D y = Reference(x, w, (int)kw);
 
-                                Convolution1D.Forward(n, ic, oc, iw, kw, PadMode.None, x_tensor, w_tensor, y_tensor);
+                            Array<float> x_tensor = xval;
+                            Array<float> w_tensor = wval;
+                            Array<float> y_tensor = new(oc * ow * n, zeroset: false);
 
-                                float[] y_expect = y.ToFloatArray();
-                                float[] y_actual = y_tensor;
+                            Convolution1D.Forward(n, ic, oc, iw, kw, PadMode.None, x_tensor, w_tensor, y_tensor);
 
-                                CollectionAssert.AreEqual(xval, (float[])x_tensor);
-                                CollectionAssert.AreEqual(wval, (float[])w_tensor);
+                            float[] y_expect = y.ToFloatArray();
+                            float[] y_actual = y_tensor;
 
-                                AssertError.Tolerance(y_expect, y_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{kw},{n}");
+                            CollectionAssert.AreEqual(xval, (float[])x_tensor);
+                            CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                                Console.WriteLine($"OK: {ic},{oc},{iw},{kw},{n}");
-                            }
+                            AssertError.Tolerance(y_expect, y_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{kw},{n}");
+
+                            Console.WriteLine($"OK: {ic},{oc},{iw},{kw},{n}");
                         }
                     }
                 }
