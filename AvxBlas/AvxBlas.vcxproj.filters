@@ -284,6 +284,9 @@
     <ClCompile Include="Convolution3D\conv3d_forward_s.cpp">
       <Filter>Source\Convolution3D</Filter>
     </ClCompile>
+    <ClCompile Include="Pool1D\pool1d_maxpool_s.cpp">
+      <Filter>Source\Pool1D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

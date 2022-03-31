@@ -18,7 +18,7 @@ int conv2d_forward_padnone_n32x_s(
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -138,7 +138,7 @@ int conv2d_forward_padzero_n32x_s(
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -258,7 +258,7 @@ int conv2d_forward_padedge_n32x_s(
     infloats x_ptr, infloats w_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if ((ic & AVX2_FLOAT_REMAIN_MASK) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
+    if ((ic % (AVX2_FLOAT_STRIDE * 4)) != 0 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)w_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
