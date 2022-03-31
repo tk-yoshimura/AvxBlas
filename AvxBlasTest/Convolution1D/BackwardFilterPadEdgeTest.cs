@@ -16,7 +16,7 @@ namespace AvxBlasTest.Connection1DTest {
                         uint ow = iw;
 
                         foreach ((uint ic, uint oc) in new (uint, uint)[] { (1, 1), (2, 3), (3, 2), (4, 5), (5, 4), (8, 10), (10, 8),
-                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (15, 64), (64, 15) }) {
+                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (43, 48), (48, 43), (15, 64), (64, 15) }) {
 
                             float[] xval = (new float[iw * ic * n]).Select((_, idx) => idx * 1e-3f).ToArray();
                             float[] gyval = (new float[ow * oc * n]).Select((_, idx) => idx * 1e-3f).Reverse().ToArray();
@@ -128,7 +128,7 @@ namespace AvxBlasTest.Connection1DTest {
 
             float[] gw_actual = gw.ToFloatArray();
 
-            AssertError.Tolerance(gw_expect, gw_actual, 1e-7f, 1e-5f, $"mismatch value {inchannels},{outchannels},{kwidth},{inwidth}");
+            AssertError.Tolerance(gw_expect, gw_actual, 1e-10f, 1e-5f);
         }
     }
 }

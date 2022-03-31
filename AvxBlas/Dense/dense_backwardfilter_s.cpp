@@ -308,6 +308,8 @@ void AvxBlas::Dense::BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<float>
     Util::CheckProdOverflow(n, oc);
     Util::CheckProdOverflow(ic, oc);
 
+    Util::CheckDuplicateArray(x, dy, dw);
+
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
     const float* y_ptr = (const float*)(dy->Ptr.ToPointer());
     float* w_ptr = (float*)(dw->Ptr.ToPointer());

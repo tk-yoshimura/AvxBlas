@@ -11,12 +11,12 @@ namespace AvxBlasTest.Connection2DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 2), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
+                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
                     foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 3), (3, 1), (3, 3), (3, 5), (5, 3), (7, 7) }) {
                         uint ow = iw, oh = ih;
 
                         foreach ((uint ic, uint oc) in new (uint, uint)[] { (1, 1), (2, 3), (3, 2), (4, 5), (5, 4), (8, 10), (10, 8),
-                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (15, 64), (64, 15) }) {
+                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (43, 48), (48, 43), (15, 64), (64, 15) }) {
 
                             float[] yval = (new float[ow * oh * oc * n]).Select((_, idx) => idx * 1e-3f).ToArray();
                             float[] wval = (new float[kw * kh * ic * oc]).Select((_, idx) => (idx + 1) * 1e-3f).Reverse().ToArray();
@@ -38,7 +38,7 @@ namespace AvxBlasTest.Connection2DTest {
                             CollectionAssert.AreEqual(yval, (float[])y_tensor);
                             CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                            AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
+                            AssertError.Tolerance(x_expect, x_actual, 1e-10f, 1e-5f, ref max_err, $"NG: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
 
                             Console.WriteLine($"OK: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
                         }
@@ -51,9 +51,9 @@ namespace AvxBlasTest.Connection2DTest {
 
         public static Map2D Reference(Map2D y, Filter2D w, int iw, int kw, int ih, int kh) {
             int inchannels = w.InChannels, outchannels = w.OutChannels, batch = y.Batch;
-            int outw = iw, outh = ih;
+            int ow = iw, oh = ih;
 
-            if (y.Width != outw || y.Height != outh) {
+            if (y.Width != ow || y.Height != oh) {
                 throw new ArgumentException("mismatch shape");
             }
 
@@ -62,10 +62,10 @@ namespace AvxBlasTest.Connection2DTest {
             for (int th = 0; th < batch; th++) {
                 for (int ky = 0; ky < kh; ky++) {
                     for (int kx = 0; kx < kw; kx++) {
-                        for (int oy = 0; oy < outh; oy++) {
+                        for (int oy = 0; oy < oh; oy++) {
                             int iy = Math.Min(ih - 1, Math.Max(0, ky + oy - kh / 2));
 
-                            for (int ox = 0; ox < outw; ox++) {
+                            for (int ox = 0; ox < ow; ox++) {
                                 int ix = Math.Min(iw - 1, Math.Max(0, kx + ox - kw / 2));
 
                                 for (int outch = 0; outch < outchannels; outch++) {
@@ -181,7 +181,7 @@ namespace AvxBlasTest.Connection2DTest {
 
             float[] x_actual = x.ToFloatArray();
 
-            AssertError.Tolerance(x_expect, x_actual, 1e-7f, 1e-5f, $"mismatch value {inchannels},{kwidth},{inwidth},{batch}");
+            AssertError.Tolerance(x_expect, x_actual, 1e-10f, 1e-5f);
         }
     }
 }

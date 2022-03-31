@@ -11,7 +11,7 @@ namespace AvxBlasTest.Connection2DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 2), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
+                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
                     foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 1), (1, 3), (3, 1), (3, 3), (3, 5), (5, 3), (7, 7) }) {
                         if (iw < kw || ih < kh) {
                             continue;
@@ -19,7 +19,7 @@ namespace AvxBlasTest.Connection2DTest {
                         uint ow = iw - kw + 1, oh = ih - kh + 1;
 
                         foreach ((uint ic, uint oc) in new (uint, uint)[] { (1, 1), (2, 3), (3, 2), (4, 5), (5, 4), (8, 10), (10, 8),
-                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (15, 64), (64, 15) }) {
+                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (43, 48), (48, 43), (15, 64), (64, 15) }) {
 
                             float[] xval = (new float[ic * iw * ih * n]).Select((_, idx) => (idx + 1) * 1e-3f).ToArray();
                             float[] wval = (new float[ic * oc * kw * kh]).Select((_, idx) => (idx + 1) * 1e-3f).Reverse().ToArray();
@@ -41,7 +41,7 @@ namespace AvxBlasTest.Connection2DTest {
                             CollectionAssert.AreEqual(xval, (float[])x_tensor);
                             CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                            AssertError.Tolerance(y_expect, y_actual, 1e-8f, 1e-6f, ref max_err, $"NG: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
+                            AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f, ref max_err, $"NG: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
 
                             Console.WriteLine($"OK: {ic},{oc},{iw},{ih},{kw},{kh},{n}");
                         }
@@ -162,7 +162,7 @@ namespace AvxBlasTest.Connection2DTest {
 
             float[] y_actual = y.ToFloatArray();
 
-            AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, $"mismatch value {inchannels},{outchannels},{kwidth},{inwidth},{batch}");
+            AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f);
         }
     }
 }

@@ -442,6 +442,8 @@ void AvxBlas::Convolution1D::BackwardFilter(
     Util::CheckLength(n * oc * ow, dy);
     Util::CheckLength(ic * oc * kw, dw);
 
+    Util::CheckDuplicateArray(x, dy, dw);
+
     if (kw == 1) {
         Dense::BackwardFilter(n * iw, ic, oc, x, dy, dw);
         return;

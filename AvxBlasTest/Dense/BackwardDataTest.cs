@@ -34,7 +34,7 @@ namespace AvxBlasTest.DenseTest {
                         CollectionAssert.AreEqual(yval, (float[])y_tensor);
                         CollectionAssert.AreEqual(wval, (float[])w_tensor);
 
-                        AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG {ic},{oc},{n}");
+                        AssertError.Tolerance(x_expect, x_actual, 1e-10f, 1e-5f, ref max_err, $"NG {ic},{oc},{n}");
 
                         Console.WriteLine($"OK: {ic},{oc},{n}");
                     }
@@ -72,7 +72,7 @@ namespace AvxBlasTest.DenseTest {
                         CollectionAssert.AreEqual(yval, (double[])y_tensor);
                         CollectionAssert.AreEqual(wval, (double[])w_tensor);
 
-                        AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, ref max_err, $"NG {ic},{oc},{n}");
+                        AssertError.Tolerance(x_expect, x_actual, 1e-10f, 1e-5f, ref max_err, $"NG {ic},{oc},{n}");
 
                         Console.WriteLine($"OK: {ic},{oc},{n}");
                     }
@@ -122,7 +122,7 @@ namespace AvxBlasTest.DenseTest {
 
             float[] x_actual = x.ToFloatArray();
 
-            AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f, $"mismatch value {inchannels},{outchannels},{batch}");
+            AssertError.Tolerance(x_expect, x_actual, 1e-8f, 1e-6f);
         }
     }
 }
