@@ -33,6 +33,9 @@ float[] t = new float[] { 6, 8, 10, 12, 14, 5, 7, 9, 11, 0, 0 };
 CollectionAssert.AreEqual(t, (float[])y);
 ```
 
+## Reference Guide
+[Wiki Home](https://github.com/tk-yoshimura/AvxBlas/wiki/Reference-Guide)
+
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
 
