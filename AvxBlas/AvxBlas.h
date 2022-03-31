@@ -72,8 +72,6 @@ namespace AvxBlas {
     };
 
     public ref class Elementwise abstract sealed {
-        static Elementwise();
-
         public:
         static void Copy(UInt32 n, Array<float>^ x, Array<float>^ y);
         static void Copy(UInt32 n, Array<double>^ x, Array<double>^ y);
@@ -86,8 +84,6 @@ namespace AvxBlas {
     };
 
     public ref class Vectorwise abstract sealed {
-        static Vectorwise();
-
         public:
         static void Fill(UInt32 n, UInt32 stride, Array<float>^ v, Array<float>^ y);
         static void Fill(UInt32 n, UInt32 stride, Array<double>^ v, Array<double>^ y);
@@ -97,40 +93,30 @@ namespace AvxBlas {
     };
 
     public ref class Constant abstract sealed {
-        static Constant();
-
         public:
         static void Add(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
         static void Add(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
     };
 
     public ref class Aggregate abstract sealed {
-        static Aggregate();
-
         public:
         static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Transform abstract sealed {
-        static Transform();
-
         public:
         static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Affine abstract sealed {
-        static Affine();
-
         public:
         static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<float>^ a, Array<float>^ b, Array<float>^ y);
         static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<double>^ a, Array<double>^ b, Array<double>^ y);
     };
 
     public ref class Dense abstract sealed {
-        static Dense();
-
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, Array<float>^ x, Array<float>^ w, Array<float>^ y);
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, Array<double>^ x, Array<double>^ w, Array<double>^ y);
@@ -143,8 +129,6 @@ namespace AvxBlas {
     };
 
     public ref class Convolution1D abstract sealed {
-        static Convolution1D();
-
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
                             PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
@@ -163,8 +147,6 @@ namespace AvxBlas {
     };
 
     public ref class Convolution2D abstract sealed {
-        static Convolution2D();
-
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
                             PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
@@ -183,8 +165,6 @@ namespace AvxBlas {
     };
 
     public ref class Convolution3D abstract sealed {
-        static Convolution3D();
-
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 id, UInt32 kw, UInt32 kh, UInt32 kd,
                             PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
@@ -203,8 +183,6 @@ namespace AvxBlas {
     };
 
     public ref class Initialize abstract sealed {
-        static Initialize();
-
         public:
         static void Clear(UInt32 n, float c, Array<float>^ y);
         static void Clear(UInt32 n, double c, Array<double>^ y);
@@ -268,5 +246,7 @@ namespace AvxBlas {
             "Failed to allocate workspace memory.";
         static initonly System::String^ InvalidNativeFuncArgument =
             "The argument of the native function is invalid.";
+        static initonly System::String^ MismatchSizeofElement =
+            "Element size does not match array stride for the specified array type.";
     };
 }

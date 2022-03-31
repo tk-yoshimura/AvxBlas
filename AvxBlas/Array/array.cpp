@@ -11,6 +11,10 @@ using namespace System::Runtime::InteropServices;
 
 generic <typename T>
 static AvxBlas::Array<T>::Array() {
+    if (!AvxBlas::Util::IsSupportedAVX || !AvxBlas::Util::IsSupportedAVX2) {
+        throw gcnew System::PlatformNotSupportedException(AvxBlas::ErrorMessage::AvxNotSupported);
+    }
+
     cli::array<T>^ array = gcnew cli::array<T>(2);
 
     GCHandle pinned_handle = GCHandle::Alloc(array, GCHandleType::Pinned);
@@ -20,7 +24,7 @@ static AvxBlas::Array<T>::Array() {
                        - Marshal::UnsafeAddrOfPinnedArrayElement(array, 0).ToInt64();
 
         if ((unsigned __int64)stride != ElementSize) {
-            throw gcnew NotSupportedException("Element size does not match array stride for the specified array type.");
+            throw gcnew NotSupportedException(AvxBlas::ErrorMessage::MismatchSizeofElement);
         }
     }
     finally {

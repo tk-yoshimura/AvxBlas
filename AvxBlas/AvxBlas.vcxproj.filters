@@ -173,20 +173,8 @@
     <ClCompile Include="Elementwise\ew_add_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
-    <ClCompile Include="Elementwise\ew_cctor.cpp">
-      <Filter>Source\Elementwise</Filter>
-    </ClCompile>
-    <ClCompile Include="Initialize\init_cctor.cpp">
-      <Filter>Source\Initialize</Filter>
-    </ClCompile>
     <ClCompile Include="Initialize\init_clear_s.cpp">
       <Filter>Source\Initialize</Filter>
-    </ClCompile>
-    <ClCompile Include="Vectorwise\vw_cctor.cpp">
-      <Filter>Source\Vectorwise</Filter>
-    </ClCompile>
-    <ClCompile Include="Constant\const_cctor.cpp">
-      <Filter>Source\Constant</Filter>
     </ClCompile>
     <ClCompile Include="Constant\const_add_s.cpp">
       <Filter>Source\Constant</Filter>
@@ -196,9 +184,6 @@
     </ClCompile>
     <ClCompile Include="Util\util_mm_mask.cpp">
       <Filter>Source\Util</Filter>
-    </ClCompile>
-    <ClCompile Include="Aggregate\ag_cctor.cpp">
-      <Filter>Source\Aggregate</Filter>
     </ClCompile>
     <ClCompile Include="Aggregate\ag_sum_s.cpp">
       <Filter>Source\Aggregate</Filter>
@@ -230,26 +215,17 @@
     <ClCompile Include="Elementwise\ew_copy_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
-    <ClCompile Include="Affine\affine_cctor.cpp">
-      <Filter>Source\Affine</Filter>
-    </ClCompile>
     <ClCompile Include="Affine\affine_dotmul_s.cpp">
       <Filter>Source\Affine</Filter>
     </ClCompile>
     <ClCompile Include="Affine\affine_dotmul_d.cpp">
       <Filter>Source\Affine</Filter>
     </ClCompile>
-    <ClCompile Include="Transform\transform_cctor.cpp">
-      <Filter>Source\Transform</Filter>
-    </ClCompile>
     <ClCompile Include="Transform\transform_transpose_s.cpp">
       <Filter>Source\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Transform\transform_transpose_d.cpp">
       <Filter>Source\Transform</Filter>
-    </ClCompile>
-    <ClCompile Include="Dense\dense_cctor.cpp">
-      <Filter>Source\Dense</Filter>
     </ClCompile>
     <ClCompile Include="Dense\dense_forward_s.cpp">
       <Filter>Source\Dense</Filter>
@@ -271,9 +247,6 @@
     </ClCompile>
     <ClCompile Include="Dense\dense_backwardfilter_d.cpp">
       <Filter>Source\Dense</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution1D\conv1d_cctor.cpp">
-      <Filter>Source\Convolution1D</Filter>
     </ClCompile>
     <ClCompile Include="Convolution1D\conv1d_forward_s.cpp">
       <Filter>Source\Convolution1D</Filter>
@@ -302,16 +275,10 @@
     <ClCompile Include="Convolution2D\conv2d_backwardfilter_s.cpp">
       <Filter>Source\Convolution2D</Filter>
     </ClCompile>
-    <ClCompile Include="Convolution2D\conv2d_cctor.cpp">
-      <Filter>Source\Convolution2D</Filter>
-    </ClCompile>
     <ClCompile Include="Convolution3D\conv3d_backwarddata_s.cpp">
       <Filter>Source\Convolution3D</Filter>
     </ClCompile>
     <ClCompile Include="Convolution3D\conv3d_backwardfilter_s.cpp">
-      <Filter>Source\Convolution3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution3D\conv3d_cctor.cpp">
       <Filter>Source\Convolution3D</Filter>
     </ClCompile>
     <ClCompile Include="Convolution3D\conv3d_forward_s.cpp">
