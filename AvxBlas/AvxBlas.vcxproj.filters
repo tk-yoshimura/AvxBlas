@@ -55,6 +55,9 @@
     <Filter Include="Source\Convolution3D">
       <UniqueIdentifier>{d0e3ce70-8b9f-404a-9133-5a75f1b2b4b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Pool1D">
+      <UniqueIdentifier>{798245fa-5b87-44d0-a0b6-2e2a24b65983}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
