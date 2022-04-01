@@ -34,7 +34,7 @@ CollectionAssert.AreEqual(t, (float[])y);
 ```
 
 ## Reference Guide
-[Wiki Home](https://github.com/tk-yoshimura/AvxBlas/wiki/Reference-Guide)
+[Wiki Home](https://github.com/tk-yoshimura/AvxBlas/wiki/Home)
 
 ## Licence
 [MIT](https://github.com/tk-yoshimura/AvxBlas/blob/main/LICENSE)
