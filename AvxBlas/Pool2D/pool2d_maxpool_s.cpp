@@ -10,7 +10,7 @@ using namespace System;
 #pragma unmanaged
 
 int pool2d_maxpool_n32x_s(
-    const uint n, const uint c, 
+    const uint n, const uint c,
     const uint iw, const uint ow, const uint sx, const uint kw,
     const uint ih, const uint oh, const uint sy, const uint kh,
     infloats x_ptr, outfloats y_ptr) {
