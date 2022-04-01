@@ -36,6 +36,9 @@
     <ClCompile Include="Tests\fma_test.cpp">
       <Filter>Source\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Tests\sum_test.cpp">
+      <Filter>Source\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas_sandbox.h">

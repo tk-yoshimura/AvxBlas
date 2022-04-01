@@ -3,6 +3,7 @@
 #include <immintrin.h>
 #include <chrono>
 #include "../AvxBlas/constants.h"
+#include "../AvxBlas/types.h"
 
 extern __m256i _mm256_setmask_ps(const unsigned int n);
 extern __m128i _mm_setmask_ps(const unsigned int n);
@@ -33,8 +34,10 @@ extern float dotmul_stride32_s(
     const unsigned int n,
     const float* __restrict x1_ptr, const float* __restrict x2_ptr);
 
-struct __m256dx2 {
-    __m256d lo, hi;
+int ag_sum_aligned_s_type1(
+    const uint n, const uint samples, const uint stride,
+    infloats x_ptr, outfloats y_ptr);
 
-    constexpr __m256dx2(__m256d lo, __m256d hi) : lo(lo), hi(hi) { }
-};
+int ag_sum_aligned_s_type2(
+    const uint n, const uint samples, const uint stride,
+    infloats x_ptr, outfloats y_ptr);

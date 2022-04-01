@@ -89,6 +89,7 @@
     <ClCompile Include="Tests\add_test.cpp" />
     <ClCompile Include="Tests\dotmul_test.cpp" />
     <ClCompile Include="Tests\fma_test.cpp" />
+    <ClCompile Include="Tests\sum_test.cpp" />
     <ClCompile Include="Utils\util_mm_mask.cpp" />
     <ClCompile Include="_main.cpp" />
   </ItemGroup>
