@@ -10,8 +10,8 @@ using namespace System;
 #pragma unmanaged
 
 int pool1d_maxpool_n32x_s(
-    const uint n, const uint c, const uint iw, const uint ow,
-    const uint sx, const uint kw,
+    const uint n, const uint c, 
+    const uint iw, const uint ow, const uint sx, const uint kw,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -72,8 +72,8 @@ int pool1d_maxpool_n32x_s(
 }
 
 int pool1d_maxpool_aligned_s(
-    const uint n, const uint c, const uint iw, const uint ow,
-    const uint sx, const uint kw,
+    const uint n, const uint c, 
+    const uint iw, const uint ow, const uint sx, const uint kw,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
@@ -155,8 +155,8 @@ int pool1d_maxpool_aligned_s(
 }
 
 int pool1d_maxpool_unaligned_s(
-    const uint n, const uint c, const uint iw, const uint ow,
-    const uint sx, const uint kw,
+    const uint n, const uint c, 
+    const uint iw, const uint ow, const uint sx, const uint kw,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG

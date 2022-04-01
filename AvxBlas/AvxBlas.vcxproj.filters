@@ -58,6 +58,9 @@
     <Filter Include="Source\Pool1D">
       <UniqueIdentifier>{798245fa-5b87-44d0-a0b6-2e2a24b65983}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Pool2D">
+      <UniqueIdentifier>{9e9d9799-a0a4-4989-8cbc-90980d864bf8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="Pool1D\pool1d_maxpool_s.cpp">
       <Filter>Source\Pool1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Pool2D\pool2d_maxpool_s.cpp">
+      <Filter>Source\Pool2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
