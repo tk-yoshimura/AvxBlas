@@ -74,11 +74,16 @@ int main(){
     //_aligned_free(y1);
     //_aligned_free(y2);
 
-    uint kw = 3, kh = 5;
+    uint kw = 3, kh = 3, kd = 1;
+    uint cnt = 0;
 
-    for (uint kx = 1, ky = 0; ky < kh; kx++, ky += (kx >= kw) ? 1 : 0, kx %= kw) {
-        printf("%d,%d\n", kx, ky);
+    for (uint kx = 1 % kw, ky = (1 / kw) % kh, kz = 1 / (kw * kh); kz < kd; kx++, ky += kx / kw, kz += ky / kh, kx %= kw, ky %= kh) {
+        printf("%d,%d,%d\n", kx, ky, kz);
+
+        cnt++;
     }
+
+    printf("cnt %d\n", cnt);
 
     printf("end");
 

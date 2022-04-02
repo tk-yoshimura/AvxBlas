@@ -214,6 +214,22 @@ namespace AvxBlas {
         //                       Array<float>^ dy, Array<float>^ dx);
     };
 
+    public ref class Pool3D abstract sealed {
+        public:
+        static void MaxPooling(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih, UInt32 id,
+                               UInt32 sx, UInt32 sy, UInt32 sz, UInt32 kw, UInt32 kh, UInt32 kd,
+                               Array<float>^ x, Array<float>^ y);
+        //static void MaxUnpooling(UInt32 n, UInt32 c, UInt32 iw,
+        //                       UInt32 sx, UInt32 kw,
+        //                       Array<float>^ y, Array<float>^ dy, Array<float>^ dx);
+        //static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw,
+        //                       UInt32 sx, UInt32 kw,
+        //                       Array<float>^ x, Array<float>^ y);
+        //static void AverageUnpooling(UInt32 n, UInt32 c, UInt32 iw,
+        //                       UInt32 sx, UInt32 kw,
+        //                       Array<float>^ dy, Array<float>^ dx);
+    };
+
     public ref class Initialize abstract sealed {
         public:
         static void Clear(UInt32 n, float c, Array<float>^ y);

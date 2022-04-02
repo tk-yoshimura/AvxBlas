@@ -163,6 +163,7 @@
     <ClInclude Include="Inline\inline_sum_s.hpp" />
     <ClCompile Include="Pool1D\pool1d_maxpool_s.cpp" />
     <ClCompile Include="Pool2D\pool2d_maxpool_s.cpp" />
+    <ClCompile Include="Pool3D\pool3d_maxpool_s.cpp" />
     <ClCompile Include="Transform\transform_transpose_d.cpp" />
     <ClCompile Include="Transform\transform_transpose_s.cpp" />
     <ClCompile Include="Util\util_align_kernel_s.cpp" />

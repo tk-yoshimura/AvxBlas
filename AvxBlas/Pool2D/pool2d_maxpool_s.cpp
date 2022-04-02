@@ -37,7 +37,7 @@ int pool2d_maxpool_n32x_s(
 
                 copy_n32x_s(c, x_ptr + c * (x + iw * y), s_ptr);
 
-                for (uint kx = 1, ky = 0; ky < kh; kx++, ky += (kx >= kw) ? 1 : 0, kx %= kw) {
+                for (uint kx = 1 % kw, ky = 1 / kw; ky < kh; kx++, ky += kx / kw, kx %= kw) {
                     x = padclip(ix + kx, iw, (kw - 1) / 2);
                     y = padclip(iy + ky, ih, (kh - 1) / 2);
 
@@ -104,7 +104,7 @@ int pool2d_maxpool_aligned_s(
 
                 copy_aligned_s(c, x_ptr + c * (x + iw * y), s_ptr);
 
-                for (uint kx = 1, ky = 0; ky < kh; kx++, ky += (kx >= kw) ? 1 : 0, kx %= kw) {
+                for (uint kx = 1 % kw, ky = 1 / kw; ky < kh; kx++, ky += kx / kw, kx %= kw) {
                     x = padclip(ix + kx, iw, (kw - 1) / 2);
                     y = padclip(iy + ky, ih, (kh - 1) / 2);
 
@@ -194,7 +194,7 @@ int pool2d_maxpool_unaligned_s(
 
                 copy_dstaligned_s(c, x_ptr + c * (x + iw * y), s_ptr, mask);
 
-                for (uint kx = 1, ky = 0; ky < kh; kx++, ky += (kx >= kw) ? 1 : 0, kx %= kw) {
+                for (uint kx = 1 % kw, ky = 1 / kw; ky < kh; kx++, ky += kx / kw, kx %= kw) {
                     x = padclip(ix + kx, iw, (kw - 1) / 2);
                     y = padclip(iy + ky, ih, (kh - 1) / 2);
 
@@ -264,8 +264,6 @@ int pool2d_maxpool_unaligned_s(
     _aligned_free(s_ptr);
 
     return SUCCESS;
-
-    return SUCCESS;
 }
 
 #pragma managed
@@ -284,7 +282,7 @@ void AvxBlas::Pool2D::MaxPooling(
     if (sx <= 0 || sx > MAX_POOL_STRIDE || sy <= 0 || sy > MAX_POOL_STRIDE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidPoolStride);
     }
-    if (kw <= 1 || kw > MAX_KERNEL_SIZE || kh <= 1 || kh > MAX_KERNEL_SIZE) {
+    if ((kw <= 1 && kh <= 1) || kw > MAX_KERNEL_SIZE || kh > MAX_KERNEL_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);
     }
     if (iw > MAX_MAP_SIZE || ih > MAX_MAP_SIZE) {
