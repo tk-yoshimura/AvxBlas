@@ -299,6 +299,21 @@
     <ClCompile Include="Pool3D\pool3d_maxpool_s.cpp">
       <Filter>Source\Pool3D</Filter>
     </ClCompile>
+    <ClCompile Include="Pool1D\pool1d_avgpool_s.cpp">
+      <Filter>Source\Pool1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_mul_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_mul_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Pool2D\pool2d_avgpool_s.cpp">
+      <Filter>Source\Pool2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Pool3D\pool3d_avgpool_s.cpp">
+      <Filter>Source\Pool3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

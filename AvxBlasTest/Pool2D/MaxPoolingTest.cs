@@ -12,15 +12,16 @@ namespace AvxBlasTest.Pool2DTest {
 
             foreach (uint n in new int[] { 1, 2 }) {
                 foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
-                    foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 2), (2, 1), (2, 2), (2, 3), (3, 2), (2, 4), (4, 3), (4, 4), (2, 5), (5, 3) }) {
-                        foreach ((uint sx, uint sy) in new (uint, uint)[] { (1, 1), (1, 2), (2, 1), (2, 3), (4, 2) }) {
-                            uint ow = (iw - 1) / sx + 1;
-                            uint oh = (ih - 1) / sy + 1;
+                    foreach ((uint sx, uint sy) in new (uint, uint)[] { (1, 1), (1, 2), (2, 1), (2, 3), (4, 2) }) {
+                        uint ow = (iw - 1) / sx + 1;
+                        uint oh = (ih - 1) / sy + 1;
+
+                        foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 2), (2, 1), (2, 2), (2, 3), (3, 2), (2, 4), (4, 3), (4, 4), (2, 5), (5, 3) }) {
 
                             foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
 
                                 float[] xval = (new float[c * iw * ih * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
-                                
+
                                 Map2D x = new((int)c, (int)iw, (int)ih, (int)n, xval);
 
                                 Map2D y = Reference(x, (int)sx, (int)kw, (int)sy, (int)kh);
@@ -62,7 +63,7 @@ namespace AvxBlasTest.Pool2DTest {
 
                             for (int ky = 0; ky < kh; ky++) {
                                 int cy = Math.Min(ih - 1, Math.Max(0, ky + iy - (kh - 1) / 2));
-                                
+
                                 for (int kx = 0; kx < kw; kx++) {
                                     int cx = Math.Min(iw - 1, Math.Max(0, kx + ix - (kw - 1) / 2));
 
@@ -83,13 +84,13 @@ namespace AvxBlasTest.Pool2DTest {
         [TestMethod]
         public void ReferenceTest() {
             int channels = 7, stridex = 2, kwidth = 2, inwidth = 13, stridey = 2, kheight = 2, inheight = 9, batch = 2;
-            
+
             float[] xval = (new float[batch * inwidth * inheight * channels]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
-            
+
             Map2D x = new(channels, inwidth, inheight, batch, xval);
-            
+
             Map2D y = Reference(x, stridex, kwidth, stridey, kheight);
-            
+
             float[] y_expect = {
                 2.70e+01f, 2.40e+01f, 3.60e+01f, 3.00e+01f, 3.20e+01f, 2.60e+01f, 2.80e+01f, 2.80e+01f, 1.90e+01f, 3.10e+01f, 3.60e+01f, 3.30e+01f, 3.20e+01f, 2.90e+01f,
                 2.30e+01f, 3.10e+01f, 3.00e+01f, 2.70e+01f, 2.80e+01f, 3.30e+01f, 2.40e+01f, 3.50e+01f, 2.60e+01f, 3.10e+01f, 2.20e+01f, 2.70e+01f, 1.80e+01f, 3.60e+01f,
@@ -128,9 +129,9 @@ namespace AvxBlasTest.Pool2DTest {
                 1.70e+01f, 2.40e+01f, 3.60e+01f, 2.00e+01f, 3.20e+01f, 1.60e+01f, 2.80e+01f, 1.20e+01f, 1.30e+01f, 8.00e+00f, 2.60e+01f, 2.70e+01f, 2.20e+01f, 2.30e+01f,
 
             };
-            
+
             float[] y_actual = y.ToFloatArray();
-            
+
             AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f);
         }
     }

@@ -134,6 +134,8 @@
     <ClCompile Include="Array\array.cpp" />
     <ClCompile Include="Constant\const_add_d.cpp" />
     <ClCompile Include="Constant\const_add_s.cpp" />
+    <ClCompile Include="Constant\const_mul_d.cpp" />
+    <ClCompile Include="Constant\const_mul_s.cpp" />
     <ClCompile Include="Convolution1D\conv1d_backwarddata_s.cpp" />
     <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp" />
     <ClCompile Include="Convolution1D\conv1d_forward_s.cpp" />
@@ -161,8 +163,11 @@
     <ClInclude Include="Inline\inline_ope_s.hpp" />
     <ClInclude Include="Inline\inline_set_s.hpp" />
     <ClInclude Include="Inline\inline_sum_s.hpp" />
+    <ClCompile Include="Pool1D\pool1d_avgpool_s.cpp" />
     <ClCompile Include="Pool1D\pool1d_maxpool_s.cpp" />
+    <ClCompile Include="Pool2D\pool2d_avgpool_s.cpp" />
     <ClCompile Include="Pool2D\pool2d_maxpool_s.cpp" />
+    <ClCompile Include="Pool3D\pool3d_avgpool_s.cpp" />
     <ClCompile Include="Pool3D\pool3d_maxpool_s.cpp" />
     <ClCompile Include="Transform\transform_transpose_d.cpp" />
     <ClCompile Include="Transform\transform_transpose_s.cpp" />

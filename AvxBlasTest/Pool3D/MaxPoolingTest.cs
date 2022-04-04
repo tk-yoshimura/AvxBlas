@@ -11,41 +11,38 @@ namespace AvxBlasTest.Pool3DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach ((uint iw, uint ih, uint id) in new (uint, uint, uint)[] { 
-                    (1, 1, 1), (1, 1, 4), (1, 4, 1), (4, 1, 1), (4, 3, 2), (5, 8, 4), (7, 16, 15), (17, 6, 28), (32, 31, 30) }) {
-                    
-                    foreach ((uint kw, uint kh, uint kd) in new (uint, uint, uint)[] { 
+                foreach ((uint iw, uint ih, uint id, uint sx, uint sy, uint sz) in new (uint, uint, uint, uint, uint, uint)[] {
+                    (1, 1, 1, 1, 1, 1), (1, 1, 4, 1, 1, 2), (1, 4, 1, 1, 2, 1), (4, 1, 1, 2, 1, 1), (4, 3, 2, 2, 2, 3), (5, 8, 4, 2, 2, 2), (7, 16, 15, 2, 2, 3), (17, 6, 28, 4, 2, 2), (32, 31, 30, 2, 2, 3),
+                    (1, 1, 1, 1, 1, 2), (1, 1, 4, 1, 2, 1), (1, 4, 1, 1, 1, 1), (4, 1, 1, 2, 2, 2), (4, 3, 2, 2, 1, 1), (5, 8, 4, 4, 2, 2), (7, 16, 15, 2, 2, 2), (17, 6, 28, 2, 2, 3), (32, 31, 30, 1, 1, 1)}) {
+
+                    uint ow = (iw - 1) / sx + 1;
+                    uint oh = (ih - 1) / sy + 1;
+                    uint od = (id - 1) / sz + 1;
+
+                    foreach ((uint kw, uint kh, uint kd) in new (uint, uint, uint)[] {
                         (1, 1, 2), (1, 2, 1), (2, 1, 1), (2, 2, 2), (2, 2, 3), (2, 3, 2), (3, 2, 2), (2, 2, 4), (2, 4, 3), (4, 4, 4), (3, 2, 5), (2, 5, 3) }) {
-                        
-                        foreach ((uint sx, uint sy, uint sz) in new (uint, uint, uint)[] { 
-                            (1, 1, 1), (1, 1, 2), (1, 2, 1), (2, 1, 1), (2, 2, 2), (2, 2, 3), (4, 2, 2) }) {
-                            
-                            uint ow = (iw - 1) / sx + 1;
-                            uint oh = (ih - 1) / sy + 1;
-                            uint od = (id - 1) / sz + 1;
 
-                            foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
+                        foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
 
-                                float[] xval = (new float[c * iw * ih * id * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
-                                
-                                Map3D x = new((int)c, (int)iw, (int)ih, (int)id, (int)n, xval);
+                            float[] xval = (new float[c * iw * ih * id * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
 
-                                Map3D y = Reference(x, (int)sx, (int)kw, (int)sy, (int)kh, (int)sz, (int)kd);
+                            Map3D x = new((int)c, (int)iw, (int)ih, (int)id, (int)n, xval);
 
-                                Array<float> x_tensor = xval;
-                                Array<float> y_tensor = new(c * ow * oh * od * n, zeroset: false);
+                            Map3D y = Reference(x, (int)sx, (int)kw, (int)sy, (int)kh, (int)sz, (int)kd);
 
-                                Pool3D.MaxPooling(n, c, iw, ih, id, sx, sy, sz, kw, kh, kd, x_tensor, y_tensor);
+                            Array<float> x_tensor = xval;
+                            Array<float> y_tensor = new(c * ow * oh * od * n, zeroset: false);
 
-                                float[] y_expect = y.ToFloatArray();
-                                float[] y_actual = y_tensor;
+                            Pool3D.MaxPooling(n, c, iw, ih, id, sx, sy, sz, kw, kh, kd, x_tensor, y_tensor);
 
-                                CollectionAssert.AreEqual(xval, (float[])x_tensor);
+                            float[] y_expect = y.ToFloatArray();
+                            float[] y_actual = y_tensor;
 
-                                AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f, ref max_err, $"NG: {c},{iw},{ih},{id},{sx},{sy},{sz},{kw},{kh},{kd},{n}");
+                            CollectionAssert.AreEqual(xval, (float[])x_tensor);
 
-                                Console.WriteLine($"OK: {c},{iw},{ih},{id},{sx},{sy},{sz},{kw},{kh},{kd},{n}");
-                            }
+                            AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f, ref max_err, $"NG: {c},{iw},{ih},{id},{sx},{sy},{sz},{kw},{kh},{kd},{n}");
+
+                            Console.WriteLine($"OK: {c},{iw},{ih},{id},{sx},{sy},{sz},{kw},{kh},{kd},{n}");
                         }
                     }
                 }
@@ -69,7 +66,7 @@ namespace AvxBlasTest.Pool3DTest {
                             for (int c = 0; c < channels; c++) {
                                 double v = double.MinValue;
 
-                                for(int kz = 0; kz < kd; kz++) {
+                                for (int kz = 0; kz < kd; kz++) {
                                     int cz = Math.Min(id - 1, Math.Max(0, kz + iz - (kd - 1) / 2));
 
                                     for (int ky = 0; ky < kh; ky++) {
@@ -96,13 +93,13 @@ namespace AvxBlasTest.Pool3DTest {
         [TestMethod]
         public void ReferenceTest() {
             int channels = 7, stridex = 2, kwidth = 2, inwidth = 13, stridey = 2, kheight = 2, inheight = 9, stridez = 2, kdepth = 2, indepth = 8, batch = 2;
-            
+
             float[] xval = (new float[batch * inwidth * inheight * indepth * channels]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
-            
+
             Map3D x = new(channels, inwidth, inheight, indepth, batch, xval);
-            
+
             Map3D y = Reference(x, stridex, kwidth, stridey, kheight, stridez, kdepth);
-            
+
             float[] y_expect = {
                 2.70e+01f, 2.70e+01f, 3.60e+01f, 3.30e+01f, 3.20e+01f, 3.50e+01f, 2.80e+01f, 3.10e+01f, 2.80e+01f, 3.10e+01f, 3.60e+01f, 3.60e+01f, 3.20e+01f, 3.20e+01f,
                 3.20e+01f, 3.10e+01f, 3.00e+01f, 2.70e+01f, 2.80e+01f, 3.30e+01f, 3.30e+01f, 3.50e+01f, 3.50e+01f, 3.40e+01f, 3.10e+01f, 3.00e+01f, 2.70e+01f, 3.60e+01f,
@@ -245,9 +242,9 @@ namespace AvxBlasTest.Pool3DTest {
                 1.70e+01f, 2.60e+01f, 3.00e+01f, 2.50e+01f, 3.20e+01f, 2.10e+01f, 3.00e+01f, 1.40e+01f, 3.00e+01f, 3.30e+01f, 2.60e+01f, 3.50e+01f, 2.20e+01f, 3.40e+01f,
                 1.80e+01f, 2.70e+01f, 2.00e+01f, 2.30e+01f, 3.00e+01f, 2.50e+01f, 3.50e+01f, 2.10e+01f, 3.10e+01f, 1.70e+01f, 2.70e+01f, 1.30e+01f, 2.30e+01f, 3.20e+01f,
             };
-            
+
             float[] y_actual = y.ToFloatArray();
-            
+
             AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f);
         }
     }

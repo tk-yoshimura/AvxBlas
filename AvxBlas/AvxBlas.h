@@ -96,6 +96,9 @@ namespace AvxBlas {
         public:
         static void Add(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
         static void Add(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void Mul(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void Mul(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
     };
 
     public ref class Aggregate abstract sealed {
@@ -190,9 +193,9 @@ namespace AvxBlas {
         //static void MaxUnpooling(UInt32 n, UInt32 c, UInt32 iw,
         //                       UInt32 sx, UInt32 kw,
         //                       Array<float>^ y, Array<float>^ dy, Array<float>^ dx);
-        //static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw,
-        //                       UInt32 sx, UInt32 kw,
-        //                       Array<float>^ x, Array<float>^ y);
+        static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw,
+                               UInt32 sx, UInt32 kw,
+                               Array<float>^ x, Array<float>^ y);
         //static void AverageUnpooling(UInt32 n, UInt32 c, UInt32 iw,
         //                       UInt32 sx, UInt32 kw,
         //                       Array<float>^ dy, Array<float>^ dx);
@@ -206,9 +209,9 @@ namespace AvxBlas {
         //static void MaxUnpooling(UInt32 n, UInt32 c, UInt32 iw,
         //                       UInt32 sx, UInt32 kw,
         //                       Array<float>^ y, Array<float>^ dy, Array<float>^ dx);
-        //static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw,
-        //                       UInt32 sx, UInt32 kw,
-        //                       Array<float>^ x, Array<float>^ y);
+        static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih,
+                               UInt32 sx, UInt32 sy, UInt32 kw, UInt32 kh,
+                               Array<float>^ x, Array<float>^ y);
         //static void AverageUnpooling(UInt32 n, UInt32 c, UInt32 iw,
         //                       UInt32 sx, UInt32 kw,
         //                       Array<float>^ dy, Array<float>^ dx);
@@ -222,9 +225,9 @@ namespace AvxBlas {
         //static void MaxUnpooling(UInt32 n, UInt32 c, UInt32 iw,
         //                       UInt32 sx, UInt32 kw,
         //                       Array<float>^ y, Array<float>^ dy, Array<float>^ dx);
-        //static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw,
-        //                       UInt32 sx, UInt32 kw,
-        //                       Array<float>^ x, Array<float>^ y);
+        static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih, UInt32 id,
+                               UInt32 sx, UInt32 sy, UInt32 sz, UInt32 kw, UInt32 kh, UInt32 kd,
+                               Array<float>^ x, Array<float>^ y);
         //static void AverageUnpooling(UInt32 n, UInt32 c, UInt32 iw,
         //                       UInt32 sx, UInt32 kw,
         //                       Array<float>^ dy, Array<float>^ dx);
