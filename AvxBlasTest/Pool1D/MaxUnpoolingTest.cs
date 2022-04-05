@@ -64,17 +64,17 @@ namespace AvxBlasTest.Pool1DTest {
             Map1D dx = new(channels, iw, batch);
 
             for (int th = 0; th < batch; th++) {
-                for (int ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
+                for (int isx = 0, ox = 0; ox < ow; isx += sx, ox++) {
                     for (int c = 0; c < channels; c++) {
                         for (int kx = 0; kx < kw; kx++) {
-                            int cx = kx + ix - (kw - 1) / 2;
+                            int ix = kx + isx;
 
-                            if (cx < 0 || cx >= iw) {
+                            if (ix >= iw) {
                                 continue;
                             }
 
-                            if (y[c, ox, th] <= x[c, cx, th]) {
-                                dx[c, cx, th] += dy[c, ox, th];
+                            if (y[c, ox, th] <= x[c, ix, th]) {
+                                dx[c, ix, th] += dy[c, ox, th];
                             }
                         }
                     }

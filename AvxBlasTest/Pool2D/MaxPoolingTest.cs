@@ -56,18 +56,14 @@ namespace AvxBlasTest.Pool2DTest {
             Map2D y = new(channels, ow, oh, batch);
 
             for (int th = 0; th < batch; th++) {
-                for (int iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-                    for (int ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
+                for (int isy = 0, oy = 0; oy < oh; isy += sy, oy++) {
+                    for (int isx = 0, ox = 0; ox < ow; isx += sx, ox++) {
                         for (int c = 0; c < channels; c++) {
                             double v = double.MinValue;
 
-                            for (int ky = 0; ky < kh; ky++) {
-                                int cy = Math.Min(ih - 1, Math.Max(0, ky + iy - (kh - 1) / 2));
-
-                                for (int kx = 0; kx < kw; kx++) {
-                                    int cx = Math.Min(iw - 1, Math.Max(0, kx + ix - (kw - 1) / 2));
-
-                                    v = Math.Max(v, x[c, cx, cy, th]);
+                            for (int ky = 0, iy = isy + ky; ky < kh && iy < ih; ky++, iy = isy + ky) {
+                                for (int kx = 0, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
+                                    v = Math.Max(v, x[c, ix, iy, th]);
                                 }
                             }
 

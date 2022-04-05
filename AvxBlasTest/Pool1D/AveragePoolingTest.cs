@@ -54,14 +54,12 @@ namespace AvxBlasTest.Pool1DTest {
             Map1D y = new(channels, ow, batch);
 
             for (int th = 0; th < batch; th++) {
-                for (int ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
+                for (int isx = 0, ox = 0; ox < ow; isx += sx, ox++) {
                     for (int c = 0; c < channels; c++) {
                         double v = 0;
 
-                        for (int kx = 0; kx < kw; kx++) {
-                            int cx = Math.Min(iw - 1, Math.Max(0, kx + ix - (kw - 1) / 2));
-
-                            v += x[c, cx, th];
+                        for (int kx = 0, ix = isx + kx; kx < kw; kx++, ix = Math.Min(iw - 1, isx + kx)) {
+                            v += x[c, ix, th];
                         }
 
                         y[c, ox, th] = v / kw;

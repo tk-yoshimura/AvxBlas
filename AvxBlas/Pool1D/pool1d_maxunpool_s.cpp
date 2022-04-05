@@ -23,19 +23,16 @@ int pool1d_maxunpool_n32x_seqk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-    const uint ew = ow * sx - pw;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -59,11 +56,6 @@ int pool1d_maxunpool_n32x_seqk_s(
                     r -= AVX2_FLOAT_STRIDE * 4;
                 }
             }
-        }
-        if (ew < iw) {
-            const uint dx = iw - ew;
-
-            zeroset_s(c * dx, dx_ptr + c * ew);
         }
 
         x_ptr += c * iw;
@@ -89,20 +81,18 @@ int pool1d_maxunpool_n32x_sltk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -152,20 +142,18 @@ int pool1d_maxunpool_n32x_sgtk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -214,19 +202,16 @@ int pool1d_maxunpool_aligned_seqk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-    const uint ew = ow * sx - pw;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -276,11 +261,6 @@ int pool1d_maxunpool_aligned_seqk_s(
                 }
             }
         }
-        if (ew < iw) {
-            const uint dx = iw - ew;
-
-            zeroset_s(c * dx, dx_ptr + c * ew);
-        }
 
         x_ptr += c * iw;
         y_ptr += c * ow;
@@ -305,20 +285,18 @@ int pool1d_maxunpool_aligned_sltk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -401,20 +379,18 @@ int pool1d_maxunpool_aligned_sgtk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -489,21 +465,18 @@ int pool1d_maxunpool_unaligned_seqk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
-    const uint ew = ow * sx - pw;
-
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -568,11 +541,6 @@ int pool1d_maxunpool_unaligned_seqk_s(
                 }
             }
         }
-        if (ew < iw) {
-            const uint dx = iw - ew;
-
-            zeroset_s(c * dx, dx_ptr + c * ew);
-        }
 
         x_ptr += c * iw;
         y_ptr += c * ow;
@@ -597,7 +565,6 @@ int pool1d_maxunpool_unaligned_sltk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
@@ -606,12 +573,12 @@ int pool1d_maxunpool_unaligned_sltk_s(
     zeroset_s(n * c * iw, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;
@@ -704,7 +671,6 @@ int pool1d_maxunpool_unaligned_sgtk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2;
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
@@ -713,12 +679,12 @@ int pool1d_maxunpool_unaligned_sgtk_s(
     zeroset_s(n * c * iw, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 const float* yc_ptr = y_ptr + c * ox;
-                float* dxc_ptr = dx_ptr + c * x;
+                float* dxc_ptr = dx_ptr + c * ix;
                 const float* dyc_ptr = dy_ptr + c * ox;
 
                 uint r = c;

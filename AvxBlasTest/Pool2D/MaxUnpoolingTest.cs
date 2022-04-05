@@ -65,26 +65,25 @@ namespace AvxBlasTest.Pool2DTest {
             Map2D dx = new(channels, iw, ih, batch);
 
             for (int th = 0; th < batch; th++) {
-
-                for (int iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-                    for (int ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
+                for (int isy = 0, oy = 0; oy < oh; isy += sy, oy++) {
+                    for (int isx = 0, ox = 0; ox < ow; isx += sx, ox++) {
                         for (int c = 0; c < channels; c++) {
                             for (int ky = 0; ky < kh; ky++) {
-                                int cy = ky + iy - (kh - 1) / 2;
+                                int iy = ky + isy;
 
-                                if (cy < 0 || cy >= ih) {
+                                if (iy >= ih) {
                                     continue;
                                 }
 
                                 for (int kx = 0; kx < kw; kx++) {
-                                    int cx = kx + ix - (kw - 1) / 2;
+                                    int ix = kx + isx;
 
-                                    if (cx < 0 || cx >= iw) {
+                                    if (ix >= iw) {
                                         continue;
                                     }
 
-                                    if (y[c, ox, oy, th] <= x[c, cx, cy, th]) {
-                                        dx[c, cx, cy, th] += dy[c, ox, oy, th];
+                                    if (y[c, ox, oy, th] <= x[c, ix, iy, th]) {
+                                        dx[c, ix, iy, th] += dy[c, ox, oy, th];
                                     }
                                 }
                             }

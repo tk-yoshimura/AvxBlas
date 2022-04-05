@@ -24,21 +24,18 @@ int pool2d_maxunpool_n32x_seqk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-    const uint ew = ow * sx - pw, eh = oh * sy - ph;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -65,18 +62,6 @@ int pool2d_maxunpool_n32x_seqk_s(
                 }
             }
         }
-        if (ew < iw) {
-            const uint dx = iw - ew;
-
-            for (uint iy = 0; iy < min(eh, ih); iy++) {
-                zeroset_s(c * dx, dx_ptr + c * (ew + iw * iy));
-            }
-        }
-        if (eh < ih) {
-            const uint dy = ih - eh;
-
-            zeroset_s(c * iw * dy, dx_ptr + c * iw * eh);
-        }
 
         x_ptr += c * iw * ih;
         y_ptr += c * ow * oh;
@@ -102,22 +87,20 @@ int pool2d_maxunpool_n32x_sltk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -170,22 +153,20 @@ int pool2d_maxunpool_n32x_sgtk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -237,21 +218,18 @@ int pool2d_maxunpool_aligned_seqk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-    const uint ew = ow * sx - pw, eh = oh * sy - ph;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -303,18 +281,6 @@ int pool2d_maxunpool_aligned_seqk_s(
                 }
             }
         }
-        if (ew < iw) {
-            const uint dx = iw - ew;
-
-            for (uint iy = 0; iy < min(eh, ih); iy++) {
-                zeroset_s(c * dx, dx_ptr + c * (ew + iw * iy));
-            }
-        }
-        if (eh < ih) {
-            const uint dy = ih - eh;
-
-            zeroset_s(c * iw * dy, dx_ptr + c * iw * eh);
-        }
 
         x_ptr += c * iw * ih;
         y_ptr += c * ow * oh;
@@ -340,22 +306,20 @@ int pool2d_maxunpool_aligned_sltk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -441,22 +405,20 @@ int pool2d_maxunpool_aligned_sgtk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -534,23 +496,20 @@ int pool2d_maxunpool_unaligned_seqk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
-    const uint ew = ow * sx - pw, eh = oh * sy - ph;
-
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
     __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -617,18 +576,6 @@ int pool2d_maxunpool_unaligned_seqk_s(
                 }
             }
         }
-        if (ew < iw) {
-            const uint dx = iw - ew;
-
-            for (uint iy = 0; iy < min(eh, ih); iy++) {
-                zeroset_s(c * dx, dx_ptr + c * (ew + iw * iy));
-            }
-        }
-        if (eh < ih) {
-            const uint dy = ih - eh;
-
-            zeroset_s(c * iw * dy, dx_ptr + c * iw * eh);
-        }
 
         x_ptr += c * iw * ih;
         y_ptr += c * ow * oh;
@@ -654,7 +601,6 @@ int pool2d_maxunpool_unaligned_sltk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
@@ -663,14 +609,14 @@ int pool2d_maxunpool_unaligned_sltk_s(
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;
@@ -766,7 +712,6 @@ int pool2d_maxunpool_unaligned_sgtk_s(
     }
 #endif // _DEBUG
 
-    const uint pw = (kw - 1) / 2, ph = (kh - 1) / 2;
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3;
@@ -775,14 +720,14 @@ int pool2d_maxunpool_unaligned_sgtk_s(
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                for (uint ky = ph <= iy ? 0 : ph - iy, y = iy + ky - ph; ky < kh && y < ih; ky++, y++) {
-                    for (uint kx = pw <= ix ? 0 : pw - ix, x = ix + kx - pw; kx < kw && x < iw; kx++, x++) {
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
+                    for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
 
-                        const float* xc_ptr = x_ptr + c * (x + iw * y);
+                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                         const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (x + iw * y);
+                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
                         const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
 
                         uint r = c;

@@ -10,7 +10,7 @@ using namespace System;
 #pragma unmanaged
 
 int pool1d_maxpool_n32x_s(
-    const uint n, const uint c, 
+    const uint n, const uint c,
     const uint iw, const uint ow, const uint sx, const uint kw,
     infloats x_ptr, outfloats y_ptr) {
 
@@ -29,15 +29,12 @@ int pool1d_maxpool_n32x_s(
     __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            uint x = padclip(ix, iw, (kw - 1) / 2);
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            copy_n32x_s(c, x_ptr + c * isx, s_ptr);
 
-            copy_n32x_s(c, x_ptr + c * x, s_ptr);
+            for (uint kx = 1, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
 
-            for (uint kx = 1; kx < kw; kx++) {
-                x = padclip(ix + kx, iw, (kw - 1) / 2);
-
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 float* sc_ptr = s_ptr;
 
                 uint r = c;
@@ -72,7 +69,7 @@ int pool1d_maxpool_n32x_s(
 }
 
 int pool1d_maxpool_aligned_s(
-    const uint n, const uint c, 
+    const uint n, const uint c,
     const uint iw, const uint ow, const uint sx, const uint kw,
     infloats x_ptr, outfloats y_ptr) {
 
@@ -91,15 +88,12 @@ int pool1d_maxpool_aligned_s(
     __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            uint x = padclip(ix, iw, (kw - 1) / 2);
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            copy_aligned_s(c, x_ptr + c * isx, s_ptr);
 
-            copy_aligned_s(c, x_ptr + c * x, s_ptr);
+            for (uint kx = 1, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
 
-            for (uint kx = 1; kx < kw; kx++) {
-                x = padclip(ix + kx, iw, (kw - 1) / 2);
-
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 float* sc_ptr = s_ptr;
 
                 uint r = c;
@@ -155,7 +149,7 @@ int pool1d_maxpool_aligned_s(
 }
 
 int pool1d_maxpool_unaligned_s(
-    const uint n, const uint c, 
+    const uint n, const uint c,
     const uint iw, const uint ow, const uint sx, const uint kw,
     infloats x_ptr, outfloats y_ptr) {
 
@@ -176,15 +170,12 @@ int pool1d_maxpool_unaligned_s(
     __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-            uint x = padclip(ix, iw, (kw - 1) / 2);
+        for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+            copy_dstaligned_s(c, x_ptr + c * isx, s_ptr, mask);
 
-            copy_dstaligned_s(c, x_ptr + c * x, s_ptr, mask);
+            for (uint kx = 1, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
 
-            for (uint kx = 1; kx < kw; kx++) {
-                x = padclip(ix + kx, iw, (kw - 1) / 2);
-
-                const float* xc_ptr = x_ptr + c * x;
+                const float* xc_ptr = x_ptr + c * ix;
                 float* sc_ptr = s_ptr;
 
                 uint r = c;

@@ -30,18 +30,16 @@ int pool2d_maxpool_n32x_s(
     __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                uint x = padclip(ix, iw, (kw - 1) / 2);
-                uint y = padclip(iy, ih, (kh - 1) / 2);
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                const uint ekw = min(iw - isx, kw), ekh = min(ih - isy, kh);
 
-                copy_n32x_s(c, x_ptr + c * (x + iw * y), s_ptr);
+                copy_n32x_s(c, x_ptr + c * (isx + iw * isy), s_ptr);
 
-                for (uint kx = 1 % kw, ky = 1 / kw; ky < kh; kx++, ky += kx / kw, kx %= kw) {
-                    x = padclip(ix + kx, iw, (kw - 1) / 2);
-                    y = padclip(iy + ky, ih, (kh - 1) / 2);
+                for (uint kx = 1 % ekw, ky = 1 / ekw; ky < ekh; kx++, ky += kx / ekw, kx %= ekw) {
+                    const uint ix = isx + kx, iy = isy + ky;
 
-                    const float* xc_ptr = x_ptr + c * (x + iw * y);
+                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                     float* sc_ptr = s_ptr;
 
                     uint r = c;
@@ -97,18 +95,16 @@ int pool2d_maxpool_aligned_s(
     __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                uint x = padclip(ix, iw, (kw - 1) / 2);
-                uint y = padclip(iy, ih, (kh - 1) / 2);
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                const uint ekw = min(iw - isx, kw), ekh = min(ih - isy, kh);
 
-                copy_aligned_s(c, x_ptr + c * (x + iw * y), s_ptr);
+                copy_aligned_s(c, x_ptr + c * (isx + iw * isy), s_ptr);
 
-                for (uint kx = 1 % kw, ky = 1 / kw; ky < kh; kx++, ky += kx / kw, kx %= kw) {
-                    x = padclip(ix + kx, iw, (kw - 1) / 2);
-                    y = padclip(iy + ky, ih, (kh - 1) / 2);
+                for (uint kx = 1 % ekw, ky = 1 / ekw; ky < ekh; kx++, ky += kx / ekw, kx %= ekw) {
+                    const uint ix = isx + kx, iy = isy + ky;
 
-                    const float* xc_ptr = x_ptr + c * (x + iw * y);
+                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                     float* sc_ptr = s_ptr;
 
                     uint r = c;
@@ -187,18 +183,16 @@ int pool2d_maxpool_unaligned_s(
     __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0, oy = 0; oy < oh; iy += sy, oy++) {
-            for (uint ix = 0, ox = 0; ox < ow; ix += sx, ox++) {
-                uint x = padclip(ix, iw, (kw - 1) / 2);
-                uint y = padclip(iy, ih, (kh - 1) / 2);
+        for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
+            for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
+                const uint ekw = min(iw - isx, kw), ekh = min(ih - isy, kh);
 
-                copy_dstaligned_s(c, x_ptr + c * (x + iw * y), s_ptr, mask);
+                copy_dstaligned_s(c, x_ptr + c * (isx + iw * isy), s_ptr, mask);
 
-                for (uint kx = 1 % kw, ky = 1 / kw; ky < kh; kx++, ky += kx / kw, kx %= kw) {
-                    x = padclip(ix + kx, iw, (kw - 1) / 2);
-                    y = padclip(iy + ky, ih, (kh - 1) / 2);
+                for (uint kx = 1 % ekw, ky = 1 / ekw; ky < ekh; kx++, ky += kx / ekw, kx %= ekw) {
+                    const uint ix = isx + kx, iy = isy + ky;
 
-                    const float* xc_ptr = x_ptr + c * (x + iw * y);
+                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
                     float* sc_ptr = s_ptr;
 
                     uint r = c;
