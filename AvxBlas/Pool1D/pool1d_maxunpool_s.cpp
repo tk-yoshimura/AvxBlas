@@ -830,7 +830,7 @@ void AvxBlas::Pool1D::MaxUnpooling(
     Util::CheckLength(n * c * iw, dx);
     Util::CheckLength(n * c * ow, dy);
 
-    Util::CheckDuplicateArray(x, dy, dx);
+    Util::CheckDuplicateArray(x, y, dy, dx);
 
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
     const float* y_ptr = (const float*)(y->Ptr.ToPointer());

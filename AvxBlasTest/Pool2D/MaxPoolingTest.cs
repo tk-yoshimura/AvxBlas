@@ -11,12 +11,12 @@ namespace AvxBlasTest.Pool2DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
-                    foreach ((uint sx, uint sy) in new (uint, uint)[] { (1, 1), (1, 2), (2, 1), (2, 3), (4, 2) }) {
+                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (6, 7), (7, 6), (5, 8), (16, 15), (17, 28), (32, 30) }) {
+                    foreach ((uint sx, uint sy) in new (uint, uint)[] { (1, 1), (1, 2), (2, 1), (2, 3), (3, 3), (4, 2) }) {
                         uint ow = (iw - 1) / sx + 1;
                         uint oh = (ih - 1) / sy + 1;
 
-                        foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 2), (2, 1), (2, 2), (2, 3), (3, 2), (2, 4), (4, 3), (4, 4), (2, 5), (5, 3) }) {
+                        foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 2), (2, 1), (2, 2), (2, 3), (3, 2), (3, 3), (2, 4), (4, 3), (4, 4), (2, 5), (5, 3) }) {
 
                             foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
 

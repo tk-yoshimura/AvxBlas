@@ -168,6 +168,7 @@
     <ClCompile Include="Pool1D\pool1d_maxunpool_s.cpp" />
     <ClCompile Include="Pool2D\pool2d_avgpool_s.cpp" />
     <ClCompile Include="Pool2D\pool2d_maxpool_s.cpp" />
+    <ClCompile Include="Pool2D\pool2d_maxunpool_s.cpp" />
     <ClCompile Include="Pool3D\pool3d_avgpool_s.cpp" />
     <ClCompile Include="Pool3D\pool3d_maxpool_s.cpp" />
     <ClCompile Include="Transform\transform_transpose_d.cpp" />
