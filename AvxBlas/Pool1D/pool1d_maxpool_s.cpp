@@ -249,8 +249,6 @@ int pool1d_maxpool_unaligned_s(
     _aligned_free(s_ptr);
 
     return SUCCESS;
-
-    return SUCCESS;
 }
 
 #pragma managed

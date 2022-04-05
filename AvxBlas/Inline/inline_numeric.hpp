@@ -17,3 +17,11 @@ __forceinline uint padclip(uint index, uint size, uint pad) {
 
     return (coord < size) ? coord : size - 1;
 }
+
+__forceinline uint min(uint a, uint b) {
+    return a < b ? a : b;
+}
+
+__forceinline uint max(uint a, uint b) {
+    return a > b ? a : b;
+}
