@@ -156,6 +156,9 @@
     <ClInclude Include="Inline\inline_kernelfma_ss.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_pooliter_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">

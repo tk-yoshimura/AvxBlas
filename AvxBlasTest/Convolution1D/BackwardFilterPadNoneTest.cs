@@ -19,7 +19,9 @@ namespace AvxBlasTest.Connection1DTest {
                         uint ow = iw - kw + 1;
 
                         foreach ((uint ic, uint oc) in new (uint, uint)[] { (1, 1), (2, 3), (3, 2), (4, 5), (5, 4), (8, 10), (10, 8),
-                                                                            (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), (43, 48), (48, 43), (15, 64), (64, 15) }) {
+                                                    (7, 16), (16, 7), (9, 24), (24, 9), (31, 32), (32, 31), 
+                                                    (36, 37), (37, 36), (38, 39), (39, 38), (43, 48), (48, 43), 
+                                                    (49, 52), (52, 49), (53, 56), (56, 53), (57, 60), (60, 57), (15, 64), (64, 15) }) {
 
                             float[] xval = (new float[iw * ic * n]).Select((_, idx) => idx * 1e-3f).ToArray();
                             float[] gyval = (new float[ow * oc * n]).Select((_, idx) => idx * 1e-3f).Reverse().ToArray();

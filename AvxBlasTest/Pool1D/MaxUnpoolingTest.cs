@@ -17,7 +17,7 @@ namespace AvxBlasTest.Pool1DTest {
 
                         foreach (uint kw in new int[] { 2, 3, 4, 5 }) {
 
-                            foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
+                            for (uint c = 1; c <= 65; c++) {
 
                                 float[] xval = (new float[c * iw * n]).Select((_, idx) => (float)(idx * 4547 % 17)).ToArray();
                                 float[] dyval = (new float[c * ow * n]).Select((_, idx) => (float)((idx + 1) * 4547 % 17)).Reverse().ToArray();

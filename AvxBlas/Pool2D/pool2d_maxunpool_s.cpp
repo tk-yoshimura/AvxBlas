@@ -4,6 +4,7 @@
 #include "../Inline/inline_numeric.hpp"
 #include "../Inline/inline_loadstore_xn_s.hpp"
 #include "../Inline/inline_copy_s.hpp"
+#include "../Inline/inline_pooliter_s.hpp"
 
 using namespace System;
 
@@ -24,40 +25,15 @@ int pool2d_maxunpool_n32x_seqk_s(
     }
 #endif // _DEBUG
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     for (uint i = 0; i < n; i++) {
         for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_load_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-                            dx2 = _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS));
-                            dx3 = _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS));
-
-                            _mm256_stream_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
+                        maxunpooliter_n32x_s(c, 
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy), 
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy)
+                        );
                     }
                 }
             }
@@ -87,9 +63,6 @@ int pool2d_maxunpool_n32x_sltk_s(
     }
 #endif // _DEBUG
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
@@ -97,33 +70,10 @@ int pool2d_maxunpool_n32x_sltk_s(
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_load_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-                            _mm256_load_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-                            dx1 = _mm256_add_ps(dx1, _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS)));
-                            dx2 = _mm256_add_ps(dx2, _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS)));
-                            dx3 = _mm256_add_ps(dx3, _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS)));
-
-                            _mm256_store_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
+                        maxunpooliter_add_n32x_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy)
+                        );
                     }
                 }
             }
@@ -153,9 +103,6 @@ int pool2d_maxunpool_n32x_sgtk_s(
     }
 #endif // _DEBUG
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
@@ -163,32 +110,10 @@ int pool2d_maxunpool_n32x_sgtk_s(
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_load_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-                            dx2 = _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS));
-                            dx3 = _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS));
-
-                            _mm256_stream_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
+                        maxunpooliter_n32x_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy)
+                        );
                     }
                 }
             }
@@ -218,65 +143,15 @@ int pool2d_maxunpool_aligned_seqk_s(
     }
 #endif // _DEBUG
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     for (uint i = 0; i < n; i++) {
         for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_load_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-                            dx2 = _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS));
-                            dx3 = _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS));
-
-                            _mm256_stream_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE * 2) {
-                            _mm256_load_x2_ps(xc_ptr, x0, x1);
-                            _mm256_load_x2_ps(yc_ptr, y0, y1);
-                            _mm256_load_x2_ps(dyc_ptr, dy0, dy1);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-
-                            _mm256_stream_x2_ps(dxc_ptr, dx0, dx1);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            r -= AVX2_FLOAT_STRIDE * 2;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE) {
-                            _mm256_load_x1_ps(xc_ptr, x0);
-                            _mm256_load_x1_ps(yc_ptr, y0);
-                            _mm256_load_x1_ps(dyc_ptr, dy0);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-
-                            _mm256_stream_x1_ps(dxc_ptr, dx0);
-                        }
+                        maxunpooliter_aligned_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy)
+                        );
                     }
                 }
             }
@@ -306,9 +181,6 @@ int pool2d_maxunpool_aligned_sltk_s(
     }
 #endif // _DEBUG
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
@@ -316,66 +188,10 @@ int pool2d_maxunpool_aligned_sltk_s(
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_load_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-                            _mm256_load_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-                            dx1 = _mm256_add_ps(dx1, _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS)));
-                            dx2 = _mm256_add_ps(dx2, _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS)));
-                            dx3 = _mm256_add_ps(dx3, _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS)));
-
-                            _mm256_store_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE * 2) {
-                            _mm256_load_x2_ps(xc_ptr, x0, x1);
-                            _mm256_load_x2_ps(yc_ptr, y0, y1);
-                            _mm256_load_x2_ps(dyc_ptr, dy0, dy1);
-                            _mm256_load_x2_ps(dxc_ptr, dx0, dx1);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-                            dx1 = _mm256_add_ps(dx1, _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS)));
-
-                            _mm256_store_x2_ps(dxc_ptr, dx0, dx1);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            r -= AVX2_FLOAT_STRIDE * 2;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE) {
-                            _mm256_load_x1_ps(xc_ptr, x0);
-                            _mm256_load_x1_ps(yc_ptr, y0);
-                            _mm256_load_x1_ps(dyc_ptr, dy0);
-                            _mm256_load_x1_ps(dxc_ptr, dx0);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-
-                            _mm256_store_x1_ps(dxc_ptr, dx0);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE;
-                            yc_ptr += AVX2_FLOAT_STRIDE;
-                            dxc_ptr += AVX2_FLOAT_STRIDE;
-                            dyc_ptr += AVX2_FLOAT_STRIDE;
-                            r -= AVX2_FLOAT_STRIDE;
-                        }
+                        maxunpooliter_add_aligned_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy)
+                        );
                     }
                 }
             }
@@ -405,9 +221,6 @@ int pool2d_maxunpool_aligned_sgtk_s(
     }
 #endif // _DEBUG
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
@@ -415,57 +228,10 @@ int pool2d_maxunpool_aligned_sgtk_s(
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_load_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-                            dx2 = _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS));
-                            dx3 = _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS));
-
-                            _mm256_stream_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE * 2) {
-                            _mm256_load_x2_ps(xc_ptr, x0, x1);
-                            _mm256_load_x2_ps(yc_ptr, y0, y1);
-                            _mm256_load_x2_ps(dyc_ptr, dy0, dy1);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-
-                            _mm256_stream_x2_ps(dxc_ptr, dx0, dx1);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            r -= AVX2_FLOAT_STRIDE * 2;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE) {
-                            _mm256_load_x1_ps(xc_ptr, x0);
-                            _mm256_load_x1_ps(yc_ptr, y0);
-                            _mm256_load_x1_ps(dyc_ptr, dy0);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-
-                            _mm256_stream_x1_ps(dxc_ptr, dx0);
-                        }
+                        maxunpooliter_aligned_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy)
+                        );
                     }
                 }
             }
@@ -498,80 +264,16 @@ int pool2d_maxunpool_unaligned_seqk_s(
 
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     for (uint i = 0; i < n; i++) {
         for (uint oy = 0, isy = 0; oy < oh; oy++, isy += sy) {
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_loadu_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_loadu_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_loadu_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-                            dx2 = _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS));
-                            dx3 = _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS));
-
-                            _mm256_storeu_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE * 2) {
-                            _mm256_loadu_x2_ps(xc_ptr, x0, x1);
-                            _mm256_loadu_x2_ps(yc_ptr, y0, y1);
-                            _mm256_loadu_x2_ps(dyc_ptr, dy0, dy1);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-
-                            _mm256_storeu_x2_ps(dxc_ptr, dx0, dx1);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            r -= AVX2_FLOAT_STRIDE * 2;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE) {
-                            _mm256_loadu_x1_ps(xc_ptr, x0);
-                            _mm256_loadu_x1_ps(yc_ptr, y0);
-                            _mm256_loadu_x1_ps(dyc_ptr, dy0);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-
-                            _mm256_storeu_x1_ps(dxc_ptr, dx0);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE;
-                            yc_ptr += AVX2_FLOAT_STRIDE;
-                            dxc_ptr += AVX2_FLOAT_STRIDE;
-                            dyc_ptr += AVX2_FLOAT_STRIDE;
-                            r -= AVX2_FLOAT_STRIDE;
-                        }
-                        if (r > 0) {
-                            _mm256_loadu_x1_ps(xc_ptr, x0);
-                            _mm256_loadu_x1_ps(yc_ptr, y0);
-                            _mm256_loadu_x1_ps(dyc_ptr, dy0);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-
-                            _mm256_maskstore_x1_ps(dxc_ptr, dx0, mask);
-                        }
+                        maxunpooliter_unaligned_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy),
+                            mask
+                        );
                     }
                 }
             }
@@ -603,9 +305,6 @@ int pool2d_maxunpool_unaligned_sltk_s(
 
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
@@ -613,76 +312,11 @@ int pool2d_maxunpool_unaligned_sltk_s(
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_loadu_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_loadu_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_loadu_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-                            _mm256_loadu_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-                            dx1 = _mm256_add_ps(dx1, _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS)));
-                            dx2 = _mm256_add_ps(dx2, _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS)));
-                            dx3 = _mm256_add_ps(dx3, _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS)));
-
-                            _mm256_storeu_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE * 2) {
-                            _mm256_loadu_x2_ps(xc_ptr, x0, x1);
-                            _mm256_loadu_x2_ps(yc_ptr, y0, y1);
-                            _mm256_loadu_x2_ps(dyc_ptr, dy0, dy1);
-                            _mm256_loadu_x2_ps(dxc_ptr, dx0, dx1);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-                            dx1 = _mm256_add_ps(dx1, _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS)));
-
-                            _mm256_storeu_x2_ps(dxc_ptr, dx0, dx1);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            r -= AVX2_FLOAT_STRIDE * 2;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE) {
-                            _mm256_loadu_x1_ps(xc_ptr, x0);
-                            _mm256_loadu_x1_ps(yc_ptr, y0);
-                            _mm256_loadu_x1_ps(dyc_ptr, dy0);
-                            _mm256_loadu_x1_ps(dxc_ptr, dx0);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-
-                            _mm256_storeu_x1_ps(dxc_ptr, dx0);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE;
-                            yc_ptr += AVX2_FLOAT_STRIDE;
-                            dxc_ptr += AVX2_FLOAT_STRIDE;
-                            dyc_ptr += AVX2_FLOAT_STRIDE;
-                            r -= AVX2_FLOAT_STRIDE;
-                        }
-                        if (r > 0) {
-                            _mm256_loadu_x1_ps(xc_ptr, x0);
-                            _mm256_loadu_x1_ps(yc_ptr, y0);
-                            _mm256_loadu_x1_ps(dyc_ptr, dy0);
-                            _mm256_loadu_x1_ps(dxc_ptr, dx0);
-
-                            dx0 = _mm256_add_ps(dx0, _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS)));
-
-                            _mm256_maskstore_x1_ps(dxc_ptr, dx0, mask);
-                        }
+                        maxunpooliter_add_unaligned_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy), 
+                            mask
+                        );
                     }
                 }
             }
@@ -714,9 +348,6 @@ int pool2d_maxunpool_unaligned_sgtk_s(
 
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
 
-    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
-    __m256 dy0, dy1, dy2, dy3, dx0, dx1, dx2, dx3;
-
     zeroset_s(n * c * iw * ih, dx_ptr);
 
     for (uint i = 0; i < n; i++) {
@@ -724,72 +355,11 @@ int pool2d_maxunpool_unaligned_sgtk_s(
             for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
                 for (uint ky = 0, iy = isy; ky < kh && iy < ih; ky++, iy++) {
                     for (uint kx = 0, ix = isx; kx < kw && ix < iw; kx++, ix++) {
-
-                        const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                        const float* yc_ptr = y_ptr + c * (ox + ow * oy);
-                        float* dxc_ptr = dx_ptr + c * (ix + iw * iy);
-                        const float* dyc_ptr = dy_ptr + c * (ox + ow * oy);
-
-                        uint r = c;
-
-                        while (r >= AVX2_FLOAT_STRIDE * 4) {
-                            _mm256_loadu_x4_ps(xc_ptr, x0, x1, x2, x3);
-                            _mm256_loadu_x4_ps(yc_ptr, y0, y1, y2, y3);
-                            _mm256_loadu_x4_ps(dyc_ptr, dy0, dy1, dy2, dy3);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-                            dx2 = _mm256_and_ps(dy2, _mm256_cmp_ps(y2, x2, _CMP_LE_OS));
-                            dx3 = _mm256_and_ps(dy3, _mm256_cmp_ps(y3, x3, _CMP_LE_OS));
-
-                            _mm256_storeu_x4_ps(dxc_ptr, dx0, dx1, dx2, dx3);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 4;
-                            r -= AVX2_FLOAT_STRIDE * 4;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE * 2) {
-                            _mm256_loadu_x2_ps(xc_ptr, x0, x1);
-                            _mm256_loadu_x2_ps(yc_ptr, y0, y1);
-                            _mm256_loadu_x2_ps(dyc_ptr, dy0, dy1);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-                            dx1 = _mm256_and_ps(dy1, _mm256_cmp_ps(y1, x1, _CMP_LE_OS));
-
-                            _mm256_storeu_x2_ps(dxc_ptr, dx0, dx1);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            yc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dxc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            dyc_ptr += AVX2_FLOAT_STRIDE * 2;
-                            r -= AVX2_FLOAT_STRIDE * 2;
-                        }
-                        if (r >= AVX2_FLOAT_STRIDE) {
-                            _mm256_loadu_x1_ps(xc_ptr, x0);
-                            _mm256_loadu_x1_ps(yc_ptr, y0);
-                            _mm256_loadu_x1_ps(dyc_ptr, dy0);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-
-                            _mm256_storeu_x1_ps(dxc_ptr, dx0);
-
-                            xc_ptr += AVX2_FLOAT_STRIDE;
-                            yc_ptr += AVX2_FLOAT_STRIDE;
-                            dxc_ptr += AVX2_FLOAT_STRIDE;
-                            dyc_ptr += AVX2_FLOAT_STRIDE;
-                            r -= AVX2_FLOAT_STRIDE;
-                        }
-                        if (r > 0) {
-                            _mm256_loadu_x1_ps(xc_ptr, x0);
-                            _mm256_loadu_x1_ps(yc_ptr, y0);
-                            _mm256_loadu_x1_ps(dyc_ptr, dy0);
-
-                            dx0 = _mm256_and_ps(dy0, _mm256_cmp_ps(y0, x0, _CMP_LE_OS));
-
-                            _mm256_maskstore_x1_ps(dxc_ptr, dx0, mask);
-                        }
+                        maxunpooliter_unaligned_s(c,
+                            x_ptr + c * (ix + iw * iy), y_ptr + c * (ox + ow * oy),
+                            dy_ptr + c * (ox + ow * oy), dx_ptr + c * (ix + iw * iy),
+                            mask
+                        );
                     }
                 }
             }

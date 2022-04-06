@@ -4,6 +4,7 @@
 #include "../Inline/inline_numeric.hpp"
 #include "../Inline/inline_loadstore_xn_s.hpp"
 #include "../Inline/inline_copy_s.hpp"
+#include "../Inline/inline_pooliter_s.hpp"
 
 using namespace System;
 
@@ -20,50 +21,18 @@ int pool1d_maxpool_n32x_s(
     }
 #endif // _DEBUG
 
-    float* s_ptr = (float*)_aligned_malloc((size_t)c * sizeof(float), AVX2_ALIGNMENT);
-    if (s_ptr == nullptr) {
-        return FAILURE_BADALLOC;
-    }
-
-    __m256 x0, x1, x2, x3;
-    __m256 s0, s1, s2, s3;
-
     for (uint i = 0; i < n; i++) {
         for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
-            copy_n32x_s(c, x_ptr + c * isx, s_ptr);
+            copy_n32x_s(c, x_ptr + c * isx, y_ptr + c * ox);
 
             for (uint kx = 1, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
-
-                const float* xc_ptr = x_ptr + c * ix;
-                float* sc_ptr = s_ptr;
-
-                uint r = c;
-
-                while (r >= AVX2_FLOAT_STRIDE * 4) {
-                    _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                    _mm256_load_x4_ps(sc_ptr, s0, s1, s2, s3);
-
-                    s0 = _mm256_max_ps(x0, s0);
-                    s1 = _mm256_max_ps(x1, s1);
-                    s2 = _mm256_max_ps(x2, s2);
-                    s3 = _mm256_max_ps(x3, s3);
-
-                    _mm256_store_x4_ps(sc_ptr, s0, s1, s2, s3);
-
-                    xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                    sc_ptr += AVX2_FLOAT_STRIDE * 4;
-                    r -= AVX2_FLOAT_STRIDE * 4;
-                }
+                maxpooliter_n32x_s(c, x_ptr + c * ix, y_ptr + c * ox);
             }
-
-            copy_n32x_s(c, s_ptr, y_ptr + c * ox);
         }
 
         x_ptr += c * iw;
         y_ptr += c * ow;
     }
-
-    _aligned_free(s_ptr);
 
     return SUCCESS;
 }
@@ -79,71 +48,18 @@ int pool1d_maxpool_aligned_s(
     }
 #endif // _DEBUG
 
-    float* s_ptr = (float*)_aligned_malloc((size_t)c * sizeof(float), AVX2_ALIGNMENT);
-    if (s_ptr == nullptr) {
-        return FAILURE_BADALLOC;
-    }
-
-    __m256 x0, x1, x2, x3;
-    __m256 s0, s1, s2, s3;
-
     for (uint i = 0; i < n; i++) {
         for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
-            copy_aligned_s(c, x_ptr + c * isx, s_ptr);
+            copy_aligned_s(c, x_ptr + c * isx, y_ptr + c * ox);
 
             for (uint kx = 1, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
-
-                const float* xc_ptr = x_ptr + c * ix;
-                float* sc_ptr = s_ptr;
-
-                uint r = c;
-
-                while (r >= AVX2_FLOAT_STRIDE * 4) {
-                    _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
-                    _mm256_load_x4_ps(sc_ptr, s0, s1, s2, s3);
-
-                    s0 = _mm256_max_ps(x0, s0);
-                    s1 = _mm256_max_ps(x1, s1);
-                    s2 = _mm256_max_ps(x2, s2);
-                    s3 = _mm256_max_ps(x3, s3);
-
-                    _mm256_store_x4_ps(sc_ptr, s0, s1, s2, s3);
-
-                    xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                    sc_ptr += AVX2_FLOAT_STRIDE * 4;
-                    r -= AVX2_FLOAT_STRIDE * 4;
-                }
-                if (r >= AVX2_FLOAT_STRIDE * 2) {
-                    _mm256_load_x2_ps(xc_ptr, x0, x1);
-                    _mm256_load_x2_ps(sc_ptr, s0, s1);
-
-                    s0 = _mm256_max_ps(x0, s0);
-                    s1 = _mm256_max_ps(x1, s1);
-
-                    _mm256_store_x2_ps(sc_ptr, s0, s1);
-
-                    xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                    sc_ptr += AVX2_FLOAT_STRIDE * 2;
-                    r -= AVX2_FLOAT_STRIDE * 2;
-                }
-                if (r >= AVX2_FLOAT_STRIDE) {
-                    _mm256_load_x1_ps(xc_ptr, x0);
-                    _mm256_load_x1_ps(sc_ptr, s0);
-
-                    s0 = _mm256_max_ps(x0, s0);
-
-                    _mm256_store_x1_ps(sc_ptr, s0);
-                }
+                maxpooliter_aligned_s(c, x_ptr + c * ix, y_ptr + c * ox);
             }
-
-            copy_aligned_s(c, s_ptr, y_ptr + c * ox);
         }
 
         x_ptr += c * iw;
         y_ptr += c * ow;
     }
-
-    _aligned_free(s_ptr);
 
     return SUCCESS;
 }
@@ -159,85 +75,20 @@ int pool1d_maxpool_unaligned_s(
     }
 #endif // _DEBUG
 
-    float* s_ptr = (float*)_aligned_malloc(((size_t)c + AVX2_FLOAT_STRIDE) * sizeof(float), AVX2_ALIGNMENT);
-    if (s_ptr == nullptr) {
-        return FAILURE_BADALLOC;
-    }
-
     const __m256i mask = _mm256_setmask_ps(c & AVX2_FLOAT_REMAIN_MASK);
-
-    __m256 x0, x1, x2, x3;
-    __m256 s0, s1, s2, s3;
 
     for (uint i = 0; i < n; i++) {
         for (uint ox = 0, isx = 0; ox < ow; ox++, isx += sx) {
-            copy_dstaligned_s(c, x_ptr + c * isx, s_ptr, mask);
+            copy_unaligned_s(c, x_ptr + c * isx, y_ptr + c * ox, mask);
 
             for (uint kx = 1, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
-
-                const float* xc_ptr = x_ptr + c * ix;
-                float* sc_ptr = s_ptr;
-
-                uint r = c;
-
-                while (r >= AVX2_FLOAT_STRIDE * 4) {
-                    _mm256_loadu_x4_ps(xc_ptr, x0, x1, x2, x3);
-                    _mm256_load_x4_ps(sc_ptr, s0, s1, s2, s3);
-
-                    s0 = _mm256_max_ps(x0, s0);
-                    s1 = _mm256_max_ps(x1, s1);
-                    s2 = _mm256_max_ps(x2, s2);
-                    s3 = _mm256_max_ps(x3, s3);
-
-                    _mm256_store_x4_ps(sc_ptr, s0, s1, s2, s3);
-
-                    xc_ptr += AVX2_FLOAT_STRIDE * 4;
-                    sc_ptr += AVX2_FLOAT_STRIDE * 4;
-                    r -= AVX2_FLOAT_STRIDE * 4;
-                }
-                if (r >= AVX2_FLOAT_STRIDE * 2) {
-                    _mm256_loadu_x2_ps(xc_ptr, x0, x1);
-                    _mm256_load_x2_ps(sc_ptr, s0, s1);
-
-                    s0 = _mm256_max_ps(x0, s0);
-                    s1 = _mm256_max_ps(x1, s1);
-
-                    _mm256_store_x2_ps(sc_ptr, s0, s1);
-
-                    xc_ptr += AVX2_FLOAT_STRIDE * 2;
-                    sc_ptr += AVX2_FLOAT_STRIDE * 2;
-                    r -= AVX2_FLOAT_STRIDE * 2;
-                }
-                if (r >= AVX2_FLOAT_STRIDE) {
-                    _mm256_loadu_x1_ps(xc_ptr, x0);
-                    _mm256_load_x1_ps(sc_ptr, s0);
-
-                    s0 = _mm256_max_ps(x0, s0);
-
-                    _mm256_store_x1_ps(sc_ptr, s0);
-
-                    xc_ptr += AVX2_FLOAT_STRIDE;
-                    sc_ptr += AVX2_FLOAT_STRIDE;
-                    r -= AVX2_FLOAT_STRIDE;
-                }
-                if (r > 0) {
-                    _mm256_loadu_x1_ps(xc_ptr, x0);
-                    _mm256_load_x1_ps(sc_ptr, s0);
-
-                    s0 = _mm256_max_ps(x0, s0);
-
-                    _mm256_store_x1_ps(sc_ptr, s0);
-                }
+                maxpooliter_unaligned_s(c, x_ptr + c * ix, y_ptr + c * ox, mask);
             }
-
-            copy_srcaligned_s(c, s_ptr, y_ptr + c * ox, mask);
         }
 
         x_ptr += c * iw;
         y_ptr += c * ow;
     }
-
-    _aligned_free(s_ptr);
 
     return SUCCESS;
 }

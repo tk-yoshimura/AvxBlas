@@ -118,6 +118,7 @@
     <ClInclude Include="Inline\inline_matmul_d.hpp" />
     <ClInclude Include="Inline\inline_matmul_s.hpp" />
     <ClInclude Include="Inline\inline_ope_d.hpp" />
+    <ClInclude Include="Inline\inline_pooliter_s.hpp" />
     <ClInclude Include="Inline\inline_set_d.hpp" />
     <ClInclude Include="Inline\inline_sum_d.hpp" />
     <ClInclude Include="Inline\inline_zeroset_d.hpp" />
