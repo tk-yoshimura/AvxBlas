@@ -323,6 +323,9 @@
     <ClCompile Include="Pool2D\pool2d_maxunpool_s.cpp">
       <Filter>Source\Pool2D</Filter>
     </ClCompile>
+    <ClCompile Include="Pool3D\pool3d_maxunpool_s.cpp">
+      <Filter>Source\Pool3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

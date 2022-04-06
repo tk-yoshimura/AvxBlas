@@ -447,7 +447,7 @@ void AvxBlas::Pool2D::MaxUnpooling(
     else if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
         if (sx == kw && sy == kh) {
 #ifdef _DEBUG
-            Console::WriteLine("type aligned sx = kx, sy = ky");
+            Console::WriteLine("type aligned sx = kx and sy = ky");
 #endif // _DEBUG
 
             ret = pool2d_maxunpool_aligned_seqk_s(n, c, iw, ow, sx, kw, ih, oh, sy, kh, x_ptr, y_ptr, dy_ptr, dx_ptr);
@@ -470,7 +470,7 @@ void AvxBlas::Pool2D::MaxUnpooling(
     else {
         if (sx == kw && sy == kh) {
 #ifdef _DEBUG
-            Console::WriteLine("type unaligned sx = kx, sy = ky");
+            Console::WriteLine("type unaligned sx = kx and sy = ky");
 #endif // _DEBUG
 
             ret = pool2d_maxunpool_unaligned_seqk_s(n, c, iw, ow, sx, kw, ih, oh, sy, kh, x_ptr, y_ptr, dy_ptr, dx_ptr);

@@ -69,7 +69,6 @@ namespace AvxBlasTest.Pool3DTest {
                                 for (int kz = 0, iz = isz + kz; kz < kd && iz < id; kz++, iz = isz + kz) {
                                     for (int ky = 0, iy = isy + ky; ky < kh && iy < ih; ky++, iy = isy + ky) {
                                         for (int kx = 0, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
-
                                             v = Math.Max(v, x[c, ix, iy, iz, th]);
                                         }
                                     }

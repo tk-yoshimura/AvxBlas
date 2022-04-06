@@ -66,13 +66,7 @@ namespace AvxBlasTest.Pool1DTest {
             for (int th = 0; th < batch; th++) {
                 for (int isx = 0, ox = 0; ox < ow; isx += sx, ox++) {
                     for (int c = 0; c < channels; c++) {
-                        for (int kx = 0; kx < kw; kx++) {
-                            int ix = kx + isx;
-
-                            if (ix >= iw) {
-                                continue;
-                            }
-
+                        for (int kx = 0, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
                             if (y[c, ox, th] <= x[c, ix, th]) {
                                 dx[c, ix, th] += dy[c, ox, th];
                             }

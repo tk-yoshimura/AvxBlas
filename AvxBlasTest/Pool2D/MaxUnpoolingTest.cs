@@ -68,20 +68,8 @@ namespace AvxBlasTest.Pool2DTest {
                 for (int isy = 0, oy = 0; oy < oh; isy += sy, oy++) {
                     for (int isx = 0, ox = 0; ox < ow; isx += sx, ox++) {
                         for (int c = 0; c < channels; c++) {
-                            for (int ky = 0; ky < kh; ky++) {
-                                int iy = ky + isy;
-
-                                if (iy >= ih) {
-                                    continue;
-                                }
-
-                                for (int kx = 0; kx < kw; kx++) {
-                                    int ix = kx + isx;
-
-                                    if (ix >= iw) {
-                                        continue;
-                                    }
-
+                            for (int ky = 0, iy = isy + ky; ky < kh && iy < ih; ky++, iy = isy + ky) {
+                                for (int kx = 0, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
                                     if (y[c, ox, oy, th] <= x[c, ix, iy, th]) {
                                         dx[c, ix, iy, th] += dy[c, ox, oy, th];
                                     }
