@@ -22,7 +22,7 @@ namespace AvxBlasTest.Pool3DTest {
                     foreach ((uint kw, uint kh, uint kd) in new (uint, uint, uint)[] {
                         (1, 1, 2), (1, 2, 1), (2, 1, 1), (2, 2, 2), (2, 2, 3), (2, 3, 2), (3, 2, 2), (2, 2, 4), (2, 4, 3), (4, 4, 4), (3, 2, 5), (2, 5, 3) }) {
 
-                        foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
+                        foreach (uint c in new uint[] { 1, 2, 4, 5, 8, 10, 15, 16, 20, 32, 33 }) {
 
                             float[] xval = (new float[c * iw * ih * id * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
 
