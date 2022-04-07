@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace AvxBlasTest.Pool3DTest {
     [TestClass]
-    public class MaxUnpoolingTest {
+    public class AverageUnpoolingTest {
         [TestMethod]
-        public void SMaxUnpoolingTest() {
+        public void SAverageUnpoolingTest() {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
@@ -24,26 +24,19 @@ namespace AvxBlasTest.Pool3DTest {
 
                         foreach (uint c in new uint[] { 1, 2, 4, 5, 8, 10, 15, 16, 20, 32, 33 }) {
 
-                            float[] xval = (new float[c * iw * ih * id * n]).Select((_, idx) => (float)(idx * 4547 % 17)).ToArray();
                             float[] dyval = (new float[c * ow * oh * od * n]).Select((_, idx) => (float)((idx + 1) * 4547 % 17)).Reverse().ToArray();
 
-                            Map3D x = new((int)c, (int)iw, (int)ih, (int)id, (int)n, xval);
-                            Map3D y = MaxPoolingTest.Reference(x, (int)sx, (int)kw, (int)sy, (int)kh, (int)sz, (int)kd);
                             Map3D dy = new((int)c, (int)ow, (int)oh, (int)od, (int)n, dyval);
-                            Map3D dx = Reference(x, y, dy, (int)iw, (int)sx, (int)kw, (int)ih, (int)sy, (int)kh, (int)id, (int)sz, (int)kd);
+                            Map3D dx = Reference(dy, (int)iw, (int)sx, (int)kw, (int)ih, (int)sy, (int)kh, (int)id, (int)sz, (int)kd);
 
-                            Array<float> x_tensor = xval;
-                            Array<float> y_tensor = y.ToFloatArray();
                             Array<float> dy_tensor = dyval;
                             Array<float> dx_tensor = new(c * iw * ih * id * n, zeroset: false);
 
-                            Pool3D.MaxUnpooling(n, c, iw, ih, id, sx, sy, sz, kw, kh, kd, x_tensor, y_tensor, dy_tensor, dx_tensor);
+                            Pool3D.AverageUnpooling(n, c, iw, ih, id, sx, sy, sz, kw, kh, kd, dy_tensor, dx_tensor);
 
                             float[] dx_expect = dx.ToFloatArray();
                             float[] dx_actual = dx_tensor;
 
-                            CollectionAssert.AreEqual(xval, (float[])x_tensor);
-                            CollectionAssert.AreEqual(y.ToFloatArray(), (float[])y_tensor);
                             CollectionAssert.AreEqual(dyval, (float[])dy_tensor);
 
                             AssertError.Tolerance(dx_expect, dx_actual, 1e-10f, 1e-5f, ref max_err, $"NG: {c},{iw},{ih},{id},{sx},{sy},{sz},{kw},{kh},{kd},{n}");
@@ -57,11 +50,11 @@ namespace AvxBlasTest.Pool3DTest {
             Console.WriteLine($"maxerr:{max_err}");
         }
 
-        public static Map3D Reference(Map3D x, Map3D y, Map3D dy, int iw, int sx, int kw, int ih, int sy, int kh, int id, int sz, int kd) {
-            int channels = y.Channels, batch = y.Batch;
+        public static Map3D Reference(Map3D dy, int iw, int sx, int kw, int ih, int sy, int kh, int id, int sz, int kd) {
+            int channels = dy.Channels, batch = dy.Batch;
             int ow = (iw - 1) / sx + 1, oh = (ih - 1) / sy + 1, od = (id - 1) / sz + 1;
 
-            if (y.Width != ow || dy.Width != ow || y.Height != oh || dy.Height != oh || y.Depth != od || dy.Depth != od) {
+            if (dy.Width != ow || dy.Height != oh || dy.Depth != od) {
                 throw new ArgumentException("mismatch shape");
             }
 
@@ -75,12 +68,22 @@ namespace AvxBlasTest.Pool3DTest {
                                 for (int kz = 0, iz = isz + kz; kz < kd && iz < id; kz++, iz = isz + kz) {
                                     for (int ky = 0, iy = isy + ky; ky < kh && iy < ih; ky++, iy = isy + ky) {
                                         for (int kx = 0, ix = isx + kx; kx < kw && ix < iw; kx++, ix = isx + kx) {
-                                            if (y[c, ox, oy, oz, th] <= x[c, ix, iy, iz, th]) {
-                                                dx[c, ix, iy, iz, th] += dy[c, ox, oy, oz, th];
-                                            }
+                                            dx[c, ix, iy, iz, th] += dy[c, ox, oy, oz, th];
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int th = 0; th < batch; th++) {
+                for (int iz = 0; iz < id; iz++) {
+                    for (int iy = 0; iy < ih; iy++) {
+                        for (int ix = 0; ix < iw; ix++) {
+                            for (int c = 0; c < channels; c++) {
+                                dx[c, ix, iy, iz, th] /= kw * kh * kd;
                             }
                         }
                     }

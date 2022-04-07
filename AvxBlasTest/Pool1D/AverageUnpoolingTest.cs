@@ -50,7 +50,7 @@ namespace AvxBlasTest.Pool1DTest {
             int channels = dy.Channels, batch = dy.Batch;
             int ow = (iw - 1) / sx + 1;
 
-            if (dy.Width != ow) { 
+            if (dy.Width != ow) {
                 throw new ArgumentException("mismatch shape");
             }
 
