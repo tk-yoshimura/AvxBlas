@@ -196,9 +196,9 @@ namespace AvxBlas {
         static void AveragePooling(UInt32 n, UInt32 c, UInt32 iw,
                                UInt32 sx, UInt32 kw,
                                Array<float>^ x, Array<float>^ y);
-        //static void AverageUnpooling(UInt32 n, UInt32 c, UInt32 iw,
-        //                       UInt32 sx, UInt32 kw,
-        //                       Array<float>^ dy, Array<float>^ dx);
+        static void AverageUnpooling(UInt32 n, UInt32 c, UInt32 iw,
+                               UInt32 sx, UInt32 kw,
+                               Array<float>^ dy, Array<float>^ dx);
     };
 
     public ref class Pool2D abstract sealed {
