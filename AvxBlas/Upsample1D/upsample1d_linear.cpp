@@ -3,6 +3,7 @@
 #include "../utils.h"
 #include "../Inline/inline_numeric.hpp"
 #include "../Inline/inline_loadstore_xn_s.hpp"
+#include "../Inline/inline_transpose_s.hpp"
 
 #pragma unmanaged
 
@@ -158,31 +159,80 @@ int upsample1d_linear_c1(
     }
 #endif // _DEBUG
 
-    float xl, xc, xr;
+    if (iw > 1u) {
+        const __m256i mask = _mm256_setmask_ps(((iw - 2u) * 2u) & AVX2_FLOAT_REMAIN_MASK);
 
-    for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-            const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+        for (uint i = 0; i < n; i++) {
+            {
+                const float* xc_ptr = x_ptr;
+                const float* xr_ptr = x_ptr + 1;
 
-            const float* xl_ptr = x_ptr + ixl;
-            const float* xc_ptr = x_ptr + ix;
-            const float* xr_ptr = x_ptr + ixr;
+                float* yl_ptr = y_ptr;
+                float* yr_ptr = yl_ptr + 1;
 
-            float* yl_ptr = y_ptr + ox;
-            float* yr_ptr = yl_ptr + 1;
+                float xc = *xc_ptr;
+                float xr = *xr_ptr;
 
-            xl = *xl_ptr;
-            xc = *xc_ptr;
-            xr = *xr_ptr;
+                floatx2 y = float_linear1d(xc, xc, xr);
 
-            floatx2 y = float_linear1d(xl, xc, xr);
+                *yl_ptr = y.imm0;
+                *yr_ptr = y.imm1;
+            }
+            for (uint ix = 1, ox = 2; ix < iw - 1u; ix += AVX2_FLOAT_STRIDE, ox += AVX2_FLOAT_STRIDE * 2) {
+                const uint ixl = ix - 1u, ixr = ix + 1u;
 
-            *yl_ptr = y.imm0;
-            *yr_ptr = y.imm1;
+                const float* xl_ptr = x_ptr + ixl;
+                const float* xc_ptr = x_ptr + ix;
+                const float* xr_ptr = x_ptr + ixr;
+
+                __m256 xl = _mm256_loadu_ps(xl_ptr);
+                __m256 xc = _mm256_loadu_ps(xc_ptr);
+                __m256 xr = _mm256_loadu_ps(xr_ptr);
+
+                __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
+                __m256x2 yt = _mm256_transpose8x2_ps(y.imm0, y.imm1);
+
+                if (ix + AVX2_FLOAT_STRIDE <= iw - 1) {
+                    _mm256_storeu_x2_ps(y_ptr + ox, yt.imm0, yt.imm1);
+                }
+                else if (ix + AVX2_FLOAT_STRIDE / 2 < iw - 1) {
+                    _mm256_maskstore_x2_ps(y_ptr + ox, yt.imm0, yt.imm1, mask);
+                }
+                else if (ix + AVX2_FLOAT_STRIDE / 2 == iw - 1) {
+                    _mm256_storeu_x1_ps(y_ptr + ox, yt.imm0);
+                }
+                else {
+                    _mm256_maskstore_x1_ps(y_ptr + ox, yt.imm0, mask);
+                }
+            }
+            {
+                const float* xl_ptr = x_ptr + (iw - 2u);
+                const float* xc_ptr = x_ptr + (iw - 1u);
+
+                float* yl_ptr = y_ptr + (iw - 1u) * 2;
+                float* yr_ptr = yl_ptr + 1;
+
+                float xl = *xl_ptr;
+                float xc = *xc_ptr;
+
+                floatx2 y = float_linear1d(xl, xc, xc);
+
+                *yl_ptr = y.imm0;
+                *yr_ptr = y.imm1;
+            }
+
+            x_ptr += iw;
+            y_ptr += ow;
         }
+    }
+    else {
+        for (uint i = 0; i < n; i++) {
+            float x = *x_ptr;
+            y_ptr[0] = y_ptr[1] = x + x + x;
 
-        x_ptr += iw;
-        y_ptr += ow;
+            x_ptr += 1;
+            y_ptr += 2;
+        }
     }
 
     return SUCCESS;
