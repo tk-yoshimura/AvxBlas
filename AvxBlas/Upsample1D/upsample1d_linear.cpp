@@ -54,7 +54,7 @@ int upsample1d_linear_aligned(
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             while (r >= AVX2_FLOAT_STRIDE) {
                 _mm256_load_x1_ps(xl_ptr, xl);
@@ -109,7 +109,7 @@ int upsample1d_linear_unaligned(
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             while (r >= AVX2_FLOAT_STRIDE) {
                 _mm256_loadu_x1_ps(xl_ptr, xl);
@@ -169,7 +169,7 @@ int upsample1d_linear_c1(
             const float* xr_ptr = x_ptr + ixr;
 
             float* yl_ptr = y_ptr + ox;
-            float* yr_ptr = y_ptr + (ox + 1);
+            float* yr_ptr = yl_ptr + 1;
 
             xl = *xl_ptr;
             xc = *xc_ptr;
@@ -212,7 +212,7 @@ int upsample1d_linear_c2to3(
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             xl = _mm_loadu_ps(xl_ptr);
             xc = _mm_loadu_ps(xc_ptr);
@@ -253,7 +253,7 @@ int upsample1d_linear_c4(
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             xl = _mm_load_ps(xl_ptr);
             xc = _mm_load_ps(xc_ptr);
@@ -296,7 +296,7 @@ int upsample1d_linear_c5to7(
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             _mm256_loadu_x1_ps(xl_ptr, xl);
             _mm256_loadu_x1_ps(xc_ptr, xc);
@@ -337,7 +337,7 @@ int upsample1d_linear_c8(
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             _mm256_load_x1_ps(xl_ptr, xl);
             _mm256_load_x1_ps(xc_ptr, xc);
@@ -399,7 +399,7 @@ void AvxBlas::Upsample1D::LinearX2(
     Util::CheckProdOverflow(iw, 2u);
     UInt32 ow = iw * 2;
 
-    if (iw > MAX_MAP_SIZE || ow > MAX_MAP_SIZE) {
+    if (ow > MAX_MAP_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 

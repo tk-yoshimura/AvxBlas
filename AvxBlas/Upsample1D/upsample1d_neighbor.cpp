@@ -23,7 +23,7 @@ int upsample1d_neighbor_aligned(
             uint r = c;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             while (r >= AVX2_FLOAT_STRIDE) {
                 _mm256_load_x1_ps(x_ptr, x);
@@ -63,7 +63,7 @@ int upsample1d_neighbor_unaligned(
             uint r = c;
 
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             while (r >= AVX2_FLOAT_STRIDE) {
                 _mm256_loadu_x1_ps(x_ptr, x);
@@ -106,7 +106,7 @@ int upsample1d_neighbor_c1(
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             float* yl_ptr = y_ptr + ox;
-            float* yr_ptr = y_ptr + (ox + 1);
+            float* yr_ptr = yl_ptr + 1;
 
             x = *x_ptr;
 
@@ -140,7 +140,7 @@ int upsample1d_neighbor_c2to3(
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             x = _mm_loadu_ps(x_ptr);
 
@@ -172,7 +172,7 @@ int upsample1d_neighbor_c4(
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             x = _mm_load_ps(x_ptr);
 
@@ -206,7 +206,7 @@ int upsample1d_neighbor_c5to7(
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             _mm256_loadu_x1_ps(x_ptr, x);
 
@@ -238,7 +238,7 @@ int upsample1d_neighbor_c8(
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             float* yl_ptr = y_ptr + c * ox;
-            float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yr_ptr = yl_ptr + c;
 
             _mm256_load_x1_ps(x_ptr, x);
 
@@ -297,7 +297,7 @@ void AvxBlas::Upsample1D::NeighborX2(
     Util::CheckProdOverflow(iw, 2u);
     UInt32 ow = iw * 2;
 
-    if (iw > MAX_MAP_SIZE || ow > MAX_MAP_SIZE) {
+    if (ow > MAX_MAP_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 

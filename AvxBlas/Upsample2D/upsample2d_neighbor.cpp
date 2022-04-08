@@ -24,9 +24,9 @@ int upsample2d_neighbor_aligned(
                 uint r = c;
 
                 float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + c;
+                float* yld_ptr = ylu_ptr + c * ow;
+                float* yrd_ptr = ylu_ptr + c * (ow + 1);
 
                 while (r >= AVX2_FLOAT_STRIDE) {
                     _mm256_load_x1_ps(x_ptr, x);
@@ -72,9 +72,9 @@ int upsample2d_neighbor_unaligned(
                 uint r = c;
 
                 float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + c;
+                float* yld_ptr = ylu_ptr + c * ow;
+                float* yrd_ptr = ylu_ptr + c * (ow + 1);
 
                 while (r >= AVX2_FLOAT_STRIDE) {
                     _mm256_loadu_x1_ps(x_ptr, x);
@@ -125,9 +125,9 @@ int upsample2d_neighbor_c1(
         for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
             for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
                 float* ylu_ptr = y_ptr + (ox + ow * oy);
-                float* yru_ptr = y_ptr + ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + 1;
+                float* yld_ptr = ylu_ptr + ow;
+                float* yrd_ptr = ylu_ptr + (ow + 1);
 
                 x = *x_ptr;
 
@@ -165,9 +165,9 @@ int upsample2d_neighbor_c2to3(
         for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
             for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
                 float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + c;
+                float* yld_ptr = ylu_ptr + c * ow;
+                float* yrd_ptr = ylu_ptr + c * (ow + 1);
 
                 x = _mm_loadu_ps(x_ptr);
 
@@ -203,9 +203,9 @@ int upsample2d_neighbor_c4(
         for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
             for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
                 float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + c;
+                float* yld_ptr = ylu_ptr + c * ow;
+                float* yrd_ptr = ylu_ptr + c * (ow + 1);
 
                 x = _mm_load_ps(x_ptr);
 
@@ -243,9 +243,9 @@ int upsample2d_neighbor_c5to7(
         for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
             for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
                 float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + c;
+                float* yld_ptr = ylu_ptr + c * ow;
+                float* yrd_ptr = ylu_ptr + c * (ow + 1);
 
                 _mm256_loadu_x1_ps(x_ptr, x);
 
@@ -281,9 +281,9 @@ int upsample2d_neighbor_c8(
         for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
             for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
                 float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* yru_ptr = ylu_ptr + c;
+                float* yld_ptr = ylu_ptr + c * ow;
+                float* yrd_ptr = ylu_ptr + c * (ow + 1);
 
                 _mm256_load_x1_ps(x_ptr, x);
 
@@ -346,7 +346,7 @@ void AvxBlas::Upsample2D::NeighborX2(
     Util::CheckProdOverflow(ih, 2u);
     UInt32 ow = iw * 2, oh = ih * 2;
 
-    if (iw > MAX_MAP_SIZE || ow > MAX_MAP_SIZE || ih > MAX_MAP_SIZE || oh > MAX_MAP_SIZE) {
+    if (ow > MAX_MAP_SIZE || oh > MAX_MAP_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 
