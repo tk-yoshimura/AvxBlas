@@ -252,269 +252,329 @@ int upsample2d_linear_unaligned(
     return SUCCESS;
 }
 
-int upsample2d_linear_cleq8(
+int upsample2d_linear_c1(
     const uint n, const uint c,
     const uint iw, const uint ow, const uint ih, const uint oh,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c > AVX2_FLOAT_STRIDE) {
+    if (c != 1) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
 
-    if (c == AVX2_FLOAT_STRIDE) {
-        __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+    float xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
 
-                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
+                const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
+                const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
+                const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
+                const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
+                const float* xc_ptr = x_ptr + c * (ix + iw * iy);
+                const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
+                const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
+                const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
+                const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
 
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+                float* ylu_ptr = y_ptr + (ox + ow * oy);
+                float* yru_ptr = y_ptr + ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + ((ox + 1) + ow * (oy + 1));
 
-                    _mm256_load_x1_ps(xlu_ptr, xlu);
-                    _mm256_load_x1_ps(xu_ptr, xu);
-                    _mm256_load_x1_ps(xru_ptr, xru);
-                    _mm256_load_x1_ps(xl_ptr, xl);
-                    _mm256_load_x1_ps(xc_ptr, xc);
-                    _mm256_load_x1_ps(xr_ptr, xr);
-                    _mm256_load_x1_ps(xld_ptr, xld);
-                    _mm256_load_x1_ps(xd_ptr, xd);
-                    _mm256_load_x1_ps(xrd_ptr, xrd);
+                xlu = *xlu_ptr;
+                xu = *xu_ptr;
+                xru = *xru_ptr;
+                xl = *xl_ptr;
+                xc = *xc_ptr;
+                xr = *xr_ptr;
+                xld = *xld_ptr;
+                xd = *xd_ptr;
+                xrd = *xrd_ptr;
 
-                    __m256x4 y = _mm256_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+                floatx4 y = float_linear2d(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
 
-                    _mm256_stream_x1_ps(ylu_ptr, y.imm0);
-                    _mm256_stream_x1_ps(yru_ptr, y.imm1);
-                    _mm256_stream_x1_ps(yld_ptr, y.imm2);
-                    _mm256_stream_x1_ps(yrd_ptr, y.imm3);
-                }
+                *ylu_ptr = y.imm0;
+                *yru_ptr = y.imm1;
+                *yld_ptr = y.imm2;
+                *yrd_ptr = y.imm3;
             }
-
-            x_ptr += c * iw * ih;
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        x_ptr += c * iw * ih;
+        y_ptr += c * ow * oh;
     }
 
-    if (c > AVX1_FLOAT_STRIDE && c < AVX2_FLOAT_STRIDE) {
-        const __m256i mask = _mm256_setmask_ps(c);
+    return SUCCESS;
+}
 
-        __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+int upsample2d_linear_c2to3(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+#ifdef _DEBUG
+    if (c <= 1 && c >= AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
+    const __m128i mask = _mm_setmask_ps(c);
 
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+    __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
 
-                    _mm256_loadu_x1_ps(xlu_ptr, xlu);
-                    _mm256_loadu_x1_ps(xu_ptr, xu);
-                    _mm256_loadu_x1_ps(xru_ptr, xru);
-                    _mm256_loadu_x1_ps(xl_ptr, xl);
-                    _mm256_loadu_x1_ps(xc_ptr, xc);
-                    _mm256_loadu_x1_ps(xr_ptr, xr);
-                    _mm256_loadu_x1_ps(xld_ptr, xld);
-                    _mm256_loadu_x1_ps(xd_ptr, xd);
-                    _mm256_loadu_x1_ps(xrd_ptr, xrd);
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
 
-                    __m256x4 y = _mm256_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+                const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
+                const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
+                const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
+                const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
+                const float* xc_ptr = x_ptr + c * (ix + iw * iy);
+                const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
+                const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
+                const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
+                const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
 
-                    _mm256_maskstore_x1_ps(ylu_ptr, y.imm0, mask);
-                    _mm256_maskstore_x1_ps(yru_ptr, y.imm1, mask);
-                    _mm256_maskstore_x1_ps(yld_ptr, y.imm2, mask);
-                    _mm256_maskstore_x1_ps(yrd_ptr, y.imm3, mask);
-                }
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                xlu = _mm_loadu_ps(xlu_ptr);
+                xu = _mm_loadu_ps(xu_ptr);
+                xru = _mm_loadu_ps(xru_ptr);
+                xl = _mm_loadu_ps(xl_ptr);
+                xc = _mm_loadu_ps(xc_ptr);
+                xr = _mm_loadu_ps(xr_ptr);
+                xld = _mm_loadu_ps(xld_ptr);
+                xd = _mm_loadu_ps(xd_ptr);
+                xrd = _mm_loadu_ps(xrd_ptr);
+
+                __m128x4 y = _mm_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+
+                _mm_maskstore_ps(ylu_ptr, mask, y.imm0);
+                _mm_maskstore_ps(yru_ptr, mask, y.imm1);
+                _mm_maskstore_ps(yld_ptr, mask, y.imm2);
+                _mm_maskstore_ps(yrd_ptr, mask, y.imm3);
             }
-
-            x_ptr += c * iw * ih;
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        x_ptr += c * iw * ih;
+        y_ptr += c * ow * oh;
     }
 
-    if (c == AVX1_FLOAT_STRIDE) {
-        __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+    return SUCCESS;
+}
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+int upsample2d_linear_c4(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
-                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
+#ifdef _DEBUG
+    if (c != AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+    __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
 
-                    xlu = _mm_load_ps(xlu_ptr);
-                    xu = _mm_load_ps(xu_ptr);
-                    xru = _mm_load_ps(xru_ptr);
-                    xl = _mm_load_ps(xl_ptr);
-                    xc = _mm_load_ps(xc_ptr);
-                    xr = _mm_load_ps(xr_ptr);
-                    xld = _mm_load_ps(xld_ptr);
-                    xd = _mm_load_ps(xd_ptr);
-                    xrd = _mm_load_ps(xrd_ptr);
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
 
-                    __m128x4 y = _mm_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+                const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
+                const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
+                const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
+                const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
+                const float* xc_ptr = x_ptr + c * (ix + iw * iy);
+                const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
+                const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
+                const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
+                const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
 
-                    _mm_stream_ps(ylu_ptr, y.imm0);
-                    _mm_stream_ps(yru_ptr, y.imm1);
-                    _mm_stream_ps(yld_ptr, y.imm2);
-                    _mm_stream_ps(yrd_ptr, y.imm3);
-                }
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                xlu = _mm_load_ps(xlu_ptr);
+                xu = _mm_load_ps(xu_ptr);
+                xru = _mm_load_ps(xru_ptr);
+                xl = _mm_load_ps(xl_ptr);
+                xc = _mm_load_ps(xc_ptr);
+                xr = _mm_load_ps(xr_ptr);
+                xld = _mm_load_ps(xld_ptr);
+                xd = _mm_load_ps(xd_ptr);
+                xrd = _mm_load_ps(xrd_ptr);
+
+                __m128x4 y = _mm_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+
+                _mm_stream_ps(ylu_ptr, y.imm0);
+                _mm_stream_ps(yru_ptr, y.imm1);
+                _mm_stream_ps(yld_ptr, y.imm2);
+                _mm_stream_ps(yrd_ptr, y.imm3);
             }
-
-            x_ptr += c * iw * ih;
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        x_ptr += c * iw * ih;
+        y_ptr += c * ow * oh;
     }
 
-    if (c > 1 && c < AVX1_FLOAT_STRIDE) {
-        const __m128i mask = _mm_setmask_ps(c);
+    return SUCCESS;
+}
 
-        __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+int upsample2d_linear_c5to7(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+#ifdef _DEBUG
+    if (c <= AVX1_FLOAT_STRIDE || c >= AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
+    const __m256i mask = _mm256_setmask_ps(c);
 
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+    __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
 
-                    xlu = _mm_loadu_ps(xlu_ptr);
-                    xu = _mm_loadu_ps(xu_ptr);
-                    xru = _mm_loadu_ps(xru_ptr);
-                    xl = _mm_loadu_ps(xl_ptr);
-                    xc = _mm_loadu_ps(xc_ptr);
-                    xr = _mm_loadu_ps(xr_ptr);
-                    xld = _mm_loadu_ps(xld_ptr);
-                    xd = _mm_loadu_ps(xd_ptr);
-                    xrd = _mm_loadu_ps(xrd_ptr);
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
 
-                    __m128x4 y = _mm_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+                const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
+                const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
+                const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
+                const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
+                const float* xc_ptr = x_ptr + c * (ix + iw * iy);
+                const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
+                const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
+                const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
+                const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
 
-                    _mm_maskstore_ps(ylu_ptr, mask, y.imm0);
-                    _mm_maskstore_ps(yru_ptr, mask, y.imm1);
-                    _mm_maskstore_ps(yld_ptr, mask, y.imm2);
-                    _mm_maskstore_ps(yrd_ptr, mask, y.imm3);
-                }
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                _mm256_loadu_x1_ps(xlu_ptr, xlu);
+                _mm256_loadu_x1_ps(xu_ptr, xu);
+                _mm256_loadu_x1_ps(xru_ptr, xru);
+                _mm256_loadu_x1_ps(xl_ptr, xl);
+                _mm256_loadu_x1_ps(xc_ptr, xc);
+                _mm256_loadu_x1_ps(xr_ptr, xr);
+                _mm256_loadu_x1_ps(xld_ptr, xld);
+                _mm256_loadu_x1_ps(xd_ptr, xd);
+                _mm256_loadu_x1_ps(xrd_ptr, xrd);
+
+                __m256x4 y = _mm256_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+
+                _mm256_maskstore_x1_ps(ylu_ptr, y.imm0, mask);
+                _mm256_maskstore_x1_ps(yru_ptr, y.imm1, mask);
+                _mm256_maskstore_x1_ps(yld_ptr, y.imm2, mask);
+                _mm256_maskstore_x1_ps(yrd_ptr, y.imm3, mask);
             }
-
-            x_ptr += c * iw * ih;
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        x_ptr += c * iw * ih;
+        y_ptr += c * ow * oh;
     }
+
+    return SUCCESS;
+}
+
+int upsample2d_linear_c8(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c != AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+
+                const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
+                const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
+                const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
+                const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
+                const float* xc_ptr = x_ptr + c * (ix + iw * iy);
+                const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
+                const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
+                const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
+                const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
+
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                _mm256_load_x1_ps(xlu_ptr, xlu);
+                _mm256_load_x1_ps(xu_ptr, xu);
+                _mm256_load_x1_ps(xru_ptr, xru);
+                _mm256_load_x1_ps(xl_ptr, xl);
+                _mm256_load_x1_ps(xc_ptr, xc);
+                _mm256_load_x1_ps(xr_ptr, xr);
+                _mm256_load_x1_ps(xld_ptr, xld);
+                _mm256_load_x1_ps(xd_ptr, xd);
+                _mm256_load_x1_ps(xrd_ptr, xrd);
+
+                __m256x4 y = _mm256_linear2d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
+
+                _mm256_stream_x1_ps(ylu_ptr, y.imm0);
+                _mm256_stream_x1_ps(yru_ptr, y.imm1);
+                _mm256_stream_x1_ps(yld_ptr, y.imm2);
+                _mm256_stream_x1_ps(yrd_ptr, y.imm3);
+            }
+        }
+
+        x_ptr += c * iw * ih;
+        y_ptr += c * ow * oh;
+    }
+
+    return SUCCESS;
+}
+
+int upsample2d_linear_cleq8(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
     if (c == 1) {
-        float xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
-
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
-
-                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
-
-                    float* ylu_ptr = y_ptr + (ox + ow * oy);
-                    float* yru_ptr = y_ptr + ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + ((ox + 1) + ow * (oy + 1));
-
-                    xlu = *xlu_ptr;
-                    xu = *xu_ptr;
-                    xru = *xru_ptr;
-                    xl = *xl_ptr;
-                    xc = *xc_ptr;
-                    xr = *xr_ptr;
-                    xld = *xld_ptr;
-                    xd = *xd_ptr;
-                    xrd = *xrd_ptr;
-
-                    floatx4 y = float_linear2d(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
-
-                    *ylu_ptr = y.imm0;
-                    *yru_ptr = y.imm1;
-                    *yld_ptr = y.imm2;
-                    *yrd_ptr = y.imm3;
-                }
-            }
-
-            x_ptr += c * iw * ih;
-            y_ptr += c * ow * oh;
-        }
-
-        return SUCCESS;
+        return upsample2d_linear_c1(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c < AVX1_FLOAT_STRIDE) {
+        return upsample2d_linear_c2to3(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c == AVX1_FLOAT_STRIDE) {
+        return upsample2d_linear_c4(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c < AVX2_FLOAT_STRIDE) {
+        return upsample2d_linear_c5to7(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c == AVX2_FLOAT_STRIDE) {
+        return upsample2d_linear_c8(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;

@@ -108,159 +108,219 @@ int upsample2d_neighbor_unaligned(
     return SUCCESS;
 }
 
-int upsample2d_neighbor_cleq8(
+int upsample2d_neighbor_c1(
     const uint n, const uint c,
     const uint iw, const uint ow, const uint ih, const uint oh,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c > AVX2_FLOAT_STRIDE) {
+    if (c != 1) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
 
-    if (c == AVX2_FLOAT_STRIDE) {
-        __m256 x;
+    float x;
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                float* ylu_ptr = y_ptr + (ox + ow * oy);
+                float* yru_ptr = y_ptr + ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + ((ox + 1) + ow * (oy + 1));
 
-                    _mm256_load_x1_ps(x_ptr, x);
+                x = *x_ptr;
 
-                    _mm256_stream_x1_ps(ylu_ptr, x);
-                    _mm256_stream_x1_ps(yru_ptr, x);
-                    _mm256_stream_x1_ps(yld_ptr, x);
-                    _mm256_stream_x1_ps(yrd_ptr, x);
+                *ylu_ptr = x;
+                *yru_ptr = x;
+                *yld_ptr = x;
+                *yrd_ptr = x;
 
-                    x_ptr += c;
-                }
+                x_ptr++;
             }
-
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        y_ptr += ow * oh;
     }
 
-    if (c > AVX1_FLOAT_STRIDE && c < AVX2_FLOAT_STRIDE) {
-        const __m256i mask = _mm256_setmask_ps(c);
+    return SUCCESS;
+}
 
-        __m256 x;
+int upsample2d_neighbor_c2to3(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+#ifdef _DEBUG
+    if (c <= 1 && c >= AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                    _mm256_loadu_x1_ps(x_ptr, x);
+    const __m128i mask = _mm_setmask_ps(c);
 
-                    _mm256_maskstore_x1_ps(ylu_ptr, x, mask);
-                    _mm256_maskstore_x1_ps(yru_ptr, x, mask);
-                    _mm256_maskstore_x1_ps(yld_ptr, x, mask);
-                    _mm256_maskstore_x1_ps(yrd_ptr, x, mask);
+    __m128 x;
 
-                    x_ptr += c;
-                }
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                x = _mm_loadu_ps(x_ptr);
+
+                _mm_maskstore_ps(ylu_ptr, mask, x);
+                _mm_maskstore_ps(yru_ptr, mask, x);
+                _mm_maskstore_ps(yld_ptr, mask, x);
+                _mm_maskstore_ps(yrd_ptr, mask, x);
+
+                x_ptr += c;
             }
-
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        y_ptr += c * ow * oh;
     }
 
-    if (c == AVX1_FLOAT_STRIDE) {
-        __m128 x;
+    return SUCCESS;
+}
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+int upsample2d_neighbor_c4(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
-                    x = _mm_load_ps(x_ptr);
+#ifdef _DEBUG
+    if (c != AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                    _mm_stream_ps(ylu_ptr, x);
-                    _mm_stream_ps(yru_ptr, x);
-                    _mm_stream_ps(yld_ptr, x);
-                    _mm_stream_ps(yrd_ptr, x);
+    __m128 x;
 
-                    x_ptr += c;
-                }
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                x = _mm_load_ps(x_ptr);
+
+                _mm_stream_ps(ylu_ptr, x);
+                _mm_stream_ps(yru_ptr, x);
+                _mm_stream_ps(yld_ptr, x);
+                _mm_stream_ps(yrd_ptr, x);
+
+                x_ptr += c;
             }
-
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        y_ptr += c * ow * oh;
     }
 
-    if (c > 1 && c < AVX1_FLOAT_STRIDE) {
-        const __m128i mask = _mm_setmask_ps(c);
+    return SUCCESS;
+}
 
-        __m128 x;
+int upsample2d_neighbor_c5to7(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+#ifdef _DEBUG
+    if (c <= AVX1_FLOAT_STRIDE || c >= AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                    x = _mm_loadu_ps(x_ptr);
+    const __m256i mask = _mm256_setmask_ps(c);
 
-                    _mm_maskstore_ps(ylu_ptr, mask, x);
-                    _mm_maskstore_ps(yru_ptr, mask, x);
-                    _mm_maskstore_ps(yld_ptr, mask, x);
-                    _mm_maskstore_ps(yrd_ptr, mask, x);
+    __m256 x;
 
-                    x_ptr += c;
-                }
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                _mm256_loadu_x1_ps(x_ptr, x);
+
+                _mm256_maskstore_x1_ps(ylu_ptr, x, mask);
+                _mm256_maskstore_x1_ps(yru_ptr, x, mask);
+                _mm256_maskstore_x1_ps(yld_ptr, x, mask);
+                _mm256_maskstore_x1_ps(yrd_ptr, x, mask);
+
+                x_ptr += c;
             }
-
-            y_ptr += c * ow * oh;
         }
 
-        return SUCCESS;
+        y_ptr += c * ow * oh;
     }
+
+    return SUCCESS;
+}
+
+int upsample2d_neighbor_c8(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c != AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    __m256 x;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                float* ylu_ptr = y_ptr + c * (ox + ow * oy);
+                float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
+                float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
+                float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
+
+                _mm256_load_x1_ps(x_ptr, x);
+
+                _mm256_stream_x1_ps(ylu_ptr, x);
+                _mm256_stream_x1_ps(yru_ptr, x);
+                _mm256_stream_x1_ps(yld_ptr, x);
+                _mm256_stream_x1_ps(yrd_ptr, x);
+
+                x_ptr += c;
+            }
+        }
+
+        y_ptr += c * ow * oh;
+    }
+
+    return SUCCESS;
+}
+
+int upsample2d_neighbor_cleq8(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh,
+    infloats x_ptr, outfloats y_ptr) {
 
     if (c == 1) {
-        float x;
-
-        for (uint i = 0; i < n; i++) {
-            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    float* ylu_ptr = y_ptr + (ox + ow * oy);
-                    float* yru_ptr = y_ptr + ((ox + 1) + ow * oy);
-                    float* yld_ptr = y_ptr + (ox + ow * (oy + 1));
-                    float* yrd_ptr = y_ptr + ((ox + 1) + ow * (oy + 1));
-
-                    x = *x_ptr;
-
-                    *ylu_ptr = x;
-                    *yru_ptr = x;
-                    *yld_ptr = x;
-                    *yrd_ptr = x;
-
-                    x_ptr++;
-                }
-            }
-
-            y_ptr += ow * oh;
-        }
-
-        return SUCCESS;
+        return upsample2d_neighbor_c1(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c < AVX1_FLOAT_STRIDE) {
+        return upsample2d_neighbor_c2to3(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c == AVX1_FLOAT_STRIDE) {
+        return upsample2d_neighbor_c4(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c < AVX2_FLOAT_STRIDE) {
+        return upsample2d_neighbor_c5to7(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
+    }
+    if (c == AVX2_FLOAT_STRIDE) {
+        return upsample2d_neighbor_c8(n, c, iw, ow, ih, oh, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;

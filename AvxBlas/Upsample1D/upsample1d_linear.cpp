@@ -147,174 +147,234 @@ int upsample1d_linear_unaligned(
     return SUCCESS;
 }
 
-int upsample1d_linear_cleq8(
+int upsample1d_linear_c1(
     const uint n, const uint c,
     const uint iw, const uint ow,
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c > AVX2_FLOAT_STRIDE) {
+    if (c != 1) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
 
-    if (c == AVX2_FLOAT_STRIDE) {
-        __m256 xl, xc, xr;
+    float xl, xc, xr;
 
-        for (uint i = 0; i < n; i++) {
-            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+    for (uint i = 0; i < n; i++) {
+        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+            const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
 
-                const float* xl_ptr = x_ptr + c * ixl;
-                const float* xc_ptr = x_ptr + c * ix;
-                const float* xr_ptr = x_ptr + c * ixr;
+            const float* xl_ptr = x_ptr + ixl;
+            const float* xc_ptr = x_ptr + ix;
+            const float* xr_ptr = x_ptr + ixr;
 
-                float* yl_ptr = y_ptr + c * ox;
-                float* yr_ptr = y_ptr + c * (ox + 1);
+            float* yl_ptr = y_ptr + ox;
+            float* yr_ptr = y_ptr + (ox + 1);
 
-                _mm256_load_x1_ps(xl_ptr, xl);
-                _mm256_load_x1_ps(xc_ptr, xc);
-                _mm256_load_x1_ps(xr_ptr, xr);
+            xl = *xl_ptr;
+            xc = *xc_ptr;
+            xr = *xr_ptr;
 
-                __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
+            floatx2 y = float_linear1d(xl, xc, xr);
 
-                _mm256_stream_x1_ps(yl_ptr, y.imm0);
-                _mm256_stream_x1_ps(yr_ptr, y.imm1);
-            }
-
-            x_ptr += c * iw;
-            y_ptr += c * ow;
+            *yl_ptr = y.imm0;
+            *yr_ptr = y.imm1;
         }
 
-        return SUCCESS;
+        x_ptr += iw;
+        y_ptr += ow;
     }
 
-    if (c > AVX1_FLOAT_STRIDE && c < AVX2_FLOAT_STRIDE) {
-        const __m256i mask = _mm256_setmask_ps(c);
+    return SUCCESS;
+}
 
-        __m256 xl, xc, xr;
+int upsample1d_linear_c2to3(
+    const uint n, const uint c,
+    const uint iw, const uint ow,
+    infloats x_ptr, outfloats y_ptr) {
 
-        for (uint i = 0; i < n; i++) {
-            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+#ifdef _DEBUG
+    if (c <= 1 && c >= AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                const float* xl_ptr = x_ptr + c * ixl;
-                const float* xc_ptr = x_ptr + c * ix;
-                const float* xr_ptr = x_ptr + c * ixr;
+    const __m128i mask = _mm_setmask_ps(c);
 
-                float* yl_ptr = y_ptr + c * ox;
-                float* yr_ptr = y_ptr + c * (ox + 1);
+    __m128 xl, xc, xr;
 
-                _mm256_loadu_x1_ps(xl_ptr, xl);
-                _mm256_loadu_x1_ps(xc_ptr, xc);
-                _mm256_loadu_x1_ps(xr_ptr, xr);
+    for (uint i = 0; i < n; i++) {
+        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+            const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
 
-                __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
+            const float* xl_ptr = x_ptr + c * ixl;
+            const float* xc_ptr = x_ptr + c * ix;
+            const float* xr_ptr = x_ptr + c * ixr;
 
-                _mm256_maskstore_x1_ps(yl_ptr, y.imm0, mask);
-                _mm256_maskstore_x1_ps(yr_ptr, y.imm1, mask);
-            }
+            float* yl_ptr = y_ptr + c * ox;
+            float* yr_ptr = y_ptr + c * (ox + 1);
 
-            x_ptr += c * iw;
-            y_ptr += c * ow;
+            xl = _mm_loadu_ps(xl_ptr);
+            xc = _mm_loadu_ps(xc_ptr);
+            xr = _mm_loadu_ps(xr_ptr);
+
+            __m128x2 y = _mm_linear1d_ps(xl, xc, xr);
+
+            _mm_maskstore_ps(yl_ptr, mask, y.imm0);
+            _mm_maskstore_ps(yr_ptr, mask, y.imm1);
         }
 
-        return SUCCESS;
+        x_ptr += c * iw;
+        y_ptr += c * ow;
     }
 
-    if (c == AVX1_FLOAT_STRIDE) {
-        __m128 xl, xc, xr;
+    return SUCCESS;
+}
 
-        for (uint i = 0; i < n; i++) {
-            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+int upsample1d_linear_c4(
+    const uint n, const uint c,
+    const uint iw, const uint ow,
+    infloats x_ptr, outfloats y_ptr) {
 
-                const float* xl_ptr = x_ptr + c * ixl;
-                const float* xc_ptr = x_ptr + c * ix;
-                const float* xr_ptr = x_ptr + c * ixr;
+#ifdef _DEBUG
+    if (c != AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                float* yl_ptr = y_ptr + c * ox;
-                float* yr_ptr = y_ptr + c * (ox + 1);
+    __m128 xl, xc, xr;
 
-                xl = _mm_load_ps(xl_ptr);
-                xc = _mm_load_ps(xc_ptr);
-                xr = _mm_load_ps(xr_ptr);
+    for (uint i = 0; i < n; i++) {
+        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+            const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
 
-                __m128x2 y = _mm_linear1d_ps(xl, xc, xr);
+            const float* xl_ptr = x_ptr + c * ixl;
+            const float* xc_ptr = x_ptr + c * ix;
+            const float* xr_ptr = x_ptr + c * ixr;
 
-                _mm_stream_ps(yl_ptr, y.imm0);
-                _mm_stream_ps(yr_ptr, y.imm1);
-            }
+            float* yl_ptr = y_ptr + c * ox;
+            float* yr_ptr = y_ptr + c * (ox + 1);
 
-            x_ptr += c * iw;
-            y_ptr += c * ow;
+            xl = _mm_load_ps(xl_ptr);
+            xc = _mm_load_ps(xc_ptr);
+            xr = _mm_load_ps(xr_ptr);
+
+            __m128x2 y = _mm_linear1d_ps(xl, xc, xr);
+
+            _mm_stream_ps(yl_ptr, y.imm0);
+            _mm_stream_ps(yr_ptr, y.imm1);
         }
 
-        return SUCCESS;
+        x_ptr += c * iw;
+        y_ptr += c * ow;
     }
 
-    if (c > 1 && c < AVX1_FLOAT_STRIDE) {
-        const __m128i mask = _mm_setmask_ps(c);
+    return SUCCESS;
+}
 
-        __m128 xl, xc, xr;
+int upsample1d_linear_c5to7(
+    const uint n, const uint c,
+    const uint iw, const uint ow,
+    infloats x_ptr, outfloats y_ptr) {
 
-        for (uint i = 0; i < n; i++) {
-            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+#ifdef _DEBUG
+    if (c <= AVX1_FLOAT_STRIDE || c >= AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
 
-                const float* xl_ptr = x_ptr + c * ixl;
-                const float* xc_ptr = x_ptr + c * ix;
-                const float* xr_ptr = x_ptr + c * ixr;
+    const __m256i mask = _mm256_setmask_ps(c);
 
-                float* yl_ptr = y_ptr + c * ox;
-                float* yr_ptr = y_ptr + c * (ox + 1);
+    __m256 xl, xc, xr;
 
-                xl = _mm_loadu_ps(xl_ptr);
-                xc = _mm_loadu_ps(xc_ptr);
-                xr = _mm_loadu_ps(xr_ptr);
+    for (uint i = 0; i < n; i++) {
+        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+            const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
 
-                __m128x2 y = _mm_linear1d_ps(xl, xc, xr);
+            const float* xl_ptr = x_ptr + c * ixl;
+            const float* xc_ptr = x_ptr + c * ix;
+            const float* xr_ptr = x_ptr + c * ixr;
 
-                _mm_maskstore_ps(yl_ptr, mask, y.imm0);
-                _mm_maskstore_ps(yr_ptr, mask, y.imm1);
-            }
+            float* yl_ptr = y_ptr + c * ox;
+            float* yr_ptr = y_ptr + c * (ox + 1);
 
-            x_ptr += c * iw;
-            y_ptr += c * ow;
+            _mm256_loadu_x1_ps(xl_ptr, xl);
+            _mm256_loadu_x1_ps(xc_ptr, xc);
+            _mm256_loadu_x1_ps(xr_ptr, xr);
+
+            __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
+
+            _mm256_maskstore_x1_ps(yl_ptr, y.imm0, mask);
+            _mm256_maskstore_x1_ps(yr_ptr, y.imm1, mask);
         }
 
-        return SUCCESS;
+        x_ptr += c * iw;
+        y_ptr += c * ow;
     }
+
+    return SUCCESS;
+}
+
+int upsample1d_linear_c8(
+    const uint n, const uint c,
+    const uint iw, const uint ow,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c != AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    __m256 xl, xc, xr;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+            const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+
+            const float* xl_ptr = x_ptr + c * ixl;
+            const float* xc_ptr = x_ptr + c * ix;
+            const float* xr_ptr = x_ptr + c * ixr;
+
+            float* yl_ptr = y_ptr + c * ox;
+            float* yr_ptr = y_ptr + c * (ox + 1);
+
+            _mm256_load_x1_ps(xl_ptr, xl);
+            _mm256_load_x1_ps(xc_ptr, xc);
+            _mm256_load_x1_ps(xr_ptr, xr);
+
+            __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
+
+            _mm256_stream_x1_ps(yl_ptr, y.imm0);
+            _mm256_stream_x1_ps(yr_ptr, y.imm1);
+        }
+
+        x_ptr += c * iw;
+        y_ptr += c * ow;
+    }
+
+    return SUCCESS;
+}
+
+int upsample1d_linear_cleq8(
+    const uint n, const uint c,
+    const uint iw, const uint ow,
+    infloats x_ptr, outfloats y_ptr) {
 
     if (c == 1) {
-        float xl, xc, xr;
-
-        for (uint i = 0; i < n; i++) {
-            for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-
-                const float* xl_ptr = x_ptr + ixl;
-                const float* xc_ptr = x_ptr + ix;
-                const float* xr_ptr = x_ptr + ixr;
-
-                float* yl_ptr = y_ptr + ox;
-                float* yr_ptr = y_ptr + (ox + 1);
-
-                xl = *xl_ptr;
-                xc = *xc_ptr;
-                xr = *xr_ptr;
-
-                floatx2 y = float_linear1d(xl, xc, xr);
-
-                *yl_ptr = y.imm0;
-                *yr_ptr = y.imm1;
-            }
-
-            x_ptr += iw;
-            y_ptr += ow;
-        }
-
-        return SUCCESS;
+        return upsample1d_linear_c1(n, c, iw, ow, x_ptr, y_ptr);
+    }
+    if (c < AVX1_FLOAT_STRIDE) {
+        return upsample1d_linear_c2to3(n, c, iw, ow, x_ptr, y_ptr);
+    }
+    if (c == AVX1_FLOAT_STRIDE) {
+        return upsample1d_linear_c4(n, c, iw, ow, x_ptr, y_ptr);
+    }
+    if (c < AVX2_FLOAT_STRIDE) {
+        return upsample1d_linear_c5to7(n, c, iw, ow, x_ptr, y_ptr);
+    }
+    if (c == AVX2_FLOAT_STRIDE) {
+        return upsample1d_linear_c8(n, c, iw, ow, x_ptr, y_ptr);
     }
 
     return FAILURE_BADPARAM;
