@@ -178,6 +178,8 @@
     <ClCompile Include="Pool3D\pool3d_maxunpool_s.cpp" />
     <ClCompile Include="Transform\transform_transpose_d.cpp" />
     <ClCompile Include="Transform\transform_transpose_s.cpp" />
+    <ClCompile Include="Upsample1D\upsample1d_linear.cpp" />
+    <ClCompile Include="Upsample1D\upsample1d_neighbor.cpp" />
     <ClCompile Include="Util\util_align_kernel_s.cpp" />
     <ClCompile Include="Util\util_align_kernel_d.cpp" />
     <ClCompile Include="Util\util_copy.cpp" />

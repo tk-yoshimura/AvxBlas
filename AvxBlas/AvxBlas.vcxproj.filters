@@ -64,6 +64,9 @@
     <Filter Include="Source\Pool3D">
       <UniqueIdentifier>{69de77c7-c95f-4237-b025-3296cff99a14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Upsample1D">
+      <UniqueIdentifier>{4c26ae92-5150-43c9-9121-8320cd912c3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -334,6 +337,12 @@
     </ClCompile>
     <ClCompile Include="Pool3D\pool3d_avgunpool_s.cpp">
       <Filter>Source\Pool3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Upsample1D\upsample1d_neighbor.cpp">
+      <Filter>Source\Upsample1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Upsample1D\upsample1d_linear.cpp">
+      <Filter>Source\Upsample1D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

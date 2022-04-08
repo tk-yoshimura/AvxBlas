@@ -172,7 +172,6 @@ void AvxBlas::Pool2D::AveragePooling(
 
         ret = pool2d_avgpool_unaligned_s(n, c, iw, ow, sx, kw, ih, oh, sy, kh, x_ptr, y_ptr);
     }
-
     if (ret != SUCCESS) {
         Util::AssertReturnCode(ret);
         return;
