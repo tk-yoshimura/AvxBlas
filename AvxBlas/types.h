@@ -222,3 +222,101 @@ struct __m128dx8 {
     constexpr __m128dx8(__m128d imm0, __m128d imm1, __m128d imm2, __m128d imm3, __m128d imm4, __m128d imm5, __m128d imm6, __m128d imm7)
         : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5), imm6(imm6), imm7(imm7) { }
 };
+
+struct floatx2 {
+    float imm0, imm1;
+
+    constexpr floatx2(float imm0, float imm1)
+        : imm0(imm0), imm1(imm1) { }
+};
+
+struct doublex2 {
+    double imm0, imm1;
+
+    constexpr doublex2(double imm0, double imm1)
+        : imm0(imm0), imm1(imm1) { }
+};
+
+struct floatx3 {
+    float imm0, imm1, imm2;
+
+    constexpr floatx3(float imm0, float imm1, float imm2)
+        : imm0(imm0), imm1(imm1), imm2(imm2) { }
+};
+
+struct doublex3 {
+    double imm0, imm1, imm2;
+
+    constexpr doublex3(double imm0, double imm1, double imm2)
+        : imm0(imm0), imm1(imm1), imm2(imm2) { }
+};
+
+struct floatx4 {
+    float imm0, imm1, imm2, imm3;
+
+    constexpr floatx4(float imm0, float imm1, float imm2, float imm3)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3) { }
+};
+
+struct doublex4 {
+    double imm0, imm1, imm2, imm3;
+
+    constexpr doublex4(double imm0, double imm1, double imm2, double imm3)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3) { }
+};
+
+struct floatx5 {
+    float imm0, imm1, imm2, imm3, imm4;
+
+    constexpr floatx5(float imm0, float imm1, float imm2, float imm3, float imm4)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4) { }
+};
+
+struct doublex5 {
+    double imm0, imm1, imm2, imm3, imm4;
+
+    constexpr doublex5(double imm0, double imm1, double imm2, double imm3, double imm4)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4) { }
+};
+
+struct floatx6 {
+    float imm0, imm1, imm2, imm3, imm4, imm5;
+
+    constexpr floatx6(float imm0, float imm1, float imm2, float imm3, float imm4, float imm5)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5) { }
+};
+
+struct doublex6 {
+    double imm0, imm1, imm2, imm3, imm4, imm5;
+
+    constexpr doublex6(double imm0, double imm1, double imm2, double imm3, double imm4, double imm5)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5) { }
+};
+
+struct floatx7 {
+    float imm0, imm1, imm2, imm3, imm4, imm5, imm6;
+
+    constexpr floatx7(float imm0, float imm1, float imm2, float imm3, float imm4, float imm5, float imm6)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5), imm6(imm6) { }
+};
+
+struct doublex7 {
+    double imm0, imm1, imm2, imm3, imm4, imm5, imm6;
+
+    constexpr doublex7(double imm0, double imm1, double imm2, double imm3, double imm4, double imm5, double imm6)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5), imm6(imm6) { }
+};
+
+struct floatx8 {
+    float imm0, imm1, imm2, imm3, imm4, imm5, imm6, imm7;
+
+    constexpr floatx8(float imm0, float imm1, float imm2, float imm3, float imm4, float imm5, float imm6, float imm7)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5), imm6(imm6), imm7(imm7) { }
+};
+
+struct doublex8 {
+    double imm0, imm1, imm2, imm3, imm4, imm5, imm6, imm7;
+
+    constexpr doublex8(double imm0, double imm1, double imm2, double imm3, double imm4, double imm5, double imm6, double imm7)
+        : imm0(imm0), imm1(imm1), imm2(imm2), imm3(imm3), imm4(imm4), imm5(imm5), imm6(imm6), imm7(imm7) { }
+};

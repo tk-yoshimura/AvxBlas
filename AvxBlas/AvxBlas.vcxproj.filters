@@ -67,6 +67,9 @@
     <Filter Include="Source\Upsample1D">
       <UniqueIdentifier>{4c26ae92-5150-43c9-9121-8320cd912c3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Upsample2D">
+      <UniqueIdentifier>{cc9ac608-fd0e-4557-af0b-24331a1d1660}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -343,6 +346,12 @@
     </ClCompile>
     <ClCompile Include="Upsample1D\upsample1d_linear.cpp">
       <Filter>Source\Upsample1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Upsample2D\upsample2d_linear.cpp">
+      <Filter>Source\Upsample2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Upsample2D\upsample2d_neighbor.cpp">
+      <Filter>Source\Upsample2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
