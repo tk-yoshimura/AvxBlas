@@ -6,7 +6,7 @@
 
 #pragma unmanaged
 
-__forceinline floatx4 float_linear3d(
+__forceinline floatx8 float_linear3d(
     float xluf, float xuf, float xruf,
     float xlf, float xf, float xrf,
     float xldf, float xdf, float xrdf,
@@ -27,29 +27,35 @@ __forceinline floatx4 float_linear3d(
     float xb2 = xb + xb, xb4 = xb2 + xb2;
 
     float xlu2 = xlu + xlu;
-    float xru2 = xru + xru;
+    float xld2 = xld + xld;
+    float xlf2 = xlf + xlf;
     float xlb2 = xlb + xlb;
+    float xru2 = xru + xru;
+    float xrd2 = xrd + xrd;
+    float xrf2 = xrf + xrf;
     float xrb2 = xrb + xrb;
     float xuf2 = xuf + xuf;
-    float xdf2 = xdf + xdf;
     float xub2 = xub + xub;
+    float xdf2 = xdf + xdf;
     float xdb2 = xdb + xdb;
-    float xlf2 = xlf + xlf;
-    float xrf2 = xrf + xrf;
 
-    float xlc = xl4 + xc8;
-    float xrc = xr4 + xc8;
-    float xuc = xu4 + xc8;
-    float xdc = xd4 + xc8;
-    float xfc = xf4 + xc8;
-    float xbc = xb4 + xc8;
+    float xf4xc8 = xf4 + xc8, xb4xc8 = xb4 + xc8;
+    float xuf2xu4xf4xc8 = xuf2 + xu4 + xf4xc8, xdf2xd4xf4xc8 = xdf2 + xd4 + xf4xc8;
+    float xub2xu4xb4xc8 = xub2 + xu4 + xb4xc8, xdb2xd4xb4xc8 = xdb2 + xd4 + xb4xc8;
+    
+    float xlf2xl4 = xlf2 + xl4, xrf2xr4 = xrf2 + xr4;
+    float xlb2xl4 = xlb2 + xl4, xrb2xr4 = xrb2 + xr4;
 
-    float ylu = xlu + xu2 + xlc;
-    float yru = xru + xu2 + xrc;
-    float yld = xld + xd2 + xlc;
-    float yrd = xrd + xd2 + xrc;
+    float yluf = (xluf + xlu2) + (xlf2xl4 + xuf2xu4xf4xc8);
+    float yruf = (xruf + xru2) + (xrf2xr4 + xuf2xu4xf4xc8);
+    float yldf = (xldf + xld2) + (xlf2xl4 + xdf2xd4xf4xc8);
+    float yrdf = (xrdf + xrd2) + (xrf2xr4 + xdf2xd4xf4xc8);
+    float ylub = (xlub + xlu2) + (xlb2xl4 + xub2xu4xb4xc8);
+    float yrub = (xrub + xru2) + (xrb2xr4 + xub2xu4xb4xc8);
+    float yldb = (xldb + xld2) + (xlb2xl4 + xdb2xd4xb4xc8);
+    float yrdb = (xrdb + xrd2) + (xrb2xr4 + xdb2xd4xb4xc8);
 
-    return floatx4(ylu, yru, yld, yrd);
+    return floatx8(yluf, yruf, yldf, yrdf, ylub, yrub, yldb, yrdb);
 }
 
 __forceinline __m128x4 _mm_linear3d_ps(
