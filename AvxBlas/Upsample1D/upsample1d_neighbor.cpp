@@ -2,6 +2,7 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_loadstore_xn_s.hpp"
+#include "../Inline/inline_transpose_s.hpp"
 
 #pragma unmanaged
 
@@ -101,21 +102,41 @@ int upsample1d_neighbor_c1(
     }
 #endif // _DEBUG
 
-    float x;
+    const __m256i srcmask = _mm256_setmask_ps(iw & AVX2_FLOAT_REMAIN_MASK);
+    const __m256i dstmask = _mm256_setmask_ps((iw * 2u) & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-            float* yl_ptr = y_ptr + ox;
-            float* yr_ptr = yl_ptr + 1;
+        for (uint ix = 0, ox = 0; ix < iw; ix += AVX2_FLOAT_STRIDE, ox += AVX2_FLOAT_STRIDE * 2) {
+            const float* xc_ptr = x_ptr + ix;
+            float* yc_ptr = y_ptr + ox;
 
-            x = *x_ptr;
+            if (ix + AVX2_FLOAT_STRIDE <= iw) {
+                __m256 x = _mm256_loadu_ps(xc_ptr);
 
-            *yl_ptr = x;
-            *yr_ptr = x;
+                __m256x2 yt = _mm256_transpose8x2_ps(x, x);
 
-            x_ptr++;
+                _mm256_storeu_x2_ps(yc_ptr, yt.imm0, yt.imm1);
+            }
+            else {
+                __m256 x = _mm256_maskload_ps(xc_ptr, srcmask);
+
+                __m256x2 yt = _mm256_transpose8x2_ps(x, x);
+
+                if (ix + AVX2_FLOAT_STRIDE / 2 < iw) {
+                    _mm256_maskstore_x2_ps(yc_ptr, yt.imm0, yt.imm1, dstmask);
+                }
+                else if (ix + AVX2_FLOAT_STRIDE / 2 == iw) {
+                    _mm256_storeu_x1_ps(yc_ptr, yt.imm0);
+                }
+                else {
+                    _mm256_maskstore_x1_ps(yc_ptr, yt.imm0, dstmask);
+                }
+
+                break;
+            }
         }
 
+        x_ptr += iw;
         y_ptr += ow;
     }
 

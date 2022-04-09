@@ -16,7 +16,7 @@ namespace AvxBlasTest.Upsample1DTest {
                 foreach (uint iw in new int[] { 1, 2, 3, 4, 5, 8, 15, 16, 17, 28, 30, 32 }) {
                     uint ow = iw * scale;
                     foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
-                        float[] xval = (new float[c * iw * n]).Select((_, idx) => idx * 1e-3f).ToArray();
+                        float[] xval = (new float[c * iw * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
 
                         Map1D x = new((int)c, (int)iw, (int)n, xval);
 

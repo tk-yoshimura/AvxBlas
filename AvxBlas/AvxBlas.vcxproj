@@ -121,6 +121,8 @@
     <ClInclude Include="Inline\inline_pooliter_s.hpp" />
     <ClInclude Include="Inline\inline_set_d.hpp" />
     <ClInclude Include="Inline\inline_sum_d.hpp" />
+    <ClInclude Include="Inline\inline_transpose_d.hpp" />
+    <ClInclude Include="Inline\inline_transpose_s.hpp" />
     <ClInclude Include="Inline\inline_zeroset_d.hpp" />
     <ClInclude Include="Inline\inline_zeroset_s.hpp" />
     <ClInclude Include="resource.h" />
@@ -182,6 +184,8 @@
     <ClCompile Include="Upsample1D\upsample1d_neighbor.cpp" />
     <ClCompile Include="Upsample2D\upsample2d_linear.cpp" />
     <ClCompile Include="Upsample2D\upsample2d_neighbor.cpp" />
+    <ClCompile Include="Upsample3D\upsample3d_linear.cpp" />
+    <ClCompile Include="Upsample3D\upsample3d_neighbor.cpp" />
     <ClCompile Include="Util\util_align_kernel_s.cpp" />
     <ClCompile Include="Util\util_align_kernel_d.cpp" />
     <ClCompile Include="Util\util_copy.cpp" />

@@ -70,6 +70,9 @@
     <Filter Include="Source\Upsample2D">
       <UniqueIdentifier>{cc9ac608-fd0e-4557-af0b-24331a1d1660}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Upsample3D">
+      <UniqueIdentifier>{a8217d10-62ff-4a95-b4e5-883b66e1ba13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -163,6 +166,12 @@
       <Filter>Source\Inline</Filter>
     </ClInclude>
     <ClInclude Include="Inline\inline_pooliter_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_transpose_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_transpose_d.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
   </ItemGroup>
@@ -352,6 +361,12 @@
     </ClCompile>
     <ClCompile Include="Upsample2D\upsample2d_neighbor.cpp">
       <Filter>Source\Upsample2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Upsample3D\upsample3d_linear.cpp">
+      <Filter>Source\Upsample3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Upsample3D\upsample3d_neighbor.cpp">
+      <Filter>Source\Upsample3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
