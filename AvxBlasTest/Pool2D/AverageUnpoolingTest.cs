@@ -83,30 +83,5 @@ namespace AvxBlasTest.Pool2DTest {
 
             return dx;
         }
-
-        [TestMethod]
-        public void ReferenceTest() {
-            //int channels = 7, stridex = 2, kwidth = 2, inwidth = 13, batch = 2;
-            //
-            //float[] xval = (new float[batch * inwidth * channels]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
-            //
-            //Map1D x = new(channels, inwidth, batch, xval);
-            //
-            //Map1D y = Reference(x, stridex, kwidth);
-            //
-            //float[] y_expect = {
-            //    6.00e+00f, 2.40e+01f, 3.60e+01f, 2.00e+01f, 3.20e+01f, 1.60e+01f, 2.80e+01f, 1.80e+01f, 1.90e+01f, 3.10e+01f, 1.50e+01f, 3.30e+01f, 2.20e+01f, 2.90e+01f,
-            //    1.30e+01f, 3.10e+01f, 9.00e+00f, 2.70e+01f, 2.80e+01f, 2.30e+01f, 2.40e+01f, 1.90e+01f, 2.60e+01f, 1.50e+01f, 2.20e+01f, 1.70e+01f, 1.80e+01f, 3.60e+01f,
-            //    2.00e+01f, 3.20e+01f, 1.60e+01f, 2.80e+01f, 1.20e+01f, 2.40e+01f, 2.50e+01f, 2.60e+01f, 3.30e+01f, 2.20e+01f, 2.90e+01f, 1.80e+01f, 2.50e+01f, 1.40e+01f,
-            //    2.10e+01f, 2.20e+01f, 1.70e+01f, 3.50e+01f, 1.30e+01f, 3.10e+01f, 9.00e+00f, 2.70e+01f, 1.10e+01f, 2.30e+01f, 3.00e+01f, 1.90e+01f, 2.60e+01f, 2.10e+01f,
-            //    2.80e+01f, 1.70e+01f, 2.40e+01f, 3.60e+01f, 2.00e+01f, 3.20e+01f, 1.60e+01f, 2.30e+01f, 1.80e+01f, 3.00e+01f, 1.40e+01f, 2.60e+01f, 3.30e+01f, 2.20e+01f,
-            //    3.50e+01f, 1.30e+01f, 3.10e+01f, 9.00e+00f, 2.70e+01f, 1.60e+01f, 2.30e+01f, 3.00e+01f, 2.50e+01f, 2.60e+01f, 2.10e+01f, 2.20e+01f, 1.70e+01f, 1.80e+01f,
-            //    1.30e+01f, 2.00e+01f, 3.20e+01f, 1.60e+01f, 3.40e+01f, 1.20e+01f, 3.00e+01f, 8.00e+00f, 2.60e+01f, 2.70e+01f, 2.20e+01f, 2.30e+01f, 1.80e+01f, 1.90e+01f,
-            //};
-            //
-            //float[] y_actual = y.ToFloatArray();
-            //
-            //AssertError.Tolerance(y_expect, y_actual, 1e-10f, 1e-5f);
-        }
     }
 }
