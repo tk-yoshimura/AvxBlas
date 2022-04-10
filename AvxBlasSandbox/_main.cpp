@@ -8,154 +8,64 @@
 #include "../AvxBlas/Inline/inline_loadstore_xn_s.hpp"
 #include "../AvxBlas/Inline/inline_transpose_s.hpp"
 
-__forceinline floatx2 float_linear1d(float xl, float xc, float xr) {
-    float xc2 = xc + xc;
-    float yl = xl + xc2;
-    float yr = xr + xc2;
+__forceinline floatx8 float_linear3d(
+    float xluf, float xuf, float xruf,
+    float xlf, float xf, float xrf,
+    float xldf, float xdf, float xrdf,
+    float xlu, float xu, float xru,
+    float xl, float xc, float xr,
+    float xld, float xd, float xrd,
+    float xlub, float xub, float xrub,
+    float xlb, float xb, float xrb,
+    float xldb, float xdb, float xrdb) {
 
-    return floatx2(yl, yr);
-}
+    float wc2 = xc + xc;
 
-__forceinline __m256x2 _mm256_linear1d_ps(__m256 xl, __m256 xc, __m256 xr) {
-    __m256 xc2 = _mm256_add_ps(xc, xc);
-    __m256 yl = _mm256_add_ps(xl, xc2);
-    __m256 yr = _mm256_add_ps(xr, xc2);
+    float wl2c = xl + xl + xc;
+    float wr2c = xr + xr + xc;
+    float wu2c = xu + xu + xc;
+    float wd2c = xd + xd + xc;
+    float wf2c = xf + xf + xc;
+    float wb2c = xb + xb + xc;
 
-    return __m256x2(yl, yr);
-}
+    float wlu2l2u2c2 = (xlu + xlu) + (wl2c + wu2c);
+    float wld2l2d2c2 = (xld + xld) + (wl2c + wd2c);
+    float wlf2l2f2c2 = (xlf + xlf) + (wl2c + wf2c);
+    float wlb2l2b2c2 = (xlb + xlb) + (wl2c + wb2c);
+    float wru2r2u2c2 = (xru + xru) + (wr2c + wu2c);
+    float wrd2r2d2c2 = (xrd + xrd) + (wr2c + wd2c);
+    float wrf2r2f2c2 = (xrf + xrf) + (wr2c + wf2c);
+    float wrb2r2b2c2 = (xrb + xrb) + (wr2c + wb2c);
+    float wuf2u2f2c2 = (xuf + xuf) + (wu2c + wf2c);
+    float wub2u2b2c2 = (xub + xub) + (wu2c + wb2c);
+    float wdf2d2f2c2 = (xdf + xdf) + (wd2c + wf2c);
+    float wdb2d2b2c2 = (xdb + xdb) + (wd2c + wb2c);
 
-int upsample1d_linear_c1(
-    const uint n, const uint c,
-    const uint iw, const uint ow,
-    infloats x_ptr, outfloats y_ptr) {
+    float yluf = (xluf + wc2) + (wlu2l2u2c2 + wlf2l2f2c2 + wuf2u2f2c2);
+    float yruf = (xruf + wc2) + (wru2r2u2c2 + wrf2r2f2c2 + wuf2u2f2c2);
+    float yldf = (xldf + wc2) + (wld2l2d2c2 + wlf2l2f2c2 + wdf2d2f2c2);
+    float yrdf = (xrdf + wc2) + (wrd2r2d2c2 + wrf2r2f2c2 + wdf2d2f2c2);
+    float ylub = (xlub + wc2) + (wlu2l2u2c2 + wlb2l2b2c2 + wub2u2b2c2);
+    float yrub = (xrub + wc2) + (wru2r2u2c2 + wrb2r2b2c2 + wub2u2b2c2);
+    float yldb = (xldb + wc2) + (wld2l2d2c2 + wlb2l2b2c2 + wdb2d2b2c2);
+    float yrdb = (xrdb + wc2) + (wrd2r2d2c2 + wrb2r2b2c2 + wdb2d2b2c2);
 
-#ifdef _DEBUG
-    if (c != 1) {
-        return FAILURE_BADPARAM;
-    }
-#endif // _DEBUG
-
-    if (iw > 1u) {
-        const __m256i srcmask = _mm256_setmask_ps((iw - 2u) & AVX2_FLOAT_REMAIN_MASK);
-        const __m256i dstmask = _mm256_setmask_ps(((iw - 2u) * 2u) & AVX2_FLOAT_REMAIN_MASK);
-
-        for (uint i = 0; i < n; i++) {
-            {
-                const float* xc_ptr = x_ptr;
-                const float* xr_ptr = x_ptr + 1;
-
-                float* yl_ptr = y_ptr;
-                float* yr_ptr = yl_ptr + 1;
-
-                float xc = *xc_ptr;
-                float xr = *xr_ptr;
-
-                floatx2 y = float_linear1d(xc, xc, xr);
-
-                *yl_ptr = y.imm0;
-                *yr_ptr = y.imm1;
-            }
-            {
-                const float* xl_ptr = x_ptr + (iw - 2u);
-                const float* xc_ptr = x_ptr + (iw - 1u);
-
-                float* yl_ptr = y_ptr + (iw - 1u) * 2;
-                float* yr_ptr = yl_ptr + 1;
-
-                float xl = *xl_ptr;
-                float xc = *xc_ptr;
-
-                floatx2 y = float_linear1d(xl, xc, xc);
-
-                *yl_ptr = y.imm0;
-                *yr_ptr = y.imm1;
-            }
-            for (uint ix = 1, ox = 2; ix < iw - 1u; ix += AVX2_FLOAT_STRIDE, ox += AVX2_FLOAT_STRIDE * 2) {
-                const uint ixl = ix - 1u, ixr = ix + 1u;
-
-                const float* xl_ptr = x_ptr + ixl;
-                const float* xc_ptr = x_ptr + ix;
-                const float* xr_ptr = x_ptr + ixr;
-
-                if (ix + AVX2_FLOAT_STRIDE <= iw - 1u) {
-                    __m256 xl = _mm256_loadu_ps(xl_ptr);
-                    __m256 xc = _mm256_loadu_ps(xc_ptr);
-                    __m256 xr = _mm256_loadu_ps(xr_ptr);
-
-                    __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
-                    __m256x2 yt = _mm256_transpose8x2_ps(y.imm0, y.imm1);
-
-                    _mm256_storeu_x2_ps(y_ptr + ox, yt.imm0, yt.imm1);
-                }
-                else {
-                    __m256 xl = _mm256_maskload_ps(xl_ptr, srcmask);
-                    __m256 xc = _mm256_maskload_ps(xc_ptr, srcmask);
-                    __m256 xr = _mm256_maskload_ps(xr_ptr, srcmask);
-
-                    __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
-                    __m256x2 yt = _mm256_transpose8x2_ps(y.imm0, y.imm1);
-
-                    if (ix + AVX2_FLOAT_STRIDE / 2 < iw - 1u) {
-                        _mm256_maskstore_x2_ps(y_ptr + ox, yt.imm0, yt.imm1, dstmask);
-                    }
-                    else if (ix + AVX2_FLOAT_STRIDE / 2 == iw - 1u) {
-                        _mm256_storeu_x1_ps(y_ptr + ox, yt.imm0);
-                    }
-                    else {
-                        _mm256_maskstore_x1_ps(y_ptr + ox, yt.imm0, dstmask);
-                    }
-
-                    break;
-                }
-            }
-
-            x_ptr += iw;
-            y_ptr += ow;
-        }
-    }
-    else {
-        for (uint i = 0; i < n; i++) {
-            float x = *x_ptr;
-            float y = x + x + x;
-
-            y_ptr[0] = y_ptr[1] = y;
-
-            x_ptr += 1;
-            y_ptr += 2;
-        }
-    }
-
-    return SUCCESS;
+    return floatx8(yluf, yruf, yldf, yrdf, ylub, yrub, yldb, yrdb);
 }
 
 int main(){
-    const unsigned int n = 5, c = 1;
-
-    for (int iw = 1; iw <= 55; iw++) {
-        int ow = iw * 2;
-
-        float* x = (float*)_aligned_malloc((n * c * iw + 1) * sizeof(float), AVX2_ALIGNMENT);
-        float* y = (float*)_aligned_malloc((n * c * ow + 1) * sizeof(float), AVX2_ALIGNMENT);
-
-        if (x == nullptr || y == nullptr) {
-            return -1;
-        }
-
-        for (int i = 0; i < (n * c * iw); i++) {
-            x[i] = i;
-        }
-
-        upsample1d_linear_c1(n, c, iw, ow, x, y);
-
-        for (int i = (n * c * ow - 1); i <= (n * c * ow); i++) {
-            printf("y[%d] = %f\n", i, y[i]);
-        }
-
-        printf("\n");
-
-        _aligned_free(x);
-        _aligned_free(y);
-    }
+    floatx8 y0 = float_linear3d(
+        1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1);
+    floatx8 y1 = float_linear3d(
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0);
+    floatx8 y2 = float_linear3d(
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     printf("end");
     getchar();

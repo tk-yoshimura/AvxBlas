@@ -10,17 +10,15 @@ namespace AvxBlasTest.Upsample2DTest {
         public void SLinearTest() {
             float max_err = 0;
 
-            uint scale = 2;
-
             foreach (uint n in new int[] { 1, 2 }) {
                 foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
-                    uint ow = iw * scale, oh = ih * scale;
+                    uint ow = iw * 2, oh = ih * 2;
                     foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
                         float[] xval = (new float[c * iw * ih * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
 
                         Map2D x = new((int)c, (int)iw, (int)ih, (int)n, xval);
 
-                        Map2D y = Reference(x, (int)scale);
+                        Map2D y = Reference(x);
 
                         Array<float> x_tensor = xval;
                         Array<float> y_tensor = new(c * ow * oh * n, zeroset: false);
@@ -44,13 +42,13 @@ namespace AvxBlasTest.Upsample2DTest {
                     for (uint iw = 1; iw <= 65; iw++) {
                         const uint c = 1;
 
-                        uint ow = iw * scale, oh = ih * scale;
+                        uint ow = iw * 2, oh = ih * 2;
 
-                        float[] xval = (new float[c * iw * ih * n]).Select((_, idx) => idx * 1e-3f).ToArray();
+                        float[] xval = (new float[c * iw * ih * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
 
                         Map2D x = new((int)c, (int)iw, (int)ih, (int)n, xval);
 
-                        Map2D y = Reference(x, (int)scale);
+                        Map2D y = Reference(x);
 
                         Array<float> x_tensor = xval;
                         Array<float> y_tensor = new(c * ow * oh * n, zeroset: false);
@@ -72,10 +70,10 @@ namespace AvxBlasTest.Upsample2DTest {
             Console.WriteLine($"maxerr:{max_err}");
         }
 
-        public static Map2D Reference(Map2D x, int scale) {
+        public static Map2D Reference(Map2D x) {
             int inw = x.Width, inh = x.Height, channels = x.Channels, batch = x.Batch;
 
-            int outw = inw * scale, outh = inh * scale;
+            int outw = inw * 2, outh = inh * 2;
             Map2D y = new Map2D(channels, outw, outh, batch);
 
             for (int th = 0; th < batch; th++) {

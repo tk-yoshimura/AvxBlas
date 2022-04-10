@@ -145,7 +145,7 @@ AvxBlas::Array<T>::Array(cli::array<T>^ array) {
         return;
     }
 
-    size_t size = (((size_t)length * ElementSize + AVX2_ALIGNMENT - 1) / AVX2_ALIGNMENT) * AVX2_ALIGNMENT;
+    size_t size = (((size_t)length * ElementSize + AVX2_ALIGNMENT * 2 - 1) / AVX2_ALIGNMENT) * AVX2_ALIGNMENT;
 
     void* ptr = _aligned_malloc(size, AVX2_ALIGNMENT);
     if (ptr == nullptr) {

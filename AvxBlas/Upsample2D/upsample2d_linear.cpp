@@ -12,15 +12,15 @@ __forceinline floatx4 float_linear2d(
     float xl, float xc, float xr,
     float xld, float xd, float xrd) {
 
-    float xlc = xl + xc, xl2c2 = xlc + xlc;
-    float xrc = xr + xc, xr2c2 = xrc + xrc;
-    float xuc = xu + xc, xu2c2 = xuc + xuc;
-    float xdc = xd + xc, xd2c2 = xdc + xdc;
+    float wlc = xl + xc, wl2c2 = wlc + wlc;
+    float wrc = xr + xc, wr2c2 = wrc + wrc;
+    float wuc = xu + xc, wu2c2 = wuc + wuc;
+    float wdc = xd + xc, wd2c2 = wdc + wdc;
 
-    float ylu = xlu + (xl2c2 + xu2c2);
-    float yru = xru + (xr2c2 + xu2c2);
-    float yld = xld + (xl2c2 + xd2c2);
-    float yrd = xrd + (xr2c2 + xd2c2);
+    float ylu = xlu + (wl2c2 + wu2c2);
+    float yru = xru + (wr2c2 + wu2c2);
+    float yld = xld + (wl2c2 + wd2c2);
+    float yrd = xrd + (wr2c2 + wd2c2);
 
     return floatx4(ylu, yru, yld, yrd);
 }
@@ -30,15 +30,15 @@ __forceinline __m128x4 _mm_linear2d_ps(
     __m128 xl, __m128 xc, __m128 xr,
     __m128 xld, __m128 xd, __m128 xrd) {
 
-    __m128 xlc = _mm_add_ps(xl, xc), xl2c2 = _mm_add_ps(xlc, xlc);
-    __m128 xrc = _mm_add_ps(xr, xc), xr2c2 = _mm_add_ps(xrc, xrc);
-    __m128 xuc = _mm_add_ps(xu, xc), xu2c2 = _mm_add_ps(xuc, xuc);
-    __m128 xdc = _mm_add_ps(xd, xc), xd2c2 = _mm_add_ps(xdc, xdc);
+    __m128 wlc = _mm_add_ps(xl, xc), wl2c2 = _mm_add_ps(wlc, wlc);
+    __m128 wrc = _mm_add_ps(xr, xc), wr2c2 = _mm_add_ps(wrc, wrc);
+    __m128 wuc = _mm_add_ps(xu, xc), wu2c2 = _mm_add_ps(wuc, wuc);
+    __m128 wdc = _mm_add_ps(xd, xc), wd2c2 = _mm_add_ps(wdc, wdc);
 
-    __m128 ylu = _mm_add_ps(xlu, _mm_add_ps(xl2c2, xu2c2));
-    __m128 yru = _mm_add_ps(xru, _mm_add_ps(xr2c2, xu2c2));
-    __m128 yld = _mm_add_ps(xld, _mm_add_ps(xl2c2, xd2c2));
-    __m128 yrd = _mm_add_ps(xrd, _mm_add_ps(xr2c2, xd2c2));
+    __m128 ylu = _mm_add_ps(xlu, _mm_add_ps(wl2c2, wu2c2));
+    __m128 yru = _mm_add_ps(xru, _mm_add_ps(wr2c2, wu2c2));
+    __m128 yld = _mm_add_ps(xld, _mm_add_ps(wl2c2, wd2c2));
+    __m128 yrd = _mm_add_ps(xrd, _mm_add_ps(wr2c2, wd2c2));
 
     return __m128x4(ylu, yru, yld, yrd);
 }
@@ -48,15 +48,15 @@ __forceinline __m256x4 _mm256_linear2d_ps(
     __m256 xl, __m256 xc, __m256 xr,
     __m256 xld, __m256 xd, __m256 xrd) {
 
-    __m256 xlc = _mm256_add_ps(xl, xc), xl2c2 = _mm256_add_ps(xlc, xlc);
-    __m256 xrc = _mm256_add_ps(xr, xc), xr2c2 = _mm256_add_ps(xrc, xrc);
-    __m256 xuc = _mm256_add_ps(xu, xc), xu2c2 = _mm256_add_ps(xuc, xuc);
-    __m256 xdc = _mm256_add_ps(xd, xc), xd2c2 = _mm256_add_ps(xdc, xdc);
+    __m256 wlc = _mm256_add_ps(xl, xc), wl2c2 = _mm256_add_ps(wlc, wlc);
+    __m256 wrc = _mm256_add_ps(xr, xc), wr2c2 = _mm256_add_ps(wrc, wrc);
+    __m256 wuc = _mm256_add_ps(xu, xc), wu2c2 = _mm256_add_ps(wuc, wuc);
+    __m256 wdc = _mm256_add_ps(xd, xc), wd2c2 = _mm256_add_ps(wdc, wdc);
 
-    __m256 ylu = _mm256_add_ps(xlu, _mm256_add_ps(xl2c2, xu2c2));
-    __m256 yru = _mm256_add_ps(xru, _mm256_add_ps(xr2c2, xu2c2));
-    __m256 yld = _mm256_add_ps(xld, _mm256_add_ps(xl2c2, xd2c2));
-    __m256 yrd = _mm256_add_ps(xrd, _mm256_add_ps(xr2c2, xd2c2));
+    __m256 ylu = _mm256_add_ps(xlu, _mm256_add_ps(wl2c2, wu2c2));
+    __m256 yru = _mm256_add_ps(xru, _mm256_add_ps(wr2c2, wu2c2));
+    __m256 yld = _mm256_add_ps(xld, _mm256_add_ps(wl2c2, wd2c2));
+    __m256 yrd = _mm256_add_ps(xrd, _mm256_add_ps(wr2c2, wd2c2));
 
     return __m256x4(ylu, yru, yld, yrd);
 }

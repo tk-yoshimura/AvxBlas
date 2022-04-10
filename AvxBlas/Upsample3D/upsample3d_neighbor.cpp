@@ -182,7 +182,7 @@ int upsample3d_neighbor_c1(
             }
         }
 
-        y_ptr += ow * oh;
+        y_ptr += ow * oh * od;
     }
 
     return SUCCESS;
@@ -316,14 +316,14 @@ int upsample3d_neighbor_c5to7(
 
                     _mm256_loadu_x1_ps(x_ptr, x);
 
-                    _mm256_maskload_x1_ps(yluf_ptr, x, mask);
-                    _mm256_maskload_x1_ps(yruf_ptr, x, mask);
-                    _mm256_maskload_x1_ps(yldf_ptr, x, mask);
-                    _mm256_maskload_x1_ps(yrdf_ptr, x, mask);
-                    _mm256_maskload_x1_ps(ylub_ptr, x, mask);
-                    _mm256_maskload_x1_ps(yrub_ptr, x, mask);
-                    _mm256_maskload_x1_ps(yldb_ptr, x, mask);
-                    _mm256_maskload_x1_ps(yrdb_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yluf_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yruf_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yldf_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yrdf_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(ylub_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yrub_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yldb_ptr, x, mask);
+                    _mm256_maskstore_x1_ps(yrdb_ptr, x, mask);
 
                     x_ptr += c;
                 }
