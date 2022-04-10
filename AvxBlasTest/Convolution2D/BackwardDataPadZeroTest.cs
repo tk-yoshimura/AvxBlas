@@ -11,7 +11,7 @@ namespace AvxBlasTest.Connection2DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
+                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (2, 3), (5, 8), (7, 6), (16, 15), (17, 28), (32, 30) }) {
                     foreach ((uint kw, uint kh) in new (uint, uint)[] { (1, 3), (3, 1), (3, 3), (3, 5), (5, 3), (7, 7) }) {
                         uint ow = iw, oh = ih;
 

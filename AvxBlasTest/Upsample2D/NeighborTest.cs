@@ -11,7 +11,7 @@ namespace AvxBlasTest.Upsample2DTest {
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
-                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
+                foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (2, 3), (5, 8), (7, 6), (16, 15), (17, 28), (32, 30) }) {
                     uint ow = iw * 2, oh = ih * 2;
                     foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
                         float[] xval = (new float[c * iw * ih * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
