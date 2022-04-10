@@ -12,7 +12,7 @@ __forceinline floatx8 float_linear3d(
     float xldf, float xdf, float xrdf,
     float xlu, float xu, float xru,
     float xl, float xc, float xr,
-    float xld, float xd, float xrd, 
+    float xld, float xd, float xrd,
     float xlub, float xub, float xrub,
     float xlb, float xb, float xrb,
     float xldb, float xdb, float xrdb) {
@@ -894,13 +894,13 @@ void AvxBlas::Upsample3D::LinearX2(
 
     int ret = UNEXECUTED;
 
-//    if (c <= AVX2_FLOAT_STRIDE) {
-//#ifdef _DEBUG
-//        Console::WriteLine("type leq8");
-//#endif // _DEBUG
-//
-//        ret = upsample3d_linear_cleq8(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-//    }
+    //    if (c <= AVX2_FLOAT_STRIDE) {
+    //#ifdef _DEBUG
+    //        Console::WriteLine("type leq8");
+    //#endif // _DEBUG
+    //
+    //        ret = upsample3d_linear_cleq8(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    //    }
     if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");

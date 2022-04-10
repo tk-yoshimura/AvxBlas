@@ -40,7 +40,7 @@ namespace AvxBlasTest.Upsample3DTest {
                 }
             }
 
-            foreach (uint n in new int[] { 1, 2 }) {
+            foreach (uint n in new int[] { 1, 2, 3, 4 }) {
                 foreach ((uint ih, uint id) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (4, 3), (5, 8), (16, 15), (17, 28), (32, 30) }) {
                     for (uint iw = 1; iw <= 65; iw++) {
                         const uint c = 1;
