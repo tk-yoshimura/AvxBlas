@@ -12,7 +12,7 @@ namespace AvxBlasTest.Upsample3DTest {
 
             foreach (uint n in new int[] { 1, 2 }) {
                 foreach ((uint iw, uint ih, uint id) in new (uint, uint, uint)[] {
-                    (1, 1, 1), (1, 1, 4), (1, 4, 1), (4, 1, 1), (5, 2, 8), (3, 9, 4), (12, 16, 15) }) {
+                    (1, 1, 1), (1, 1, 4), (1, 4, 1), (4, 1, 1), (5, 2, 8), (3, 9, 6), (12, 16, 15) }) {
 
                     uint ow = iw * 2, oh = ih * 2, od = id * 2;
                     foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {

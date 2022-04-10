@@ -12,7 +12,7 @@ namespace AvxBlasTest.Connection3DTest {
 
             foreach (uint n in new int[] { 1, 2 }) {
                 foreach ((uint iw, uint ih, uint id) in new (uint, uint, uint)[] {
-                    (1, 1, 1), (1, 1, 4), (1, 4, 1), (4, 1, 1), (5, 2, 8), (3, 9, 4), (12, 16, 15) }) {
+                    (1, 1, 1), (1, 1, 4), (1, 4, 1), (4, 1, 1), (5, 2, 8), (3, 9, 6), (12, 16, 15) }) {
 
                     foreach ((uint kw, uint kh, uint kd) in new (uint, uint, uint)[] {
                         (1, 1, 1), (1, 1, 3), (1, 3, 1), (3, 1, 1), (3, 3, 3), (3, 1, 5), (3, 5, 3), (5, 5, 5) }) {
