@@ -48,14 +48,14 @@ int upsample1d_linear_aligned(
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
 
-            uint r = c;
-
             const float* xl_ptr = x_ptr + c * ixl;
             const float* xc_ptr = x_ptr + c * ix;
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
             float* yr_ptr = yl_ptr + c;
+
+            uint r = c;
 
             while (r >= AVX2_FLOAT_STRIDE) {
                 _mm256_load_x1_ps(xl_ptr, xl);
@@ -103,14 +103,14 @@ int upsample1d_linear_unaligned(
         for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
             const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
 
-            uint r = c;
-
             const float* xl_ptr = x_ptr + c * ixl;
             const float* xc_ptr = x_ptr + c * ix;
             const float* xr_ptr = x_ptr + c * ixr;
 
             float* yl_ptr = y_ptr + c * ox;
             float* yr_ptr = yl_ptr + c;
+
+            uint r = c;
 
             while (r >= AVX2_FLOAT_STRIDE) {
                 _mm256_loadu_x1_ps(xl_ptr, xl);
@@ -165,10 +165,12 @@ int upsample1d_linear_c1(
 
         for (uint i = 0; i < n; i++) {
             {
-                const float* xc_ptr = x_ptr;
-                const float* xr_ptr = x_ptr + 1;
+                const uint ix = 0, ixr = 1, ox = ix * 2;
 
-                float* yl_ptr = y_ptr;
+                const float* xc_ptr = x_ptr + ix;
+                const float* xr_ptr = x_ptr + ixr;
+
+                float* yl_ptr = y_ptr + ox;
                 float* yr_ptr = yl_ptr + 1;
 
                 float xc = *xc_ptr;
@@ -178,7 +180,7 @@ int upsample1d_linear_c1(
 
                 *yl_ptr = y.imm0;
                 *yr_ptr = y.imm1;
-            }            
+            }
             for (uint ix = 1, ox = 2; ix < iw - 1u; ix += AVX2_FLOAT_STRIDE, ox += AVX2_FLOAT_STRIDE * 2) {
                 const uint ixl = ix - 1u, ixr = ix + 1u;
 
@@ -186,42 +188,33 @@ int upsample1d_linear_c1(
                 const float* xc_ptr = x_ptr + ix;
                 const float* xr_ptr = x_ptr + ixr;
 
+                __m256 xl = _mm256_loadu_ps(xl_ptr);
+                __m256 xc = _mm256_loadu_ps(xc_ptr);
+                __m256 xr = _mm256_loadu_ps(xr_ptr);
+
+                __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
+                __m256x2 yt = _mm256_transpose8x2_ps(y.imm0, y.imm1);
+
                 if (ix + AVX2_FLOAT_STRIDE <= iw - 1u) {
-                    __m256 xl = _mm256_loadu_ps(xl_ptr);
-                    __m256 xc = _mm256_loadu_ps(xc_ptr);
-                    __m256 xr = _mm256_loadu_ps(xr_ptr);
-
-                    __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
-                    __m256x2 yt = _mm256_transpose8x2_ps(y.imm0, y.imm1);
-
                     _mm256_storeu_x2_ps(y_ptr + ox, yt.imm0, yt.imm1);
                 }
+                else if (ix + AVX2_FLOAT_STRIDE / 2 < iw - 1u) {
+                    _mm256_maskstore_x2_ps(y_ptr + ox, yt.imm0, yt.imm1, dstmask);
+                }
+                else if (ix + AVX2_FLOAT_STRIDE / 2 == iw - 1u) {
+                    _mm256_storeu_x1_ps(y_ptr + ox, yt.imm0);
+                }
                 else {
-                    __m256 xl = _mm256_maskload_ps(xl_ptr, srcmask);
-                    __m256 xc = _mm256_maskload_ps(xc_ptr, srcmask);
-                    __m256 xr = _mm256_maskload_ps(xr_ptr, srcmask);
-
-                    __m256x2 y = _mm256_linear1d_ps(xl, xc, xr);
-                    __m256x2 yt = _mm256_transpose8x2_ps(y.imm0, y.imm1);
-
-                    if (ix + AVX2_FLOAT_STRIDE / 2 < iw - 1u) {
-                        _mm256_maskstore_x2_ps(y_ptr + ox, yt.imm0, yt.imm1, dstmask);
-                    }
-                    else if (ix + AVX2_FLOAT_STRIDE / 2 == iw - 1u) {
-                        _mm256_storeu_x1_ps(y_ptr + ox, yt.imm0);
-                    }
-                    else {
-                        _mm256_maskstore_x1_ps(y_ptr + ox, yt.imm0, dstmask);
-                    }
-
-                    break;
+                    _mm256_maskstore_x1_ps(y_ptr + ox, yt.imm0, dstmask);
                 }
             }
             {
-                const float* xl_ptr = x_ptr + (iw - 2u);
-                const float* xc_ptr = x_ptr + (iw - 1u);
+                const uint ixl = (iw - 2u), ix = (iw - 1u), ox = ix * 2;
 
-                float* yl_ptr = y_ptr + (iw - 1u) * 2;
+                const float* xl_ptr = x_ptr + ixl;
+                const float* xc_ptr = x_ptr + ix;
+
+                float* yl_ptr = y_ptr + ox;
                 float* yr_ptr = yl_ptr + 1;
 
                 float xl = *xl_ptr;
@@ -258,7 +251,7 @@ int upsample1d_linear_c2to3(
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c <= 1 && c >= AVX1_FLOAT_STRIDE) {
+    if (c <= 1 || c >= AVX1_FLOAT_STRIDE) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -301,7 +294,7 @@ int upsample1d_linear_c4(
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c != AVX1_FLOAT_STRIDE) {
+    if (c != AVX1_FLOAT_STRIDE || ((size_t)x_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -385,7 +378,7 @@ int upsample1d_linear_c8(
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c != AVX2_FLOAT_STRIDE) {
+    if (c != AVX2_FLOAT_STRIDE || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG

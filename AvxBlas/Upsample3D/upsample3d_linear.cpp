@@ -3,6 +3,7 @@
 #include "../utils.h"
 #include "../Inline/inline_numeric.hpp"
 #include "../Inline/inline_loadstore_xn_s.hpp"
+#include "../Inline/inline_transpose_s.hpp"
 
 #pragma unmanaged
 
@@ -164,8 +165,6 @@ int upsample3d_linear_aligned(
                     const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
                     const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
 
-                    uint r = c;
-
                     const float* xluf_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izf));
                     const float* xuf_ptr = x_ptr + c * (ix + iw * (iyu + ih * izf));
                     const float* xruf_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izf));
@@ -204,6 +203,8 @@ int upsample3d_linear_aligned(
                     float* yrub_ptr = yruf_ptr + c * (ow * oh);
                     float* yldb_ptr = yldf_ptr + c * (ow * oh);
                     float* yrdb_ptr = yrdf_ptr + c * (ow * oh);
+
+                    uint r = c;
 
                     while (r >= AVX2_FLOAT_STRIDE) {
                         _mm256_load_x1_ps(xluf_ptr, xluf);
@@ -328,8 +329,6 @@ int upsample3d_linear_unaligned(
                     const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
                     const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
 
-                    uint r = c;
-
                     const float* xluf_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izf));
                     const float* xuf_ptr = x_ptr + c * (ix + iw * (iyu + ih * izf));
                     const float* xruf_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izf));
@@ -368,6 +367,8 @@ int upsample3d_linear_unaligned(
                     float* yrub_ptr = yruf_ptr + c * (ow * oh);
                     float* yldb_ptr = yldf_ptr + c * (ow * oh);
                     float* yrdb_ptr = yrdf_ptr + c * (ow * oh);
+
+                    uint r = c;
 
                     while (r >= AVX2_FLOAT_STRIDE) {
                         _mm256_loadu_x1_ps(xluf_ptr, xluf);
@@ -513,348 +514,826 @@ int upsample3d_linear_unaligned(
     return SUCCESS;
 }
 
-//int upsample3d_linear_c1(
-//    const uint n, const uint c,
-//    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
-//    infloats x_ptr, outfloats y_ptr) {
-//
-//#ifdef _DEBUG
-//    if (c != 1) {
-//        return FAILURE_BADPARAM;
-//    }
-//#endif // _DEBUG
-//
-//    float xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
-//
-//    for (uint i = 0; i < n; i++) {
-//        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
-//            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-//                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-//                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-//                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
-//                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
-//
-//                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-//                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-//                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-//                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-//                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-//                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-//                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-//                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-//                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
-//
-//                    float* ylu_ptr = y_ptr + (ox + ow * oy);
-//                    float* yru_ptr = y_ptr + ((ox + 1) + ow * oy);
-//                    float* yld_ptr = y_ptr + (ox + ow * (oy + 1));
-//                    float* yrd_ptr = y_ptr + ((ox + 1) + ow * (oy + 1));
-//
-//                    xlu = *xlu_ptr;
-//                    xu = *xu_ptr;
-//                    xru = *xru_ptr;
-//                    xl = *xl_ptr;
-//                    xc = *xc_ptr;
-//                    xr = *xr_ptr;
-//                    xld = *xld_ptr;
-//                    xd = *xd_ptr;
-//                    xrd = *xrd_ptr;
-//
-//                    floatx8 y = float_linear3d(xlu, xu, xru, xl, xc, xr, xld, xd, xrd, xlu, xu, xru, xl, xc, xr, xld, xd, xrd, xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
-//
-//                    *ylu_ptr = y.imm0;
-//                    *yru_ptr = y.imm1;
-//                    *yld_ptr = y.imm2;
-//                    *yrd_ptr = y.imm3;
-//                }
-//            }
-//        }
-//
-//        x_ptr += c * iw * ih * id;
-//        y_ptr += c * ow * oh * od;
-//    }
-//
-//    return SUCCESS;
-//}
-//
-//int upsample3d_linear_c2to3(
-//    const uint n, const uint c,
-//    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
-//    infloats x_ptr, outfloats y_ptr) {
-//
-//#ifdef _DEBUG
-//    if (c <= 1 && c >= AVX1_FLOAT_STRIDE) {
-//        return FAILURE_BADPARAM;
-//    }
-//#endif // _DEBUG
-//
-//    const __m128i mask = _mm_setmask_ps(c);
-//
-//    __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
-//
-//    for (uint i = 0; i < n; i++) {
-//        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
-//            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-//                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-//                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-//                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
-//                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
-//
-//                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-//                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-//                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-//                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-//                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-//                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-//                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-//                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-//                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
-//
-//                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-//                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-//                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-//                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
-//
-//                    xlu = _mm_loadu_ps(xlu_ptr);
-//                    xu = _mm_loadu_ps(xu_ptr);
-//                    xru = _mm_loadu_ps(xru_ptr);
-//                    xl = _mm_loadu_ps(xl_ptr);
-//                    xc = _mm_loadu_ps(xc_ptr);
-//                    xr = _mm_loadu_ps(xr_ptr);
-//                    xld = _mm_loadu_ps(xld_ptr);
-//                    xd = _mm_loadu_ps(xd_ptr);
-//                    xrd = _mm_loadu_ps(xrd_ptr);
-//
-//                    __m128x4 y = _mm_linear3d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
-//
-//                    _mm_maskstore_ps(ylu_ptr, mask, y.imm0);
-//                    _mm_maskstore_ps(yru_ptr, mask, y.imm1);
-//                    _mm_maskstore_ps(yld_ptr, mask, y.imm2);
-//                    _mm_maskstore_ps(yrd_ptr, mask, y.imm3);
-//                }
-//            }
-//        }
-//
-//        x_ptr += c * iw * ih * id;
-//        y_ptr += c * ow * oh * od;
-//    }
-//
-//    return SUCCESS;
-//}
-//
-//int upsample3d_linear_c4(
-//    const uint n, const uint c,
-//    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
-//    infloats x_ptr, outfloats y_ptr) {
-//
-//#ifdef _DEBUG
-//    if (c != AVX1_FLOAT_STRIDE) {
-//        return FAILURE_BADPARAM;
-//    }
-//#endif // _DEBUG
-//
-//    __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
-//
-//    for (uint i = 0; i < n; i++) {
-//        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
-//            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-//                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-//                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-//                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
-//                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
-//
-//                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-//                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-//                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-//                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-//                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-//                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-//                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-//                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-//                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
-//
-//                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-//                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-//                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-//                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
-//
-//                    xlu = _mm_load_ps(xlu_ptr);
-//                    xu = _mm_load_ps(xu_ptr);
-//                    xru = _mm_load_ps(xru_ptr);
-//                    xl = _mm_load_ps(xl_ptr);
-//                    xc = _mm_load_ps(xc_ptr);
-//                    xr = _mm_load_ps(xr_ptr);
-//                    xld = _mm_load_ps(xld_ptr);
-//                    xd = _mm_load_ps(xd_ptr);
-//                    xrd = _mm_load_ps(xrd_ptr);
-//
-//                    __m128x4 y = _mm_linear3d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
-//
-//                    _mm_stream_ps(ylu_ptr, y.imm0);
-//                    _mm_stream_ps(yru_ptr, y.imm1);
-//                    _mm_stream_ps(yld_ptr, y.imm2);
-//                    _mm_stream_ps(yrd_ptr, y.imm3);
-//                }
-//            }
-//        }
-//
-//        x_ptr += c * iw * ih * id;
-//        y_ptr += c * ow * oh * od;
-//    }
-//
-//    return SUCCESS;
-//}
-//
-//int upsample3d_linear_c5to7(
-//    const uint n, const uint c,
-//    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
-//    infloats x_ptr, outfloats y_ptr) {
-//
-//#ifdef _DEBUG
-//    if (c <= AVX1_FLOAT_STRIDE || c >= AVX2_FLOAT_STRIDE) {
-//        return FAILURE_BADPARAM;
-//    }
-//#endif // _DEBUG
-//
-//    const __m256i mask = _mm256_setmask_ps(c);
-//
-//    __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
-//
-//    for (uint i = 0; i < n; i++) {
-//        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
-//            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-//                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-//                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-//                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
-//                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
-//
-//                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-//                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-//                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-//                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-//                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-//                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-//                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-//                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-//                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
-//
-//                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-//                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-//                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-//                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
-//
-//                    _mm256_loadu_x1_ps(xlu_ptr, xlu);
-//                    _mm256_loadu_x1_ps(xu_ptr, xu);
-//                    _mm256_loadu_x1_ps(xru_ptr, xru);
-//                    _mm256_loadu_x1_ps(xl_ptr, xl);
-//                    _mm256_loadu_x1_ps(xc_ptr, xc);
-//                    _mm256_loadu_x1_ps(xr_ptr, xr);
-//                    _mm256_loadu_x1_ps(xld_ptr, xld);
-//                    _mm256_loadu_x1_ps(xd_ptr, xd);
-//                    _mm256_loadu_x1_ps(xrd_ptr, xrd);
-//
-//                    __m256x4 y = _mm256_linear3d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
-//
-//                    _mm256_maskstore_x1_ps(ylu_ptr, y.imm0, mask);
-//                    _mm256_maskstore_x1_ps(yru_ptr, y.imm1, mask);
-//                    _mm256_maskstore_x1_ps(yld_ptr, y.imm2, mask);
-//                    _mm256_maskstore_x1_ps(yrd_ptr, y.imm3, mask);
-//                }
-//            }
-//        }
-//
-//        x_ptr += c * iw * ih * id;
-//        y_ptr += c * ow * oh * od;
-//    }
-//
-//    return SUCCESS;
-//}
-//
-//int upsample3d_linear_c8(
-//    const uint n, const uint c,
-//    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
-//    infloats x_ptr, outfloats y_ptr) {
-//
-//#ifdef _DEBUG
-//    if (c != AVX2_FLOAT_STRIDE) {
-//        return FAILURE_BADPARAM;
-//    }
-//#endif // _DEBUG
-//
-//    __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
-//
-//    for (uint i = 0; i < n; i++) {
-//        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
-//            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-//                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-//                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
-//                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
-//                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
-//
-//                    const float* xlu_ptr = x_ptr + c * (ixl + iw * iyu);
-//                    const float* xu_ptr = x_ptr + c * (ix + iw * iyu);
-//                    const float* xru_ptr = x_ptr + c * (ixr + iw * iyu);
-//                    const float* xl_ptr = x_ptr + c * (ixl + iw * iy);
-//                    const float* xc_ptr = x_ptr + c * (ix + iw * iy);
-//                    const float* xr_ptr = x_ptr + c * (ixr + iw * iy);
-//                    const float* xld_ptr = x_ptr + c * (ixl + iw * iyd);
-//                    const float* xd_ptr = x_ptr + c * (ix + iw * iyd);
-//                    const float* xrd_ptr = x_ptr + c * (ixr + iw * iyd);
-//
-//                    float* ylu_ptr = y_ptr + c * (ox + ow * oy);
-//                    float* yru_ptr = y_ptr + c * ((ox + 1) + ow * oy);
-//                    float* yld_ptr = y_ptr + c * (ox + ow * (oy + 1));
-//                    float* yrd_ptr = y_ptr + c * ((ox + 1) + ow * (oy + 1));
-//
-//                    _mm256_load_x1_ps(xlu_ptr, xlu);
-//                    _mm256_load_x1_ps(xu_ptr, xu);
-//                    _mm256_load_x1_ps(xru_ptr, xru);
-//                    _mm256_load_x1_ps(xl_ptr, xl);
-//                    _mm256_load_x1_ps(xc_ptr, xc);
-//                    _mm256_load_x1_ps(xr_ptr, xr);
-//                    _mm256_load_x1_ps(xld_ptr, xld);
-//                    _mm256_load_x1_ps(xd_ptr, xd);
-//                    _mm256_load_x1_ps(xrd_ptr, xrd);
-//
-//                    __m256x4 y = _mm256_linear3d_ps(xlu, xu, xru, xl, xc, xr, xld, xd, xrd);
-//
-//                    _mm256_stream_x1_ps(ylu_ptr, y.imm0);
-//                    _mm256_stream_x1_ps(yru_ptr, y.imm1);
-//                    _mm256_stream_x1_ps(yld_ptr, y.imm2);
-//                    _mm256_stream_x1_ps(yrd_ptr, y.imm3);
-//                }
-//            }
-//        }
-//
-//        x_ptr += c * iw * ih * id;
-//        y_ptr += c * ow * oh * od;
-//    }
-//
-//    return SUCCESS;
-//}
-//
-//int upsample3d_linear_cleq8(
-//    const uint n, const uint c,
-//    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
-//    infloats x_ptr, outfloats y_ptr) {
-//
-//    if (c == 1) {
-//        return upsample3d_linear_c1(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-//    }
-//    if (c < AVX1_FLOAT_STRIDE) {
-//        return upsample3d_linear_c2to3(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-//    }
-//    if (c == AVX1_FLOAT_STRIDE) {
-//        return upsample3d_linear_c4(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-//    }
-//    if (c < AVX2_FLOAT_STRIDE) {
-//        return upsample3d_linear_c5to7(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-//    }
-//    if (c == AVX2_FLOAT_STRIDE) {
-//        return upsample3d_linear_c8(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-//    }
-//
-//    return FAILURE_BADPARAM;
-//}
+int upsample3d_linear_c1(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c != 1) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    if (iw > 1u) {
+        const __m256i srcmask = _mm256_setmask_ps((iw - 2u) & AVX2_FLOAT_REMAIN_MASK);
+        const __m256i dstmask = _mm256_setmask_ps(((iw - 2u) * 2u) & AVX2_FLOAT_REMAIN_MASK);
+
+        for (uint i = 0; i < n; i++) {
+            for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
+                for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
+
+                    {
+                        const uint ix = 0, ixr = 1, ox = ix * 2;
+
+                        const float* xuf_ptr = x_ptr + (ix + iw * (iyu + ih * izf));
+                        const float* xruf_ptr = x_ptr + (ixr + iw * (iyu + ih * izf));
+                        const float* xf_ptr = x_ptr + (ix + iw * (iy + ih * izf));
+                        const float* xrf_ptr = x_ptr + (ixr + iw * (iy + ih * izf));
+                        const float* xdf_ptr = x_ptr + (ix + iw * (iyd + ih * izf));
+                        const float* xrdf_ptr = x_ptr + (ixr + iw * (iyd + ih * izf));
+
+                        const float* xu_ptr = x_ptr + (ix + iw * (iyu + ih * iz));
+                        const float* xru_ptr = x_ptr + (ixr + iw * (iyu + ih * iz));
+                        const float* xc_ptr = x_ptr + (ix + iw * (iy + ih * iz));
+                        const float* xr_ptr = x_ptr + (ixr + iw * (iy + ih * iz));
+                        const float* xd_ptr = x_ptr + (ix + iw * (iyd + ih * iz));
+                        const float* xrd_ptr = x_ptr + (ixr + iw * (iyd + ih * iz));
+
+                        const float* xub_ptr = x_ptr + (ix + iw * (iyu + ih * izb));
+                        const float* xrub_ptr = x_ptr + (ixr + iw * (iyu + ih * izb));
+                        const float* xb_ptr = x_ptr + (ix + iw * (iy + ih * izb));
+                        const float* xrb_ptr = x_ptr + (ixr + iw * (iy + ih * izb));
+                        const float* xdb_ptr = x_ptr + (ix + iw * (iyd + ih * izb));
+                        const float* xrdb_ptr = x_ptr + (ixr + iw * (iyd + ih * izb));
+
+                        float* yluf_ptr = y_ptr + (ox + ow * (oy + oh * oz));
+                        float* yruf_ptr = yluf_ptr + 1;
+                        float* yldf_ptr = yluf_ptr + ow;
+                        float* yrdf_ptr = yluf_ptr + (ow + 1);
+                        float* ylub_ptr = yluf_ptr + (ow * oh);
+                        float* yrub_ptr = yruf_ptr + (ow * oh);
+                        float* yldb_ptr = yldf_ptr + (ow * oh);
+                        float* yrdb_ptr = yrdf_ptr + (ow * oh);
+
+                        float xuf = *xuf_ptr;
+                        float xruf = *xruf_ptr;
+                        float xf = *xf_ptr;
+                        float xrf = *xrf_ptr;
+                        float xdf = *xdf_ptr;
+                        float xrdf = *xrdf_ptr;
+
+                        float xu = *xu_ptr;
+                        float xru = *xru_ptr;
+                        float xc = *xc_ptr;
+                        float xr = *xr_ptr;
+                        float xd = *xd_ptr;
+                        float xrd = *xrd_ptr;
+
+                        float xub = *xub_ptr;
+                        float xrub = *xrub_ptr;
+                        float xb = *xb_ptr;
+                        float xrb = *xrb_ptr;
+                        float xdb = *xdb_ptr;
+                        float xrdb = *xrdb_ptr;
+
+                        floatx8 y = float_linear3d(
+                            xuf, xuf, xruf, xf, xf, xrf, xdf, xdf, xrdf,
+                            xu, xu, xru, xc, xc, xr, xd, xd, xrd,
+                            xub, xub, xrub, xb, xb, xrb, xdb, xdb, xrdb
+                        );
+
+                        *yluf_ptr = y.imm0;
+                        *yruf_ptr = y.imm1;
+                        *yldf_ptr = y.imm2;
+                        *yrdf_ptr = y.imm3;
+                        *ylub_ptr = y.imm4;
+                        *yrub_ptr = y.imm5;
+                        *yldb_ptr = y.imm6;
+                        *yrdb_ptr = y.imm7;
+                    }
+                    for (uint ix = 1, ox = 2; ix < iw - 1u; ix += AVX2_FLOAT_STRIDE, ox += AVX2_FLOAT_STRIDE * 2) {
+                        const uint ixl = ix - 1u, ixr = ix + 1u;
+
+                        const float* xluf_ptr = x_ptr + (ixl + iw * (iyu + ih * izf));
+                        const float* xuf_ptr = x_ptr + (ix + iw * (iyu + ih * izf));
+                        const float* xruf_ptr = x_ptr + (ixr + iw * (iyu + ih * izf));
+                        const float* xlf_ptr = x_ptr + (ixl + iw * (iy + ih * izf));
+                        const float* xf_ptr = x_ptr + (ix + iw * (iy + ih * izf));
+                        const float* xrf_ptr = x_ptr + (ixr + iw * (iy + ih * izf));
+                        const float* xldf_ptr = x_ptr + (ixl + iw * (iyd + ih * izf));
+                        const float* xdf_ptr = x_ptr + (ix + iw * (iyd + ih * izf));
+                        const float* xrdf_ptr = x_ptr + (ixr + iw * (iyd + ih * izf));
+
+                        const float* xlu_ptr = x_ptr + (ixl + iw * (iyu + ih * iz));
+                        const float* xu_ptr = x_ptr + (ix + iw * (iyu + ih * iz));
+                        const float* xru_ptr = x_ptr + (ixr + iw * (iyu + ih * iz));
+                        const float* xl_ptr = x_ptr + (ixl + iw * (iy + ih * iz));
+                        const float* xc_ptr = x_ptr + (ix + iw * (iy + ih * iz));
+                        const float* xr_ptr = x_ptr + (ixr + iw * (iy + ih * iz));
+                        const float* xld_ptr = x_ptr + (ixl + iw * (iyd + ih * iz));
+                        const float* xd_ptr = x_ptr + (ix + iw * (iyd + ih * iz));
+                        const float* xrd_ptr = x_ptr + (ixr + iw * (iyd + ih * iz));
+
+                        const float* xlub_ptr = x_ptr + (ixl + iw * (iyu + ih * izb));
+                        const float* xub_ptr = x_ptr + (ix + iw * (iyu + ih * izb));
+                        const float* xrub_ptr = x_ptr + (ixr + iw * (iyu + ih * izb));
+                        const float* xlb_ptr = x_ptr + (ixl + iw * (iy + ih * izb));
+                        const float* xb_ptr = x_ptr + (ix + iw * (iy + ih * izb));
+                        const float* xrb_ptr = x_ptr + (ixr + iw * (iy + ih * izb));
+                        const float* xldb_ptr = x_ptr + (ixl + iw * (iyd + ih * izb));
+                        const float* xdb_ptr = x_ptr + (ix + iw * (iyd + ih * izb));
+                        const float* xrdb_ptr = x_ptr + (ixr + iw * (iyd + ih * izb));
+
+                        float* yluf_ptr = y_ptr + (ox + ow * (oy + oh * oz));
+                        float* yldf_ptr = yluf_ptr + ow;
+                        float* ylub_ptr = yluf_ptr + (ow * oh);
+                        float* yldb_ptr = yldf_ptr + (ow * oh);
+
+                        __m256 xluf = _mm256_loadu_ps(xluf_ptr);
+                        __m256 xuf = _mm256_loadu_ps(xuf_ptr);
+                        __m256 xruf = _mm256_loadu_ps(xruf_ptr);
+                        __m256 xlf = _mm256_loadu_ps(xlf_ptr);
+                        __m256 xf = _mm256_loadu_ps(xf_ptr);
+                        __m256 xrf = _mm256_loadu_ps(xrf_ptr);
+                        __m256 xldf = _mm256_loadu_ps(xldf_ptr);
+                        __m256 xdf = _mm256_loadu_ps(xdf_ptr);
+                        __m256 xrdf = _mm256_loadu_ps(xrdf_ptr);
+
+                        __m256 xlu = _mm256_loadu_ps(xlu_ptr);
+                        __m256 xu = _mm256_loadu_ps(xu_ptr);
+                        __m256 xru = _mm256_loadu_ps(xru_ptr);
+                        __m256 xl = _mm256_loadu_ps(xl_ptr);
+                        __m256 xc = _mm256_loadu_ps(xc_ptr);
+                        __m256 xr = _mm256_loadu_ps(xr_ptr);
+                        __m256 xld = _mm256_loadu_ps(xld_ptr);
+                        __m256 xd = _mm256_loadu_ps(xd_ptr);
+                        __m256 xrd = _mm256_loadu_ps(xrd_ptr);
+
+                        __m256 xlub = _mm256_loadu_ps(xlub_ptr);
+                        __m256 xub = _mm256_loadu_ps(xub_ptr);
+                        __m256 xrub = _mm256_loadu_ps(xrub_ptr);
+                        __m256 xlb = _mm256_loadu_ps(xlb_ptr);
+                        __m256 xb = _mm256_loadu_ps(xb_ptr);
+                        __m256 xrb = _mm256_loadu_ps(xrb_ptr);
+                        __m256 xldb = _mm256_loadu_ps(xldb_ptr);
+                        __m256 xdb = _mm256_loadu_ps(xdb_ptr);
+                        __m256 xrdb = _mm256_loadu_ps(xrdb_ptr);
+
+                        __m256x8 y = _mm256_linear3d_ps(
+                            xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf,
+                            xlu, xu, xru, xl, xc, xr, xld, xd, xrd,
+                            xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb
+                        );
+
+                        __m256x2 yt0 = _mm256_transpose8x2_ps(y.imm0, y.imm1);
+                        __m256x2 yt1 = _mm256_transpose8x2_ps(y.imm2, y.imm3);
+                        __m256x2 yt2 = _mm256_transpose8x2_ps(y.imm4, y.imm5);
+                        __m256x2 yt3 = _mm256_transpose8x2_ps(y.imm6, y.imm7);
+
+                        if (ix + AVX2_FLOAT_STRIDE <= iw - 1u) {
+                            _mm256_storeu_x2_ps(yluf_ptr, yt0.imm0, yt0.imm1);
+                            _mm256_storeu_x2_ps(yldf_ptr, yt1.imm0, yt1.imm1);
+                            _mm256_storeu_x2_ps(ylub_ptr, yt2.imm0, yt2.imm1);
+                            _mm256_storeu_x2_ps(yldb_ptr, yt3.imm0, yt3.imm1);
+                        }
+                        else if (ix + AVX2_FLOAT_STRIDE / 2 < iw - 1u) {
+                            _mm256_maskstore_x2_ps(yluf_ptr, yt0.imm0, yt0.imm1, dstmask);
+                            _mm256_maskstore_x2_ps(yldf_ptr, yt1.imm0, yt1.imm1, dstmask);
+                            _mm256_maskstore_x2_ps(ylub_ptr, yt2.imm0, yt2.imm1, dstmask);
+                            _mm256_maskstore_x2_ps(yldb_ptr, yt3.imm0, yt3.imm1, dstmask);
+                        }
+                        else if (ix + AVX2_FLOAT_STRIDE / 2 == iw - 1u) {
+                            _mm256_storeu_x1_ps(yluf_ptr, yt0.imm0);
+                            _mm256_storeu_x1_ps(yldf_ptr, yt1.imm0);
+                            _mm256_storeu_x1_ps(ylub_ptr, yt2.imm0);
+                            _mm256_storeu_x1_ps(yldb_ptr, yt3.imm0);
+                        }
+                        else {
+                            _mm256_maskstore_x1_ps(yluf_ptr, yt0.imm0, dstmask);
+                            _mm256_maskstore_x1_ps(yldf_ptr, yt1.imm0, dstmask);
+                            _mm256_maskstore_x1_ps(ylub_ptr, yt2.imm0, dstmask);
+                            _mm256_maskstore_x1_ps(yldb_ptr, yt3.imm0, dstmask);
+                        }
+                    }
+                    {
+                        const uint ixl = (iw - 2u), ix = (iw - 1u), ox = ix * 2;
+
+                        const float* xluf_ptr = x_ptr + (ixl + iw * (iyu + ih * izf));
+                        const float* xuf_ptr = x_ptr + (ix + iw * (iyu + ih * izf));
+                        const float* xlf_ptr = x_ptr + (ixl + iw * (iy + ih * izf));
+                        const float* xf_ptr = x_ptr + (ix + iw * (iy + ih * izf));
+                        const float* xldf_ptr = x_ptr + (ixl + iw * (iyd + ih * izf));
+                        const float* xdf_ptr = x_ptr + (ix + iw * (iyd + ih * izf));
+
+                        const float* xlu_ptr = x_ptr + (ixl + iw * (iyu + ih * iz));
+                        const float* xu_ptr = x_ptr + (ix + iw * (iyu + ih * iz));
+                        const float* xl_ptr = x_ptr + (ixl + iw * (iy + ih * iz));
+                        const float* xc_ptr = x_ptr + (ix + iw * (iy + ih * iz));
+                        const float* xld_ptr = x_ptr + (ixl + iw * (iyd + ih * iz));
+                        const float* xd_ptr = x_ptr + (ix + iw * (iyd + ih * iz));
+
+                        const float* xlub_ptr = x_ptr + (ixl + iw * (iyu + ih * izb));
+                        const float* xub_ptr = x_ptr + (ix + iw * (iyu + ih * izb));
+                        const float* xlb_ptr = x_ptr + (ixl + iw * (iy + ih * izb));
+                        const float* xb_ptr = x_ptr + (ix + iw * (iy + ih * izb));
+                        const float* xldb_ptr = x_ptr + (ixl + iw * (iyd + ih * izb));
+                        const float* xdb_ptr = x_ptr + (ix + iw * (iyd + ih * izb));
+
+                        float* yluf_ptr = y_ptr + (ox + ow * (oy + oh * oz));
+                        float* yruf_ptr = yluf_ptr + 1;
+                        float* yldf_ptr = yluf_ptr + ow;
+                        float* yrdf_ptr = yluf_ptr + (ow + 1);
+                        float* ylub_ptr = yluf_ptr + (ow * oh);
+                        float* yrub_ptr = yruf_ptr + (ow * oh);
+                        float* yldb_ptr = yldf_ptr + (ow * oh);
+                        float* yrdb_ptr = yrdf_ptr + (ow * oh);
+
+                        float xluf = *xluf_ptr;
+                        float xuf = *xuf_ptr;
+                        float xlf = *xlf_ptr;
+                        float xf = *xf_ptr;
+                        float xldf = *xldf_ptr;
+                        float xdf = *xdf_ptr;
+
+                        float xlu = *xlu_ptr;
+                        float xu = *xu_ptr;
+                        float xl = *xl_ptr;
+                        float xc = *xc_ptr;
+                        float xld = *xld_ptr;
+                        float xd = *xd_ptr;
+
+                        float xlub = *xlub_ptr;
+                        float xub = *xub_ptr;
+                        float xlb = *xlb_ptr;
+                        float xb = *xb_ptr;
+                        float xldb = *xldb_ptr;
+                        float xdb = *xdb_ptr;
+
+                        floatx8 y = float_linear3d(
+                            xluf, xuf, xuf, xlf, xf, xf, xldf, xdf, xdf,
+                            xlu, xu, xu, xl, xc, xc, xld, xd, xd,
+                            xlub, xub, xub, xlb, xb, xb, xldb, xdb, xdb
+                        );
+
+                        *yluf_ptr = y.imm0;
+                        *yruf_ptr = y.imm1;
+                        *yldf_ptr = y.imm2;
+                        *yrdf_ptr = y.imm3;
+                        *ylub_ptr = y.imm4;
+                        *yrub_ptr = y.imm5;
+                        *yldb_ptr = y.imm6;
+                        *yrdb_ptr = y.imm7;
+                    }
+                }
+            }
+
+            x_ptr += iw * ih * id;
+            y_ptr += ow * oh * od;
+        }
+    }
+    else {
+        for (uint i = 0; i < n; i++) {
+            for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
+                for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
+
+                    const uint ix = 0, ox = ix * 2;
+
+                    const float* xuf_ptr = x_ptr + (ix + iw * (iyu + ih * izf));
+                    const float* xf_ptr = x_ptr + (ix + iw * (iy + ih * izf));
+                    const float* xdf_ptr = x_ptr + (ix + iw * (iyd + ih * izf));
+
+                    const float* xu_ptr = x_ptr + (ix + iw * (iyu + ih * iz));
+                    const float* xc_ptr = x_ptr + (ix + iw * (iy + ih * iz));
+                    const float* xd_ptr = x_ptr + (ix + iw * (iyd + ih * iz));
+
+                    const float* xub_ptr = x_ptr + (ix + iw * (iyu + ih * izb));
+                    const float* xb_ptr = x_ptr + (ix + iw * (iy + ih * izb));
+                    const float* xdb_ptr = x_ptr + (ix + iw * (iyd + ih * izb));
+
+                    float* yluf_ptr = y_ptr + (ox + ow * (oy + oh * oz));
+                    float* yldf_ptr = yluf_ptr + ow;
+                    float* ylub_ptr = yluf_ptr + (ow * oh);
+                    float* yldb_ptr = yldf_ptr + (ow * oh);
+
+                    float xuf = *xuf_ptr;
+                    float xf = *xf_ptr;
+                    float xdf = *xdf_ptr;
+
+                    float xu = *xu_ptr;
+                    float xc = *xc_ptr;
+                    float xd = *xd_ptr;
+
+                    float xub = *xub_ptr;
+                    float xb = *xb_ptr;
+                    float xdb = *xdb_ptr;
+
+                    floatx8 y = float_linear3d(
+                        xuf, xuf, xuf, xf, xf, xf, xdf, xdf, xdf,
+                        xu, xu, xu, xc, xc, xc, xd, xd, xd,
+                        xub, xub, xub, xb, xb, xb, xdb, xdb, xdb
+                    );
+
+                    yluf_ptr[0] = yluf_ptr[1] = y.imm0;
+                    yldf_ptr[0] = yldf_ptr[1] = y.imm2;
+                    ylub_ptr[0] = ylub_ptr[1] = y.imm4;
+                    yldb_ptr[0] = yldb_ptr[1] = y.imm6;
+                }
+            }
+
+            x_ptr += ih * id;
+            y_ptr += 2u * oh * od;
+        }
+    }
+
+    return SUCCESS;
+}
+
+int upsample3d_linear_c2to3(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c <= 1 || c >= AVX1_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m128i mask = _mm_setmask_ps(c);
+
+    __m128 xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf;
+    __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+    __m128 xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
+            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
+
+                    const float* xluf_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izf));
+                    const float* xuf_ptr = x_ptr + c * (ix + iw * (iyu + ih * izf));
+                    const float* xruf_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izf));
+                    const float* xlf_ptr = x_ptr + c * (ixl + iw * (iy + ih * izf));
+                    const float* xf_ptr = x_ptr + c * (ix + iw * (iy + ih * izf));
+                    const float* xrf_ptr = x_ptr + c * (ixr + iw * (iy + ih * izf));
+                    const float* xldf_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izf));
+                    const float* xdf_ptr = x_ptr + c * (ix + iw * (iyd + ih * izf));
+                    const float* xrdf_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izf));
+
+                    const float* xlu_ptr = x_ptr + c * (ixl + iw * (iyu + ih * iz));
+                    const float* xu_ptr = x_ptr + c * (ix + iw * (iyu + ih * iz));
+                    const float* xru_ptr = x_ptr + c * (ixr + iw * (iyu + ih * iz));
+                    const float* xl_ptr = x_ptr + c * (ixl + iw * (iy + ih * iz));
+                    const float* xc_ptr = x_ptr + c * (ix + iw * (iy + ih * iz));
+                    const float* xr_ptr = x_ptr + c * (ixr + iw * (iy + ih * iz));
+                    const float* xld_ptr = x_ptr + c * (ixl + iw * (iyd + ih * iz));
+                    const float* xd_ptr = x_ptr + c * (ix + iw * (iyd + ih * iz));
+                    const float* xrd_ptr = x_ptr + c * (ixr + iw * (iyd + ih * iz));
+
+                    const float* xlub_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izb));
+                    const float* xub_ptr = x_ptr + c * (ix + iw * (iyu + ih * izb));
+                    const float* xrub_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izb));
+                    const float* xlb_ptr = x_ptr + c * (ixl + iw * (iy + ih * izb));
+                    const float* xb_ptr = x_ptr + c * (ix + iw * (iy + ih * izb));
+                    const float* xrb_ptr = x_ptr + c * (ixr + iw * (iy + ih * izb));
+                    const float* xldb_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izb));
+                    const float* xdb_ptr = x_ptr + c * (ix + iw * (iyd + ih * izb));
+                    const float* xrdb_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izb));
+
+                    float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
+                    float* yruf_ptr = yluf_ptr + c;
+                    float* yldf_ptr = yluf_ptr + c * ow;
+                    float* yrdf_ptr = yluf_ptr + c * (ow + 1);
+                    float* ylub_ptr = yluf_ptr + c * (ow * oh);
+                    float* yrub_ptr = yruf_ptr + c * (ow * oh);
+                    float* yldb_ptr = yldf_ptr + c * (ow * oh);
+                    float* yrdb_ptr = yrdf_ptr + c * (ow * oh);
+
+                    xluf = _mm_loadu_ps(xluf_ptr);
+                    xuf = _mm_loadu_ps(xuf_ptr);
+                    xruf = _mm_loadu_ps(xruf_ptr);
+                    xlf = _mm_loadu_ps(xlf_ptr);
+                    xf = _mm_loadu_ps(xf_ptr);
+                    xrf = _mm_loadu_ps(xrf_ptr);
+                    xldf = _mm_loadu_ps(xldf_ptr);
+                    xdf = _mm_loadu_ps(xdf_ptr);
+                    xrdf = _mm_loadu_ps(xrdf_ptr);
+                    xlu = _mm_loadu_ps(xlu_ptr);
+                    xu = _mm_loadu_ps(xu_ptr);
+                    xru = _mm_loadu_ps(xru_ptr);
+                    xl = _mm_loadu_ps(xl_ptr);
+                    xc = _mm_loadu_ps(xc_ptr);
+                    xr = _mm_loadu_ps(xr_ptr);
+                    xld = _mm_loadu_ps(xld_ptr);
+                    xd = _mm_loadu_ps(xd_ptr);
+                    xrd = _mm_loadu_ps(xrd_ptr);
+                    xlub = _mm_loadu_ps(xlub_ptr);
+                    xub = _mm_loadu_ps(xub_ptr);
+                    xrub = _mm_loadu_ps(xrub_ptr);
+                    xlb = _mm_loadu_ps(xlb_ptr);
+                    xb = _mm_loadu_ps(xb_ptr);
+                    xrb = _mm_loadu_ps(xrb_ptr);
+                    xldb = _mm_loadu_ps(xldb_ptr);
+                    xdb = _mm_loadu_ps(xdb_ptr);
+                    xrdb = _mm_loadu_ps(xrdb_ptr);
+
+                    __m128x8 y = _mm_linear3d_ps(
+                        xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf,
+                        xlu, xu, xru, xl, xc, xr, xld, xd, xrd,
+                        xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb
+                    );
+
+                    _mm_maskstore_ps(yluf_ptr, mask, y.imm0);
+                    _mm_maskstore_ps(yruf_ptr, mask, y.imm1);
+                    _mm_maskstore_ps(yldf_ptr, mask, y.imm2);
+                    _mm_maskstore_ps(yrdf_ptr, mask, y.imm3);
+                    _mm_maskstore_ps(ylub_ptr, mask, y.imm4);
+                    _mm_maskstore_ps(yrub_ptr, mask, y.imm5);
+                    _mm_maskstore_ps(yldb_ptr, mask, y.imm6);
+                    _mm_maskstore_ps(yrdb_ptr, mask, y.imm7);
+                }
+            }
+        }
+
+        x_ptr += c * iw * ih * id;
+        y_ptr += c * ow * oh * od;
+    }
+
+    return SUCCESS;
+}
+
+int upsample3d_linear_c4(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c != AVX1_FLOAT_STRIDE || ((size_t)x_ptr % AVX1_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX1_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    __m128 xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf;
+    __m128 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+    __m128 xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
+            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
+
+                    const float* xluf_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izf));
+                    const float* xuf_ptr = x_ptr + c * (ix + iw * (iyu + ih * izf));
+                    const float* xruf_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izf));
+                    const float* xlf_ptr = x_ptr + c * (ixl + iw * (iy + ih * izf));
+                    const float* xf_ptr = x_ptr + c * (ix + iw * (iy + ih * izf));
+                    const float* xrf_ptr = x_ptr + c * (ixr + iw * (iy + ih * izf));
+                    const float* xldf_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izf));
+                    const float* xdf_ptr = x_ptr + c * (ix + iw * (iyd + ih * izf));
+                    const float* xrdf_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izf));
+
+                    const float* xlu_ptr = x_ptr + c * (ixl + iw * (iyu + ih * iz));
+                    const float* xu_ptr = x_ptr + c * (ix + iw * (iyu + ih * iz));
+                    const float* xru_ptr = x_ptr + c * (ixr + iw * (iyu + ih * iz));
+                    const float* xl_ptr = x_ptr + c * (ixl + iw * (iy + ih * iz));
+                    const float* xc_ptr = x_ptr + c * (ix + iw * (iy + ih * iz));
+                    const float* xr_ptr = x_ptr + c * (ixr + iw * (iy + ih * iz));
+                    const float* xld_ptr = x_ptr + c * (ixl + iw * (iyd + ih * iz));
+                    const float* xd_ptr = x_ptr + c * (ix + iw * (iyd + ih * iz));
+                    const float* xrd_ptr = x_ptr + c * (ixr + iw * (iyd + ih * iz));
+
+                    const float* xlub_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izb));
+                    const float* xub_ptr = x_ptr + c * (ix + iw * (iyu + ih * izb));
+                    const float* xrub_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izb));
+                    const float* xlb_ptr = x_ptr + c * (ixl + iw * (iy + ih * izb));
+                    const float* xb_ptr = x_ptr + c * (ix + iw * (iy + ih * izb));
+                    const float* xrb_ptr = x_ptr + c * (ixr + iw * (iy + ih * izb));
+                    const float* xldb_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izb));
+                    const float* xdb_ptr = x_ptr + c * (ix + iw * (iyd + ih * izb));
+                    const float* xrdb_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izb));
+
+                    float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
+                    float* yruf_ptr = yluf_ptr + c;
+                    float* yldf_ptr = yluf_ptr + c * ow;
+                    float* yrdf_ptr = yluf_ptr + c * (ow + 1);
+                    float* ylub_ptr = yluf_ptr + c * (ow * oh);
+                    float* yrub_ptr = yruf_ptr + c * (ow * oh);
+                    float* yldb_ptr = yldf_ptr + c * (ow * oh);
+                    float* yrdb_ptr = yrdf_ptr + c * (ow * oh);
+
+                    xluf = _mm_load_ps(xluf_ptr);
+                    xuf = _mm_load_ps(xuf_ptr);
+                    xruf = _mm_load_ps(xruf_ptr);
+                    xlf = _mm_load_ps(xlf_ptr);
+                    xf = _mm_load_ps(xf_ptr);
+                    xrf = _mm_load_ps(xrf_ptr);
+                    xldf = _mm_load_ps(xldf_ptr);
+                    xdf = _mm_load_ps(xdf_ptr);
+                    xrdf = _mm_load_ps(xrdf_ptr);
+                    xlu = _mm_load_ps(xlu_ptr);
+                    xu = _mm_load_ps(xu_ptr);
+                    xru = _mm_load_ps(xru_ptr);
+                    xl = _mm_load_ps(xl_ptr);
+                    xc = _mm_load_ps(xc_ptr);
+                    xr = _mm_load_ps(xr_ptr);
+                    xld = _mm_load_ps(xld_ptr);
+                    xd = _mm_load_ps(xd_ptr);
+                    xrd = _mm_load_ps(xrd_ptr);
+                    xlub = _mm_load_ps(xlub_ptr);
+                    xub = _mm_load_ps(xub_ptr);
+                    xrub = _mm_load_ps(xrub_ptr);
+                    xlb = _mm_load_ps(xlb_ptr);
+                    xb = _mm_load_ps(xb_ptr);
+                    xrb = _mm_load_ps(xrb_ptr);
+                    xldb = _mm_load_ps(xldb_ptr);
+                    xdb = _mm_load_ps(xdb_ptr);
+                    xrdb = _mm_load_ps(xrdb_ptr);
+
+                    __m128x8 y = _mm_linear3d_ps(
+                        xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf,
+                        xlu, xu, xru, xl, xc, xr, xld, xd, xrd,
+                        xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb
+                    );
+
+                    _mm_stream_ps(yluf_ptr, y.imm0);
+                    _mm_stream_ps(yruf_ptr, y.imm1);
+                    _mm_stream_ps(yldf_ptr, y.imm2);
+                    _mm_stream_ps(yrdf_ptr, y.imm3);
+                    _mm_stream_ps(ylub_ptr, y.imm4);
+                    _mm_stream_ps(yrub_ptr, y.imm5);
+                    _mm_stream_ps(yldb_ptr, y.imm6);
+                    _mm_stream_ps(yrdb_ptr, y.imm7);
+                }
+            }
+        }
+
+        x_ptr += c * iw * ih * id;
+        y_ptr += c * ow * oh * od;
+    }
+
+    return SUCCESS;
+}
+
+int upsample3d_linear_c5to7(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c <= AVX1_FLOAT_STRIDE || c >= AVX2_FLOAT_STRIDE) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256i mask = _mm256_setmask_ps(c);
+
+    __m256 xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf;
+    __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+    __m256 xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
+            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
+
+                    const float* xluf_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izf));
+                    const float* xuf_ptr = x_ptr + c * (ix + iw * (iyu + ih * izf));
+                    const float* xruf_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izf));
+                    const float* xlf_ptr = x_ptr + c * (ixl + iw * (iy + ih * izf));
+                    const float* xf_ptr = x_ptr + c * (ix + iw * (iy + ih * izf));
+                    const float* xrf_ptr = x_ptr + c * (ixr + iw * (iy + ih * izf));
+                    const float* xldf_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izf));
+                    const float* xdf_ptr = x_ptr + c * (ix + iw * (iyd + ih * izf));
+                    const float* xrdf_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izf));
+
+                    const float* xlu_ptr = x_ptr + c * (ixl + iw * (iyu + ih * iz));
+                    const float* xu_ptr = x_ptr + c * (ix + iw * (iyu + ih * iz));
+                    const float* xru_ptr = x_ptr + c * (ixr + iw * (iyu + ih * iz));
+                    const float* xl_ptr = x_ptr + c * (ixl + iw * (iy + ih * iz));
+                    const float* xc_ptr = x_ptr + c * (ix + iw * (iy + ih * iz));
+                    const float* xr_ptr = x_ptr + c * (ixr + iw * (iy + ih * iz));
+                    const float* xld_ptr = x_ptr + c * (ixl + iw * (iyd + ih * iz));
+                    const float* xd_ptr = x_ptr + c * (ix + iw * (iyd + ih * iz));
+                    const float* xrd_ptr = x_ptr + c * (ixr + iw * (iyd + ih * iz));
+
+                    const float* xlub_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izb));
+                    const float* xub_ptr = x_ptr + c * (ix + iw * (iyu + ih * izb));
+                    const float* xrub_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izb));
+                    const float* xlb_ptr = x_ptr + c * (ixl + iw * (iy + ih * izb));
+                    const float* xb_ptr = x_ptr + c * (ix + iw * (iy + ih * izb));
+                    const float* xrb_ptr = x_ptr + c * (ixr + iw * (iy + ih * izb));
+                    const float* xldb_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izb));
+                    const float* xdb_ptr = x_ptr + c * (ix + iw * (iyd + ih * izb));
+                    const float* xrdb_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izb));
+
+                    float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
+                    float* yruf_ptr = yluf_ptr + c;
+                    float* yldf_ptr = yluf_ptr + c * ow;
+                    float* yrdf_ptr = yluf_ptr + c * (ow + 1);
+                    float* ylub_ptr = yluf_ptr + c * (ow * oh);
+                    float* yrub_ptr = yruf_ptr + c * (ow * oh);
+                    float* yldb_ptr = yldf_ptr + c * (ow * oh);
+                    float* yrdb_ptr = yrdf_ptr + c * (ow * oh);
+
+                    _mm256_loadu_x1_ps(xluf_ptr, xluf);
+                    _mm256_loadu_x1_ps(xuf_ptr, xuf);
+                    _mm256_loadu_x1_ps(xruf_ptr, xruf);
+                    _mm256_loadu_x1_ps(xlf_ptr, xlf);
+                    _mm256_loadu_x1_ps(xf_ptr, xf);
+                    _mm256_loadu_x1_ps(xrf_ptr, xrf);
+                    _mm256_loadu_x1_ps(xldf_ptr, xldf);
+                    _mm256_loadu_x1_ps(xdf_ptr, xdf);
+                    _mm256_loadu_x1_ps(xrdf_ptr, xrdf);
+
+                    _mm256_loadu_x1_ps(xlu_ptr, xlu);
+                    _mm256_loadu_x1_ps(xu_ptr, xu);
+                    _mm256_loadu_x1_ps(xru_ptr, xru);
+                    _mm256_loadu_x1_ps(xl_ptr, xl);
+                    _mm256_loadu_x1_ps(xc_ptr, xc);
+                    _mm256_loadu_x1_ps(xr_ptr, xr);
+                    _mm256_loadu_x1_ps(xld_ptr, xld);
+                    _mm256_loadu_x1_ps(xd_ptr, xd);
+                    _mm256_loadu_x1_ps(xrd_ptr, xrd);
+
+                    _mm256_loadu_x1_ps(xlub_ptr, xlub);
+                    _mm256_loadu_x1_ps(xub_ptr, xub);
+                    _mm256_loadu_x1_ps(xrub_ptr, xrub);
+                    _mm256_loadu_x1_ps(xlb_ptr, xlb);
+                    _mm256_loadu_x1_ps(xb_ptr, xb);
+                    _mm256_loadu_x1_ps(xrb_ptr, xrb);
+                    _mm256_loadu_x1_ps(xldb_ptr, xldb);
+                    _mm256_loadu_x1_ps(xdb_ptr, xdb);
+                    _mm256_loadu_x1_ps(xrdb_ptr, xrdb);
+
+                    __m256x8 y = _mm256_linear3d_ps(
+                        xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf,
+                        xlu, xu, xru, xl, xc, xr, xld, xd, xrd,
+                        xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb
+                    );
+
+                    _mm256_maskstore_x1_ps(yluf_ptr, y.imm0, mask);
+                    _mm256_maskstore_x1_ps(yruf_ptr, y.imm1, mask);
+                    _mm256_maskstore_x1_ps(yldf_ptr, y.imm2, mask);
+                    _mm256_maskstore_x1_ps(yrdf_ptr, y.imm3, mask);
+                    _mm256_maskstore_x1_ps(ylub_ptr, y.imm4, mask);
+                    _mm256_maskstore_x1_ps(yrub_ptr, y.imm5, mask);
+                    _mm256_maskstore_x1_ps(yldb_ptr, y.imm6, mask);
+                    _mm256_maskstore_x1_ps(yrdb_ptr, y.imm7, mask);
+                }
+            }
+        }
+
+        x_ptr += c * iw * ih * id;
+        y_ptr += c * ow * oh * od;
+    }
+
+    return SUCCESS;
+}
+
+int upsample3d_linear_c8(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (c != AVX2_FLOAT_STRIDE || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    __m256 xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf;
+    __m256 xlu, xu, xru, xl, xc, xr, xld, xd, xrd;
+    __m256 xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb;
+
+    for (uint i = 0; i < n; i++) {
+        for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
+            for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
+                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+                    const uint ixl = max(ix, 1u) - 1u, ixr = min(ix + 1u, iw - 1u);
+                    const uint iyu = max(iy, 1u) - 1u, iyd = min(iy + 1u, ih - 1u);
+                    const uint izf = max(iz, 1u) - 1u, izb = min(iz + 1u, id - 1u);
+
+                    const float* xluf_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izf));
+                    const float* xuf_ptr = x_ptr + c * (ix + iw * (iyu + ih * izf));
+                    const float* xruf_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izf));
+                    const float* xlf_ptr = x_ptr + c * (ixl + iw * (iy + ih * izf));
+                    const float* xf_ptr = x_ptr + c * (ix + iw * (iy + ih * izf));
+                    const float* xrf_ptr = x_ptr + c * (ixr + iw * (iy + ih * izf));
+                    const float* xldf_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izf));
+                    const float* xdf_ptr = x_ptr + c * (ix + iw * (iyd + ih * izf));
+                    const float* xrdf_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izf));
+
+                    const float* xlu_ptr = x_ptr + c * (ixl + iw * (iyu + ih * iz));
+                    const float* xu_ptr = x_ptr + c * (ix + iw * (iyu + ih * iz));
+                    const float* xru_ptr = x_ptr + c * (ixr + iw * (iyu + ih * iz));
+                    const float* xl_ptr = x_ptr + c * (ixl + iw * (iy + ih * iz));
+                    const float* xc_ptr = x_ptr + c * (ix + iw * (iy + ih * iz));
+                    const float* xr_ptr = x_ptr + c * (ixr + iw * (iy + ih * iz));
+                    const float* xld_ptr = x_ptr + c * (ixl + iw * (iyd + ih * iz));
+                    const float* xd_ptr = x_ptr + c * (ix + iw * (iyd + ih * iz));
+                    const float* xrd_ptr = x_ptr + c * (ixr + iw * (iyd + ih * iz));
+
+                    const float* xlub_ptr = x_ptr + c * (ixl + iw * (iyu + ih * izb));
+                    const float* xub_ptr = x_ptr + c * (ix + iw * (iyu + ih * izb));
+                    const float* xrub_ptr = x_ptr + c * (ixr + iw * (iyu + ih * izb));
+                    const float* xlb_ptr = x_ptr + c * (ixl + iw * (iy + ih * izb));
+                    const float* xb_ptr = x_ptr + c * (ix + iw * (iy + ih * izb));
+                    const float* xrb_ptr = x_ptr + c * (ixr + iw * (iy + ih * izb));
+                    const float* xldb_ptr = x_ptr + c * (ixl + iw * (iyd + ih * izb));
+                    const float* xdb_ptr = x_ptr + c * (ix + iw * (iyd + ih * izb));
+                    const float* xrdb_ptr = x_ptr + c * (ixr + iw * (iyd + ih * izb));
+
+                    float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
+                    float* yruf_ptr = yluf_ptr + c;
+                    float* yldf_ptr = yluf_ptr + c * ow;
+                    float* yrdf_ptr = yluf_ptr + c * (ow + 1);
+                    float* ylub_ptr = yluf_ptr + c * (ow * oh);
+                    float* yrub_ptr = yruf_ptr + c * (ow * oh);
+                    float* yldb_ptr = yldf_ptr + c * (ow * oh);
+                    float* yrdb_ptr = yrdf_ptr + c * (ow * oh);
+
+                    _mm256_load_x1_ps(xluf_ptr, xluf);
+                    _mm256_load_x1_ps(xuf_ptr, xuf);
+                    _mm256_load_x1_ps(xruf_ptr, xruf);
+                    _mm256_load_x1_ps(xlf_ptr, xlf);
+                    _mm256_load_x1_ps(xf_ptr, xf);
+                    _mm256_load_x1_ps(xrf_ptr, xrf);
+                    _mm256_load_x1_ps(xldf_ptr, xldf);
+                    _mm256_load_x1_ps(xdf_ptr, xdf);
+                    _mm256_load_x1_ps(xrdf_ptr, xrdf);
+
+                    _mm256_load_x1_ps(xlu_ptr, xlu);
+                    _mm256_load_x1_ps(xu_ptr, xu);
+                    _mm256_load_x1_ps(xru_ptr, xru);
+                    _mm256_load_x1_ps(xl_ptr, xl);
+                    _mm256_load_x1_ps(xc_ptr, xc);
+                    _mm256_load_x1_ps(xr_ptr, xr);
+                    _mm256_load_x1_ps(xld_ptr, xld);
+                    _mm256_load_x1_ps(xd_ptr, xd);
+                    _mm256_load_x1_ps(xrd_ptr, xrd);
+
+                    _mm256_load_x1_ps(xlub_ptr, xlub);
+                    _mm256_load_x1_ps(xub_ptr, xub);
+                    _mm256_load_x1_ps(xrub_ptr, xrub);
+                    _mm256_load_x1_ps(xlb_ptr, xlb);
+                    _mm256_load_x1_ps(xb_ptr, xb);
+                    _mm256_load_x1_ps(xrb_ptr, xrb);
+                    _mm256_load_x1_ps(xldb_ptr, xldb);
+                    _mm256_load_x1_ps(xdb_ptr, xdb);
+                    _mm256_load_x1_ps(xrdb_ptr, xrdb);
+
+                    __m256x8 y = _mm256_linear3d_ps(
+                        xluf, xuf, xruf, xlf, xf, xrf, xldf, xdf, xrdf,
+                        xlu, xu, xru, xl, xc, xr, xld, xd, xrd,
+                        xlub, xub, xrub, xlb, xb, xrb, xldb, xdb, xrdb
+                    );
+
+                    _mm256_stream_x1_ps(yluf_ptr, y.imm0);
+                    _mm256_stream_x1_ps(yruf_ptr, y.imm1);
+                    _mm256_stream_x1_ps(yldf_ptr, y.imm2);
+                    _mm256_stream_x1_ps(yrdf_ptr, y.imm3);
+                    _mm256_stream_x1_ps(ylub_ptr, y.imm4);
+                    _mm256_stream_x1_ps(yrub_ptr, y.imm5);
+                    _mm256_stream_x1_ps(yldb_ptr, y.imm6);
+                    _mm256_stream_x1_ps(yrdb_ptr, y.imm7);
+                }
+            }
+        }
+
+        x_ptr += c * iw * ih * id;
+        y_ptr += c * ow * oh * od;
+    }
+
+    return SUCCESS;
+}
+
+int upsample3d_linear_cleq8(
+    const uint n, const uint c,
+    const uint iw, const uint ow, const uint ih, const uint oh, const uint id, const uint od,
+    infloats x_ptr, outfloats y_ptr) {
+
+    if (c == 1) {
+        return upsample3d_linear_c1(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    }
+    if (c < AVX1_FLOAT_STRIDE) {
+        return upsample3d_linear_c2to3(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    }
+    if (c == AVX1_FLOAT_STRIDE) {
+        return upsample3d_linear_c4(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    }
+    if (c < AVX2_FLOAT_STRIDE) {
+        return upsample3d_linear_c5to7(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    }
+    if (c == AVX2_FLOAT_STRIDE) {
+        return upsample3d_linear_c8(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    }
+
+    return FAILURE_BADPARAM;
+}
 
 #pragma managed
 
@@ -894,14 +1373,14 @@ void AvxBlas::Upsample3D::LinearX2(
 
     int ret = UNEXECUTED;
 
-    //    if (c <= AVX2_FLOAT_STRIDE) {
-    //#ifdef _DEBUG
-    //        Console::WriteLine("type leq8");
-    //#endif // _DEBUG
-    //
-    //        ret = upsample3d_linear_cleq8(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
-    //    }
-    if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
+    if (c <= AVX2_FLOAT_STRIDE) {
+#ifdef _DEBUG
+        Console::WriteLine("type leq8");
+#endif // _DEBUG
+
+        ret = upsample3d_linear_cleq8(n, c, iw, ow, ih, oh, id, od, x_ptr, y_ptr);
+    }
+    else if ((c & AVX2_FLOAT_REMAIN_MASK) == 0) {
 #ifdef _DEBUG
         Console::WriteLine("type aligned");
 #endif // _DEBUG

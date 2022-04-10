@@ -2,6 +2,7 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_loadstore_xn_s.hpp"
+#include "../Inline/inline_transpose_s.hpp"
 
 #pragma unmanaged
 
@@ -22,7 +23,6 @@ int upsample3d_neighbor_aligned(
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
                 for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    uint r = c;
 
                     float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
                     float* yruf_ptr = yluf_ptr + c;
@@ -32,6 +32,8 @@ int upsample3d_neighbor_aligned(
                     float* yrub_ptr = yruf_ptr + c * ow * oh;
                     float* yldb_ptr = yldf_ptr + c * ow * oh;
                     float* yrdb_ptr = yrdf_ptr + c * ow * oh;
+
+                    uint r = c;
 
                     while (r >= AVX2_FLOAT_STRIDE) {
                         _mm256_load_x1_ps(x_ptr, x);
@@ -84,7 +86,6 @@ int upsample3d_neighbor_unaligned(
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
                 for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    uint r = c;
 
                     float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
                     float* yruf_ptr = yluf_ptr + c;
@@ -94,6 +95,8 @@ int upsample3d_neighbor_unaligned(
                     float* yrub_ptr = yruf_ptr + c * ow * oh;
                     float* yldb_ptr = yldf_ptr + c * ow * oh;
                     float* yrdb_ptr = yrdf_ptr + c * ow * oh;
+
+                    uint r = c;
 
                     while (r >= AVX2_FLOAT_STRIDE) {
                         _mm256_loadu_x1_ps(x_ptr, x);
@@ -151,37 +154,54 @@ int upsample3d_neighbor_c1(
     }
 #endif // _DEBUG
 
-    float x;
+    const __m256i srcmask = _mm256_setmask_ps(iw & AVX2_FLOAT_REMAIN_MASK);
+    const __m256i dstmask = _mm256_setmask_ps((iw * 2u) & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
-                for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
-                    float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
-                    float* yruf_ptr = yluf_ptr + c;
-                    float* yldf_ptr = yluf_ptr + c * ow;
-                    float* yrdf_ptr = yluf_ptr + c * (ow + 1);
-                    float* ylub_ptr = yluf_ptr + c * ow * oh;
-                    float* yrub_ptr = yruf_ptr + c * ow * oh;
-                    float* yldb_ptr = yldf_ptr + c * ow * oh;
-                    float* yrdb_ptr = yrdf_ptr + c * ow * oh;
+                for (uint ix = 0, ox = 0; ix < iw; ix += AVX2_FLOAT_STRIDE, ox += AVX2_FLOAT_STRIDE * 2) {
 
-                    x = *x_ptr;
+                    const float* xc_ptr = x_ptr + (ix + iw * (iy + ih * iz));
 
-                    *yluf_ptr = x;
-                    *yruf_ptr = x;
-                    *yldf_ptr = x;
-                    *yrdf_ptr = x;
-                    *ylub_ptr = x;
-                    *yrub_ptr = x;
-                    *yldb_ptr = x;
-                    *yrdb_ptr = x;
+                    float* yuf_ptr = y_ptr + (ox + ow * (oy + oh * oz));
+                    float* ydf_ptr = yuf_ptr + ow;
+                    float* yub_ptr = yuf_ptr + ow * oh;
+                    float* ydb_ptr = ydf_ptr + ow * oh;
 
-                    x_ptr++;
+                    __m256 x = _mm256_loadu_ps(xc_ptr);
+
+                    __m256x2 yt = _mm256_transpose8x2_ps(x, x);
+
+                    if (ix + AVX2_FLOAT_STRIDE <= iw) {
+                        _mm256_storeu_x2_ps(yuf_ptr, yt.imm0, yt.imm1);
+                        _mm256_storeu_x2_ps(ydf_ptr, yt.imm0, yt.imm1);
+                        _mm256_storeu_x2_ps(yub_ptr, yt.imm0, yt.imm1);
+                        _mm256_storeu_x2_ps(ydb_ptr, yt.imm0, yt.imm1);
+                    }
+                    else if (ix + AVX2_FLOAT_STRIDE / 2 < iw) {
+                        _mm256_maskstore_x2_ps(yuf_ptr, yt.imm0, yt.imm1, dstmask);
+                        _mm256_maskstore_x2_ps(ydf_ptr, yt.imm0, yt.imm1, dstmask);
+                        _mm256_maskstore_x2_ps(yub_ptr, yt.imm0, yt.imm1, dstmask);
+                        _mm256_maskstore_x2_ps(ydb_ptr, yt.imm0, yt.imm1, dstmask);
+                    }
+                    else if (ix + AVX2_FLOAT_STRIDE / 2 == iw) {
+                        _mm256_storeu_x1_ps(yuf_ptr, yt.imm0);
+                        _mm256_storeu_x1_ps(ydf_ptr, yt.imm0);
+                        _mm256_storeu_x1_ps(yub_ptr, yt.imm0);
+                        _mm256_storeu_x1_ps(ydb_ptr, yt.imm0);
+                    }
+                    else {
+                        _mm256_maskstore_x1_ps(yuf_ptr, yt.imm0, dstmask);
+                        _mm256_maskstore_x1_ps(ydf_ptr, yt.imm0, dstmask);
+                        _mm256_maskstore_x1_ps(yub_ptr, yt.imm0, dstmask);
+                        _mm256_maskstore_x1_ps(ydb_ptr, yt.imm0, dstmask);
+                    }
                 }
             }
         }
 
+        x_ptr += iw * ih * id;
         y_ptr += ow * oh * od;
     }
 
@@ -194,7 +214,7 @@ int upsample3d_neighbor_c2to3(
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c <= 1 && c >= AVX1_FLOAT_STRIDE) {
+    if (c <= 1 || c >= AVX1_FLOAT_STRIDE) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -207,6 +227,7 @@ int upsample3d_neighbor_c2to3(
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
                 for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+
                     float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
                     float* yruf_ptr = yluf_ptr + c;
                     float* yldf_ptr = yluf_ptr + c * ow;
@@ -255,6 +276,7 @@ int upsample3d_neighbor_c4(
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
                 for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+
                     float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
                     float* yruf_ptr = yluf_ptr + c;
                     float* yldf_ptr = yluf_ptr + c * ow;
@@ -305,6 +327,7 @@ int upsample3d_neighbor_c5to7(
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
                 for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+
                     float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
                     float* yruf_ptr = yluf_ptr + c;
                     float* yldf_ptr = yluf_ptr + c * ow;
@@ -342,7 +365,7 @@ int upsample3d_neighbor_c8(
     infloats x_ptr, outfloats y_ptr) {
 
 #ifdef _DEBUG
-    if (c != AVX2_FLOAT_STRIDE) {
+    if (c != AVX2_FLOAT_STRIDE || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
         return FAILURE_BADPARAM;
     }
 #endif // _DEBUG
@@ -353,6 +376,7 @@ int upsample3d_neighbor_c8(
         for (uint iz = 0, oz = 0; iz < id; iz++, oz += 2) {
             for (uint iy = 0, oy = 0; iy < ih; iy++, oy += 2) {
                 for (uint ix = 0, ox = 0; ix < iw; ix++, ox += 2) {
+
                     float* yluf_ptr = y_ptr + c * (ox + ow * (oy + oh * oz));
                     float* yruf_ptr = yluf_ptr + c;
                     float* yldf_ptr = yluf_ptr + c * ow;
