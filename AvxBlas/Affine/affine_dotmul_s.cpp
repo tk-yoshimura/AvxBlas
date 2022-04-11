@@ -108,7 +108,7 @@ int affine_dotmul_stride2_s(
             for (uint j = 0, nbs = nbb * 2; j < nbs; j += 8) {
                 __m256 b = _mm256_loadu_ps(b_ptr + j);
 
-                __m128 y = _mm256_hadd2_ps(_mm256_mul_ps(a, b));
+                __m128 y = _mm256_hadd2_x1_ps(_mm256_mul_ps(a, b));
 
                 _mm_storeu_ps(y_ptr, y);
 
@@ -117,7 +117,7 @@ int affine_dotmul_stride2_s(
             {
                 __m256 b = _mm256_maskload_ps(b_ptr + nbb * 2, masksrc);
 
-                __m128 y = _mm256_hadd2_ps(_mm256_mul_ps(a, b));
+                __m128 y = _mm256_hadd2_x1_ps(_mm256_mul_ps(a, b));
 
                 _mm_maskstore_ps(y_ptr, maskdst, y);
 
@@ -132,7 +132,7 @@ int affine_dotmul_stride2_s(
             for (uint j = 0, nbs = nbb * 2; j < nbs; j += 8) {
                 __m256 b = _mm256_load_ps(b_ptr + j);
 
-                __m128 y = _mm256_hadd2_ps(_mm256_mul_ps(a, b));
+                __m128 y = _mm256_hadd2_x1_ps(_mm256_mul_ps(a, b));
 
                 _mm_store_ps(y_ptr, y);
 

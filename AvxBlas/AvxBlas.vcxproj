@@ -154,6 +154,7 @@
     <ClCompile Include="Dense\dense_backwardfilter_s.cpp" />
     <ClCompile Include="Dense\dense_forward_d.cpp" />
     <ClCompile Include="Dense\dense_forward_s.cpp" />
+    <ClCompile Include="Downsample1D\downsample1d_interarea.cpp" />
     <ClCompile Include="Elementwise\ew_abs_d.cpp" />
     <ClCompile Include="Elementwise\ew_abs_s.cpp" />
     <ClCompile Include="Elementwise\ew_add_d.cpp" />

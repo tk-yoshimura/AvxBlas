@@ -162,11 +162,19 @@ __forceinline __m256 _mm256_sum24to6_ps(__m256 x0, __m256 x1, __m256 x2) {
 }
 
 // e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1,e2+e3,e4+e5,e6+e7
-__forceinline __m128 _mm256_hadd2_ps(__m256 x) {
+__forceinline __m128 _mm256_hadd2_x1_ps(__m256 x) {
     __m128 lo = _mm256_castps256_ps128(x);
     __m128 hi = _mm256_extractf128_ps(x, 1);
 
     __m128 ret = _mm_hadd_ps(lo, hi);
+
+    return ret;
+}
+
+// e0,...,e15 -> e0+e1,...,e14+e15
+__forceinline __m256 _mm256_hadd2_x2_ps(__m256 x0, __m256 x1) {
+    __m256d y = _mm256_castps_pd(_mm256_hadd_ps(x0, x1));
+    __m256 ret = _mm256_castpd_ps(_mm256_permute4x64_pd(y, _MM_PERM_DBCA));
 
     return ret;
 }

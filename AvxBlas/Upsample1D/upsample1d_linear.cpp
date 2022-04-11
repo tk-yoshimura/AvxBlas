@@ -160,8 +160,7 @@ int upsample1d_linear_c1(
 #endif // _DEBUG
 
     if (iw > 1u) {
-        const __m256i srcmask = _mm256_setmask_ps((iw - 2u) & AVX2_FLOAT_REMAIN_MASK);
-        const __m256i dstmask = _mm256_setmask_ps(((iw - 2u) * 2u) & AVX2_FLOAT_REMAIN_MASK);
+        const __m256i mask = _mm256_setmask_ps(((iw - 2u) * 2u) & AVX2_FLOAT_REMAIN_MASK);
 
         for (uint i = 0; i < n; i++) {
             {
@@ -199,13 +198,13 @@ int upsample1d_linear_c1(
                     _mm256_storeu_x2_ps(y_ptr + ox, yt.imm0, yt.imm1);
                 }
                 else if (ix + AVX2_FLOAT_STRIDE / 2 < iw - 1u) {
-                    _mm256_maskstore_x2_ps(y_ptr + ox, yt.imm0, yt.imm1, dstmask);
+                    _mm256_maskstore_x2_ps(y_ptr + ox, yt.imm0, yt.imm1, mask);
                 }
                 else if (ix + AVX2_FLOAT_STRIDE / 2 == iw - 1u) {
                     _mm256_storeu_x1_ps(y_ptr + ox, yt.imm0);
                 }
                 else {
-                    _mm256_maskstore_x1_ps(y_ptr + ox, yt.imm0, dstmask);
+                    _mm256_maskstore_x1_ps(y_ptr + ox, yt.imm0, mask);
                 }
             }
             {
