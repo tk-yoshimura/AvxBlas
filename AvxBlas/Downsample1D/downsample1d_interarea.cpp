@@ -259,6 +259,7 @@ int downsample1d_interarea_c5to7(
 
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ox < ow; ix += 2, ox++) {
+
             const float* xl_ptr = x_ptr + c * ix;
             const float* xr_ptr = xl_ptr + c;
 
@@ -294,6 +295,7 @@ int downsample1d_interarea_c8(
 
     for (uint i = 0; i < n; i++) {
         for (uint ix = 0, ox = 0; ox < ow; ix += 2, ox++) {
+
             const float* xl_ptr = x_ptr + c * ix;
             const float* xr_ptr = xl_ptr + c;
 
@@ -353,7 +355,7 @@ void AvxBlas::Downsample1D::InterareaX2(
     if (n <= 0 || c <= 0 || iw <= 0) {
         return;
     }
-    if ((iw & 1) != 0 || iw > MAX_MAP_SIZE) {
+    if ((iw & 1u) != 0 || iw > MAX_MAP_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidDataSize);
     }
 

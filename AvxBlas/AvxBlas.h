@@ -220,22 +220,28 @@ namespace AvxBlas {
     public ref class Upsample2D abstract sealed {
         public:
         static void NeighborX2(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih,
-            Array<float>^ x, Array<float>^ y);
+                             Array<float>^ x, Array<float>^ y);
         static void LinearX2(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih,
-            Array<float>^ x, Array<float>^ y);
+                             Array<float>^ x, Array<float>^ y);
     };
 
     public ref class Upsample3D abstract sealed {
         public:
         static void NeighborX2(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih, UInt32 id,
-            Array<float>^ x, Array<float>^ y);
+                              Array<float>^ x, Array<float>^ y);
         static void LinearX2(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih, UInt32 id,
-            Array<float>^ x, Array<float>^ y);
+                             Array<float>^ x, Array<float>^ y);
     };
 
     public ref class Downsample1D abstract sealed {
         public:
         static void InterareaX2(UInt32 n, UInt32 c, UInt32 iw,
+                                Array<float>^ x, Array<float>^ y);
+    };
+
+    public ref class Downsample2D abstract sealed {
+        public:
+        static void InterareaX2(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih,
                                 Array<float>^ x, Array<float>^ y);
     };
 
