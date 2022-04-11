@@ -13,6 +13,7 @@ namespace AvxBlas {
         private:
         IntPtr ptr;
         UInt32 length;
+        UInt64 allocsize;
 
         public:
         property IntPtr Ptr { IntPtr get(); }
@@ -57,6 +58,9 @@ namespace AvxBlas {
 
         static void Copy(Array^ src_array, Array^ dst_array, UInt32 count);
         static void Copy(Array^ src_array, UInt32 src_index, Array^ dst_array, UInt32 dst_index, UInt32 count);
+
+        void FillOutOfIndex();
+        void CheckOverflow();
 
         String^ ToString() override;
 

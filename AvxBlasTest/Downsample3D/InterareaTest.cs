@@ -9,8 +9,6 @@ namespace AvxBlasTest.Downsample3DTest {
     public class InterareaTest {
         [TestMethod]
         public void SInterareaTest() {
-            using StreamWriter sw = new("downsample3d.txt");
-
             float max_err = 0;
 
             foreach (uint n in new int[] { 1, 2 }) {
@@ -27,9 +25,6 @@ namespace AvxBlasTest.Downsample3DTest {
 
                         Array<float> x_tensor = xval;
                         Array<float> y_tensor = new(c * ow * oh * od * n, zeroset: false);
-
-                        sw.WriteLine($"{c},{iw},{ih},{id},{n}");
-                        sw.Flush();
 
                         Downsample3D.InterareaX2(n, c, iw, ih, id, x_tensor, y_tensor);
 
@@ -60,9 +55,6 @@ namespace AvxBlasTest.Downsample3DTest {
 
                         Array<float> x_tensor = xval;
                         Array<float> y_tensor = new(c * ow * oh * od * n, zeroset: false);
-
-                        sw.WriteLine($"{c},{iw},{ih},{id},{n}");
-                        sw.Flush();
 
                         Downsample3D.InterareaX2(n, c, iw, ih, id, x_tensor, y_tensor);
 

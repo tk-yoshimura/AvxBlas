@@ -112,39 +112,6 @@ AvxBlas::Array<T>::Array(UInt32 length, bool zeroset){
         return;
     }
 
-    size_t size = (((size_t)length * ElementSize + AVX2_ALIGNMENT - 1) / AVX2_ALIGNMENT) * AVX2_ALIGNMENT;
-
-    void* ptr = _aligned_malloc(size, AVX2_ALIGNMENT);
-    if (ptr == nullptr) {
-        throw gcnew System::OutOfMemoryException();
-    }
-
-    this->length = length;
-    this->ptr = IntPtr(ptr);
-
-    if (zeroset) {
-        Zeroset();
-    }
-}
-
-generic <typename T>
-AvxBlas::Array<T>::Array(Int32 length, bool zeroset)
-    : Array(length >= 0 ? (UInt32)length : throw gcnew System::ArgumentOutOfRangeException("length"), zeroset) {}
-
-generic <typename T>
-AvxBlas::Array<T>::Array(cli::array<T>^ array) {
-    if (array->LongLength > MaxLength) {
-        throw gcnew System::ArgumentOutOfRangeException("length");
-    }
-
-    UInt32 length = array->Length;
-
-    if (length <= 0) {
-        this->length = length;
-        this->ptr = IntPtr::Zero;
-        return;
-    }
-
     size_t size = (((size_t)length * ElementSize + AVX2_ALIGNMENT * 2 - 1) / AVX2_ALIGNMENT) * AVX2_ALIGNMENT;
 
     void* ptr = _aligned_malloc(size, AVX2_ALIGNMENT);
@@ -154,6 +121,29 @@ AvxBlas::Array<T>::Array(cli::array<T>^ array) {
 
     this->length = length;
     this->ptr = IntPtr(ptr);
+    this->allocsize = size;
+
+    if (zeroset) {
+        Zeroset();
+    }
+
+#ifdef _DEBUG
+    FillOutOfIndex();
+#endif // _DEBUG
+
+}
+
+generic <typename T>
+AvxBlas::Array<T>::Array(Int32 length, bool zeroset)
+    : Array(length >= 0 ? (UInt32)length : throw gcnew System::ArgumentOutOfRangeException("length"), zeroset) {}
+
+generic <typename T>
+AvxBlas::Array<T>::Array(cli::array<T>^ array)
+    : Array(
+        array->LongLength <= MaxLength
+        ? array->Length
+        : throw gcnew System::ArgumentOutOfRangeException("length"), 
+        false) {
 
     Write(array);
 }
@@ -200,6 +190,10 @@ AvxBlas::Array<T>::operator cli::array<T>^ (Array^ array) {
     if (array->length <= 0) {
         return gcnew cli::array<T>(0);
     }
+
+#ifdef _DEBUG
+    array->CheckOverflow();
+#endif // _DEBUG
 
     cli::array<T>^ arr = gcnew cli::array<T>((int)array->length);
     array->Read(arr);
@@ -332,6 +326,25 @@ void AvxBlas::Array<T>::Copy(Array^ src_array, UInt32 src_index, Array^ dst_arra
     memcpy_s(dst_ptr, static_cast<rsize_t>(count) * ElementSize, src_ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
+generic <typename T>
+void AvxBlas::Array<T>::FillOutOfIndex() {
+    unsigned char* ucptr = (unsigned char*)(this->ptr).ToPointer();
+    
+    for (UInt64 i = (UInt64)Length * ElementSize; i < allocsize; i++) {
+        ucptr[i] = (i & 0x7Fu) | 0x80u;
+    }
+}
+
+generic <typename T>
+void AvxBlas::Array<T>::CheckOverflow() {
+    unsigned char* ucptr = (unsigned char*)(this->ptr).ToPointer();
+
+    for (UInt64 i = (UInt64)Length * ElementSize; i < allocsize; i++) {
+        if (ucptr[i] != ((i & 0x7Fu) | 0x80u)) {
+            throw gcnew System::AccessViolationException();
+        }
+    }
+}
 
 generic <typename T>
 String^ AvxBlas::Array<T>::ToString() {
