@@ -245,6 +245,12 @@ namespace AvxBlas {
                                 Array<float>^ x, Array<float>^ y);
     };
 
+    public ref class Downsample3D abstract sealed {
+        public:
+        static void InterareaX2(UInt32 n, UInt32 c, UInt32 iw, UInt32 ih, UInt32 id,
+                                Array<float>^ x, Array<float>^ y);
+    };
+
     public ref class Initialize abstract sealed {
         public:
         static void Clear(UInt32 n, float c, Array<float>^ y);

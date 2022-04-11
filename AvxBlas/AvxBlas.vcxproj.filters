@@ -79,6 +79,9 @@
     <Filter Include="Source\Downsample2D">
       <UniqueIdentifier>{c9ca7ba9-cada-405f-8ae7-c3e9e022013e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Downsample3D">
+      <UniqueIdentifier>{90cd83e7-2f60-42de-9c9a-96c2f0c4dad9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -379,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="Downsample2D\downsample2d_interarea.cpp">
       <Filter>Source\Downsample2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Downsample3D\downsample3d_interarea.cpp">
+      <Filter>Source\Downsample3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

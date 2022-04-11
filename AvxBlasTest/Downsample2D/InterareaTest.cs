@@ -30,9 +30,9 @@ namespace AvxBlasTest.Downsample2DTest {
 
                         CollectionAssert.AreEqual(xval, (float[])x_tensor);
 
-                        AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG: {c},{iw},{n}");
+                        AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG: {c},{iw},{ih},{n}");
 
-                        Console.WriteLine($"OK: {c},{iw},{n}");
+                        Console.WriteLine($"OK: {c},{iw},{ih},{n}");
                     }
                 }
             }
