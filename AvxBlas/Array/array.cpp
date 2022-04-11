@@ -365,5 +365,6 @@ AvxBlas::Array<T>::!Array() {
 
         this->length = 0;
         this->ptr = IntPtr::Zero;
+        this->allocsize = 0;
     }
 }
