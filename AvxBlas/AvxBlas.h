@@ -59,8 +59,10 @@ namespace AvxBlas {
         static void Copy(Array^ src_array, Array^ dst_array, UInt32 count);
         static void Copy(Array^ src_array, UInt32 src_index, Array^ dst_array, UInt32 dst_index, UInt32 count);
 
-        void FillOutOfIndex();
+#ifdef _DEBUG
+        void SetupCanary();
         void CheckOverflow();
+#endif // _DEBUG
 
         String^ ToString() override;
 

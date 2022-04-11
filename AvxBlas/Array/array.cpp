@@ -128,7 +128,7 @@ AvxBlas::Array<T>::Array(UInt32 length, bool zeroset){
     }
 
 #ifdef _DEBUG
-    FillOutOfIndex();
+    SetupCanary();
 #endif // _DEBUG
 
 }
@@ -326,8 +326,9 @@ void AvxBlas::Array<T>::Copy(Array^ src_array, UInt32 src_index, Array^ dst_arra
     memcpy_s(dst_ptr, static_cast<rsize_t>(count) * ElementSize, src_ptr, static_cast<rsize_t>(count) * ElementSize);
 }
 
+#ifdef _DEBUG
 generic <typename T>
-void AvxBlas::Array<T>::FillOutOfIndex() {
+void AvxBlas::Array<T>::SetupCanary() {
     unsigned char* ucptr = (unsigned char*)(this->ptr).ToPointer();
     
     for (UInt64 i = (UInt64)Length * ElementSize; i < allocsize; i++) {
@@ -345,6 +346,7 @@ void AvxBlas::Array<T>::CheckOverflow() {
         }
     }
 }
+#endif // _DEBUG
 
 generic <typename T>
 String^ AvxBlas::Array<T>::ToString() {
