@@ -109,6 +109,7 @@ AvxBlas::Array<T>::Array(UInt32 length, bool zeroset){
     if (length <= 0) {
         this->length = length;
         this->ptr = IntPtr::Zero;
+        this->allocsize = 0;
         return;
     }
 
