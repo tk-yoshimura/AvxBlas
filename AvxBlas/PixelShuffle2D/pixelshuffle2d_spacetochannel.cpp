@@ -21,14 +21,15 @@ int pixelshuffle2d_spacetochannel_aligned(
 #endif // _DEBUG
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0; iy < ih; iy++) {
-            uint iys = iy % s, oy = iy / s;
-            float* yc_ptr = y_ptr + cs * iys + oc * ow * oy;
+        for (uint oy = 0; oy < oh; oy++) {
+            for (uint cy = 0; cy < s; cy++) {
+                float* yc_ptr = y_ptr + cs * cy + oc * ow * oy;
 
-            for (uint ix = 0; ix < iw; ix += s) {
-                copy_aligned_s(cs, x_ptr, yc_ptr);
-                x_ptr += cs;
-                yc_ptr += oc;
+                for (uint ox = 0; ox < ow; ox++) {
+                    copy_aligned_s(cs, x_ptr, yc_ptr);
+                    x_ptr += cs;
+                    yc_ptr += oc;
+                }
             }
         }
 
@@ -56,14 +57,15 @@ int pixelshuffle2d_spacetochannel_unaligned(
     const __m256i mask = _mm256_setmask_ps(cs & AVX2_FLOAT_REMAIN_MASK);
 
     for (uint i = 0; i < n; i++) {
-        for (uint iy = 0; iy < ih; iy++) {
-            uint iys = iy % s, oy = iy / s;
-            float* yc_ptr = y_ptr + cs * iys + oc * ow * oy;
+        for (uint oy = 0; oy < oh; oy++) {
+            for (uint cy = 0; cy < s; cy++) {
+                float* yc_ptr = y_ptr + cs * cy + oc * ow * oy;
 
-            for (uint ix = 0; ix < iw; ix += s) {
-                copy_unaligned_s(cs, x_ptr, yc_ptr, mask);
-                x_ptr += cs;
-                yc_ptr += oc;
+                for (uint ox = 0; ox < ow; ox++) {
+                    copy_unaligned_s(cs, x_ptr, yc_ptr, mask);
+                    x_ptr += cs;
+                    yc_ptr += oc;
+                }
             }
         }
 
