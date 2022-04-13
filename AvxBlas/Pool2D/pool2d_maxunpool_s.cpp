@@ -388,7 +388,7 @@ void AvxBlas::Pool2D::MaxUnpooling(
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidChannels);
     }
     if (sx <= 0 || sx > MAX_POOL_STRIDE || sy <= 0 || sy > MAX_POOL_STRIDE) {
-        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidPoolStride);
+        throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidStride);
     }
     if ((kw <= 1 && kh <= 1) || kw > MAX_KERNEL_SIZE || kh > MAX_KERNEL_SIZE) {
         throw gcnew System::ArgumentOutOfRangeException(ErrorMessage::InvalidKernelSize);

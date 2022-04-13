@@ -87,14 +87,14 @@ namespace AvxBlasTest.Upsample2DTest {
                             double u = x[f, ix, Math.Max(0, iy - 1), th];
                             double d = x[f, ix, Math.Min(inh - 1, iy + 1), th];
 
-                            double lu = x[f, Math.Max(0, ix - 1),       Math.Max(0, iy - 1), th];
+                            double lu = x[f, Math.Max(0, ix - 1), Math.Max(0, iy - 1), th];
                             double ru = x[f, Math.Min(inw - 1, ix + 1), Math.Max(0, iy - 1), th];
-                            double ld = x[f, Math.Max(0, ix - 1),       Math.Min(inh - 1, iy + 1), th];
+                            double ld = x[f, Math.Max(0, ix - 1), Math.Min(inh - 1, iy + 1), th];
                             double rd = x[f, Math.Min(inw - 1, ix + 1), Math.Min(inh - 1, iy + 1), th];
 
-                            y[f, ix * 2,     iy * 2,     th] = (4 * c + 2 * l + 2 * u + lu) / 9;
-                            y[f, ix * 2 + 1, iy * 2,     th] = (4 * c + 2 * r + 2 * u + ru) / 9;
-                            y[f, ix * 2,     iy * 2 + 1, th] = (4 * c + 2 * l + 2 * d + ld) / 9;
+                            y[f, ix * 2, iy * 2, th] = (4 * c + 2 * l + 2 * u + lu) / 9;
+                            y[f, ix * 2 + 1, iy * 2, th] = (4 * c + 2 * r + 2 * u + ru) / 9;
+                            y[f, ix * 2, iy * 2 + 1, th] = (4 * c + 2 * l + 2 * d + ld) / 9;
                             y[f, ix * 2 + 1, iy * 2 + 1, th] = (4 * c + 2 * r + 2 * d + rd) / 9;
                         }
                     }

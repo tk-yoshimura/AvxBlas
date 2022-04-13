@@ -257,6 +257,12 @@ namespace AvxBlas {
                                 Array<float>^ x, Array<float>^ y);
     };
 
+    public ref class PixelShuffle2D abstract sealed {
+        public:
+        static void SpaceToChannel(UInt32 n, UInt32 ic, UInt32 iw, UInt32 ih, UInt32 s,
+                                   Array<float>^ xs, Array<float>^ yc);
+    };
+
     public ref class Initialize abstract sealed {
         public:
         static void Clear(UInt32 n, float c, Array<float>^ y);
@@ -315,8 +321,8 @@ namespace AvxBlas {
             "The specified channels is invalid.";
         static initonly System::String^ InvalidKernelSize =
             "The specified kernel size is invalid.";
-        static initonly System::String^ InvalidPoolStride =
-            "The specified pool stride is invalid.";
+        static initonly System::String^ InvalidStride =
+            "The specified stride is invalid.";
         static initonly System::String^ InvalidDataSize =
             "The specified data size is invalid.";
         static initonly System::String^ FailedWorkspaceAllocate =

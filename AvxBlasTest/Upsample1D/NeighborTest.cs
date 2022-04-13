@@ -15,33 +15,33 @@ namespace AvxBlasTest.Upsample1DTest {
                     uint ow = iw * 2;
                     foreach (uint c in new uint[] { 1, 2, 3, 4, 5, 8, 10, 15, 16, 20, 31, 32, 33, 39, 40, 41, 47, 48, 49, 55, 56, 57, 63, 64, 65 }) {
                         float[] xval = (new float[c * iw * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
-            
+
                         Map1D x = new((int)c, (int)iw, (int)n, xval);
-            
+
                         Map1D y = Reference(x);
-            
+
                         Array<float> x_tensor = xval;
                         Array<float> y_tensor = new(c * ow * n, zeroset: false);
-            
+
                         Upsample1D.NeighborX2(n, c, iw, x_tensor, y_tensor);
-            
+
                         float[] y_expect = y.ToFloatArray();
                         float[] y_actual = y_tensor;
-            
+
                         CollectionAssert.AreEqual(xval, (float[])x_tensor);
-            
+
                         AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG: {c},{iw},{n}");
-            
+
                         Console.WriteLine($"OK: {c},{iw},{n}");
-            
+
                     }
                 }
             }
 
             foreach (uint n in new int[] { 1, 2, 3, 4 }) {
                 for (uint iw = 1; iw <= 65; iw++) {
-                    const uint c = 1; 
-                    
+                    const uint c = 1;
+
                     uint ow = iw * 2;
 
                     float[] xval = (new float[c * iw * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
@@ -62,7 +62,7 @@ namespace AvxBlasTest.Upsample1DTest {
 
                     AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG: {c},{iw},{n}");
 
-                    Console.WriteLine($"OK: {c},{iw},{n}");                    
+                    Console.WriteLine($"OK: {c},{iw},{n}");
                 }
             }
 

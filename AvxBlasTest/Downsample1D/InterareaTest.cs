@@ -39,8 +39,8 @@ namespace AvxBlasTest.Downsample1DTest {
 
             foreach (uint n in new int[] { 1, 2, 3, 4 }) {
                 for (uint ow = 1; ow <= 65; ow++) {
-                    const uint c = 1; 
-                    
+                    const uint c = 1;
+
                     uint iw = ow * 2;
 
                     float[] xval = (new float[c * iw * n]).Select((_, idx) => (float)(idx * 4547 % 17 + idx * 631 % 23)).ToArray();
@@ -61,7 +61,7 @@ namespace AvxBlasTest.Downsample1DTest {
 
                     AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG: {c},{iw},{n}");
 
-                    Console.WriteLine($"OK: {c},{iw},{n}");                    
+                    Console.WriteLine($"OK: {c},{iw},{n}");
                 }
             }
 
