@@ -85,6 +85,9 @@
     <Filter Include="Source\PixelShuffle2D">
       <UniqueIdentifier>{800d7d36-4d9f-4285-8960-cd992e02e0bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\PixelShuffle3D">
+      <UniqueIdentifier>{31330efc-2316-44ac-927b-5e104373de0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -394,6 +397,12 @@
     </ClCompile>
     <ClCompile Include="PixelShuffle2D\pixelshuffle2d_channeltospace.cpp">
       <Filter>Source\PixelShuffle2D</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShuffle3D\pixelshuffle3d_channeltospace.cpp">
+      <Filter>Source\PixelShuffle3D</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShuffle3D\pixelshuffle3d_spacetochannel.cpp">
+      <Filter>Source\PixelShuffle3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

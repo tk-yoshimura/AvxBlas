@@ -13,31 +13,29 @@ namespace AvxBlasTest.PixelShuffle2DTest {
             foreach (uint n in new int[] { 1, 2 }) {
                 foreach (uint oc in new int[] { 1, 2, 3, 4, 5, 8, 15, 16, 17 }) {
                     foreach (uint s in new int[] { 1, 2, 3, 4 }) {
-                        foreach (uint iw in new int[] { 1, 2, 3, 4, 5, 7, 11 }) {
-                            foreach (uint ih in new int[] { 1, 2, 3, 4, 5, 7, 11 }) {
-                                uint ow = iw * s, oh = ih * s, ic = oc * s * s;
+                        foreach ((uint iw, uint ih) in new (uint, uint)[] { (1, 1), (1, 4), (4, 1), (2, 3), (5, 8), (7, 6), (16, 15), (17, 28), (32, 30) }) {
+                            uint ow = iw * s, oh = ih * s, ic = oc * s * s;
 
-                                float[] xval = (new float[iw * ih * ic * n]).Select((_, idx) => idx * 1e-3f).ToArray();
+                            float[] xval = (new float[iw * ih * ic * n]).Select((_, idx) => idx * 1e-3f).ToArray();
 
-                                Map2D x = new Map2D((int)ic, (int)iw, (int)ih, (int)n, xval);
+                            Map2D x = new Map2D((int)ic, (int)iw, (int)ih, (int)n, xval);
 
-                                Map2D y = Reference(x, (int)s);
+                            Map2D y = Reference(x, (int)s);
 
-                                Array<float> x_tensor = xval;
-                                Array<float> y_tensor = new(oc * ow * oh * n, zeroset: false);
+                            Array<float> x_tensor = xval;
+                            Array<float> y_tensor = new(oc * ow * oh * n, zeroset: false);
 
-                                PixelShuffle2D.ChannelToSpace(n, ic, iw, ih, s, x_tensor, y_tensor);
+                            PixelShuffle2D.ChannelToSpace(n, ic, iw, ih, s, x_tensor, y_tensor);
 
-                                float[] y_expect = y.ToFloatArray();
-                                float[] y_actual = y_tensor;
+                            float[] y_expect = y.ToFloatArray();
+                            float[] y_actual = y_tensor;
 
-                                CollectionAssert.AreEqual(xval, (float[])x_tensor);
+                            CollectionAssert.AreEqual(xval, (float[])x_tensor);
 
-                                AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG {ic},{oc},{s},{iw},{ih},{n}");
+                            AssertError.Tolerance(y_expect, y_actual, 1e-7f, 1e-5f, ref max_err, $"NG {ic},{oc},{s},{iw},{ih},{n}");
 
-                                Console.WriteLine($"OK: {ic},{oc},{s},{iw},{ih},{n}");
+                            Console.WriteLine($"OK: {ic},{oc},{s},{iw},{ih},{n}");
 
-                            }
                         }
                     }
                 }

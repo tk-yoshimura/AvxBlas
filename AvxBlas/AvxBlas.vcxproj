@@ -171,6 +171,8 @@
     <ClInclude Include="Inline\inline_sum_s.hpp" />
     <ClCompile Include="PixelShuffle2D\pixelshuffle2d_channeltospace.cpp" />
     <ClCompile Include="PixelShuffle2D\pixelshuffle2d_spacetochannel.cpp" />
+    <ClCompile Include="PixelShuffle3D\pixelshuffle3d_channeltospace.cpp" />
+    <ClCompile Include="PixelShuffle3D\pixelshuffle3d_spacetochannel.cpp" />
     <ClCompile Include="Pool1D\pool1d_avgpool_s.cpp" />
     <ClCompile Include="Pool1D\pool1d_avgunpool_s.cpp" />
     <ClCompile Include="Pool1D\pool1d_maxpool_s.cpp" />
