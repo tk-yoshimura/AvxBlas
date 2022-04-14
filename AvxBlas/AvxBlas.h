@@ -261,6 +261,8 @@ namespace AvxBlas {
         public:
         static void SpaceToChannel(UInt32 n, UInt32 ic, UInt32 iw, UInt32 ih, UInt32 s,
                                    Array<float>^ xs, Array<float>^ yc);
+        static void ChannelToSpace(UInt32 n, UInt32 ic, UInt32 iw, UInt32 ih, UInt32 s,
+                                   Array<float>^ xs, Array<float>^ yc);
     };
 
     public ref class Initialize abstract sealed {

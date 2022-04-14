@@ -392,6 +392,9 @@
     <ClCompile Include="PixelShuffle2D\pixelshuffle2d_spacetochannel.cpp">
       <Filter>Source\PixelShuffle2D</Filter>
     </ClCompile>
+    <ClCompile Include="PixelShuffle2D\pixelshuffle2d_channeltospace.cpp">
+      <Filter>Source\PixelShuffle2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
