@@ -101,6 +101,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Inline\inline_cmp_s.hpp" />
     <ClInclude Include="Inline\inline_copy_d.hpp" />
     <ClInclude Include="Inline\inline_imcol_d.hpp" />
     <ClInclude Include="Inline\inline_kernelfma_ss.hpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="Util\util_align_kernel_s.cpp" />
     <ClCompile Include="Util\util_align_kernel_d.cpp" />
     <ClCompile Include="Util\util_copy.cpp" />
+    <ClCompile Include="Util\util_nan.cpp" />
     <ClCompile Include="Util\util_repeat_vector.cpp" />
     <ClCompile Include="Util\util_mm_mask.cpp" />
     <ClCompile Include="Util\util_numeric.cpp" />

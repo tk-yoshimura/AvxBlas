@@ -1,5 +1,6 @@
 #include "../avxblas.h"
 #include "../constants.h"
+#include "../utils.h"
 #include <array>
 #include <vector>
 #include <bitset>
@@ -108,10 +109,6 @@ void AvxBlas::Util::CheckLength(UInt32 length, ...cli::array<Array<T>^>^ arrays)
 
 generic <typename T> where T : ValueType
 void AvxBlas::Util::CheckOutOfRange(UInt32 index, UInt32 length, ...cli::array<Array<T>^>^ arrays) {
-    if (length <= 0) {
-        return;
-    }
-
     if (index + length < index) {
         throw gcnew System::IndexOutOfRangeException(AvxBlas::ErrorMessage::InvalidArrayLength);
     }
@@ -152,19 +149,28 @@ void AvxBlas::Util::CheckProdOverflow(... cli::array<UInt32>^ arrays) {
     }
 }
 
-void AvxBlas::Util::AssertReturnCode(int ret) {
-    if (ret == SUCCESS) {
-        return;
-    }
-    if (ret == FAILURE_BADPARAM) {
-        throw gcnew System::ArgumentException(ErrorMessage::InvalidNativeFuncArgument);
-    }
-    if (ret == FAILURE_BADALLOC) {
-        throw gcnew System::OutOfMemoryException(ErrorMessage::FailedWorkspaceAllocate);
-    }
-    if (ret == UNEXECUTED) {
-        throw gcnew System::NotImplementedException();
-    }
+bool AvxBlas::Util::ContainsNaN(UInt32 n, Array<float>^ array) {
+    CheckLength(n, array);
+
+    return contains_nan_s(n, (const float*)(array->Ptr.ToPointer()));
+}
+
+bool AvxBlas::Util::ContainsNaN(UInt32 n, Array<double>^ array) {
+    CheckLength(n, array);
+
+    return contains_nan_d(n, (const double*)(array->Ptr.ToPointer()));
+}
+
+bool AvxBlas::Util::ContainsNaN(UInt32 index, UInt32 n, Array<float>^ array) {
+    CheckOutOfRange(index, n, array);
+
+    return contains_nan_s(n, (const float*)(array->Ptr.ToPointer()) + index);
+}
+
+bool AvxBlas::Util::ContainsNaN(UInt32 index, UInt32 n, Array<double>^ array) {
+    CheckOutOfRange(index, n, array);
+
+    return contains_nan_d(n, (const double*)(array->Ptr.ToPointer()) + index);
 }
 
 bool AvxBlas::Util::IsSupportedAVX::get() {
@@ -181,4 +187,19 @@ bool AvxBlas::Util::IsSupportedAVX512F::get() {
 
 bool AvxBlas::Util::IsSupportedFMA::get() {
     return is_supported_fma();
+}
+
+void AvxBlas::Util::AssertReturnCode(int ret) {
+    if (ret == SUCCESS) {
+        return;
+    }
+    if (ret == FAILURE_BADPARAM) {
+        throw gcnew System::ArgumentException(ErrorMessage::InvalidNativeFuncArgument);
+    }
+    if (ret == FAILURE_BADALLOC) {
+        throw gcnew System::OutOfMemoryException(ErrorMessage::FailedWorkspaceAllocate);
+    }
+    if (ret == UNEXECUTED) {
+        throw gcnew System::NotImplementedException();
+    }
 }

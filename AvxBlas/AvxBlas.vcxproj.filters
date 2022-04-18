@@ -189,6 +189,9 @@
     <ClInclude Include="Inline\inline_transpose_d.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_cmp_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">
@@ -403,6 +406,9 @@
     </ClCompile>
     <ClCompile Include="PixelShuffle3D\pixelshuffle3d_spacetochannel.cpp">
       <Filter>Source\PixelShuffle3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\util_nan.cpp">
+      <Filter>Source\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

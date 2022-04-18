@@ -299,12 +299,18 @@ namespace AvxBlas {
 
         static void CheckProdOverflow(... cli::array<UInt32>^ arrays);
 
-        static void AssertReturnCode(int ret);
+        static bool ContainsNaN(UInt32 n, Array<float>^ array);
+        static bool ContainsNaN(UInt32 n, Array<double>^ array);
+        static bool ContainsNaN(UInt32 index, UInt32 n, Array<float>^ array);
+        static bool ContainsNaN(UInt32 index, UInt32 n, Array<double>^ array);
 
         static property bool IsSupportedAVX { bool get(); };
         static property bool IsSupportedAVX2 { bool get(); };
         static property bool IsSupportedAVX512F { bool get(); };
         static property bool IsSupportedFMA { bool get(); };
+
+        internal:
+        static void AssertReturnCode(int ret);
     };
 
     private ref class Numeric abstract sealed {
