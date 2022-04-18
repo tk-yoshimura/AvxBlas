@@ -8,64 +8,165 @@
 #include "../AvxBlas/Inline/inline_loadstore_xn_s.hpp"
 #include "../AvxBlas/Inline/inline_transpose_s.hpp"
 
-__forceinline floatx8 float_linear3d(
-    float xluf, float xuf, float xruf,
-    float xlf, float xf, float xrf,
-    float xldf, float xdf, float xrdf,
-    float xlu, float xu, float xru,
-    float xl, float xc, float xr,
-    float xld, float xd, float xrd,
-    float xlub, float xub, float xrub,
-    float xlb, float xb, float xrb,
-    float xldb, float xdb, float xrdb) {
+void sort_s(uint n, float* v_ptr) {
+    for (uint h = n * 3 / 4; h >= AVX2_FLOAT_STRIDE; h = h * 3 / 4) {
+        for (uint i = 0; i + h + AVX2_FLOAT_STRIDE <= n; i += AVX2_FLOAT_STRIDE / 2) {
+            __m256 a = _mm256_loadu_ps(v_ptr + i);
+            __m256 b = _mm256_loadu_ps(v_ptr + i + h);
 
-    float wc2 = xc + xc;
+            __m256 x = _mm256_min_ps(a, b);
+            __m256 y = _mm256_max_ps(a, b);
 
-    float wl2c = xl + xl + xc;
-    float wr2c = xr + xr + xc;
-    float wu2c = xu + xu + xc;
-    float wd2c = xd + xd + xc;
-    float wf2c = xf + xf + xc;
-    float wb2c = xb + xb + xc;
+            _mm256_storeu_ps(v_ptr + i, x);
+            _mm256_storeu_ps(v_ptr + i + h, y);
+        }
+        {
+            uint i = n - h - AVX2_FLOAT_STRIDE;
 
-    float wlu2l2u2c2 = (xlu + xlu) + (wl2c + wu2c);
-    float wld2l2d2c2 = (xld + xld) + (wl2c + wd2c);
-    float wlf2l2f2c2 = (xlf + xlf) + (wl2c + wf2c);
-    float wlb2l2b2c2 = (xlb + xlb) + (wl2c + wb2c);
-    float wru2r2u2c2 = (xru + xru) + (wr2c + wu2c);
-    float wrd2r2d2c2 = (xrd + xrd) + (wr2c + wd2c);
-    float wrf2r2f2c2 = (xrf + xrf) + (wr2c + wf2c);
-    float wrb2r2b2c2 = (xrb + xrb) + (wr2c + wb2c);
-    float wuf2u2f2c2 = (xuf + xuf) + (wu2c + wf2c);
-    float wub2u2b2c2 = (xub + xub) + (wu2c + wb2c);
-    float wdf2d2f2c2 = (xdf + xdf) + (wd2c + wf2c);
-    float wdb2d2b2c2 = (xdb + xdb) + (wd2c + wb2c);
+            __m256 a = _mm256_loadu_ps(v_ptr + i);
+            __m256 b = _mm256_loadu_ps(v_ptr + i + h);
 
-    float yluf = (xluf + wc2) + (wlu2l2u2c2 + wlf2l2f2c2 + wuf2u2f2c2);
-    float yruf = (xruf + wc2) + (wru2r2u2c2 + wrf2r2f2c2 + wuf2u2f2c2);
-    float yldf = (xldf + wc2) + (wld2l2d2c2 + wlf2l2f2c2 + wdf2d2f2c2);
-    float yrdf = (xrdf + wc2) + (wrd2r2d2c2 + wrf2r2f2c2 + wdf2d2f2c2);
-    float ylub = (xlub + wc2) + (wlu2l2u2c2 + wlb2l2b2c2 + wub2u2b2c2);
-    float yrub = (xrub + wc2) + (wru2r2u2c2 + wrb2r2b2c2 + wub2u2b2c2);
-    float yldb = (xldb + wc2) + (wld2l2d2c2 + wlb2l2b2c2 + wdb2d2b2c2);
-    float yrdb = (xrdb + wc2) + (wrd2r2d2c2 + wrb2r2b2c2 + wdb2d2b2c2);
+            __m256 x = _mm256_min_ps(a, b);
+            __m256 y = _mm256_max_ps(a, b);
 
-    return floatx8(yluf, yruf, yldf, yrdf, ylub, yrub, yldb, yrdb);
+            _mm256_storeu_ps(v_ptr + i, x);
+            _mm256_storeu_ps(v_ptr + i + h, y);
+        }
+    }
+    if (n >= AVX1_FLOAT_STRIDE * 2) {
+        uint h = AVX1_FLOAT_STRIDE;
+
+        for (uint i = 0; i + h + AVX1_FLOAT_STRIDE <= n; i += AVX1_FLOAT_STRIDE / 2) {
+            __m128 a = _mm_loadu_ps(v_ptr + i);
+            __m128 b = _mm_loadu_ps(v_ptr + i + h);
+
+            __m128 x = _mm_min_ps(a, b);
+            __m128 y = _mm_max_ps(a, b);
+
+            _mm_storeu_ps(v_ptr + i, x);
+            _mm_storeu_ps(v_ptr + i + h, y);
+        }
+        {
+            uint i = n - h - AVX1_FLOAT_STRIDE;
+
+            __m128 a = _mm_loadu_ps(v_ptr + i);
+            __m128 b = _mm_loadu_ps(v_ptr + i + h);
+
+            __m128 x = _mm_min_ps(a, b);
+            __m128 y = _mm_max_ps(a, b);
+
+            _mm_storeu_ps(v_ptr + i, x);
+            _mm_storeu_ps(v_ptr + i + h, y);
+        }
+    }
+}
+
+__forceinline __m256 _mm256_isnan_ps(__m256 x) {
+    __m256 y = _mm256_cmp_ps(x, x, _CMP_NEQ_UQ);
+
+    return y;
+}
+
+__forceinline __m256 _mm256_not_ps(__m256 x) {
+    const __m256 setbits = _mm256_castsi256_ps(_mm256_set1_epi32(~0u));
+ 
+    __m256 y = _mm256_xor_ps(x, setbits);
+
+    return y;
+}
+
+__forceinline __m256 _mm256_cmpgt_ps(__m256 x, __m256 y) {
+    __m256 gt = _mm256_cmp_ps(x, y, _CMP_GT_OQ);
+    
+    return gt;
+}
+
+__forceinline __m256 _mm256_cmpnangt_ps(__m256 x, __m256 y) {
+    __m256 gt = _mm256_cmp_ps(x, y, _CMP_GT_OQ);
+    __m256 xisnan = _mm256_isnan_ps(x);
+    __m256 yisnan = _mm256_isnan_ps(y);
+    __m256 bothnan = _mm256_and_ps(xisnan, yisnan);
+
+    __m256 ret = _mm256_andnot_ps(bothnan, _mm256_or_ps(gt, yisnan));
+
+    return ret;
+}
+
+__forceinline void _mm256_cmpnangtswap_ps(__m256 a, __m256 b, __m256& x, __m256& y) {
+    __m256 gtflag = _mm256_cmpnangt_ps(a, b);
+
+    x = _mm256_blendv_ps(a, b, gtflag);
+    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
+}
+
+__forceinline bool _mm256_cmpnangtswap_signal_ps(__m256 a, __m256 b, __m256& x, __m256& y) {
+    __m256 gtflag = _mm256_cmpnangt_ps(a, b);
+    
+    bool swaped = _mm256_movemask_ps(gtflag) > 0;
+    
+    x = _mm256_blendv_ps(a, b, gtflag);
+    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
+
+    return swaped;
+}
+
+__forceinline bool _mm256_cmpnangtswap_masksignal_ps(__m256 a, __m256 b, __m256i mask, __m256& x, __m256& y) {
+    __m256 gtflag = _mm256_and_ps(_mm256_cmpnangt_ps(a, b), _mm256_castsi256_ps(mask));
+
+    bool swaped = _mm256_movemask_ps(gtflag) > 0;
+
+    x = _mm256_blendv_ps(a, b, gtflag);
+    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
+
+    return swaped;
 }
 
 int main(){
-    floatx8 y0 = float_linear3d(
-        1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1);
-    floatx8 y1 = float_linear3d(
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0);
-    floatx8 y2 = float_linear3d(
-        0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0);
+    //const uint N = 255;
+    //
+    //srand((uint)time(NULL));
+    //
+    //float* v = (float*)_aligned_malloc((N + 1) * sizeof(float), AVX2_ALIGNMENT);
+    //
+    //if (v == nullptr) {
+    //    return -1;
+    //}
+    //
+    //for (uint i = 0; i < N; i++) {
+    //    v[i] = (rand() % 1001) * 0.001f;
+    //}
+    //
+    //v[N] = -1;
+    //
+    //sort_s(N, v);
+    //
+    //for (uint i = 0; i < N; i++) {
+    //    printf("%.3lf\n", v[i]);
+    //}
+
+    //__m256 a = _mm256_setr_ps(1, 2, 3, 4, 5, 6, 7, 8);
+    //__m256 b = _mm256_setr_ps(6, 5, 7, 2, 4, 3, 8, 9);
+    //__m256 c = _mm256_setr_ps(6, 5, 7, 2, 4, 3, 8, NAN);
+    //__m256 x, y;
+    //
+    //bool swaped = _mm256_cmpgtswap_signal_ps(a, b, x, y);
+    //
+    //swaped = _mm256_cmpgtswap_signal_ps(b, a, x, y);
+    //
+    //swaped = _mm256_cmpgtswap_signal_ps(a, a, x, y);
+    //
+    //swaped = _mm256_cmpgtswap_signal_ps(c, b, x, y);
+    //
+    //swaped = _mm256_cmpgtswap_signal_ps(b, c, x, y);
+    //
+    //swaped = _mm256_cmpgtswap_signal_ps(c, c, x, y);
+
+    __m256 a = _mm256_setr_ps(1, 1, 2, NAN, 1,   NAN, INFINITY, INFINITY);
+    __m256 b = _mm256_setr_ps(1, 2, 1, 1,   NAN, NAN, INFINITY, NAN     );
+
+
+    __m256 c = _mm256_cmpnangt_ps(a, b);
+
 
     printf("end");
     getchar();
