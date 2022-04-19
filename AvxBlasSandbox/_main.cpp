@@ -8,121 +8,88 @@
 #include "../AvxBlas/Inline/inline_loadstore_xn_s.hpp"
 #include "../AvxBlas/Inline/inline_transpose_s.hpp"
 
-void sort_s(uint n, float* v_ptr) {
-    for (uint h = n * 3 / 4; h >= AVX2_FLOAT_STRIDE; h = h * 3 / 4) {
-        for (uint i = 0; i + h + AVX2_FLOAT_STRIDE <= n; i += AVX2_FLOAT_STRIDE / 2) {
-            __m256 a = _mm256_loadu_ps(v_ptr + i);
-            __m256 b = _mm256_loadu_ps(v_ptr + i + h);
+__forceinline __m128 _mm_evensort_ps(__m128 x) {
+    __m128 y = _mm_permute_ps(x, _MM_PERM_CDAB);
+    __m128 c = _mm_permute_ps(_mm_cmp_ps(x, y, _CMP_GT_OQ), _MM_PERM_CCAA);
+    __m128 z = _mm_blendv_ps(x, y, c);
 
-            __m256 x = _mm256_min_ps(a, b);
-            __m256 y = _mm256_max_ps(a, b);
-
-            _mm256_storeu_ps(v_ptr + i, x);
-            _mm256_storeu_ps(v_ptr + i + h, y);
-        }
-        {
-            uint i = n - h - AVX2_FLOAT_STRIDE;
-
-            __m256 a = _mm256_loadu_ps(v_ptr + i);
-            __m256 b = _mm256_loadu_ps(v_ptr + i + h);
-
-            __m256 x = _mm256_min_ps(a, b);
-            __m256 y = _mm256_max_ps(a, b);
-
-            _mm256_storeu_ps(v_ptr + i, x);
-            _mm256_storeu_ps(v_ptr + i + h, y);
-        }
-    }
-    if (n >= AVX1_FLOAT_STRIDE * 2) {
-        uint h = AVX1_FLOAT_STRIDE;
-
-        for (uint i = 0; i + h + AVX1_FLOAT_STRIDE <= n; i += AVX1_FLOAT_STRIDE / 2) {
-            __m128 a = _mm_loadu_ps(v_ptr + i);
-            __m128 b = _mm_loadu_ps(v_ptr + i + h);
-
-            __m128 x = _mm_min_ps(a, b);
-            __m128 y = _mm_max_ps(a, b);
-
-            _mm_storeu_ps(v_ptr + i, x);
-            _mm_storeu_ps(v_ptr + i + h, y);
-        }
-        {
-            uint i = n - h - AVX1_FLOAT_STRIDE;
-
-            __m128 a = _mm_loadu_ps(v_ptr + i);
-            __m128 b = _mm_loadu_ps(v_ptr + i + h);
-
-            __m128 x = _mm_min_ps(a, b);
-            __m128 y = _mm_max_ps(a, b);
-
-            _mm_storeu_ps(v_ptr + i, x);
-            _mm_storeu_ps(v_ptr + i + h, y);
-        }
-    }
+    return z;
 }
 
-__forceinline __m256 _mm256_isnan_ps(__m256 x) {
-    __m256 y = _mm256_cmp_ps(x, x, _CMP_NEQ_UQ);
+__forceinline __m128 _mm_oddsort_ps(__m128 x) {
+    const __m128 xormask = _mm_castsi128_ps(_mm_setr_epi32(~0u, 0, 0, ~0u));
 
-    return y;
+    __m128 y = _mm_permute_ps(x, _MM_PERM_ABCD);
+    __m128 c = _mm_xor_ps(xormask, _mm_permute_ps(_mm_cmp_ps(x, y, _CMP_GT_OQ), _MM_PERM_DBBD));
+    __m128 z = _mm_blendv_ps(x, y, c);
+
+    return z;
 }
 
-__forceinline __m256 _mm256_not_ps(__m256 x) {
-    const __m256 setbits = _mm256_castsi256_ps(_mm256_set1_epi32(~0u));
- 
-    __m256 y = _mm256_xor_ps(x, setbits);
+__forceinline __m128 _mm_sort_ps(__m128 x) {
+    x = _mm_oddsort_ps(x);
+    x = _mm_evensort_ps(x);
+    x = _mm_oddsort_ps(x);
 
-    return y;
+    return x;
 }
-
-
 
 int main(){
-    //const uint N = 255;
-    //
-    //srand((uint)time(NULL));
-    //
-    //float* v = (float*)_aligned_malloc((N + 1) * sizeof(float), AVX2_ALIGNMENT);
-    //
-    //if (v == nullptr) {
-    //    return -1;
-    //}
-    //
-    //for (uint i = 0; i < N; i++) {
-    //    v[i] = (rand() % 1001) * 0.001f;
-    //}
-    //
-    //v[N] = -1;
-    //
-    //sort_s(N, v);
-    //
-    //for (uint i = 0; i < N; i++) {
-    //    printf("%.3lf\n", v[i]);
-    //}
+    __m128 x1234 = _mm_setr_ps(1, 2, 3, 4);
+    __m128 x1243 = _mm_setr_ps(1, 2, 4, 3);
+    __m128 x1324 = _mm_setr_ps(1, 3, 2, 4);
+    __m128 x1342 = _mm_setr_ps(1, 3, 4, 2);
+    __m128 x1423 = _mm_setr_ps(1, 4, 2, 3);
+    __m128 x1432 = _mm_setr_ps(1, 4, 3, 2);
 
-    //__m256 a = _mm256_setr_ps(1, 2, 3, 4, 5, 6, 7, 8);
-    //__m256 b = _mm256_setr_ps(6, 5, 7, 2, 4, 3, 8, 9);
-    //__m256 c = _mm256_setr_ps(6, 5, 7, 2, 4, 3, 8, NAN);
-    //__m256 x, y;
-    //
-    //bool swaped = _mm256_cmpgtswap_signal_ps(a, b, x, y);
-    //
-    //swaped = _mm256_cmpgtswap_signal_ps(b, a, x, y);
-    //
-    //swaped = _mm256_cmpgtswap_signal_ps(a, a, x, y);
-    //
-    //swaped = _mm256_cmpgtswap_signal_ps(c, b, x, y);
-    //
-    //swaped = _mm256_cmpgtswap_signal_ps(b, c, x, y);
-    //
-    //swaped = _mm256_cmpgtswap_signal_ps(c, c, x, y);
+    __m128 x2134 = _mm_setr_ps(2, 1, 3, 4);
+    __m128 x2143 = _mm_setr_ps(2, 1, 4, 3);
+    __m128 x2341 = _mm_setr_ps(2, 3, 4, 1);
+    __m128 x2431 = _mm_setr_ps(2, 4, 3, 1);
+    __m128 x2314 = _mm_setr_ps(2, 3, 1, 4);
+    __m128 x2413 = _mm_setr_ps(2, 4, 1, 3);
 
-    __m256 a = _mm256_setr_ps(1, 1, 2, NAN, 1,   NAN, INFINITY, INFINITY);
-    __m256 b = _mm256_setr_ps(1, 2, 1, 1,   NAN, NAN, INFINITY, NAN     );
+    __m128 x3124 = _mm_setr_ps(3, 1, 2, 4);
+    __m128 x3142 = _mm_setr_ps(3, 1, 4, 2);
+    __m128 x3214 = _mm_setr_ps(3, 2, 1, 4);
+    __m128 x3412 = _mm_setr_ps(3, 4, 1, 2);
+    __m128 x3241 = _mm_setr_ps(3, 2, 4, 1);
+    __m128 x3421 = _mm_setr_ps(3, 4, 2, 1);
 
+    __m128 x4123 = _mm_setr_ps(4, 1, 2, 3);
+    __m128 x4132 = _mm_setr_ps(4, 1, 3, 2);
+    __m128 x4213 = _mm_setr_ps(4, 2, 1, 3);
+    __m128 x4312 = _mm_setr_ps(4, 3, 1, 2);
+    __m128 x4231 = _mm_setr_ps(4, 2, 3, 1);
+    __m128 x4321 = _mm_setr_ps(4, 3, 2, 1);
+               
+    __m128 y1234 = _mm_sort_ps(x1234);
+    __m128 y1243 = _mm_sort_ps(x1243);
+    __m128 y1324 = _mm_sort_ps(x1324);
+    __m128 y1342 = _mm_sort_ps(x1342);
+    __m128 y1423 = _mm_sort_ps(x1423);
+    __m128 y1432 = _mm_sort_ps(x1432);
 
-    __m256 c = _mm256_cmpnangt_ps(a, b);
+    __m128 y2134 = _mm_sort_ps(x2134);
+    __m128 y2143 = _mm_sort_ps(x2143);
+    __m128 y2341 = _mm_sort_ps(x2341);
+    __m128 y2431 = _mm_sort_ps(x2431);
+    __m128 y2314 = _mm_sort_ps(x2314);
+    __m128 y2413 = _mm_sort_ps(x2413);
 
+    __m128 y3124 = _mm_sort_ps(x3124);
+    __m128 y3142 = _mm_sort_ps(x3142);
+    __m128 y3214 = _mm_sort_ps(x3214);
+    __m128 y3412 = _mm_sort_ps(x3412);
+    __m128 y3241 = _mm_sort_ps(x3241);
+    __m128 y3421 = _mm_sort_ps(x3421);
+
+    __m128 y4123 = _mm_sort_ps(x4123);
+    __m128 y4132 = _mm_sort_ps(x4132);
+    __m128 y4213 = _mm_sort_ps(x4213);
+    __m128 y4312 = _mm_sort_ps(x4312);
+    __m128 y4231 = _mm_sort_ps(x4231);
+    __m128 y4321 = _mm_sort_ps(x4321);
 
     printf("end");
     getchar();
