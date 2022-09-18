@@ -371,7 +371,7 @@ int conv2d_forward_padedge_unaligned_s(
 
 #pragma managed
 
-void AvxBlas::Convolution2D::Forward(
+void AvxBlas::Convolute2D::Forward(
     UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
     PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y) {
 

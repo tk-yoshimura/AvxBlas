@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.Connection3DTest {
+namespace AvxBlasTest.Convolute3DTest {
     [TestClass]
     public class BackwardDataPadEdgeTest {
         [TestMethod]
@@ -34,7 +34,7 @@ namespace AvxBlasTest.Connection3DTest {
                             Array<float> w_tensor = wval;
                             Array<float> x_tensor = new(ic * iw * ih * id * n, zeroset: false);
 
-                            Convolution3D.BackwardData(n, ic, oc, iw, ih, id, kw, kh, kd, PadMode.Edge, y_tensor, w_tensor, x_tensor);
+                            Convolute3D.BackwardData(n, ic, oc, iw, ih, id, kw, kh, kd, PadMode.Edge, y_tensor, w_tensor, x_tensor);
 
                             float[] x_expect = x.ToFloatArray();
                             float[] x_actual = x_tensor;

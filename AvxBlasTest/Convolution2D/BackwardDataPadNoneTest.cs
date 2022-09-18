@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.Connection2DTest {
+namespace AvxBlasTest.Convolute2DTest {
     [TestClass]
     public class BackwardDataPadNoneTest {
         [TestMethod]
@@ -33,7 +33,7 @@ namespace AvxBlasTest.Connection2DTest {
                             Array<float> w_tensor = wval;
                             Array<float> x_tensor = new(ic * iw * ih * n, zeroset: false);
 
-                            Convolution2D.BackwardData(n, ic, oc, iw, ih, kw, kh, PadMode.None, y_tensor, w_tensor, x_tensor);
+                            Convolute2D.BackwardData(n, ic, oc, iw, ih, kw, kh, PadMode.None, y_tensor, w_tensor, x_tensor);
 
                             float[] x_expect = x.ToFloatArray();
                             float[] x_actual = x_tensor;

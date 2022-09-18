@@ -394,7 +394,7 @@ int conv1d_backwarddata_padedge_unaligned_s(
 
 #pragma managed
 
-void AvxBlas::Convolution1D::BackwardData(
+void AvxBlas::Convolute1D::BackwardData(
     UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
     PadMode padmode, Array<float>^ dy, Array<float>^ w, Array<float>^ dx) {
 

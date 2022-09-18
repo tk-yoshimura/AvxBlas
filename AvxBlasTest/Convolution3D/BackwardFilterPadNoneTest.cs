@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.Connection3DTest {
+namespace AvxBlasTest.Convolute3DTest {
     [TestClass]
     public class BackwardFilterPadNoneTest {
         [TestMethod]
@@ -38,7 +38,7 @@ namespace AvxBlasTest.Connection3DTest {
 
                             Array<float> gw_tensor = new(ic * oc * kw * kh * kd, zeroset: false);
 
-                            Convolution3D.BackwardFilter(n, ic, oc, iw, ih, id, kw, kh, kd, PadMode.None, x_tensor, gy_tensor, gw_tensor);
+                            Convolute3D.BackwardFilter(n, ic, oc, iw, ih, id, kw, kh, kd, PadMode.None, x_tensor, gy_tensor, gw_tensor);
 
                             float[] gw_expect = gw.ToFloatArray();
                             float[] gw_actual = gw_tensor;

@@ -432,7 +432,7 @@ int conv2d_backwardfilter_padedge_unaligned_s(
 
 #pragma managed
 
-void AvxBlas::Convolution2D::BackwardFilter(
+void AvxBlas::Convolute2D::BackwardFilter(
     UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
     PadMode padmode, Array<float>^ x, Array<float>^ dy, Array<float>^ dw) {
 

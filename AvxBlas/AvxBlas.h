@@ -137,7 +137,7 @@ namespace AvxBlas {
         static void BackwardFilter(UInt32 n, UInt32 ic, UInt32 oc, Array<double>^ x, Array<double>^ dy, Array<double>^ dw);
     };
 
-    public ref class Convolution1D abstract sealed {
+    public ref class Convolute1D abstract sealed {
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 kw,
                             PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
@@ -147,7 +147,7 @@ namespace AvxBlas {
                                    PadMode padmode, Array<float>^ x, Array<float>^ dy, Array<float>^ dw);
     };
 
-    public ref class Convolution2D abstract sealed {
+    public ref class Convolute2D abstract sealed {
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 kw, UInt32 kh,
                             PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);
@@ -157,7 +157,7 @@ namespace AvxBlas {
                                    PadMode padmode, Array<float>^ x, Array<float>^ dy, Array<float>^ dw);
     };
 
-    public ref class Convolution3D abstract sealed {
+    public ref class Convolute3D abstract sealed {
         public:
         static void Forward(UInt32 n, UInt32 ic, UInt32 oc, UInt32 iw, UInt32 ih, UInt32 id, UInt32 kw, UInt32 kh, UInt32 kd,
                             PadMode padmode, Array<float>^ x, Array<float>^ w, Array<float>^ y);

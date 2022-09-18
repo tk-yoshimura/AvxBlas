@@ -46,15 +46,6 @@
     <Filter Include="Source\Dense">
       <UniqueIdentifier>{d8cb2fa7-3f2b-4f69-89a1-686cabc4f702}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Convolution1D">
-      <UniqueIdentifier>{57cb5677-237b-41bf-a8ac-c577a4005d74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Convolution2D">
-      <UniqueIdentifier>{f29015e4-3062-4518-93a0-02cf79c8625c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Convolution3D">
-      <UniqueIdentifier>{d0e3ce70-8b9f-404a-9133-5a75f1b2b4b1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Pool1D">
       <UniqueIdentifier>{798245fa-5b87-44d0-a0b6-2e2a24b65983}</UniqueIdentifier>
     </Filter>
@@ -87,6 +78,15 @@
     </Filter>
     <Filter Include="Source\PixelShuffle3D">
       <UniqueIdentifier>{31330efc-2316-44ac-927b-5e104373de0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Convolute1D">
+      <UniqueIdentifier>{57cb5677-237b-41bf-a8ac-c577a4005d74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Convolute2D">
+      <UniqueIdentifier>{f29015e4-3062-4518-93a0-02cf79c8625c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Convolute3D">
+      <UniqueIdentifier>{d0e3ce70-8b9f-404a-9133-5a75f1b2b4b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -290,15 +290,6 @@
     <ClCompile Include="Dense\dense_backwardfilter_d.cpp">
       <Filter>Source\Dense</Filter>
     </ClCompile>
-    <ClCompile Include="Convolution1D\conv1d_forward_s.cpp">
-      <Filter>Source\Convolution1D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution1D\conv1d_backwarddata_s.cpp">
-      <Filter>Source\Convolution1D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution1D\conv1d_backwardfilter_s.cpp">
-      <Filter>Source\Convolution1D</Filter>
-    </ClCompile>
     <ClCompile Include="Util\util_align_kernel_s.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
@@ -307,24 +298,6 @@
     </ClCompile>
     <ClCompile Include="Util\util_copy.cpp">
       <Filter>Source\Util</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution2D\conv2d_forward_s.cpp">
-      <Filter>Source\Convolution2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution2D\conv2d_backwarddata_s.cpp">
-      <Filter>Source\Convolution2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution2D\conv2d_backwardfilter_s.cpp">
-      <Filter>Source\Convolution2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution3D\conv3d_backwarddata_s.cpp">
-      <Filter>Source\Convolution3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution3D\conv3d_backwardfilter_s.cpp">
-      <Filter>Source\Convolution3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Convolution3D\conv3d_forward_s.cpp">
-      <Filter>Source\Convolution3D</Filter>
     </ClCompile>
     <ClCompile Include="Pool1D\pool1d_maxpool_s.cpp">
       <Filter>Source\Pool1D</Filter>
@@ -409,6 +382,33 @@
     </ClCompile>
     <ClCompile Include="Util\util_nan.cpp">
       <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute1D\conv1d_backwardfilter_s.cpp">
+      <Filter>Source\Convolute1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute1D\conv1d_forward_s.cpp">
+      <Filter>Source\Convolute1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute1D\conv1d_backwarddata_s.cpp">
+      <Filter>Source\Convolute1D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute2D\conv2d_backwardfilter_s.cpp">
+      <Filter>Source\Convolute2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute2D\conv2d_forward_s.cpp">
+      <Filter>Source\Convolute2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute2D\conv2d_backwarddata_s.cpp">
+      <Filter>Source\Convolute2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute3D\conv3d_backwarddata_s.cpp">
+      <Filter>Source\Convolute3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute3D\conv3d_backwardfilter_s.cpp">
+      <Filter>Source\Convolute3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Convolute3D\conv3d_forward_s.cpp">
+      <Filter>Source\Convolute3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

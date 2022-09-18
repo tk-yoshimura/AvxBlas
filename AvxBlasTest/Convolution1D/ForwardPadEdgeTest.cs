@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.Connection1DTest {
+namespace AvxBlasTest.Convolute1DTest {
     [TestClass]
     public class ForwardPadEdgeTest {
         [TestMethod]
@@ -30,7 +30,7 @@ namespace AvxBlasTest.Connection1DTest {
                             Array<float> w_tensor = wval;
                             Array<float> y_tensor = new(oc * ow * n, zeroset: false);
 
-                            Convolution1D.Forward(n, ic, oc, iw, kw, PadMode.Edge, x_tensor, w_tensor, y_tensor);
+                            Convolute1D.Forward(n, ic, oc, iw, kw, PadMode.Edge, x_tensor, w_tensor, y_tensor);
 
                             float[] y_expect = y.ToFloatArray();
                             float[] y_actual = y_tensor;
