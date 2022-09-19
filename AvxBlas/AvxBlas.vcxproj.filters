@@ -88,6 +88,15 @@
     <Filter Include="Source\Convolute3D">
       <UniqueIdentifier>{d0e3ce70-8b9f-404a-9133-5a75f1b2b4b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Permutate">
+      <UniqueIdentifier>{3dfc8946-0d9d-402a-ac89-57abcd00d23a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Permutate\Sort">
+      <UniqueIdentifier>{09031956-e270-4ab2-9a90-4d923cfbd017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Permutate\SortWithKey">
+      <UniqueIdentifier>{283d23d4-e3d4-41c6-b4b5-d0d868bd9803}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -191,6 +200,24 @@
     </ClInclude>
     <ClInclude Include="Inline\inline_cmp_s.hpp">
       <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_loadstore_xn_epi64.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_loadstore_xn_epi32.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_cmp_ep64.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_cmp_ep32.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Permutate\Sort\sort.h">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClInclude>
+    <ClInclude Include="Permutate\SortWithKey\sortwithkey.h">
+      <Filter>Source\Permutate\SortWithKey</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -409,6 +436,90 @@
     </ClCompile>
     <ClCompile Include="Convolute3D\conv3d_forward_s.cpp">
       <Filter>Source\Convolute3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortasc_minnan_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortdsc_ignnan_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortdsc_ignnan_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortdsc_maxnan_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortdsc_maxnan_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortdsc_minnan_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortdsc_minnan_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortasc_ignnan_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortasc_ignnan_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortasc_maxnan_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortasc_maxnan_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sortasc_minnan_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_ignnan_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_ignnan_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_maxnan_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_maxnan_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_minnan_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_minnan_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_ignnan_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_ignnan_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_maxnan_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_maxnan_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_minnan_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_minnan_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sort_s.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Sort\sort_d.cpp">
+      <Filter>Source\Permutate\Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkey_d.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\SortWithKey\sortwithkey_s.cpp">
+      <Filter>Source\Permutate\SortWithKey</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

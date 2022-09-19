@@ -101,11 +101,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Inline\inline_cmp_ep32.hpp" />
+    <ClInclude Include="Inline\inline_cmp_ep64.hpp" />
     <ClInclude Include="Inline\inline_cmp_s.hpp" />
     <ClInclude Include="Inline\inline_copy_d.hpp" />
     <ClInclude Include="Inline\inline_imcol_d.hpp" />
     <ClInclude Include="Inline\inline_kernelfma_ss.hpp" />
     <ClInclude Include="Inline\inline_loadstore_xn_d.hpp" />
+    <ClInclude Include="Inline\inline_loadstore_xn_epi32.hpp" />
+    <ClInclude Include="Inline\inline_loadstore_xn_epi64.hpp" />
     <ClInclude Include="Inline\inline_loadstore_xn_s.hpp" />
     <ClInclude Include="Inline\inline_dilate_d.hpp" />
     <ClInclude Include="Inline\inline_kahan_d.hpp" />
@@ -126,6 +130,9 @@
     <ClInclude Include="Inline\inline_transpose_s.hpp" />
     <ClInclude Include="Inline\inline_zeroset_d.hpp" />
     <ClInclude Include="Inline\inline_zeroset_s.hpp" />
+    <ClInclude Include="Permutate\SortWithKey\sortkv_types.h" />
+    <ClInclude Include="Permutate\SortWithKey\sortwithkey.h" />
+    <ClInclude Include="Permutate\Sort\sort.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="utils.h" />
@@ -170,6 +177,34 @@
     <ClInclude Include="Inline\inline_ope_s.hpp" />
     <ClInclude Include="Inline\inline_set_s.hpp" />
     <ClInclude Include="Inline\inline_sum_s.hpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_ignnan_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_ignnan_s.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_maxnan_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_maxnan_s.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_minnan_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_minnan_s.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_ignnan_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_ignnan_s.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_maxnan_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_maxnan_s.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_minnan_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkeydsc_minnan_s.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkey_d.cpp" />
+    <ClCompile Include="Permutate\SortWithKey\sortwithkey_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sortasc_ignnan_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sortasc_ignnan_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sortasc_maxnan_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sortasc_maxnan_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sortasc_minnan_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sortasc_minnan_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sortdsc_ignnan_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sortdsc_ignnan_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sortdsc_maxnan_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sortdsc_maxnan_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sortdsc_minnan_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sortdsc_minnan_s.cpp" />
+    <ClCompile Include="Permutate\Sort\sort_d.cpp" />
+    <ClCompile Include="Permutate\Sort\sort_s.cpp" />
     <ClCompile Include="PixelShuffle2D\pixelshuffle2d_channeltospace.cpp" />
     <ClCompile Include="PixelShuffle2D\pixelshuffle2d_spacetochannel.cpp" />
     <ClCompile Include="PixelShuffle3D\pixelshuffle3d_channeltospace.cpp" />

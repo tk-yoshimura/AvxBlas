@@ -4,88 +4,80 @@
 #include "../utils.h"
 #include "inline_ope_s.hpp"
 
-__forceinline __m256 _mm256_cmpgt_ps(__m256 x, __m256 y) {
+#pragma region greater than (x > y)
+
+// compare x > y (ignore nan)
+__forceinline __m256 _mm256_cmpgt_ignnan_ps(__m256 x, __m256 y) {
     __m256 gt = _mm256_cmp_ps(x, y, _CMP_GT_OQ);
 
     return gt;
 }
 
+// compare !(x <= y) and not isnan(x) ... nan < minf < nval < pinf
 __forceinline __m256 _mm256_cmpgt_minnan_ps(__m256 x, __m256 y) {
-    __m256 gt = _mm256_cmp_ps(x, y, _CMP_GT_OQ);
+    __m256 gt = _mm256_cmp_ps(x, y, _CMP_NLE_UQ);
     __m256 xisnan = _mm256_isnan_ps(x);
-    __m256 yisnan = _mm256_isnan_ps(y);
-    __m256 bothnan = _mm256_and_ps(xisnan, yisnan);
 
-    __m256 ret = _mm256_andnot_ps(bothnan, _mm256_or_ps(gt, yisnan));
+    __m256 ret = _mm256_andnot_ps(xisnan, gt);
 
     return ret;
 }
 
+// compare !(x <= y) and not isnan(y) ... minf < nval < pinf < nan
 __forceinline __m256 _mm256_cmpgt_maxnan_ps(__m256 x, __m256 y) {
-    __m256 gt = _mm256_cmp_ps(x, y, _CMP_GT_OQ);
-    __m256 xisnan = _mm256_isnan_ps(x);
+    __m256 gt = _mm256_cmp_ps(x, y, _CMP_NLE_UQ);
     __m256 yisnan = _mm256_isnan_ps(y);
-    __m256 bothnan = _mm256_and_ps(xisnan, yisnan);
 
-    __m256 ret = _mm256_andnot_ps(bothnan, _mm256_or_ps(gt, xisnan));
+    __m256 ret = _mm256_andnot_ps(yisnan, gt);
 
     return ret;
 }
 
-__forceinline void _mm256_cmpgtswap_minnan_ps(__m256 a, __m256 b, __m256& x, __m256& y) {
-    __m256 gtflag = _mm256_cmpgt_minnan_ps(a, b);
+#pragma endregion greater than (x > y)
 
-    x = _mm256_blendv_ps(a, b, gtflag);
-    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
+#pragma region less than (x < y)
+
+// compare x < y (ignore nan)
+__forceinline __m256 _mm256_cmplt_ignnan_ps(__m256 x, __m256 y) {
+    __m256 lt = _mm256_cmp_ps(x, y, _CMP_LT_OQ);
+
+    return lt;
 }
 
-__forceinline bool _mm256_cmpgtswap_minnan_signal_ps(__m256 a, __m256 b, __m256& x, __m256& y) {
-    __m256 gtflag = _mm256_cmpgt_minnan_ps(a, b);
+// compare !(x >= y) and not isnan(x) ... pinf > nval > minf > nan
+__forceinline __m256 _mm256_cmplt_minnan_ps(__m256 x, __m256 y) {
+    __m256 lt = _mm256_cmp_ps(x, y, _CMP_NGE_UQ);
+    __m256 yisnan = _mm256_isnan_ps(y);
 
-    bool swaped = _mm256_movemask_ps(gtflag) > 0;
+    __m256 ret = _mm256_andnot_ps(yisnan, lt);
 
-    x = _mm256_blendv_ps(a, b, gtflag);
-    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
-
-    return swaped;
+    return ret;
 }
 
-__forceinline bool _mm256_cmpgtswap_minnan_masksignal_ps(__m256 a, __m256 b, __m256i mask, __m256& x, __m256& y) {
-    __m256 gtflag = _mm256_and_ps(_mm256_cmpgt_minnan_ps(a, b), _mm256_castsi256_ps(mask));
+// compare !(x >= y) and not isnan(x) ... nan > pinf > nval > minf
+__forceinline __m256 _mm256_cmplt_maxnan_ps(__m256 x, __m256 y) {
+    __m256 lt = _mm256_cmp_ps(x, y, _CMP_NGE_UQ);
+    __m256 xisnan = _mm256_isnan_ps(x);
 
-    bool swaped = _mm256_movemask_ps(gtflag) > 0;
+    __m256 ret = _mm256_andnot_ps(xisnan, lt);
 
-    x = _mm256_blendv_ps(a, b, gtflag);
-    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
-
-    return swaped;
+    return ret;
 }
 
-__forceinline void _mm256_cmpgtswap_maxnan_ps(__m256 a, __m256 b, __m256& x, __m256& y) {
-    __m256 gtflag = _mm256_cmpgt_maxnan_ps(a, b);
+#pragma endregion less than (x < y)
 
-    x = _mm256_blendv_ps(a, b, gtflag);
-    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
+#pragma region equals
+
+// compare x == y (ignore nan)
+__forceinline __m256 _mm256_cmpeq_ignnan_ps(__m256 x, __m256 y) {
+    __m256 eqflag = _mm256_castsi256_ps(
+        _mm256_cmpeq_epi32(
+            _mm256_castps_si256(x),
+            _mm256_castps_si256(y)
+        )
+    );
+
+    return eqflag;
 }
 
-__forceinline bool _mm256_cmpgtswap_maxnan_signal_ps(__m256 a, __m256 b, __m256& x, __m256& y) {
-    __m256 gtflag = _mm256_cmpgt_maxnan_ps(a, b);
-
-    bool swaped = _mm256_movemask_ps(gtflag) > 0;
-
-    x = _mm256_blendv_ps(a, b, gtflag);
-    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
-
-    return swaped;
-}
-
-__forceinline bool _mm256_cmpgtswap_maxnan_masksignal_ps(__m256 a, __m256 b, __m256i mask, __m256& x, __m256& y) {
-    __m256 gtflag = _mm256_and_ps(_mm256_cmpgt_maxnan_ps(a, b), _mm256_castsi256_ps(mask));
-
-    bool swaped = _mm256_movemask_ps(gtflag) > 0;
-
-    x = _mm256_blendv_ps(a, b, gtflag);
-    y = _mm256_blendv_ps(a, b, _mm256_not_ps(gtflag));
-
-    return swaped;
-}
+#pragma endregion equals

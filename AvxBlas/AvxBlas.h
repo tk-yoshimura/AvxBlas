@@ -77,6 +77,16 @@ namespace AvxBlas {
         Edge
     };
 
+    public enum class SortOrder {
+        Ascending,
+        Descending
+    };
+
+    public enum class SortNaNMode {
+        MinimizeNaN,
+        MaximizeNaN
+    };
+
     public ref class Elementwise abstract sealed {
         public:
         static void Copy(UInt32 n, Array<float>^ x, Array<float>^ y);
@@ -271,6 +281,15 @@ namespace AvxBlas {
             Array<float>^ xs, Array<float>^ yc);
         static void ChannelToSpace(UInt32 n, UInt32 ic, UInt32 iw, UInt32 ih, UInt32 id, UInt32 s,
             Array<float>^ xs, Array<float>^ yc);
+    };
+
+    public ref class Permutate abstract sealed {
+        public:
+        static void Sort(UInt32 n, UInt32 stride, Array<float>^ y, SortOrder order, SortNaNMode nan_mode);
+        static void Sort(UInt32 n, UInt32 stride, Array<double>^ y, SortOrder order, SortNaNMode nan_mode);
+
+        static void SortWithKey(UInt32 n, UInt32 stride, Array<float>^ k, Array<UInt32>^ v, SortOrder order, SortNaNMode nan_mode);
+        static void SortWithKey(UInt32 n, UInt32 stride, Array<double>^ k, Array<UInt64>^ v, SortOrder order, SortNaNMode nan_mode);
     };
 
     public ref class Initialize abstract sealed {
