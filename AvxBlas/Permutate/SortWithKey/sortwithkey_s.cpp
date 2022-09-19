@@ -31,14 +31,14 @@ int sortwithkeydsc_s(const uint n, const uint s, uint* __restrict v_ptr, float* 
 
 #pragma managed
 
-void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 stride, Array<float>^ k, Array<UInt32>^ v, SortOrder order, SortNaNMode nan_mode) {
-    if (n <= 0 || stride <= 0) {
+void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<UInt32>^ v, SortOrder order, SortNaNMode nan_mode) {
+    if (n <= 0 || s <= 0) {
         return;
     }
 
-    Util::CheckProdOverflow(n, stride);
-    Util::CheckLength(n * stride, k);
-    Util::CheckLength(n * stride, v);
+    Util::CheckProdOverflow(n, s);
+    Util::CheckLength(n * s, k);
+    Util::CheckLength(n * s, v);
 
     float* k_ptr = (float*)(k->Ptr.ToPointer());
     uint* v_ptr = (uint*)(v->Ptr.ToPointer());
@@ -46,10 +46,10 @@ void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 stride, Array<float>^ k, A
     int ret = UNEXECUTED;
 
     if (order == SortOrder::Ascending) {
-        ret = sortwithkeyasc_s(n, stride, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortwithkeyasc_s(n, s, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
     }
     else {
-        ret = sortwithkeydsc_s(n, stride, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortwithkeydsc_s(n, s, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
     }
 
     Util::AssertReturnCode(ret);

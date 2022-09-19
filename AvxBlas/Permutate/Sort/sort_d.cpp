@@ -31,23 +31,23 @@ int sortdsc_d(const uint n, const uint s, double* y_ptr, bool minimize_nan) {
 
 #pragma managed
 
-void AvxBlas::Permutate::Sort(UInt32 n, UInt32 stride, Array<double>^ y, SortOrder order, SortNaNMode nan_mode) {
-    if (n <= 0 || stride <= 0) {
+void AvxBlas::Permutate::Sort(UInt32 n, UInt32 s, Array<double>^ y, SortOrder order, SortNaNMode nan_mode) {
+    if (n <= 0 || s <= 0) {
         return;
     }
 
-    Util::CheckProdOverflow(n, stride);
-    Util::CheckLength(n * stride, y);
+    Util::CheckProdOverflow(n, s);
+    Util::CheckLength(n * s, y);
 
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     int ret = UNEXECUTED;
 
     if (order == SortOrder::Ascending) {
-        ret = sortasc_d(n, stride, y_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortasc_d(n, s, y_ptr, nan_mode == SortNaNMode::MinimizeNaN);
     }
     else {
-        ret = sortdsc_d(n, stride, y_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortdsc_d(n, s, y_ptr, nan_mode == SortNaNMode::MinimizeNaN);
     }
 
     Util::AssertReturnCode(ret);

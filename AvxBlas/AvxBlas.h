@@ -285,11 +285,11 @@ namespace AvxBlas {
 
     public ref class Permutate abstract sealed {
         public:
-        static void Sort(UInt32 n, UInt32 stride, Array<float>^ y, SortOrder order, SortNaNMode nan_mode);
-        static void Sort(UInt32 n, UInt32 stride, Array<double>^ y, SortOrder order, SortNaNMode nan_mode);
+        static void Sort(UInt32 n, UInt32 s, Array<float>^ y, SortOrder order, SortNaNMode nan_mode);
+        static void Sort(UInt32 n, UInt32 s, Array<double>^ y, SortOrder order, SortNaNMode nan_mode);
 
-        static void SortWithKey(UInt32 n, UInt32 stride, Array<float>^ k, Array<UInt32>^ v, SortOrder order, SortNaNMode nan_mode);
-        static void SortWithKey(UInt32 n, UInt32 stride, Array<double>^ k, Array<UInt64>^ v, SortOrder order, SortNaNMode nan_mode);
+        static void SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<UInt32>^ v, SortOrder order, SortNaNMode nan_mode);
+        static void SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<UInt64>^ v, SortOrder order, SortNaNMode nan_mode);
     };
 
     public ref class Initialize abstract sealed {

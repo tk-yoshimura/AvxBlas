@@ -219,6 +219,9 @@
     <ClInclude Include="Permutate\SortWithKey\sortwithkey.h">
       <Filter>Source\Permutate\SortWithKey</Filter>
     </ClInclude>
+    <ClInclude Include="Permutate\SortWithKey\sortkv_types.h">
+      <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">
