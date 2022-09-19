@@ -31,7 +31,7 @@ int sortwithkeydsc_s(const uint n, const uint s, uint* __restrict v_ptr, float* 
 
 #pragma managed
 
-void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<UInt32>^ v, SortOrder order, SortNaNMode nan_mode) {
+void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode) {
     if (n <= 0 || s <= 0) {
         return;
     }
