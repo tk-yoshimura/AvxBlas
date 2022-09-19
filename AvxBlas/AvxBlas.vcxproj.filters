@@ -97,6 +97,9 @@
     <Filter Include="Source\Permutate\SortWithKey">
       <UniqueIdentifier>{283d23d4-e3d4-41c6-b4b5-d0d868bd9803}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Permutate\Flip">
+      <UniqueIdentifier>{9d2831da-7b48-454f-be45-c15a089e2eee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -523,6 +526,9 @@
     </ClCompile>
     <ClCompile Include="Permutate\SortWithKey\sortwithkey_s.cpp">
       <Filter>Source\Permutate\SortWithKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Flip\flip_s.cpp">
+      <Filter>Source\Permutate\Flip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
