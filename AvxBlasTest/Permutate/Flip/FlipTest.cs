@@ -30,5 +30,29 @@ namespace AvxBlasTest.FlipTest {
                 }
             }
         }
+
+        [TestMethod]
+        public void DFlipTest() {
+            Random random = new(1234);
+
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
+                    double[] x = (new double[checked(n * s + 4)]).Select((_, idx) => random.NextDouble()).ToArray();
+                    double[] t = (double[])x.Clone();
+
+                    for (uint i = 0; i < n; i++) {
+                        Array.Reverse(t, (int)(i * s), (int)s);
+                    }
+
+                    Array<double> y = (double[])x.Clone();
+
+                    Permutate.Flip(n, s, x, y);
+
+                    CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s}");
+
+                    Console.WriteLine($"OK: n{n} s{s}");
+                }
+            }
+        }
     }
 }

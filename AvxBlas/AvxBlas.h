@@ -292,6 +292,7 @@ namespace AvxBlas {
         static void SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int64>^ v, SortOrder order, SortNaNMode nan_mode);
 
         static void Flip(UInt32 n, UInt32 s, Array<float>^ x, Array<float>^ y);
+        static void Flip(UInt32 n, UInt32 s, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {

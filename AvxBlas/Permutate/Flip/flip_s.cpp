@@ -9,13 +9,13 @@ using namespace System;
 
 __m256i _mm256_flipperm_ps(const uint n) {
 #ifdef _DEBUG
-    if (n <= 0 || n >= 8) {
+    if (n <= 0 || n >= AVX2_FLOAT_STRIDE) {
         throw std::exception();
     }
 #endif // _DEBUG
 
-    int x[8];
-    for (uint i = 0; i < 8; i++) {
+    int x[AVX2_FLOAT_STRIDE];
+    for (uint i = 0; i < AVX2_FLOAT_STRIDE; i++) {
         x[i] = (i < n) ? (n - i - 1) : i;
     }
 
@@ -454,7 +454,7 @@ int flip_s9to15_s(
         x1 = _mm256_permutevar8x32_ps(x1, rperm);
 
         _mm256_maskstore_ps(y_ptr, mask, x1);
-        _mm256_storeu_ps(y_ptr + s - 8, x0);
+        _mm256_storeu_ps(y_ptr + s - AVX2_DOUBLE_STRIDE, x0);
 
         x_ptr += s;
         y_ptr += s;
@@ -539,7 +539,7 @@ int flip_s17to23_s(
         x2 = _mm256_permutevar8x32_ps(x2, rperm);
 
         _mm256_maskstore_ps(y_ptr, mask, x2);
-        _mm256_storeu_x2_ps(y_ptr + s - 16, x1, x0);
+        _mm256_storeu_x2_ps(y_ptr + s - AVX2_DOUBLE_STRIDE * 2, x1, x0);
 
         x_ptr += s;
         y_ptr += s;
@@ -612,7 +612,7 @@ int flip_s25to31_s(
         x3 = _mm256_permutevar8x32_ps(x3, rperm);
 
         _mm256_maskstore_ps(y_ptr, mask, x3);
-        _mm256_storeu_x3_ps(y_ptr + s - 24, x2, x1, x0);
+        _mm256_storeu_x3_ps(y_ptr + s - AVX2_DOUBLE_STRIDE * 3, x2, x1, x0);
 
         x_ptr += s;
         y_ptr += s;
@@ -863,7 +863,7 @@ void AvxBlas::Permutate::Flip(UInt32 n, UInt32 s, Array<float>^ x, Array<float>^
     else if (s == 32) {
         ret = flip_s32_s(n, s, x_ptr, y_ptr);
     }
-    else if ((s % 8) == 0) {
+    else if ((s % AVX2_FLOAT_STRIDE) == 0) {
         ret = flip_s8x_s(n, s, x_ptr, y_ptr);
     }
     else {

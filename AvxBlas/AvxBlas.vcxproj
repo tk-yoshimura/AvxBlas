@@ -177,6 +177,7 @@
     <ClInclude Include="Inline\inline_ope_s.hpp" />
     <ClInclude Include="Inline\inline_set_s.hpp" />
     <ClInclude Include="Inline\inline_sum_s.hpp" />
+    <ClCompile Include="Permutate\Flip\flip_d.cpp" />
     <ClCompile Include="Permutate\Flip\flip_s.cpp" />
     <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_ignnan_d.cpp" />
     <ClCompile Include="Permutate\SortWithKey\sortwithkeyasc_ignnan_s.cpp" />

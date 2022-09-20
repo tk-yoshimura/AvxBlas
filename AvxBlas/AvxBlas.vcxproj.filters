@@ -530,6 +530,9 @@
     <ClCompile Include="Permutate\Flip\flip_s.cpp">
       <Filter>Source\Permutate\Flip</Filter>
     </ClCompile>
+    <ClCompile Include="Permutate\Flip\flip_d.cpp">
+      <Filter>Source\Permutate\Flip</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
