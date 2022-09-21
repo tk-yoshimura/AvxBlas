@@ -140,8 +140,8 @@ namespace AvxBlasTest.SortTest {
         public void SSortAscTest() {
             Random random = new(1234);
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     float[] x = (new float[checked(n * s + 4)]).Select((_, idx) => (float)random.NextDouble()).ToArray();
                     float[] t = (float[])x.Clone();
 
@@ -159,8 +159,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     float[] x = (new float[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (float)random.NextDouble() : float.NaN).ToArray();
                     float[] t = (float[])x.Clone();
@@ -179,8 +179,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     float[] x = (new float[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (float)random.NextDouble() : float.NaN).ToArray();
                     float[] t = (float[])x.Clone();
@@ -204,8 +204,8 @@ namespace AvxBlasTest.SortTest {
         public void SSortDscTest() {
             Random random = new(1234);
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     float[] x = (new float[checked(n * s + 4)]).Select((_, idx) => (float)random.NextDouble()).ToArray();
                     float[] t = (float[])x.Clone();
 
@@ -224,8 +224,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     float[] x = (new float[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (float)random.NextDouble() : float.NaN).ToArray();
                     float[] t = (float[])x.Clone();
@@ -244,8 +244,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     float[] x = (new float[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (float)random.NextDouble() : float.NaN).ToArray();
                     float[] t = (float[])x.Clone();
@@ -269,8 +269,8 @@ namespace AvxBlasTest.SortTest {
         public void DSortAscTest() {
             Random random = new(1234);
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     double[] x = (new double[checked(n * s + 4)]).Select((_, idx) => (double)random.NextDouble()).ToArray();
                     double[] t = (double[])x.Clone();
 
@@ -288,8 +288,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     double[] x = (new double[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (double)random.NextDouble() : double.NaN).ToArray();
                     double[] t = (double[])x.Clone();
@@ -308,8 +308,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     double[] x = (new double[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (double)random.NextDouble() : double.NaN).ToArray();
                     double[] t = (double[])x.Clone();
@@ -333,8 +333,8 @@ namespace AvxBlasTest.SortTest {
         public void DSortDscTest() {
             Random random = new(1234);
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     double[] x = (new double[checked(n * s + 4)]).Select((_, idx) => (double)random.NextDouble()).ToArray();
                     double[] t = (double[])x.Clone();
 
@@ -353,8 +353,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     double[] x = (new double[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (double)random.NextDouble() : double.NaN).ToArray();
                     double[] t = (double[])x.Clone();
@@ -373,8 +373,8 @@ namespace AvxBlasTest.SortTest {
                 }
             }
 
-            for(uint n = 0; n <= 64; n++){
-                for(uint s = 0; s <= 256; s++){
+            for (uint n = 0; n <= 64; n++) {
+                for (uint s = 0; s <= 256; s++) {
                     double[] x = (new double[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? (double)random.NextDouble() : double.NaN).ToArray();
                     double[] t = (double[])x.Clone();
