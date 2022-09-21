@@ -40,9 +40,6 @@
     <Filter Include="Source\Affine">
       <UniqueIdentifier>{b7e9195d-d433-4510-9772-0d195869c1c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Transform">
-      <UniqueIdentifier>{5197ca05-ba65-433d-bed5-93c1a6d1159c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Dense">
       <UniqueIdentifier>{d8cb2fa7-3f2b-4f69-89a1-686cabc4f702}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,9 @@
     </Filter>
     <Filter Include="Source\Permutate\Flip">
       <UniqueIdentifier>{9d2831da-7b48-454f-be45-c15a089e2eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Permutate\Transpose">
+      <UniqueIdentifier>{c886a010-2511-4cf8-9155-2e972a94e317}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -295,12 +295,6 @@
     </ClCompile>
     <ClCompile Include="Affine\affine_dotmul_d.cpp">
       <Filter>Source\Affine</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform\transform_transpose_s.cpp">
-      <Filter>Source\Transform</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform\transform_transpose_d.cpp">
-      <Filter>Source\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Dense\dense_forward_s.cpp">
       <Filter>Source\Dense</Filter>
@@ -532,6 +526,12 @@
     </ClCompile>
     <ClCompile Include="Permutate\Flip\flip_d.cpp">
       <Filter>Source\Permutate\Flip</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Transpose\transpose_d.cpp">
+      <Filter>Source\Permutate\Transpose</Filter>
+    </ClCompile>
+    <ClCompile Include="Permutate\Transpose\transpose_s.cpp">
+      <Filter>Source\Permutate\Transpose</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

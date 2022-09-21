@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace AvxBlasTest.TransformTest {
+namespace AvxBlasTest.TransposeTest {
     [TestClass]
     public class TransposeTest {
         [TestMethod]
@@ -42,7 +42,7 @@ namespace AvxBlasTest.TransformTest {
 
                             Array<float> y = new(checked(n * r * s * stride) + 4);
 
-                            Transform.Transpose(n, r, s, stride, x, y);
+                            Permutate.Transpose(n, r, s, stride, x, y);
 
                             CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} r{r} s{s} stride{stride}");
 
@@ -89,7 +89,7 @@ namespace AvxBlasTest.TransformTest {
 
                             Array<double> y = new(checked(n * r * s * stride) + 4);
 
-                            Transform.Transpose(n, r, s, stride, x, y);
+                            Permutate.Transpose(n, r, s, stride, x, y);
 
                             CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} r{r} s{s} stride{stride}");
 

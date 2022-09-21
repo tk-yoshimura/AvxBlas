@@ -1,7 +1,7 @@
-#include "../avxblas.h"
-#include "../constants.h"
-#include "../utils.h"
-#include "../Inline/inline_loadstore_xn_s.hpp"
+#include "../../avxblas.h"
+#include "../../constants.h"
+#include "../../utils.h"
+#include "../../Inline/inline_loadstore_xn_s.hpp"
 
 using namespace System;
 

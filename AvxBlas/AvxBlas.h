@@ -123,12 +123,6 @@ namespace AvxBlas {
         static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
-    public ref class Transform abstract sealed {
-        public:
-        static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<float>^ x, Array<float>^ y);
-        static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<double>^ x, Array<double>^ y);
-    };
-
     public ref class Affine abstract sealed {
         public:
         static void Dotmul(UInt32 na, UInt32 nb, UInt32 stride, Array<float>^ a, Array<float>^ b, Array<float>^ y);
@@ -293,6 +287,9 @@ namespace AvxBlas {
 
         static void Flip(UInt32 n, UInt32 s, Array<float>^ x, Array<float>^ y);
         static void Flip(UInt32 n, UInt32 s, Array<double>^ x, Array<double>^ y);
+
+        static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<float>^ x, Array<float>^ y);
+        static void Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Initialize abstract sealed {

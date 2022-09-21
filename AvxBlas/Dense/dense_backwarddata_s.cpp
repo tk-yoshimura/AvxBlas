@@ -15,7 +15,7 @@ void AvxBlas::Dense::BackwardData(UInt32 n, UInt32 ic, UInt32 oc, Array<float>^ 
     }
 
     Array<float>^ transpose_w = gcnew Array<float>(w->Length, false);
-    Transform::Transpose(1, oc, ic, 1, w, transpose_w);
+    Permutate::Transpose(1, oc, ic, 1, w, transpose_w);
 
     Affine::Dotmul(n, ic, oc, dy, transpose_w, dx);
 
