@@ -454,7 +454,7 @@ int flip_s9to15_s(
         x1 = _mm256_permutevar8x32_ps(x1, rperm);
 
         _mm256_maskstore_ps(y_ptr, mask, x1);
-        _mm256_storeu_ps(y_ptr + s - AVX2_DOUBLE_STRIDE, x0);
+        _mm256_storeu_ps(y_ptr + s - AVX2_FLOAT_STRIDE, x0);
 
         x_ptr += s;
         y_ptr += s;
@@ -539,7 +539,7 @@ int flip_s17to23_s(
         x2 = _mm256_permutevar8x32_ps(x2, rperm);
 
         _mm256_maskstore_ps(y_ptr, mask, x2);
-        _mm256_storeu_x2_ps(y_ptr + s - AVX2_DOUBLE_STRIDE * 2, x1, x0);
+        _mm256_storeu_x2_ps(y_ptr + s - AVX2_FLOAT_STRIDE * 2, x1, x0);
 
         x_ptr += s;
         y_ptr += s;
@@ -612,7 +612,7 @@ int flip_s25to31_s(
         x3 = _mm256_permutevar8x32_ps(x3, rperm);
 
         _mm256_maskstore_ps(y_ptr, mask, x3);
-        _mm256_storeu_x3_ps(y_ptr + s - AVX2_DOUBLE_STRIDE * 3, x2, x1, x0);
+        _mm256_storeu_x3_ps(y_ptr + s - AVX2_FLOAT_STRIDE * 3, x2, x1, x0);
 
         x_ptr += s;
         y_ptr += s;
