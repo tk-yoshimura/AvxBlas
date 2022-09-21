@@ -86,15 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Tests\add_test.cpp" />
-    <ClCompile Include="Tests\dotmul_test.cpp" />
-    <ClCompile Include="Tests\fma_test.cpp" />
-    <ClCompile Include="Tests\sum_test.cpp" />
-    <ClCompile Include="Utils\util_mm_mask.cpp" />
     <ClCompile Include="_main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="avxblas_sandbox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,20 +5,20 @@ using System.Linq;
 
 namespace AvxBlasTest.AggregateTest {
     [TestClass]
-    public class SumTest {
+    public class MaxTest {
         [TestMethod]
-        public void SSumTest() {
+        public void SMaxTest() {
             Random random = new(1234);
 
             foreach (uint n in new uint[] {
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
+                    1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
 
                 foreach (uint samples in new uint[] {
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
+                    1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                     15u, 16u, 17u, 63u, 64u, 65u, 255u, 256u, 257u }) {
 
                     foreach (uint stride in new uint[] {
-                        0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
+                        1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                         15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u,
                         63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
@@ -31,10 +31,10 @@ namespace AvxBlasTest.AggregateTest {
 
                         for (int i = 0; i < n; i++) {
                             for (int j = 0; j < stride; j++) {
-                                float s = 0;
+                                float s = float.NegativeInfinity;
 
                                 for (int k = 0; k < samples; k++) {
-                                    s += x[j + stride * (k + samples * i)];
+                                    s = Math.Max(s, x[j + stride * (k + samples * i)]);
                                 }
 
                                 t[j + stride * i] = s;
@@ -43,7 +43,7 @@ namespace AvxBlasTest.AggregateTest {
 
                         Array<float> y = new(outlength);
 
-                        Aggregate.Sum(n, samples, stride, x, y);
+                        Aggregate.Max(n, samples, stride, x, y);
 
                         CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} samples{samples} stride{stride}");
 
@@ -54,18 +54,18 @@ namespace AvxBlasTest.AggregateTest {
         }
 
         [TestMethod]
-        public void DSumTest() {
+        public void DMaxTest() {
             Random random = new(1234);
 
             foreach (uint n in new uint[] {
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
+                    1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 15u, 16u, 17u }) {
 
                 foreach (uint samples in new uint[] {
-                    0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
+                    1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                     15u, 16u, 17u, 63u, 64u, 65u, 255u, 256u, 257u }) {
 
                     foreach (uint stride in new uint[] {
-                        0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
+                        1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u, 13u, 14u,
                         15u, 16u, 17u, 23u, 24u, 25u, 31u, 32u, 33u,
                         63u, 64u, 65u, 127u, 128u, 129u, 255u, 256u, 257u }) {
 
@@ -78,10 +78,10 @@ namespace AvxBlasTest.AggregateTest {
 
                         for (int i = 0; i < n; i++) {
                             for (int j = 0; j < stride; j++) {
-                                double s = 0;
+                                double s = double.NegativeInfinity;
 
                                 for (int k = 0; k < samples; k++) {
-                                    s += x[j + stride * (k + samples * i)];
+                                    s = Math.Max(s, x[j + stride * (k + samples * i)]);
                                 }
 
                                 t[j + stride * i] = s;
@@ -90,7 +90,7 @@ namespace AvxBlasTest.AggregateTest {
 
                         Array<double> y = new(outlength);
 
-                        Aggregate.Sum(n, samples, stride, x, y);
+                        Aggregate.Max(n, samples, stride, x, y);
 
                         CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} samples{samples} stride{stride}");
 

@@ -20,14 +20,14 @@ __forceinline double _mm256_sum4to1_pd(__m256d x) {
     return ret;
 }
 
-// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e2+e4+e6,e1+e3+e5+e7
+// e0,e1,e2,e3 -> e0+e2,e1+e3
 __forceinline __m128d _mm256_sum4to2_pd(__m256d x) {
     __m128d ret = _mm_add_pd(_mm256_castpd256_pd128(x), _mm256_extractf128_pd(x, 1));
 
     return ret;
 }
 
-// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e2+e4+e6,e1+e3+e5+e7
+// e0,e1,e2,e3,e4,e5,e6,e7 -> e0+e1+e2+e3+e4+e5+e6+e7
 __forceinline double _mm256_sum8to1_pd(__m256d x, __m256d y) {
     double ret = _mm256_sum4to1_pd(_mm256_add_pd(x, y));
 

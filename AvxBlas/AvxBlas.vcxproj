@@ -105,6 +105,8 @@
     <ClInclude Include="Inline\inline_cmp_ep64.hpp" />
     <ClInclude Include="Inline\inline_cmp_s.hpp" />
     <ClInclude Include="Inline\inline_copy_d.hpp" />
+    <ClInclude Include="Inline\inline_fill_d.hpp" />
+    <ClInclude Include="Inline\inline_fill_s.hpp" />
     <ClInclude Include="Inline\inline_imcol_d.hpp" />
     <ClInclude Include="Inline\inline_kernelfma_ss.hpp" />
     <ClInclude Include="Inline\inline_loadstore_xn_d.hpp" />
@@ -114,6 +116,8 @@
     <ClInclude Include="Inline\inline_dilate_d.hpp" />
     <ClInclude Include="Inline\inline_kahan_d.hpp" />
     <ClInclude Include="Inline\inline_kahan_s.hpp" />
+    <ClInclude Include="Inline\inline_max_d.hpp" />
+    <ClInclude Include="Inline\inline_max_s.hpp" />
     <ClInclude Include="Inline\inline_numeric.hpp" />
     <ClInclude Include="Inline\inline_copy_s.hpp" />
     <ClInclude Include="Inline\inline_dilate_s.hpp" />
@@ -140,6 +144,8 @@
   <ItemGroup>
     <ClCompile Include="Affine\affine_dotmul_d.cpp" />
     <ClCompile Include="Affine\affine_dotmul_s.cpp" />
+    <ClCompile Include="Aggregate\ag_max_d.cpp" />
+    <ClCompile Include="Aggregate\ag_max_s.cpp" />
     <ClCompile Include="Aggregate\ag_sum_d.cpp" />
     <ClCompile Include="Aggregate\ag_sum_s.cpp" />
     <ClCompile Include="Array\array.cpp" />

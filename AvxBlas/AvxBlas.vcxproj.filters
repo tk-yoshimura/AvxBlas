@@ -225,6 +225,18 @@
     <ClInclude Include="Permutate\SortWithKey\sortkv_types.h">
       <Filter>Source\Permutate\SortWithKey</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_max_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_max_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_fill_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_fill_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">
@@ -532,6 +544,12 @@
     </ClCompile>
     <ClCompile Include="Permutate\Transpose\transpose_s.cpp">
       <Filter>Source\Permutate\Transpose</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_max_s.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_max_d.cpp">
+      <Filter>Source\Aggregate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

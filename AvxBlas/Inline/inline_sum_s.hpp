@@ -28,7 +28,7 @@ __forceinline __m128 _mm256_sum8to2_ps(__m256 x) {
     return ret;
 }
 
-// e0,e1,e2,e3,e4,e5,-,- -> e0+e3,e1+e4,e2+e5,-,-
+// e0,e1,e2,e3,e4,e5,-,- -> e0+e3,e1+e4,e2+e5,-
 __forceinline __m128 _mm256_sum6to3_ps(__m256 x) {
     const __m256i _perm43 = _mm256_setr_epi32(0, 1, 2, 6, 3, 4, 5, 7);
 
