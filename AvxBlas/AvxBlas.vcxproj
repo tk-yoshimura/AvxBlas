@@ -118,6 +118,8 @@
     <ClInclude Include="Inline\inline_kahan_s.hpp" />
     <ClInclude Include="Inline\inline_max_d.hpp" />
     <ClInclude Include="Inline\inline_max_s.hpp" />
+    <ClInclude Include="Inline\inline_min_d.hpp" />
+    <ClInclude Include="Inline\inline_min_s.hpp" />
     <ClInclude Include="Inline\inline_numeric.hpp" />
     <ClInclude Include="Inline\inline_copy_s.hpp" />
     <ClInclude Include="Inline\inline_dilate_s.hpp" />
@@ -146,6 +148,8 @@
     <ClCompile Include="Affine\affine_dotmul_s.cpp" />
     <ClCompile Include="Aggregate\ag_max_d.cpp" />
     <ClCompile Include="Aggregate\ag_max_s.cpp" />
+    <ClCompile Include="Aggregate\ag_min_d.cpp" />
+    <ClCompile Include="Aggregate\ag_min_s.cpp" />
     <ClCompile Include="Aggregate\ag_sum_d.cpp" />
     <ClCompile Include="Aggregate\ag_sum_s.cpp" />
     <ClCompile Include="Array\array.cpp" />

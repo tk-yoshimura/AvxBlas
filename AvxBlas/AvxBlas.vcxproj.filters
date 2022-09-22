@@ -237,6 +237,12 @@
     <ClInclude Include="Inline\inline_fill_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_min_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_min_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">
@@ -549,6 +555,12 @@
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
     <ClCompile Include="Aggregate\ag_max_d.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_min_d.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_min_s.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
   </ItemGroup>

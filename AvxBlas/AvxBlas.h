@@ -124,6 +124,9 @@ namespace AvxBlas {
 
         static void Max(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Max(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
+
+        static void Min(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
+        static void Min(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Affine abstract sealed {
