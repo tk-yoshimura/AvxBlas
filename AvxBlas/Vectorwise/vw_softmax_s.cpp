@@ -188,16 +188,18 @@ int vw_softmax_stride3_s(
     }
 #endif // _DEBUG
 
+    const __m256i mask6 = _mm256_setmask_ps(6);
+
     __m256 x0, x1, x2, x3, y0, y1, y2, y3, z0, z1, z2, z3;
     __m256 x0_max, x1_max, x2_max, x3_max, y0_sum, y1_sum, y2_sum, y3_sum;
 
     uint r = n;
 
-    while (r > AVX2_FLOAT_STRIDE) {
-        x0 = _mm256_loadu_ps(x_ptr);
-        x1 = _mm256_loadu_ps(x_ptr + 6);
-        x2 = _mm256_loadu_ps(x_ptr + 12);
-        x3 = _mm256_loadu_ps(x_ptr + 18);
+    while (r >= AVX2_FLOAT_STRIDE) {
+        x0 = _mm256_maskload_ps(x_ptr, mask6);
+        x1 = _mm256_maskload_ps(x_ptr + 6, mask6);
+        x2 = _mm256_maskload_ps(x_ptr + 12, mask6);
+        x3 = _mm256_maskload_ps(x_ptr + 18, mask6);
 
         x0_max = _mm256_maxwise3_ps(x0);
         x1_max = _mm256_maxwise3_ps(x1);
@@ -222,15 +224,15 @@ int vw_softmax_stride3_s(
         _mm256_storeu_ps(y_ptr, z0);
         _mm256_storeu_ps(y_ptr + 6, z1);
         _mm256_storeu_ps(y_ptr + 12, z2);
-        _mm256_storeu_ps(y_ptr + 18, z3);
+        _mm256_maskstore_ps(y_ptr + 18, mask6, z3);
 
         x_ptr += 24;
         y_ptr += 24;
         r -= AVX2_FLOAT_STRIDE;
     }
-    if (r > AVX2_FLOAT_STRIDE / 2) {
-        x0 = _mm256_loadu_ps(x_ptr);
-        x1 = _mm256_loadu_ps(x_ptr + 6);
+    if (r >= AVX2_FLOAT_STRIDE / 2) {
+        x0 = _mm256_maskload_ps(x_ptr, mask6);
+        x1 = _mm256_maskload_ps(x_ptr + 6, mask6);
 
         x0_max = _mm256_maxwise3_ps(x0);
         x1_max = _mm256_maxwise3_ps(x1);
@@ -245,14 +247,14 @@ int vw_softmax_stride3_s(
         z1 = _mm256_div_ps(y1, y1_sum);
 
         _mm256_storeu_ps(y_ptr, z0);
-        _mm256_storeu_ps(y_ptr + 6, z1);
+        _mm256_maskstore_ps(y_ptr + 6, mask6, z1);
 
         x_ptr += 12;
         y_ptr += 12;
         r -= AVX2_FLOAT_STRIDE / 2;
     }
-    if (r > AVX2_FLOAT_STRIDE / 4) {
-        x0 = _mm256_loadu_ps(x_ptr);
+    if (r >= AVX2_FLOAT_STRIDE / 4) {
+        x0 = _mm256_maskload_ps(x_ptr, mask6);
 
         x0_max = _mm256_maxwise3_ps(x0);
 
@@ -262,7 +264,7 @@ int vw_softmax_stride3_s(
 
         z0 = _mm256_div_ps(y0, y0_sum);
 
-        _mm256_storeu_ps(y_ptr, z0);
+        _mm256_maskstore_ps(y_ptr, mask6, z0);
 
         x_ptr += 6;
         y_ptr += 6;
@@ -406,11 +408,11 @@ int vw_softmax_stride5to7_s(
 
     uint r = n;
 
-    while (r > 4) {
-        x0 = _mm256_loadu_ps(x_ptr);
-        x1 = _mm256_loadu_ps(x_ptr + stride);
-        x2 = _mm256_loadu_ps(x_ptr + stride * 2);
-        x3 = _mm256_loadu_ps(x_ptr + stride * 3);
+    while (r >= 4) {
+        x0 = _mm256_maskload_ps(x_ptr, mask);
+        x1 = _mm256_maskload_ps(x_ptr + stride, mask);
+        x2 = _mm256_maskload_ps(x_ptr + stride * 2, mask);
+        x3 = _mm256_maskload_ps(x_ptr + stride * 3, mask);
 
         x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
         x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
@@ -440,15 +442,15 @@ int vw_softmax_stride5to7_s(
         _mm256_storeu_ps(y_ptr, z0);
         _mm256_storeu_ps(y_ptr + stride, z1);
         _mm256_storeu_ps(y_ptr + stride * 2, z2);
-        _mm256_storeu_ps(y_ptr + stride * 3, z3);
+        _mm256_maskstore_ps(y_ptr + stride * 3, mask, z3);
 
         x_ptr += stride * 4;
         y_ptr += stride * 4;
         r -= 4;
     }
-    if (r > 2) {
-        x0 = _mm256_loadu_ps(x_ptr);
-        x1 = _mm256_loadu_ps(x_ptr + stride);
+    if (r >= 2) {
+        x0 = _mm256_maskload_ps(x_ptr, mask);
+        x1 = _mm256_maskload_ps(x_ptr + stride, mask);
 
         x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
         x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
@@ -466,13 +468,13 @@ int vw_softmax_stride5to7_s(
         z1 = _mm256_div_ps(y1, y1_sum);
 
         _mm256_storeu_ps(y_ptr, z0);
-        _mm256_storeu_ps(y_ptr + stride, z1);
+        _mm256_maskstore_ps(y_ptr + stride, mask, z1);
 
         x_ptr += stride * 2;
         y_ptr += stride * 2;
         r -= 2;
     }
-    while (r > 0) {
+    if (r > 0) {
         x0 = _mm256_maskload_ps(x_ptr, mask);
 
         x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
@@ -486,10 +488,6 @@ int vw_softmax_stride5to7_s(
         z0 = _mm256_div_ps(y0, y0_sum);
 
         _mm256_maskstore_ps(y_ptr, mask, z0);
-
-        x_ptr += stride;
-        y_ptr += stride;
-        r -= 1;
     }
 
     return SUCCESS;
@@ -596,9 +594,9 @@ int vw_softmax_stride9to15_s(
 
     uint r = n;
 
-    while (r > 2) {
-        _mm256_loadu_x2_ps(x_ptr, x0, x1);
-        _mm256_loadu_x2_ps(x_ptr + stride, x2, x3);
+    while (r >= 2) {
+        _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
+        _mm256_maskload_x2_ps(x_ptr + stride, x2, x3, mask);
 
         x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
         x3 = _mm256_or_ps(x3, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
@@ -620,32 +618,11 @@ int vw_softmax_stride9to15_s(
         z3 = _mm256_div_ps(y3, y23_sum);
 
         _mm256_storeu_x2_ps(y_ptr, z0, z1);
-        _mm256_storeu_x2_ps(y_ptr + stride, z2, x3);
+        _mm256_maskstore_x2_ps(y_ptr + stride, z2, z3, mask);
 
         x_ptr += stride * 2;
         y_ptr += stride * 2;
         r -= 2;
-    }
-    if (r > 1) {
-        _mm256_loadu_x2_ps(x_ptr, x0, x1);
-
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
-
-        x01_max = _mm256_max_ps(_mm256_maxwise8_ps(x0), _mm256_maxwise8_ps(x1));
-
-        y0 = _mm256_softmaxexp_ps(x0, x01_max);
-        y1 = _mm256_softmaxexp_ps(x1, x01_max);
-
-        y01_sum = _mm256_add_ps(_mm256_sumwise8_ps(y0), _mm256_sumwise8_ps(y1));
-
-        z0 = _mm256_div_ps(y0, y01_sum);
-        z1 = _mm256_div_ps(y1, y01_sum);
-
-        _mm256_storeu_x2_ps(y_ptr, z0, z1);
-
-        x_ptr += stride;
-        y_ptr += stride;
-        r -= 1;
     }
     if (r > 0) {
         _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
@@ -702,7 +679,7 @@ int vw_softmax_stride16_s(
         z2 = _mm256_div_ps(y2, y23_sum);
         z3 = _mm256_div_ps(y3, y23_sum);
 
-        _mm256_store_x4_ps(y_ptr, z0, z1, z2, x3);
+        _mm256_store_x4_ps(y_ptr, z0, z1, z2, z3);
 
         x_ptr += stride * 2;
         y_ptr += stride * 2;
