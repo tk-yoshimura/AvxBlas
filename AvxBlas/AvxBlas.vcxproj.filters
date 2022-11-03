@@ -563,6 +563,9 @@
     <ClCompile Include="Aggregate\ag_min_s.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
+    <ClCompile Include="Vectorwise\vw_softmax_s.cpp">
+      <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
