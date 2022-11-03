@@ -77,6 +77,79 @@ __forceinline __m256 _mm256_sumwise8_ps(__m256 x) {
     return w;
 }
 
+__forceinline __m256 _mm256_normal_asone_ps(__m256 x) {
+    __m256 y = _mm256_and_ps(_mm256_set1_ps(NAN), _mm256_cmp_ps(x, x, _CMP_NEQ_UQ));
+    __m256 z = _mm256_add_ps(_mm256_set1_ps(1), y);
+
+    return z;
+}
+
+int vw_softmax_stride1_s(
+    const uint n, const uint stride,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if (stride != 1 || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    const __m256 fills = _mm256_set1_ps(1);
+
+    __m256 x0, x1, x2, x3, y0, y1, y2, y3;
+
+    uint r = n;
+
+    while (r >= AVX2_FLOAT_STRIDE * 4) {
+        _mm256_load_x4_ps(x_ptr, x0, x1, x2, x3);
+
+        y0 = _mm256_normal_asone_ps(x0);
+        y1 = _mm256_normal_asone_ps(x1);
+        y2 = _mm256_normal_asone_ps(x2);
+        y3 = _mm256_normal_asone_ps(x3);
+
+        _mm256_stream_x4_ps(y_ptr, y0, y1, y2, y3);
+
+        x_ptr += AVX2_FLOAT_STRIDE * 4;
+        y_ptr += AVX2_FLOAT_STRIDE * 4;
+        r -= AVX2_FLOAT_STRIDE * 4;
+    }
+    if (r >= AVX2_FLOAT_STRIDE * 2) {
+        _mm256_load_x2_ps(x_ptr, x0, x1);
+
+        y0 = _mm256_normal_asone_ps(x0);
+        y1 = _mm256_normal_asone_ps(x1);
+
+        _mm256_stream_x2_ps(y_ptr, y0, y1);
+
+        x_ptr += AVX2_FLOAT_STRIDE * 2;
+        y_ptr += AVX2_FLOAT_STRIDE * 2;
+        r -= AVX2_FLOAT_STRIDE * 2;
+    }
+    if (r >= AVX2_FLOAT_STRIDE) {
+        _mm256_load_x1_ps(x_ptr, x0);
+
+        y0 = _mm256_normal_asone_ps(x0);
+
+        _mm256_stream_x1_ps(y_ptr, y0);
+
+        x_ptr += AVX2_FLOAT_STRIDE;
+        y_ptr += AVX2_FLOAT_STRIDE;
+        r -= AVX2_FLOAT_STRIDE;
+    }
+    if (r > 0) {
+        const __m256i mask = _mm256_setmask_ps(r);
+
+        x0 = _mm256_maskload_ps(x_ptr, mask);
+
+        y0 = _mm256_normal_asone_ps(x0);
+
+        _mm256_maskstore_ps(y_ptr, mask, y0);
+    }
+
+    return SUCCESS;
+}
+
 int vw_softmax_stride2_s(
     const uint n, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
@@ -1232,7 +1305,10 @@ int vw_softmax_strideleq8_s(
     const uint n, const uint stride,
     infloats x_ptr, outfloats y_ptr) {
 
-    if (stride == 2) {
+    if (stride == 1) {
+        return vw_softmax_stride1_s(n, stride, x_ptr, y_ptr);
+    }
+    else if (stride == 2) {
         return vw_softmax_stride2_s(n, stride, x_ptr, y_ptr);
     }
     else if (stride == 3) {
@@ -1301,11 +1377,6 @@ void AvxBlas::Vectorwise::Softmax(UInt32 n, UInt32 stride, Array<float>^ x, Arra
     Util::CheckProdOverflow(n, stride);
 
     Util::CheckLength(n * stride, x, y);
-
-    if (stride == 1u) {
-        Initialize::Clear(n * stride, 1.0, y);
-        return;
-    }
 
     const float* x_ptr = (const float*)(x->Ptr.ToPointer());
     float* y_ptr = (float*)(y->Ptr.ToPointer());

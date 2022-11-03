@@ -44,26 +44,19 @@ __forceinline __m256 _mm256_sumwise8_ps(__m256 x) {
     return w;
 }
 
+__forceinline __m256 _mm256_normal_asone_ps(__m256 x) {    
+    __m256 y = _mm256_and_ps(_mm256_set1_ps(NAN), _mm256_cmp_ps(x, x, _CMP_NEQ_UQ));
+    __m256 z = _mm256_add_ps(_mm256_set1_ps(1), y);
+
+    return z;
+}
 
 int main(){
-    const __m256i mask = _mm256_setmask_ps(1);
-    const __m256 minf = _mm256_set1_ps(-HUGE_VALF);
+    const __m256 fills = _mm256_set1_ps(1);
 
-    __m256 x0 = _mm256_setr_ps(12, 2, -15, 0, 13, -13, 11, -3);
-    __m256 x1 = _mm256_setr_ps(-7, NAN, NAN, NAN, NAN, NAN, NAN, NAN);
+    __m256 x = _mm256_setr_ps(-7, -HUGE_VALF, NAN, NAN, HUGE_VALF, NAN, 0, NAN);
+    __m256 y = _mm256_normal_asone_ps(x);
 
-    x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), minf));
-
-    __m256 x01_max = _mm256_max_ps(_mm256_maxwise8_ps(x0), _mm256_maxwise8_ps(x1));
-
-    __m256 y0 = _mm256_softmaxexp_ps(x0, x01_max);
-    __m256 y1 = _mm256_softmaxexp_ps(x1, x01_max);
-
-    __m256 y01_sum = _mm256_add_ps(_mm256_sumwise8_ps(y0), _mm256_sumwise8_ps(y1));
-
-    __m256 z0 = _mm256_div_ps(y0, y01_sum);
-    __m256 z1 = _mm256_div_ps(y1, y01_sum);
-    
     printf("end");
     getchar();
 }
