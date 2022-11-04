@@ -578,6 +578,12 @@
     <ClCompile Include="Cast\cast_double_to_float.cpp">
       <Filter>Source\Cast</Filter>
     </ClCompile>
+    <ClCompile Include="Aggregate\ag_average_d.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_average_s.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

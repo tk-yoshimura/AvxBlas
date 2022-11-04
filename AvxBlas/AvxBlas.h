@@ -128,6 +128,9 @@ namespace AvxBlas {
         static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Sum(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
 
+        static void Average(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
+        static void Average(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
+
         static void Max(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Max(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
 
