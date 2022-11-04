@@ -97,6 +97,9 @@ namespace AvxBlas {
 
         static void Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Cast(UInt32 n, Array<float>^ x, Array<double>^ y);
+        static void Cast(UInt32 n, Array<double>^ x, Array<float>^ y);
     };
 
     public ref class Vectorwise abstract sealed {

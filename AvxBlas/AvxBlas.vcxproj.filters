@@ -100,6 +100,9 @@
     <Filter Include="Source\Permutate\Transpose">
       <UniqueIdentifier>{c886a010-2511-4cf8-9155-2e972a94e317}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Cast">
+      <UniqueIdentifier>{917281ef-1966-4ed8-8371-6fd65222917d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avxblas.h">
@@ -568,6 +571,12 @@
     </ClCompile>
     <ClCompile Include="Vectorwise\vw_softmax_d.cpp">
       <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Cast\cast_float_to_double.cpp">
+      <Filter>Source\Cast</Filter>
+    </ClCompile>
+    <ClCompile Include="Cast\cast_double_to_float.cpp">
+      <Filter>Source\Cast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
