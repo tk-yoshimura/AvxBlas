@@ -792,7 +792,7 @@ int vw_softmax_stride17to23_s(
     const __m256 minf = _mm256_set1_ps(-HUGE_VALF);
 
     __m256 x0, x1, x2, y0, y1, y2, z0, z1, z2;
-    __m256 x_max, y_sum;
+    __m256 x_max, y_sum, y_rcp_sum;
 
     uint r = n;
 
@@ -809,9 +809,11 @@ int vw_softmax_stride17to23_s(
 
         y_sum = _mm256_add_ps(_mm256_add_ps(_mm256_sumwise8_ps(y0), _mm256_sumwise8_ps(y1)), _mm256_sumwise8_ps(y2));
 
-        z0 = _mm256_div_ps(y0, y_sum);
-        z1 = _mm256_div_ps(y1, y_sum);
-        z2 = _mm256_div_ps(y2, y_sum);
+        y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
+        z0 = _mm256_mul_ps(y0, y_rcp_sum);
+        z1 = _mm256_mul_ps(y1, y_rcp_sum);
+        z2 = _mm256_mul_ps(y2, y_rcp_sum);
 
         _mm256_maskstore_x3_ps(y_ptr, z0, z1, z2, mask);
 
@@ -834,7 +836,7 @@ int vw_softmax_stride24_s(
 #endif // _DEBUG
 
     __m256 x0, x1, x2, y0, y1, y2, z0, z1, z2;
-    __m256 x_max, y_sum;
+    __m256 x_max, y_sum, y_rcp_sum;
 
     uint r = n;
 
@@ -849,9 +851,11 @@ int vw_softmax_stride24_s(
 
         y_sum = _mm256_add_ps(_mm256_add_ps(_mm256_sumwise8_ps(y0), _mm256_sumwise8_ps(y1)), _mm256_sumwise8_ps(y2));
 
-        z0 = _mm256_div_ps(y0, y_sum);
-        z1 = _mm256_div_ps(y1, y_sum);
-        z2 = _mm256_div_ps(y2, y_sum);
+        y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
+        z0 = _mm256_mul_ps(y0, y_rcp_sum);
+        z1 = _mm256_mul_ps(y1, y_rcp_sum);
+        z2 = _mm256_mul_ps(y2, y_rcp_sum);
 
         _mm256_store_x3_ps(y_ptr, z0, z1, z2);
 
@@ -878,7 +882,7 @@ int vw_softmax_stride25to31_s(
     const __m256 minf = _mm256_set1_ps(-HUGE_VALF);
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3, z0, z1, z2, z3;
-    __m256 x_max, y_sum;
+    __m256 x_max, y_sum, y_rcp_sum;
 
     uint r = n;
 
@@ -902,10 +906,12 @@ int vw_softmax_stride25to31_s(
             _mm256_add_ps(_mm256_sumwise8_ps(y2), _mm256_sumwise8_ps(y3))
         );
 
-        z0 = _mm256_div_ps(y0, y_sum);
-        z1 = _mm256_div_ps(y1, y_sum);
-        z2 = _mm256_div_ps(y2, y_sum);
-        z3 = _mm256_div_ps(y3, y_sum);
+        y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
+        z0 = _mm256_mul_ps(y0, y_rcp_sum);
+        z1 = _mm256_mul_ps(y1, y_rcp_sum);
+        z2 = _mm256_mul_ps(y2, y_rcp_sum);
+        z3 = _mm256_mul_ps(y3, y_rcp_sum);
 
         _mm256_maskstore_x4_ps(y_ptr, z0, z1, z2, z3, mask);
 
@@ -928,7 +934,7 @@ int vw_softmax_stride32_s(
 #endif // _DEBUG
 
     __m256 x0, x1, x2, x3, y0, y1, y2, y3, z0, z1, z2, z3;
-    __m256 x_max, y_sum;
+    __m256 x_max, y_sum, y_rcp_sum;
 
     uint r = n;
 
@@ -950,16 +956,138 @@ int vw_softmax_stride32_s(
             _mm256_add_ps(_mm256_sumwise8_ps(y2), _mm256_sumwise8_ps(y3))
         );
 
-        z0 = _mm256_div_ps(y0, y_sum);
-        z1 = _mm256_div_ps(y1, y_sum);
-        z2 = _mm256_div_ps(y2, y_sum);
-        z3 = _mm256_div_ps(y3, y_sum);
+        y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
+        z0 = _mm256_mul_ps(y0, y_rcp_sum);
+        z1 = _mm256_mul_ps(y1, y_rcp_sum);
+        z2 = _mm256_mul_ps(y2, y_rcp_sum);
+        z3 = _mm256_mul_ps(y3, y_rcp_sum);
 
         _mm256_store_x4_ps(y_ptr, z0, z1, z2, z3);
 
         x_ptr += stride;
         y_ptr += stride;
         r--;
+    }
+
+    return SUCCESS;
+}
+
+int vw_softmax_stride32x_s(
+    const uint n, const uint stride,
+    infloats x_ptr, outfloats y_ptr) {
+
+#ifdef _DEBUG
+    if ((stride % (AVX2_FLOAT_STRIDE * 4) != 0) || (stride <= AVX2_FLOAT_STRIDE * 4)
+        || ((size_t)x_ptr % AVX2_ALIGNMENT) != 0 || ((size_t)y_ptr % AVX2_ALIGNMENT) != 0) {
+        return FAILURE_BADPARAM;
+    }
+#endif // _DEBUG
+
+    uint r;
+    infloats xc_ptr;
+    outfloats yc_ptr;
+    __m256 x0, x1, x2, x3, y0, y1, y2, y3, z0, z1, z2, z3;
+
+    for (uint i = 0; i < n; i++) {
+        __m256 x_max = _mm256_undefined_ps(), y_sum = _mm256_undefined_ps();
+
+        r = stride;
+        xc_ptr = x_ptr;
+
+        {
+            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
+
+            x_max = _mm256_max_ps(
+                _mm256_max_ps(_mm256_maxwise8_ps(x0), _mm256_maxwise8_ps(x1)),
+                _mm256_max_ps(_mm256_maxwise8_ps(x2), _mm256_maxwise8_ps(x3))
+            );
+
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
+            r -= AVX2_FLOAT_STRIDE * 4;
+        }
+        while (r >= AVX2_FLOAT_STRIDE * 4) {
+            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
+
+            x_max = _mm256_max_ps(
+                _mm256_max_ps(
+                    _mm256_max_ps(_mm256_maxwise8_ps(x0), _mm256_maxwise8_ps(x1)),
+                    _mm256_max_ps(_mm256_maxwise8_ps(x2), _mm256_maxwise8_ps(x3))
+                ),
+                x_max
+            );
+
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
+            r -= AVX2_FLOAT_STRIDE * 4;
+        }
+
+        r = stride;
+        xc_ptr = x_ptr;
+        yc_ptr = y_ptr;
+
+        {
+            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
+
+            y0 = _mm256_softmaxexp_ps(x0, x_max);
+            y1 = _mm256_softmaxexp_ps(x1, x_max);
+            y2 = _mm256_softmaxexp_ps(x2, x_max);
+            y3 = _mm256_softmaxexp_ps(x3, x_max);
+
+            _mm256_store_x4_ps(yc_ptr, y0, y1, y2, y3);
+
+            y_sum = _mm256_add_ps(
+                _mm256_add_ps(_mm256_sumwise8_ps(y0), _mm256_sumwise8_ps(y1)),
+                _mm256_add_ps(_mm256_sumwise8_ps(y2), _mm256_sumwise8_ps(y3))
+            );
+
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
+            yc_ptr += AVX2_FLOAT_STRIDE * 4;
+            r -= AVX2_FLOAT_STRIDE * 4;
+        }
+        while (r >= AVX2_FLOAT_STRIDE * 4) {
+            _mm256_load_x4_ps(xc_ptr, x0, x1, x2, x3);
+
+            y0 = _mm256_softmaxexp_ps(x0, x_max);
+            y1 = _mm256_softmaxexp_ps(x1, x_max);
+            y2 = _mm256_softmaxexp_ps(x2, x_max);
+            y3 = _mm256_softmaxexp_ps(x3, x_max);
+
+            _mm256_store_x4_ps(yc_ptr, y0, y1, y2, y3);
+
+            y_sum = _mm256_add_ps(
+                _mm256_add_ps(
+                    _mm256_add_ps(_mm256_sumwise8_ps(y0), _mm256_sumwise8_ps(y1)),
+                    _mm256_add_ps(_mm256_sumwise8_ps(y2), _mm256_sumwise8_ps(y3))
+                ),
+                y_sum
+            );
+
+            xc_ptr += AVX2_FLOAT_STRIDE * 4;
+            yc_ptr += AVX2_FLOAT_STRIDE * 4;
+            r -= AVX2_FLOAT_STRIDE * 4;
+        }
+
+        r = stride;
+        yc_ptr = y_ptr;
+
+        __m256 y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
+        while (r >= AVX2_FLOAT_STRIDE * 4) {
+            _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
+
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
+            z1 = _mm256_mul_ps(y1, y_rcp_sum);
+            z2 = _mm256_mul_ps(y2, y_rcp_sum);
+            z3 = _mm256_mul_ps(y3, y_rcp_sum);
+
+            _mm256_store_x4_ps(yc_ptr, z0, z1, z2, z3);
+
+            yc_ptr += AVX2_FLOAT_STRIDE * 4;
+            r -= AVX2_FLOAT_STRIDE * 4;
+        }
+
+        x_ptr += stride;
+        y_ptr += stride;
     }
 
     return SUCCESS;
@@ -1076,13 +1204,15 @@ int vw_softmax_aligned_s(
         r = stride;
         yc_ptr = y_ptr;
 
+        __m256 y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
         while (r >= AVX2_FLOAT_STRIDE * 4) {
             _mm256_load_x4_ps(yc_ptr, y0, y1, y2, y3);
 
-            z0 = _mm256_div_ps(y0, y_sum);
-            z1 = _mm256_div_ps(y1, y_sum);
-            z2 = _mm256_div_ps(y2, y_sum);
-            z3 = _mm256_div_ps(y3, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
+            z1 = _mm256_mul_ps(y1, y_rcp_sum);
+            z2 = _mm256_mul_ps(y2, y_rcp_sum);
+            z3 = _mm256_mul_ps(y3, y_rcp_sum);
 
             _mm256_store_x4_ps(yc_ptr, z0, z1, z2, z3);
 
@@ -1092,8 +1222,8 @@ int vw_softmax_aligned_s(
         if (r >= AVX2_FLOAT_STRIDE * 2) {
             _mm256_load_x2_ps(yc_ptr, y0, y1);
 
-            z0 = _mm256_div_ps(y0, y_sum);
-            z1 = _mm256_div_ps(y1, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
+            z1 = _mm256_mul_ps(y1, y_rcp_sum);
 
             _mm256_store_x2_ps(yc_ptr, z0, z1);
 
@@ -1103,7 +1233,7 @@ int vw_softmax_aligned_s(
         if (r >= AVX2_FLOAT_STRIDE) {
             _mm256_load_x1_ps(yc_ptr, y0);
 
-            z0 = _mm256_div_ps(y0, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
 
             _mm256_store_x1_ps(yc_ptr, z0);
         }
@@ -1252,13 +1382,15 @@ int vw_softmax_unaligned_s(
         r = stride;
         yc_ptr = y_ptr;
 
+        __m256 y_rcp_sum = _mm256_div_ps(_mm256_set1_ps(1), y_sum);
+
         while (r >= AVX2_FLOAT_STRIDE * 4) {
             _mm256_loadu_x4_ps(yc_ptr, y0, y1, y2, y3);
 
-            z0 = _mm256_div_ps(y0, y_sum);
-            z1 = _mm256_div_ps(y1, y_sum);
-            z2 = _mm256_div_ps(y2, y_sum);
-            z3 = _mm256_div_ps(y3, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
+            z1 = _mm256_mul_ps(y1, y_rcp_sum);
+            z2 = _mm256_mul_ps(y2, y_rcp_sum);
+            z3 = _mm256_mul_ps(y3, y_rcp_sum);
 
             _mm256_storeu_x4_ps(yc_ptr, z0, z1, z2, z3);
 
@@ -1268,8 +1400,8 @@ int vw_softmax_unaligned_s(
         if (r >= AVX2_FLOAT_STRIDE * 2) {
             _mm256_loadu_x2_ps(yc_ptr, y0, y1);
 
-            z0 = _mm256_div_ps(y0, y_sum);
-            z1 = _mm256_div_ps(y1, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
+            z1 = _mm256_mul_ps(y1, y_rcp_sum);
 
             _mm256_storeu_x2_ps(yc_ptr, z0, z1);
 
@@ -1279,7 +1411,7 @@ int vw_softmax_unaligned_s(
         if (r >= AVX2_FLOAT_STRIDE) {
             _mm256_loadu_x1_ps(yc_ptr, y0);
 
-            z0 = _mm256_div_ps(y0, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
 
             _mm256_storeu_x1_ps(yc_ptr, z0);
 
@@ -1289,7 +1421,7 @@ int vw_softmax_unaligned_s(
         if (r > 0) {
             _mm256_maskload_x1_ps(yc_ptr, y0, mask);
 
-            z0 = _mm256_div_ps(y0, y_sum);
+            z0 = _mm256_mul_ps(y0, y_rcp_sum);
 
             _mm256_maskstore_x1_ps(yc_ptr, z0, mask);
         }
@@ -1342,6 +1474,9 @@ int vw_softmax_stride_aligned_s(
     }
     if (stride == AVX2_FLOAT_STRIDE * 4) {
         return vw_softmax_stride32_s(n, stride, x_ptr, y_ptr);
+    }
+    if (stride % (AVX2_FLOAT_STRIDE * 4) == 0) {
+        return vw_softmax_stride32x_s(n, stride, x_ptr, y_ptr);
     }
 
     return vw_softmax_aligned_s(n, stride, x_ptr, y_ptr);
