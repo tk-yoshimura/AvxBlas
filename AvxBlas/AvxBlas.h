@@ -108,6 +108,7 @@ namespace AvxBlas {
         static void Add(UInt32 n, UInt32 stride, Array<double>^ x, Array<double>^ v, Array<double>^ y);
 
         static void Softmax(UInt32 n, UInt32 stride, Array<float>^ x, Array<float>^ y);
+        static void Softmax(UInt32 n, UInt32 stride, Array<double>^ x, Array<double>^ y);
     };
 
     public ref class Constant abstract sealed {

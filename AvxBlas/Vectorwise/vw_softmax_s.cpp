@@ -1,7 +1,6 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
-#include "../Inline/inline_max_s.hpp"
 #include "../Inline/inline_loadstore_xn_s.hpp"
 
 #include <math.h>

@@ -566,6 +566,9 @@
     <ClCompile Include="Vectorwise\vw_softmax_s.cpp">
       <Filter>Source\Vectorwise</Filter>
     </ClCompile>
+    <ClCompile Include="Vectorwise\vw_softmax_d.cpp">
+      <Filter>Source\Vectorwise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
