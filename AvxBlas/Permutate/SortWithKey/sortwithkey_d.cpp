@@ -31,7 +31,7 @@ int sortwithkeydsc_d(const uint n, const uint s, ulong* __restrict v_ptr, double
 
 #pragma managed
 
-void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int64>^ v, SortOrder order, SortNaNMode nan_mode) {
+void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode) {
     if (n <= 0 || s <= 0) {
         return;
     }
@@ -40,8 +40,12 @@ void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array
     Util::CheckLength(n * s, k);
     Util::CheckLength(n * s, v);
 
+    Array<Int64>^ vl = gcnew Array<Int64>(n * s, false);
+
+    Cast::AsType(n * s, v, vl);
+
     double* k_ptr = (double*)(k->Ptr.ToPointer());
-    ulong* v_ptr = (ulong*)(v->Ptr.ToPointer());
+    ulong* v_ptr = (ulong*)(vl->Ptr.ToPointer());
 
     int ret = UNEXECUTED;
 
@@ -51,6 +55,14 @@ void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array
     else {
         ret = sortwithkeydsc_d(n, s, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
     }
+
+#if _DEBUG
+    vl->CheckOverflow();
+#endif
+
+    Cast::AsType(n * s, vl, v);
+
+    vl->~Array();
 
     Util::AssertReturnCode(ret);
 }

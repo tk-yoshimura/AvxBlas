@@ -17,7 +17,7 @@ namespace AvxBlasTest.CastTest {
 
                 Array<double> y = new(length + 4);
 
-                Elementwise.Cast(length, x, y);
+                Cast.AsType(length, x, y);
 
                 CollectionAssert.AreEqual(t, (double[])y);
             }
@@ -34,9 +34,82 @@ namespace AvxBlasTest.CastTest {
 
                 Array<float> y = new(length + 4);
 
-                Elementwise.Cast(length, x, y);
+                Cast.AsType(length, x, y);
 
                 CollectionAssert.AreEqual(t, (float[])y);
+            }
+        }
+
+        [TestMethod]
+        public void IntLongTest() {
+            Random random = new(1234);
+
+            for (uint length = 0; length <= 64; length++) {
+                int[] x = (new int[length]).Select((_, idx) => random.Next(32) - 16).ToArray();
+
+                long[] t = x.Select((v) => (long)v).Concat(new long[4]).ToArray();
+
+                Array<long> y = new(length + 4);
+
+                Cast.AsType(length, x, y);
+
+                CollectionAssert.AreEqual(t, (long[])y);
+            }
+        }
+
+        [TestMethod]
+        public void LongIntTest() {
+            Random random = new(1234);
+
+            for (uint length = 0; length <= 64; length++) {
+                long[] x = (new long[length]).Select((_, idx) => (long)(random.Next(65537) - 32768)).ToArray();
+                
+                int[] t = x.Select((v) => (int)v).Concat(new int[4]).ToArray();
+
+                Array<int> y = new(length + 4);
+
+                Cast.AsType(length, x, y);
+
+                CollectionAssert.AreEqual(t, (int[])y);
+            }
+
+            for (uint length = 0; length <= 64; length++) {
+                long[] x = (new long[length]).Select((_, idx) => (long)random.Next() * (random.Next(2) == 0 ? -1 : +1)).ToArray();
+                
+                int[] t = x.Select((v) => (int)v).Concat(new int[4]).ToArray();
+
+                Array<int> y = new(length + 4);
+
+                Cast.AsType(length, x, y);
+
+                CollectionAssert.AreEqual(t, (int[])y);
+            }
+
+            {
+                long[] x = new long[] { 
+                    int.MaxValue,
+                    int.MinValue,
+                    int.MaxValue,
+                    int.MinValue,
+                    int.MaxValue,
+                    int.MinValue,
+                    int.MaxValue,
+                    int.MinValue,
+                    int.MaxValue,
+                    int.MinValue,
+                    int.MaxValue,
+                    int.MinValue,
+                    int.MaxValue,
+                    int.MinValue,
+                };
+
+                int[] t = x.Select((v) => (int)v).Concat(new int[4]).ToArray();
+
+                Array<int> y = new(x.Length + 4);
+
+                Cast.AsType((uint)x.Length, x, y);
+
+                CollectionAssert.AreEqual(t, (int[])y);
             }
         }
     }

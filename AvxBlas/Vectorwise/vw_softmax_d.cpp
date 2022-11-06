@@ -71,8 +71,6 @@ int vw_softmax_stride1_d(
     }
 #endif // _DEBUG
 
-    const __m256d fills = _mm256_set1_pd(1);
-
     __m256d x0, x1, x2, x3, y0, y1, y2, y3;
 
     uint r = n;

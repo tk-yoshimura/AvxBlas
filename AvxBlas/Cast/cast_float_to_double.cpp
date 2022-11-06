@@ -84,7 +84,7 @@ int cast_float_to_double(
 
 #pragma managed
 
-void AvxBlas::Elementwise::Cast(UInt32 n, Array<float>^ x, Array<double>^ y) {
+void AvxBlas::Cast::AsType(UInt32 n, Array<float>^ x, Array<double>^ y) {
     if (n <= 0) {
         return;
     }

@@ -97,9 +97,14 @@ namespace AvxBlas {
 
         static void Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+    };
 
-        static void Cast(UInt32 n, Array<float>^ x, Array<double>^ y);
-        static void Cast(UInt32 n, Array<double>^ x, Array<float>^ y);
+    public ref class Cast abstract sealed{
+        public:
+        static void AsType(UInt32 n, Array<float>^ x, Array<double>^ y);
+        static void AsType(UInt32 n, Array<double>^ x, Array<float>^ y);
+        static void AsType(UInt32 n, Array<Int32>^ x, Array<Int64>^ y);
+        static void AsType(UInt32 n, Array<Int64>^ x, Array<Int32>^ y);
     };
 
     public ref class Vectorwise abstract sealed {
@@ -136,6 +141,12 @@ namespace AvxBlas {
 
         static void Min(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Min(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
+
+        //static void ArgMax(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y);
+        //static void ArgMax(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<Int32>^ y);
+        //
+        //static void ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y);
+        //static void ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<Int32>^ y);
     };
 
     public ref class Affine abstract sealed {
@@ -298,7 +309,7 @@ namespace AvxBlas {
         static void Sort(UInt32 n, UInt32 s, Array<double>^ y, SortOrder order, SortNaNMode nan_mode);
 
         static void SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode);
-        static void SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int64>^ v, SortOrder order, SortNaNMode nan_mode);
+        static void SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode);
 
         static void Flip(UInt32 n, UInt32 s, Array<float>^ x, Array<float>^ y);
         static void Flip(UInt32 n, UInt32 s, Array<double>^ x, Array<double>^ y);

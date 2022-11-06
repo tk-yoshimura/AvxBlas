@@ -157,6 +157,8 @@
     <ClCompile Include="Array\array.cpp" />
     <ClCompile Include="Cast\cast_double_to_float.cpp" />
     <ClCompile Include="Cast\cast_float_to_double.cpp" />
+    <ClCompile Include="Cast\cast_int_to_long.cpp" />
+    <ClCompile Include="Cast\cast_long_to_int.cpp" />
     <ClCompile Include="Constant\const_add_d.cpp" />
     <ClCompile Include="Constant\const_add_s.cpp" />
     <ClCompile Include="Constant\const_mul_d.cpp" />

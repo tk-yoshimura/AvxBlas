@@ -10,6 +10,18 @@
 
 static_assert(sizeof(float) == sizeof(uint), "mismatch sizeof float and uint");
 
+__forceinline __m128i _mm_load_epi32(const uint* ptr) {
+    return _mm_castps_si128(_mm_load_ps((float*)(void*)ptr));
+}
+
+__forceinline void _mm_store_epi32(const uint* ptr, __m128i v) {
+    _mm_store_ps((float*)(void*)ptr, _mm_castsi128_ps(v));
+}
+
+__forceinline void _mm_stream_epi32(const uint* ptr, __m128i v) {
+    _mm_stream_ps((float*)(void*)ptr, _mm_castsi128_ps(v));
+}
+
 __forceinline __m256i _mm256_load_epi32(const uint* ptr) {
     return _mm256_castps_si256(_mm256_load_ps((float*)(void*)ptr));
 }

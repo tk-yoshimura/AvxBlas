@@ -584,6 +584,12 @@
     <ClCompile Include="Aggregate\ag_average_s.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
+    <ClCompile Include="Cast\cast_int_to_long.cpp">
+      <Filter>Source\Cast</Filter>
+    </ClCompile>
+    <ClCompile Include="Cast\cast_long_to_int.cpp">
+      <Filter>Source\Cast</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

@@ -409,10 +409,10 @@ namespace AvxBlasTest.SortTest {
             for (uint n = 0; n <= 64; n++) {
                 for (uint s = 0; s <= 256; s++) {
                     double[] k = (new double[checked(n * s + 4)]).Select((_, idx) => random.NextDouble()).ToArray();
-                    long[] v = (new long[checked(n * s + 4)]).Select((_, idx) => (long)idx).ToArray();
+                    int[] v = (new int[checked(n * s + 4)]).Select((_, idx) => idx).ToArray();
 
                     double[] tk = (double[])k.Clone();
-                    long[] tv = (long[])v.Clone();
+                    int[] tv = (int[])v.Clone();
 
                     for (uint i = 0; i < n; i++) {
                         Array.Sort(tk, tv, (int)(i * s), (int)s);
@@ -421,7 +421,7 @@ namespace AvxBlasTest.SortTest {
                     }
 
                     Array<double> yk = k;
-                    Array<long> yv = v;
+                    Array<int> yv = v;
 
                     Permutate.SortWithKey(n, s, yk, yv, SortOrder.Descending, SortNaNMode.MinimizeNaN);
 
@@ -439,17 +439,17 @@ namespace AvxBlasTest.SortTest {
                 for (uint s = 0; s <= 256; s++) {
                     double[] k = (new double[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? random.NextDouble() : double.NaN).ToArray();
-                    long[] v = (new long[checked(n * s + 4)]).Select((_, idx) => (long)idx).ToArray();
+                    int[] v = (new int[checked(n * s + 4)]).Select((_, idx) => idx).ToArray();
 
                     double[] tk = (double[])k.Clone();
-                    long[] tv = (long[])v.Clone();
+                    int[] tv = (int[])v.Clone();
 
                     for (uint i = 0; i < n; i++) {
                         Array.Sort(tk, tv, (int)(i * s), (int)s, new DDscMinNaN());
                     }
 
                     Array<double> yk = k;
-                    Array<long> yv = v;
+                    Array<int> yv = v;
 
                     Permutate.SortWithKey(n, s, yk, yv, SortOrder.Descending, SortNaNMode.MinimizeNaN);
 
@@ -467,17 +467,17 @@ namespace AvxBlasTest.SortTest {
                 for (uint s = 0; s <= 256; s++) {
                     double[] k = (new double[checked(n * s + 4)]).Select(
                         (_, idx) => random.Next(4) > 0 ? random.NextDouble() : double.NaN).ToArray();
-                    long[] v = (new long[checked(n * s + 4)]).Select((_, idx) => (long)idx).ToArray();
+                    int[] v = (new int[checked(n * s + 4)]).Select((_, idx) => idx).ToArray();
 
                     double[] tk = (double[])k.Clone();
-                    long[] tv = (long[])v.Clone();
+                    int[] tv = (int[])v.Clone();
 
                     for (uint i = 0; i < n; i++) {
                         Array.Sort(tk, tv, (int)(i * s), (int)s, new DDscMaxNaN());
                     }
 
                     Array<double> yk = k;
-                    Array<long> yv = v;
+                    Array<int> yv = v;
 
                     Permutate.SortWithKey(n, s, yk, yv, SortOrder.Descending, SortNaNMode.MaximizeNaN);
 
