@@ -117,3 +117,22 @@ __forceinline __m128d _mm256_hadd2_pd(__m256d x) {
 
     return ret;
 }
+
+__forceinline __m256d _mm256_sumwise2_pd(__m256d x) {
+    __m256d y = _mm256_add_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
+
+    return y;
+}
+
+__forceinline __m256d _mm256_sumwise3_pd(__m256d x) {
+    __m256d y = _mm256_add_pd(_mm256_add_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_DBAC)), _mm256_permute4x64_pd(x, _MM_PERM_DACB));
+
+    return y;
+}
+
+__forceinline __m256d _mm256_sumwise4_pd(__m256d x) {
+    __m256d y = _mm256_add_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
+    __m256d z = _mm256_add_pd(y, _mm256_permute4x64_pd(y, _MM_PERM_BADC));
+
+    return z;
+}

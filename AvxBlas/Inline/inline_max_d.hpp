@@ -105,3 +105,22 @@ __forceinline __m256dx2 _mm256_max12to6_pd(__m256d x0, __m256d x1, __m256d x2) {
 
     return __m256dx2(imm0, imm1);
 }
+
+__forceinline __m256d _mm256_maxwise2_pd(__m256d x) {
+    __m256d y = _mm256_max_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
+
+    return y;
+}
+
+__forceinline __m256d _mm256_maxwise3_pd(__m256d x) {
+    __m256d y = _mm256_max_pd(_mm256_max_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_DBAC)), _mm256_permute4x64_pd(x, _MM_PERM_DACB));
+
+    return y;
+}
+
+__forceinline __m256d _mm256_maxwise4_pd(__m256d x) {
+    __m256d y = _mm256_max_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
+    __m256d z = _mm256_max_pd(y, _mm256_permute4x64_pd(y, _MM_PERM_BADC));
+
+    return z;
+}

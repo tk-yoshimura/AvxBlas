@@ -2,6 +2,8 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_loadstore_xn_d.hpp"
+#include "../Inline/inline_max_d.hpp"
+#include "../Inline/inline_sum_d.hpp"
 
 #include <math.h>
 
@@ -12,44 +14,6 @@ using namespace System;
 __forceinline __m256d _mm256_softmaxexp_pd(__m256d x, __m256d x_max) {
     __m256d y = _mm256_sub_pd(x, x_max);
     __m256d z = _mm256_exp_pd(y);
-
-    return z;
-}
-
-__forceinline __m256d _mm256_maxwise2_pd(__m256d x) {
-    __m256d y = _mm256_max_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
-
-    return y;
-}
-
-__forceinline __m256d _mm256_sumwise2_pd(__m256d x) {
-    __m256d y = _mm256_add_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
-
-    return y;
-}
-
-__forceinline __m256d _mm256_maxwise3_pd(__m256d x) {
-    __m256d y = _mm256_max_pd(_mm256_max_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_DBAC)), _mm256_permute4x64_pd(x, _MM_PERM_DACB));
-
-    return y;
-}
-
-__forceinline __m256d _mm256_sumwise3_pd(__m256d x) {
-    __m256d y = _mm256_add_pd(_mm256_add_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_DBAC)), _mm256_permute4x64_pd(x, _MM_PERM_DACB));
-
-    return y;
-}
-
-__forceinline __m256d _mm256_maxwise4_pd(__m256d x) {
-    __m256d y = _mm256_max_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
-    __m256d z = _mm256_max_pd(y, _mm256_permute4x64_pd(y, _MM_PERM_BADC));
-
-    return z;
-}
-
-__forceinline __m256d _mm256_sumwise4_pd(__m256d x) {
-    __m256d y = _mm256_add_pd(x, _mm256_permute4x64_pd(x, _MM_PERM_CDAB));
-    __m256d z = _mm256_add_pd(y, _mm256_permute4x64_pd(y, _MM_PERM_BADC));
 
     return z;
 }

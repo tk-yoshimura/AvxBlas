@@ -1,16 +1,10 @@
 #include <intrin.h>
 
-#ifdef _DEBUG
-#include <exception>
-#endif // _DEBUG
-
 // bitscanforward
 __forceinline unsigned int bsf(unsigned int n) {
-#ifdef _DEBUG
     if (n == 0u) {
-        throw std::exception("undefined bsf");
+        return 0u;
     }
-#endif // _DEBUG
 
 #ifdef _MSC_VER
     unsigned long index;

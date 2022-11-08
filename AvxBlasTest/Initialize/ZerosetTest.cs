@@ -82,5 +82,83 @@ namespace AvxBlasTest.InitializeTest {
                 }
             }
         }
+
+        [TestMethod]
+        public void IZerosetTest() {
+            for (uint length = 1; length <= 64; length++) {
+                for (uint index = 0; index < length; index++) {
+                    for (uint count = 0; count <= length - index; count++) {
+                        int[] v = (new int[length]).Select((_, idx) => idx + 1).ToArray();
+                        int[] v2 = (new int[length])
+                            .Select((_, idx) => idx >= index && idx < (index + count) ? 0 : idx + 1)
+                            .ToArray();
+
+                        Array<int> arr = new(v);
+
+                        Initialize.Zeroset(index, count, arr);
+
+                        int[] v3 = arr;
+
+                        CollectionAssert.AreEqual(v2, v3);
+                    }
+                }
+            }
+
+            for (uint length = 1; length <= 64; length++) {
+                for (uint count = 0; count <= length; count++) {
+                    int[] v = (new int[length]).Select((_, idx) => idx + 1).ToArray();
+                    int[] v2 = (new int[length])
+                        .Select((_, idx) => idx < count ? 0 : idx + 1)
+                        .ToArray();
+
+                    Array<int> arr = new(v);
+
+                    Initialize.Zeroset(count, arr);
+
+                    int[] v3 = arr;
+
+                    CollectionAssert.AreEqual(v2, v3);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void LZerosetTest() {
+            for (uint length = 1; length <= 64; length++) {
+                for (uint index = 0; index < length; index++) {
+                    for (uint count = 0; count <= length - index; count++) {
+                        long[] v = (new long[length]).Select((_, idx) => (long)idx + 1).ToArray();
+                        long[] v2 = (new long[length])
+                            .Select((_, idx) => idx >= index && idx < (index + count) ? 0 : (long)idx + 1)
+                            .ToArray();
+
+                        Array<long> arr = new(v);
+
+                        Initialize.Zeroset(index, count, arr);
+
+                        long[] v3 = arr;
+
+                        CollectionAssert.AreEqual(v2, v3);
+                    }
+                }
+            }
+
+            for (uint length = 1; length <= 64; length++) {
+                for (uint count = 0; count <= length; count++) {
+                    long[] v = (new long[length]).Select((_, idx) => (long)idx + 1).ToArray();
+                    long[] v2 = (new long[length])
+                        .Select((_, idx) => idx < count ? 0 : (long)idx + 1)
+                        .ToArray();
+
+                    Array<long> arr = new(v);
+
+                    Initialize.Zeroset(count, arr);
+
+                    long[] v3 = arr;
+
+                    CollectionAssert.AreEqual(v2, v3);
+                }
+            }
+        }
     }
 }

@@ -145,7 +145,7 @@ namespace AvxBlas {
         //static void ArgMax(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y);
         //static void ArgMax(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<Int32>^ y);
         //
-        //static void ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y);
+        static void ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y);
         //static void ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<Int32>^ y);
     };
 
@@ -325,10 +325,20 @@ namespace AvxBlas {
         static void Clear(UInt32 index, UInt32 n, float c, Array<float>^ y);
         static void Clear(UInt32 index, UInt32 n, double c, Array<double>^ y);
 
+        static void Clear(UInt32 n, Int32 c, Array<Int32>^ y);
+        static void Clear(UInt32 n, Int64 c, Array<Int64>^ y);
+        static void Clear(UInt32 index, UInt32 n, Int32 c, Array<Int32>^ y);
+        static void Clear(UInt32 index, UInt32 n, Int64 c, Array<Int64>^ y);
+
         static void Zeroset(UInt32 n, Array<float>^ y);
         static void Zeroset(UInt32 n, Array<double>^ y);
         static void Zeroset(UInt32 index, UInt32 n, Array<float>^ y);
         static void Zeroset(UInt32 index, UInt32 n, Array<double>^ y);
+
+        static void Zeroset(UInt32 n, Array<Int32>^ y);
+        static void Zeroset(UInt32 n, Array<Int64>^ y);
+        static void Zeroset(UInt32 index, UInt32 n, Array<Int32>^ y);
+        static void Zeroset(UInt32 index, UInt32 n, Array<Int64>^ y);
     };
 
     public ref class Util abstract sealed {

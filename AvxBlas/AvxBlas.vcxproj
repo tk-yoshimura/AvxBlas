@@ -120,6 +120,7 @@
     <ClInclude Include="Inline\inline_max_s.hpp" />
     <ClInclude Include="Inline\inline_min_d.hpp" />
     <ClInclude Include="Inline\inline_min_s.hpp" />
+    <ClInclude Include="Inline\inline_misc.hpp" />
     <ClInclude Include="Inline\inline_numeric.hpp" />
     <ClInclude Include="Inline\inline_copy_s.hpp" />
     <ClInclude Include="Inline\inline_dilate_s.hpp" />
@@ -146,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="Affine\affine_dotmul_d.cpp" />
     <ClCompile Include="Affine\affine_dotmul_s.cpp" />
+    <ClCompile Include="Aggregate\ag_argmin_s.cpp" />
     <ClCompile Include="Aggregate\ag_average_d.cpp" />
     <ClCompile Include="Aggregate\ag_average_s.cpp" />
     <ClCompile Include="Aggregate\ag_max_d.cpp" />
@@ -188,6 +190,8 @@
     <ClCompile Include="Elementwise\ew_copy_d.cpp" />
     <ClCompile Include="Elementwise\ew_copy_s.cpp" />
     <ClCompile Include="Initialize\init_clear_d.cpp" />
+    <ClCompile Include="Initialize\init_clear_epi32.cpp" />
+    <ClCompile Include="Initialize\init_clear_epi64.cpp" />
     <ClCompile Include="Initialize\init_clear_s.cpp" />
     <ClCompile Include="Vectorwise\vw_softmax_d.cpp" />
     <ClCompile Include="Vectorwise\vw_softmax_s.cpp" />
