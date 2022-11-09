@@ -147,6 +147,9 @@
   <ItemGroup>
     <ClCompile Include="Affine\affine_dotmul_d.cpp" />
     <ClCompile Include="Affine\affine_dotmul_s.cpp" />
+    <ClCompile Include="Aggregate\ag_argmax_d.cpp" />
+    <ClCompile Include="Aggregate\ag_argmax_s.cpp" />
+    <ClCompile Include="Aggregate\ag_argmin_d.cpp" />
     <ClCompile Include="Aggregate\ag_argmin_s.cpp" />
     <ClCompile Include="Aggregate\ag_average_d.cpp" />
     <ClCompile Include="Aggregate\ag_average_s.cpp" />

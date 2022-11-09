@@ -602,6 +602,15 @@
     <ClCompile Include="Initialize\init_clear_epi64.cpp">
       <Filter>Source\Initialize</Filter>
     </ClCompile>
+    <ClCompile Include="Aggregate\ag_argmax_s.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_argmin_d.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
+    <ClCompile Include="Aggregate\ag_argmax_d.cpp">
+      <Filter>Source\Aggregate</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

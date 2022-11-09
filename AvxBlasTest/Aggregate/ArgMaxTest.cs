@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace AvxBlasTest.AggregateTest {
     [TestClass]
-    public class ArgMinTest {
+    public class ArgMaxTest {
         [TestMethod]
-        public void SArgMinTest() {
+        public void SArgMaxTest() {
             Random random = new(1234);
 
             foreach (uint n in new uint[] {
@@ -31,11 +31,11 @@ namespace AvxBlasTest.AggregateTest {
 
                         for (int i = 0; i < n; i++) {
                             for (int j = 0; j < stride; j++) {
-                                float s = float.PositiveInfinity;
+                                float s = float.NegativeInfinity;
                                 int index = 0;
 
                                 for (int k = 0; k < samples; k++) {
-                                    if (s > x[j + stride * (k + samples * i)]) {
+                                    if (s < x[j + stride * (k + samples * i)]) {
                                         index = k;
                                         s = x[j + stride * (k + samples * i)];
                                     }
@@ -47,7 +47,7 @@ namespace AvxBlasTest.AggregateTest {
 
                         Array<int> y = new(outlength);
 
-                        Aggregate.ArgMin(n, samples, stride, x, y);
+                        Aggregate.ArgMax(n, samples, stride, x, y);
 
                         CollectionAssert.AreEqual(t, (int[])y, $"NG: n{n} samples{samples} stride{stride}");
 
@@ -57,8 +57,10 @@ namespace AvxBlasTest.AggregateTest {
             }
         }
 
+        
+
         [TestMethod]
-        public void DArgMinTest() {
+        public void DArgMaxTest() {
             Random random = new(1234);
 
             foreach (uint n in new uint[] {
@@ -82,11 +84,11 @@ namespace AvxBlasTest.AggregateTest {
 
                         for (int i = 0; i < n; i++) {
                             for (int j = 0; j < stride; j++) {
-                                double s = double.PositiveInfinity;
+                                double s = double.NegativeInfinity;
                                 int index = 0;
 
                                 for (int k = 0; k < samples; k++) {
-                                    if (s > x[j + stride * (k + samples * i)]) {
+                                    if (s < x[j + stride * (k + samples * i)]) {
                                         index = k;
                                         s = x[j + stride * (k + samples * i)];
                                     }
@@ -98,7 +100,7 @@ namespace AvxBlasTest.AggregateTest {
 
                         Array<int> y = new(outlength);
 
-                        Aggregate.ArgMin(n, samples, stride, x, y);
+                        Aggregate.ArgMax(n, samples, stride, x, y);
 
                         CollectionAssert.AreEqual(t, (int[])y, $"NG: n{n} samples{samples} stride{stride}");
 
