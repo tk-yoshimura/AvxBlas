@@ -611,6 +611,228 @@
     <ClCompile Include="Aggregate\ag_argmax_d.cpp">
       <Filter>Source\Aggregate</Filter>
     </ClCompile>
+    <ClCompile Include="Elementwise\ew_cbrt_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cbrt_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_ceil_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_ceil_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cos_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cos_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cosh_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cosh_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cube_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_cube_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_div_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_div_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_exp_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_exp_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_floor_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_floor_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_log_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_log_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_log2_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_log2_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_maximum_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_maximum_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_minimum_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_minimum_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_mul_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_mul_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_nanaszero_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_nanaszero_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_neg_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_neg_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_pow_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_pow_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_pow2_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_pow2_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_rcp_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_rcp_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_relu_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_relu_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_relugrad_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_relugrad_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_round_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_round_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sigmoid_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sigmoid_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sign_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sign_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_signedpow_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_signedpow_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_signedsqrt_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_signedsqrt_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sin_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sin_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sinh_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sinh_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_softplus_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_softplus_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sqrt_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sqrt_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_square_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_square_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sub_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sub_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_tan_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_tan_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_tanh_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_tanh_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arccos_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arccos_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arcsin_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arcsin_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arctan_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arctan_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_atan2_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_atan2_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

@@ -95,8 +95,119 @@ namespace AvxBlas {
         static void Abs(UInt32 n, Array<float>^ x, Array<float>^ y);
         static void Abs(UInt32 n, Array<double>^ x, Array<double>^ y);
 
+        static void Sign(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Sign(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Neg(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Neg(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Rcp(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Rcp(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Sin(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Sin(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Cos(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Cos(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Tan(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Tan(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Arcsin(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Arcsin(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Arccos(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Arccos(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Arctan(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Arctan(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Sinh(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Sinh(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Cosh(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Cosh(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Tanh(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Tanh(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Sqrt(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Sqrt(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void SignedSqrt(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void SignedSqrt(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Cbrt(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Cbrt(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Square(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Square(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Cube(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Cube(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Floor(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Floor(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Ceil(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Ceil(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Round(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Round(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Log(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Log(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Log2(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Log2(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Exp(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Exp(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Pow2(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Pow2(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Relu(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Relu(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Softplus(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Softplus(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void Sigmoid(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void Sigmoid(UInt32 n, Array<double>^ x, Array<double>^ y);
+
+        static void NanAsZero(UInt32 n, Array<float>^ x, Array<float>^ y);
+        static void NanAsZero(UInt32 n, Array<double>^ x, Array<double>^ y);
+
         static void Add(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void Add(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Sub(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Sub(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Mul(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Mul(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Div(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Div(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Maximum(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Maximum(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Minimum(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Minimum(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Pow(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Pow(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void SignedPow(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void SignedPow(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Atan2(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Atan2(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void ReluGrad(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void ReluGrad(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
     };
 
     public ref class Cast abstract sealed{
