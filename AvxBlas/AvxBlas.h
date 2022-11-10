@@ -203,8 +203,8 @@ namespace AvxBlas {
         static void SignedPow(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void SignedPow(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
 
-        static void Atan2(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
-        static void Atan2(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+        static void Arctan2(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
+        static void Arctan2(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
 
         static void ReluGrad(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void ReluGrad(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);

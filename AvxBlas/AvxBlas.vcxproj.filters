@@ -827,10 +827,10 @@
     <ClCompile Include="Elementwise\ew_arctan_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
-    <ClCompile Include="Elementwise\ew_atan2_d.cpp">
+    <ClCompile Include="Elementwise\ew_arctan2_d.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
-    <ClCompile Include="Elementwise\ew_atan2_s.cpp">
+    <ClCompile Include="Elementwise\ew_arctan2_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
   </ItemGroup>

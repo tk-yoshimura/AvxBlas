@@ -196,8 +196,8 @@
     <ClCompile Include="Elementwise\ew_arcsin_s.cpp" />
     <ClCompile Include="Elementwise\ew_arctan_d.cpp" />
     <ClCompile Include="Elementwise\ew_arctan_s.cpp" />
-    <ClCompile Include="Elementwise\ew_atan2_d.cpp" />
-    <ClCompile Include="Elementwise\ew_atan2_s.cpp" />
+    <ClCompile Include="Elementwise\ew_arctan2_d.cpp" />
+    <ClCompile Include="Elementwise\ew_arctan2_s.cpp" />
     <ClCompile Include="Elementwise\ew_cbrt_d.cpp" />
     <ClCompile Include="Elementwise\ew_cbrt_s.cpp" />
     <ClCompile Include="Elementwise\ew_ceil_d.cpp" />

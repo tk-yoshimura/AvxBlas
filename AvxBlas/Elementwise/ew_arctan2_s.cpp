@@ -81,7 +81,7 @@ int ew_atan2_s(
 
 #pragma managed
 
-void AvxBlas::Elementwise::Atan2(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y) {
+void AvxBlas::Elementwise::Arctan2(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y) {
     if (n <= 0) {
         return;
     }
