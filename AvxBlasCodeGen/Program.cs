@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace AvxBlasCodeGen {
+﻿namespace AvxBlasCodeGen {
     public static class Program {
         static void Main() {
-            string[] binaryfuncs = new []{
+            string[] binaryfuncs = new[]{
                 ""
             };
-            string[] unaryfuncs = new []{
+            string[] unaryfuncs = new[]{
                 ""
             };
 

@@ -63,7 +63,7 @@ namespace AvxBlasTest.CastTest {
 
             for (uint length = 0; length <= 64; length++) {
                 long[] x = (new long[length]).Select((_, idx) => (long)(random.Next(65537) - 32768)).ToArray();
-                
+
                 int[] t = x.Select((v) => (int)v).Concat(new int[4]).ToArray();
 
                 Array<int> y = new(length + 4);
@@ -75,7 +75,7 @@ namespace AvxBlasTest.CastTest {
 
             for (uint length = 0; length <= 64; length++) {
                 long[] x = (new long[length]).Select((_, idx) => (long)random.Next() * (random.Next(2) == 0 ? -1 : +1)).ToArray();
-                
+
                 int[] t = x.Select((v) => (int)v).Concat(new int[4]).ToArray();
 
                 Array<int> y = new(length + 4);
@@ -86,7 +86,7 @@ namespace AvxBlasTest.CastTest {
             }
 
             {
-                long[] x = new long[] { 
+                long[] x = new long[] {
                     int.MaxValue,
                     int.MinValue,
                     int.MaxValue,

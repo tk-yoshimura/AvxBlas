@@ -25,7 +25,7 @@ namespace AvxBlasTest.ElementwiseTest {
 
                     float[] ys = y;
 
-                    for (int i = 0; i < ts.Length; i++) { 
+                    for (int i = 0; i < ts.Length; i++) {
                         Assert.AreEqual(ts[i], ys[i], Math.Abs(ts[i]) * 1e-6);
                     }
                 }
@@ -51,7 +51,7 @@ namespace AvxBlasTest.ElementwiseTest {
 
                     double[] ys = y;
 
-                    for (int i = 0; i < ts.Length; i++) { 
+                    for (int i = 0; i < ts.Length; i++) {
                         Assert.AreEqual(ts[i], ys[i], Math.Abs(ts[i]) * 1e-12);
                     }
                 }

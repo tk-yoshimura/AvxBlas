@@ -57,7 +57,7 @@ namespace AvxBlasTest.AggregateTest {
             }
         }
 
-        
+
 
         [TestMethod]
         public void DArgMaxTest() {
