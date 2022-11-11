@@ -218,14 +218,14 @@ namespace AvxBlas {
         static void Sum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
         static void Sum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
 
-        //static void Prod(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
-        //static void Prod(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
-        //
-        //static void Maximum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
-        //static void Maximum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
-        //
-        //static void Minimum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
-        //static void Minimum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
+        static void Prod(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Prod(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
+        
+        static void Maximum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Maximum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
+        
+        static void Minimum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Minimum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
     };
 
     public ref class Cast abstract sealed{

@@ -863,6 +863,24 @@
     <ClCompile Include="Elementwise\ew_sum_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
+    <ClCompile Include="Elementwise\ew_prod_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_prod_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arrmax_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arrmax_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arrmin_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_arrmin_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

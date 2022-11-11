@@ -202,6 +202,10 @@
     <ClCompile Include="Elementwise\ew_arctan_s.cpp" />
     <ClCompile Include="Elementwise\ew_arctan2_d.cpp" />
     <ClCompile Include="Elementwise\ew_arctan2_s.cpp" />
+    <ClCompile Include="Elementwise\ew_arrmax_d.cpp" />
+    <ClCompile Include="Elementwise\ew_arrmax_s.cpp" />
+    <ClCompile Include="Elementwise\ew_arrmin_d.cpp" />
+    <ClCompile Include="Elementwise\ew_arrmin_s.cpp" />
     <ClCompile Include="Elementwise\ew_cbrt_d.cpp" />
     <ClCompile Include="Elementwise\ew_cbrt_s.cpp" />
     <ClCompile Include="Elementwise\ew_ceil_d.cpp" />
@@ -242,6 +246,8 @@
     <ClCompile Include="Elementwise\ew_pow2_s.cpp" />
     <ClCompile Include="Elementwise\ew_pow_d.cpp" />
     <ClCompile Include="Elementwise\ew_pow_s.cpp" />
+    <ClCompile Include="Elementwise\ew_prod_d.cpp" />
+    <ClCompile Include="Elementwise\ew_prod_s.cpp" />
     <ClCompile Include="Elementwise\ew_rcp_d.cpp" />
     <ClCompile Include="Elementwise\ew_rcp_s.cpp" />
     <ClCompile Include="Elementwise\ew_relugrad_d.cpp" />
