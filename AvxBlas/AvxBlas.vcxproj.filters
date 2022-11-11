@@ -857,6 +857,12 @@
     <ClCompile Include="Elementwise\ew_lerp_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
+    <ClCompile Include="Elementwise\ew_sum_d.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
+    <ClCompile Include="Elementwise\ew_sum_s.cpp">
+      <Filter>Source\Elementwise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

@@ -8,9 +8,7 @@ using namespace System;
 #pragma unmanaged
 
 __forceinline __m256d _mm256_lerp_pd(__m256d xc, __m256d x1, __m256d x2) {
-    const __m256d ones = _mm256_set1_pd(1);
-
-    __m256d y = _mm256_add_pd(_mm256_mul_pd(x1, xc), _mm256_mul_pd(x2, _mm256_sub_pd(ones, xc)));
+    __m256d y = _mm256_add_pd(x2, _mm256_mul_pd(_mm256_sub_pd(x1, x2), xc));
 
     return y;
 }

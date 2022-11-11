@@ -8,9 +8,7 @@ using namespace System;
 #pragma unmanaged
 
 __forceinline __m256 _mm256_lerp_ps(__m256 xc, __m256 x1, __m256 x2) {
-    const __m256 ones = _mm256_set1_ps(1);
-
-    __m256 y = _mm256_add_ps(_mm256_mul_ps(x1, xc), _mm256_mul_ps(x2, _mm256_sub_ps(ones, xc)));
+    __m256 y = _mm256_add_ps(x2, _mm256_mul_ps(_mm256_sub_ps(x1, x2), xc));
 
     return y;
 }
@@ -97,7 +95,7 @@ int ew_lerp_s(
 
 #pragma managed
 
-void AvxBlas::Elementwise::Clamp(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ x3, Array<float>^ y) {
+void AvxBlas::Elementwise::Lerp(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ x3, Array<float>^ y) {
     if (n <= 0) {
         return;
     }

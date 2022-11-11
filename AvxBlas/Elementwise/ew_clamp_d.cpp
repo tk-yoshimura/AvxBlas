@@ -98,7 +98,7 @@ void AvxBlas::Elementwise::Clamp(UInt32 n, Array<double>^ x1, Array<double>^ x2,
 
     const double* x1_ptr = (const double*)(x1->Ptr.ToPointer());
     const double* x2_ptr = (const double*)(x2->Ptr.ToPointer());
-    const double* x3_ptr = (const double*)(x2->Ptr.ToPointer());
+    const double* x3_ptr = (const double*)(x3->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     int ret = ew_clamp_d(n, x1_ptr, x2_ptr, x3_ptr, y_ptr);

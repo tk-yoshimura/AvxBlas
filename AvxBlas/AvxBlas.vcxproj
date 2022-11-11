@@ -270,6 +270,8 @@
     <ClCompile Include="Elementwise\ew_square_s.cpp" />
     <ClCompile Include="Elementwise\ew_sub_d.cpp" />
     <ClCompile Include="Elementwise\ew_sub_s.cpp" />
+    <ClCompile Include="Elementwise\ew_sum_d.cpp" />
+    <ClCompile Include="Elementwise\ew_sum_s.cpp" />
     <ClCompile Include="Elementwise\ew_tanh_d.cpp" />
     <ClCompile Include="Elementwise\ew_tanh_s.cpp" />
     <ClCompile Include="Elementwise\ew_tan_d.cpp" />
