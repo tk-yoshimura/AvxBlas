@@ -82,7 +82,7 @@ namespace AvxBlas {
         Descending
     };
 
-    public enum class SortNaNMode {
+    public enum class SortNanMode {
         MinimizeNaN,
         MaximizeNaN
     };
@@ -255,6 +255,33 @@ namespace AvxBlas {
 
         static void Mul(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
         static void Mul(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void LSub(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void LSub(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void RSub(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void RSub(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void LDiv(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void LDiv(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void RDiv(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void RDiv(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void Pow(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void Pow(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void SignedPow(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void SignedPow(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void Maximum(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void Maximum(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void Minimum(UInt32 n, Array<float>^ x, float c, Array<float>^ y);
+        static void Minimum(UInt32 n, Array<double>^ x, double c, Array<double>^ y);
+
+        static void Clamp(UInt32 n, Array<float>^ x, float cmin, float cmax, Array<float>^ y);
+        static void Clamp(UInt32 n, Array<double>^ x, double cmin, double cmax, Array<double>^ y);
     };
 
     public ref class Aggregate abstract sealed {
@@ -437,11 +464,11 @@ namespace AvxBlas {
 
     public ref class Permutate abstract sealed {
         public:
-        static void Sort(UInt32 n, UInt32 s, Array<float>^ y, SortOrder order, SortNaNMode nan_mode);
-        static void Sort(UInt32 n, UInt32 s, Array<double>^ y, SortOrder order, SortNaNMode nan_mode);
+        static void Sort(UInt32 n, UInt32 s, Array<float>^ y, SortOrder order, SortNanMode nan_mode);
+        static void Sort(UInt32 n, UInt32 s, Array<double>^ y, SortOrder order, SortNanMode nan_mode);
 
-        static void SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode);
-        static void SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode);
+        static void SortWithKey(UInt32 n, UInt32 s, Array<float>^ k, Array<Int32>^ v, SortOrder order, SortNanMode nan_mode);
+        static void SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int32>^ v, SortOrder order, SortNanMode nan_mode);
 
         static void Flip(UInt32 n, UInt32 s, Array<float>^ x, Array<float>^ y);
         static void Flip(UInt32 n, UInt32 s, Array<double>^ x, Array<double>^ y);

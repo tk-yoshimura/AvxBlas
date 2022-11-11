@@ -151,7 +151,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<float> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} s{s} nan_none");
 
@@ -171,7 +171,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<float> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} s{s} nan_minimize");
 
@@ -191,7 +191,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<float> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNaNMode.MaximizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNanMode.MaximizeNaN);
 
                     CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} s{s} nan_maximize");
 
@@ -216,7 +216,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<float> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} s{s} nan_none");
 
@@ -236,7 +236,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<float> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} s{s} nan_minimize");
 
@@ -256,7 +256,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<float> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNaNMode.MaximizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNanMode.MaximizeNaN);
 
                     CollectionAssert.AreEqual(t, (float[])y, $"NG: n{n} s{s} nan_maximize");
 
@@ -280,7 +280,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<double> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s} nan_none");
 
@@ -300,7 +300,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<double> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s} nan_minimize");
 
@@ -320,7 +320,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<double> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNaNMode.MaximizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Ascending, SortNanMode.MaximizeNaN);
 
                     CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s} nan_maximize");
 
@@ -345,7 +345,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<double> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s} nan_none");
 
@@ -365,7 +365,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<double> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNaNMode.MinimizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNanMode.MinimizeNaN);
 
                     CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s} nan_minimize");
 
@@ -385,7 +385,7 @@ namespace AvxBlasTest.SortTest {
 
                     Array<double> y = x;
 
-                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNaNMode.MaximizeNaN);
+                    Permutate.Sort(n, s, y, SortOrder.Descending, SortNanMode.MaximizeNaN);
 
                     CollectionAssert.AreEqual(t, (double[])y, $"NG: n{n} s{s} nan_maximize");
 

@@ -31,7 +31,7 @@ int sortwithkeydsc_d(const uint n, const uint s, ulong* __restrict v_ptr, double
 
 #pragma managed
 
-void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int32>^ v, SortOrder order, SortNaNMode nan_mode) {
+void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array<Int32>^ v, SortOrder order, SortNanMode nan_mode) {
     if (n <= 0 || s <= 0) {
         return;
     }
@@ -50,10 +50,10 @@ void AvxBlas::Permutate::SortWithKey(UInt32 n, UInt32 s, Array<double>^ k, Array
     int ret = UNEXECUTED;
 
     if (order == SortOrder::Ascending) {
-        ret = sortwithkeyasc_d(n, s, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortwithkeyasc_d(n, s, v_ptr, k_ptr, nan_mode == SortNanMode::MinimizeNaN);
     }
     else {
-        ret = sortwithkeydsc_d(n, s, v_ptr, k_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortwithkeydsc_d(n, s, v_ptr, k_ptr, nan_mode == SortNanMode::MinimizeNaN);
     }
 
 #if _DEBUG

@@ -31,7 +31,7 @@ int sortdsc_s(const uint n, const uint s, float* y_ptr, bool minimize_nan) {
 
 #pragma managed
 
-void AvxBlas::Permutate::Sort(UInt32 n, UInt32 s, Array<float>^ y, SortOrder order, SortNaNMode nan_mode) {
+void AvxBlas::Permutate::Sort(UInt32 n, UInt32 s, Array<float>^ y, SortOrder order, SortNanMode nan_mode) {
     if (n <= 0 || s <= 0) {
         return;
     }
@@ -44,10 +44,10 @@ void AvxBlas::Permutate::Sort(UInt32 n, UInt32 s, Array<float>^ y, SortOrder ord
     int ret = UNEXECUTED;
 
     if (order == SortOrder::Ascending) {
-        ret = sortasc_s(n, s, y_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortasc_s(n, s, y_ptr, nan_mode == SortNanMode::MinimizeNaN);
     }
     else {
-        ret = sortdsc_s(n, s, y_ptr, nan_mode == SortNaNMode::MinimizeNaN);
+        ret = sortdsc_s(n, s, y_ptr, nan_mode == SortNanMode::MinimizeNaN);
     }
 
     Util::AssertReturnCode(ret);

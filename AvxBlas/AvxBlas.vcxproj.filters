@@ -881,6 +881,60 @@
     <ClCompile Include="Elementwise\ew_arrmin_s.cpp">
       <Filter>Source\Elementwise</Filter>
     </ClCompile>
+    <ClCompile Include="Constant\const_lsub_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_lsub_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_rsub_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_rsub_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_rdiv_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_ldiv_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_ldiv_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_rdiv_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_pow_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_pow_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_signedpow_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_signedpow_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_minimum_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_minimum_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_maximum_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_maximum_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_clamp_s.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
+    <ClCompile Include="Constant\const_clamp_d.cpp">
+      <Filter>Source\Constant</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

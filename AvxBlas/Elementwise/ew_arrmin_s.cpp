@@ -3,6 +3,8 @@
 #include "../utils.h"
 #include "../Inline/inline_loadstore_xn_s.hpp"
 
+#include <math.h>
+
 using namespace System;
 
 #pragma unmanaged
