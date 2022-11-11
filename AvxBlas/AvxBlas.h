@@ -208,6 +208,24 @@ namespace AvxBlas {
 
         static void ReluGrad(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ y);
         static void ReluGrad(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ y);
+
+        static void Clamp(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ x3, Array<float>^ y);
+        static void Clamp(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ x3, Array<double>^ y);
+
+        static void Lerp(UInt32 n, Array<float>^ x1, Array<float>^ x2, Array<float>^ x3, Array<float>^ y);
+        static void Lerp(UInt32 n, Array<double>^ x1, Array<double>^ x2, Array<double>^ x3, Array<double>^ y);
+
+        static void Sum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Sum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
+
+        static void Prod(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Prod(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
+
+        static void Maximum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Maximum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
+
+        static void Minimum(UInt32 n, array<Array<float>^>^ xs, Array<float>^ y);
+        static void Minimum(UInt32 n, array<Array<double>^>^ xs, Array<double>^ y);
     };
 
     public ref class Cast abstract sealed{
@@ -252,6 +270,9 @@ namespace AvxBlas {
 
         static void Min(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
         static void Min(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
+
+        static void Prod(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y);
+        static void Prod(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y);
 
         static void ArgMax(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y);
         static void ArgMax(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<Int32>^ y);

@@ -131,6 +131,8 @@
     <ClInclude Include="Inline\inline_matmul_s.hpp" />
     <ClInclude Include="Inline\inline_ope_d.hpp" />
     <ClInclude Include="Inline\inline_pooliter_s.hpp" />
+    <ClInclude Include="Inline\inline_prod_d.hpp" />
+    <ClInclude Include="Inline\inline_prod_s.hpp" />
     <ClInclude Include="Inline\inline_set_d.hpp" />
     <ClInclude Include="Inline\inline_sum_d.hpp" />
     <ClInclude Include="Inline\inline_transpose_d.hpp" />
@@ -157,6 +159,8 @@
     <ClCompile Include="Aggregate\ag_max_s.cpp" />
     <ClCompile Include="Aggregate\ag_min_d.cpp" />
     <ClCompile Include="Aggregate\ag_min_s.cpp" />
+    <ClCompile Include="Aggregate\ag_prod_d.cpp" />
+    <ClCompile Include="Aggregate\ag_prod_s.cpp" />
     <ClCompile Include="Aggregate\ag_sum_d.cpp" />
     <ClCompile Include="Aggregate\ag_sum_s.cpp" />
     <ClCompile Include="Array\array.cpp" />
@@ -202,6 +206,8 @@
     <ClCompile Include="Elementwise\ew_cbrt_s.cpp" />
     <ClCompile Include="Elementwise\ew_ceil_d.cpp" />
     <ClCompile Include="Elementwise\ew_ceil_s.cpp" />
+    <ClCompile Include="Elementwise\ew_clamp_d.cpp" />
+    <ClCompile Include="Elementwise\ew_clamp_s.cpp" />
     <ClCompile Include="Elementwise\ew_copy_d.cpp" />
     <ClCompile Include="Elementwise\ew_copy_s.cpp" />
     <ClCompile Include="Elementwise\ew_cosh_d.cpp" />
@@ -216,6 +222,8 @@
     <ClCompile Include="Elementwise\ew_exp_s.cpp" />
     <ClCompile Include="Elementwise\ew_floor_d.cpp" />
     <ClCompile Include="Elementwise\ew_floor_s.cpp" />
+    <ClCompile Include="Elementwise\ew_lerp_d.cpp" />
+    <ClCompile Include="Elementwise\ew_lerp_s.cpp" />
     <ClCompile Include="Elementwise\ew_log2_d.cpp" />
     <ClCompile Include="Elementwise\ew_log2_s.cpp" />
     <ClCompile Include="Elementwise\ew_log_d.cpp" />
