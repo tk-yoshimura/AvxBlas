@@ -2,6 +2,7 @@
 #pragma unmanaged
 
 #include <immintrin.h>
+#include "inline_cond_s.hpp"
 
 // e0,e1,e2,e3 -> e0*e1*e2*e3
 __forceinline float _mm_prod4to1_ps(__m128 x) {
@@ -68,6 +69,8 @@ __forceinline float _mm256_prod32to1_ps(__m256 x, __m256 y, __m256 z, __m256 w) 
 
 // e0,...,e23 -> e0*e3*...*e21,e1*e4*...*e22,e2*e5*...*e23,zero
 __forceinline __m128 _mm256_prod24to3_ps(__m256 x0, __m256 x1, __m256 x2) {
+    const __m256 _ones = _mm256_set1_ps(1);
+
     const __m256i _perm_y0 = _mm256_setr_epi32(0, 1, 2, 6, 3, 4, 5, 7);
     const __m256i _perm_y1 = _mm256_setr_epi32(1, 2, 3, 0, 4, 5, 6, 7);
     const __m256i _perm_y2 = _mm256_setr_epi32(2, 3, 4, 1, 5, 6, 7, 0);
@@ -76,18 +79,18 @@ __forceinline __m128 _mm256_prod24to3_ps(__m256 x0, __m256 x1, __m256 x2) {
     const __m256i _perm_z1 = _mm256_setr_epi32(7, 0, 3, 1, 2, 4, 5, 6);
     const __m256i _perm_z2 = _mm256_setr_epi32(0, 7, 3, 1, 2, 4, 5, 6);
 
-    const __m256 _mask_1 = _mm256_castsi256_ps(_mm256_setr_epi32(~0u, ~0u, ~0u, 0, ~0u, ~0u, ~0u, 0));
-    const __m256 _mask_2 = _mm256_castsi256_ps(_mm256_setr_epi32(0, 0, 0, ~0u, 0, 0, 0, ~0u));
+    const __m256i _mask_1 = _mm256_setr_epi32(~0u, ~0u, ~0u, 0, ~0u, ~0u, ~0u, 0);
+    const __m256i _mask_2 = _mm256_setr_epi32(0, 0, 0, ~0u, 0, 0, 0, ~0u);
 
     __m256 y0 = _mm256_permutevar8x32_ps(x0, _perm_y0);
     __m256 y1 = _mm256_permutevar8x32_ps(x1, _perm_y1);
     __m256 y2 = _mm256_permutevar8x32_ps(x2, _perm_y2);
 
-    __m256 z0 = _mm256_permutevar8x32_ps(_mm256_and_ps(y0, _mask_2), _perm_z0);
-    __m256 z1 = _mm256_permutevar8x32_ps(_mm256_and_ps(y1, _mask_2), _perm_z1);
-    __m256 z2 = _mm256_permutevar8x32_ps(_mm256_and_ps(y2, _mask_2), _perm_z2);
+    __m256 z0 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y0, _ones), _perm_z0);
+    __m256 z1 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y1, _ones), _perm_z1);
+    __m256 z2 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y2, _ones), _perm_z2);
 
-    __m256 w0 = _mm256_and_ps(_mm256_mul_ps(y0, _mm256_mul_ps(y1, y2)), _mask_1);
+    __m256 w0 = _mm256_where_ps(_mask_1, _mm256_mul_ps(y0, _mm256_mul_ps(y1, y2)), _ones);
     __m256 w1 = _mm256_mul_ps(z0, _mm256_mul_ps(z1, z2));
 
     __m256 s = _mm256_mul_ps(w0, w1);
@@ -99,6 +102,8 @@ __forceinline __m128 _mm256_prod24to3_ps(__m256 x0, __m256 x1, __m256 x2) {
 
 // e0,...,e39 -> e0*e5*...*e35,e1*e6*...*e36,e2*e7*...*e37,e3*e8*...*e38,e4*e9*...*e39,zero,zero,zero
 __forceinline __m256 _mm256_prod40to5_ps(__m256 x0, __m256 x1, __m256 x2, __m256 x3, __m256 x4) {
+    const __m256 _ones = _mm256_set1_ps(1);
+
     const __m256i _perm_y1 = _mm256_setr_epi32(2, 3, 4, 5, 6, 7, 0, 1);
     const __m256i _perm_y2 = _mm256_setr_epi32(4, 5, 6, 7, 3, 0, 1, 2);
     const __m256i _perm_y3 = _mm256_setr_epi32(1, 2, 3, 4, 5, 6, 7, 0);
@@ -110,8 +115,8 @@ __forceinline __m256 _mm256_prod40to5_ps(__m256 x0, __m256 x1, __m256 x2, __m256
     const __m256i _perm_z3 = _mm256_setr_epi32(5, 6, 0, 1, 7, 2, 3, 4);
     const __m256i _perm_z4 = _mm256_setr_epi32(0, 1, 5, 6, 7, 2, 3, 4);
 
-    const __m256 _mask_1 = _mm256_castsi256_ps(_mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, 0, 0, 0));
-    const __m256 _mask_2 = _mm256_castsi256_ps(_mm256_setr_epi32(0, 0, 0, 0, 0, ~0u, ~0u, ~0u));
+    const __m256i _mask_1 = _mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, 0, 0, 0);
+    const __m256i _mask_2 = _mm256_setr_epi32(0, 0, 0, 0, 0, ~0u, ~0u, ~0u);
 
     __m256 y0 = x0;
     __m256 y1 = _mm256_permutevar8x32_ps(x1, _perm_y1);
@@ -119,13 +124,13 @@ __forceinline __m256 _mm256_prod40to5_ps(__m256 x0, __m256 x1, __m256 x2, __m256
     __m256 y3 = _mm256_permutevar8x32_ps(x3, _perm_y3);
     __m256 y4 = _mm256_permutevar8x32_ps(x4, _perm_y4);
 
-    __m256 z0 = _mm256_permutevar8x32_ps(_mm256_and_ps(y0, _mask_2), _perm_z0);
-    __m256 z1 = _mm256_permutevar8x32_ps(_mm256_and_ps(y1, _mask_2), _perm_z1);
-    __m256 z2 = _mm256_permutevar8x32_ps(_mm256_and_ps(y2, _mask_2), _perm_z2);
-    __m256 z3 = _mm256_permutevar8x32_ps(_mm256_and_ps(y3, _mask_2), _perm_z3);
-    __m256 z4 = _mm256_permutevar8x32_ps(_mm256_and_ps(y4, _mask_2), _perm_z4);
+    __m256 z0 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y0, _ones), _perm_z0);
+    __m256 z1 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y1, _ones), _perm_z1);
+    __m256 z2 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y2, _ones), _perm_z2);
+    __m256 z3 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y3, _ones), _perm_z3);
+    __m256 z4 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y4, _ones), _perm_z4);
 
-    __m256 w0 = _mm256_and_ps(_mm256_mul_ps(y0, _mm256_mul_ps(_mm256_mul_ps(y1, y2), _mm256_mul_ps(y3, y4))), _mask_1);
+    __m256 w0 = _mm256_where_ps(_mask_1, _mm256_mul_ps(y0, _mm256_mul_ps(_mm256_mul_ps(y1, y2), _mm256_mul_ps(y3, y4))), _ones);
     __m256 w1 = _mm256_mul_ps(z0, _mm256_mul_ps(_mm256_mul_ps(z1, z2), _mm256_mul_ps(z3, z4)));
 
     __m256 s = _mm256_mul_ps(w0, w1);
@@ -135,6 +140,8 @@ __forceinline __m256 _mm256_prod40to5_ps(__m256 x0, __m256 x1, __m256 x2, __m256
 
 // e0,...,e23 -> e0*e6*...*e18,e1*e7*...*e19,e2*e8*...*e20,e3*e9*...*e21,e4*e10*...*e22,e5*e11*...*e23,zero,zero
 __forceinline __m256 _mm256_prod24to6_ps(__m256 x0, __m256 x1, __m256 x2) {
+    const __m256 _ones = _mm256_set1_ps(1);
+
     const __m256i _perm_y1 = _mm256_setr_epi32(4, 5, 6, 7, 2, 3, 0, 1);
     const __m256i _perm_y2 = _mm256_setr_epi32(2, 3, 4, 5, 6, 7, 0, 1);
 
@@ -142,18 +149,18 @@ __forceinline __m256 _mm256_prod24to6_ps(__m256 x0, __m256 x1, __m256 x2) {
     const __m256i _perm_z1 = _mm256_setr_epi32(4, 5, 6, 7, 0, 1, 2, 3);
     const __m256i _perm_z2 = _mm256_setr_epi32(2, 3, 4, 5, 6, 7, 0, 1);
 
-    const __m256 _mask_1 = _mm256_castsi256_ps(_mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0));
-    const __m256 _mask_2 = _mm256_castsi256_ps(_mm256_setr_epi32(0, 0, 0, 0, 0, 0, ~0u, ~0u));
+    const __m256i _mask_1 = _mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0);
+    const __m256i _mask_2 = _mm256_setr_epi32(0, 0, 0, 0, 0, 0, ~0u, ~0u);
 
     __m256 y0 = x0;
     __m256 y1 = _mm256_permutevar8x32_ps(x1, _perm_y1);
     __m256 y2 = _mm256_permutevar8x32_ps(x2, _perm_y2);
 
-    __m256 z0 = _mm256_permutevar8x32_ps(_mm256_and_ps(y0, _mask_2), _perm_z0);
-    __m256 z1 = _mm256_permutevar8x32_ps(_mm256_and_ps(y1, _mask_2), _perm_z1);
-    __m256 z2 = _mm256_permutevar8x32_ps(_mm256_and_ps(y2, _mask_2), _perm_z2);
+    __m256 z0 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y0, _ones), _perm_z0);
+    __m256 z1 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y1, _ones), _perm_z1);
+    __m256 z2 = _mm256_permutevar8x32_ps(_mm256_where_ps(_mask_2, y2, _ones), _perm_z2);
 
-    __m256 w0 = _mm256_and_ps(_mm256_mul_ps(y0, _mm256_mul_ps(y1, y2)), _mask_1);
+    __m256 w0 = _mm256_where_ps(_mask_1, _mm256_mul_ps(y0, _mm256_mul_ps(y1, y2)), _ones);
     __m256 w1 = _mm256_mul_ps(z0, _mm256_mul_ps(z1, z2));
 
     __m256 s = _mm256_mul_ps(w0, w1);

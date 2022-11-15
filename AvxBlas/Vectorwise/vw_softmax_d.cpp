@@ -1,6 +1,7 @@
 #include "../avxblas.h"
 #include "../constants.h"
 #include "../utils.h"
+#include "../Inline/inline_cond_d.hpp"
 #include "../Inline/inline_loadstore_xn_d.hpp"
 #include "../Inline/inline_max_d.hpp"
 #include "../Inline/inline_sum_d.hpp"
@@ -384,11 +385,8 @@ int vw_softmax_stride5to7_d(
     uint r = n;
 
     while (r >= 2) {
-        _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-        _mm256_maskload_x2_pd(x_ptr + stride, x2, x3, mask);
-
-        x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
-        x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, minf);
+        _mm256_condmaskload_x2_pd(x_ptr + stride, x2, x3, mask, minf);
 
         x01_max = _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1));
         x23_max = _mm256_max_pd(_mm256_maxwise4_pd(x2), _mm256_maxwise4_pd(x3));
@@ -414,9 +412,7 @@ int vw_softmax_stride5to7_d(
         r -= 2;
     }
     if (r > 0) {
-        _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-
-        x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, minf);
 
         x01_max = _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1));
 
@@ -513,9 +509,7 @@ int vw_softmax_stride9to11_d(
     uint r = n;
 
     while (r > 0) {
-        _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
-
-        x2 = _mm256_or_pd(x2, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x3_pd(x_ptr, x0, x1, x2, mask, minf);
 
         x_max = _mm256_max_pd(_mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1)), _mm256_maxwise4_pd(x2));
 
@@ -603,9 +597,7 @@ int vw_softmax_stride13to15_d(
     uint r = n;
 
     while (r > 0) {
-        _mm256_maskload_x4_pd(x_ptr, x0, x1, x2, x3, mask);
-
-        x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x4_pd(x_ptr, x0, x1, x2, x3, mask, minf);
 
         x_max = _mm256_max_pd(
             _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1)),
@@ -1020,9 +1012,7 @@ int vw_softmax_unaligned_d(
             r -= AVX2_DOUBLE_STRIDE;
         }
         if (r > 0) {
-            _mm256_maskload_x1_pd(xc_ptr, x0, mask);
-
-            x0 = _mm256_or_pd(x0, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+            _mm256_condmaskload_x1_pd(xc_ptr, x0, mask, minf);
 
             x_max = _mm256_max_pd(_mm256_maxwise4_pd(x0), x_max);
         }
@@ -1084,9 +1074,7 @@ int vw_softmax_unaligned_d(
             r -= AVX2_DOUBLE_STRIDE;
         }
         if (r > 0) {
-            _mm256_maskload_x1_pd(xc_ptr, x0, mask);
-
-            x0 = _mm256_or_pd(x0, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+            _mm256_condmaskload_x1_pd(xc_ptr, x0, mask, minf);
 
             y0 = _mm256_softmaxexp_pd(x0, x_max);
 

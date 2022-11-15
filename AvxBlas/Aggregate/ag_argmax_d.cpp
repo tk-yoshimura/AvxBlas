@@ -2,6 +2,7 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_max_d.hpp"
+#include "../Inline/inline_cond_d.hpp"
 #include "../Inline/inline_misc.hpp"
 #include "../Inline/inline_cmp_d.hpp"
 #include "../Inline/inline_loadstore_xn_d.hpp"
@@ -258,15 +259,10 @@ int ag_argmax_samples5to7_d(
     uint r = n;
 
     while (r >= AVX2_EPI32_STRIDE / 2) {
-        _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-        _mm256_maskload_x2_pd(x_ptr + samples, x2, x3, mask);
-        _mm256_maskload_x2_pd(x_ptr + samples * 2, x4, x5, mask);
-        _mm256_maskload_x2_pd(x_ptr + samples * 3, x6, x7, mask);
-
-        x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
-        x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
-        x5 = _mm256_or_pd(x5, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
-        x7 = _mm256_or_pd(x7, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, minf);
+        _mm256_condmaskload_x2_pd(x_ptr + samples, x2, x3, mask, minf);
+        _mm256_condmaskload_x2_pd(x_ptr + samples * 2, x4, x5, mask, minf);
+        _mm256_condmaskload_x2_pd(x_ptr + samples * 3, x6, x7, mask, minf);
 
         s01 = _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1));
         s23 = _mm256_max_pd(_mm256_maxwise4_pd(x2), _mm256_maxwise4_pd(x3));
@@ -293,11 +289,8 @@ int ag_argmax_samples5to7_d(
         r -= AVX2_EPI32_STRIDE / 2;
     }
     if (r >= AVX2_EPI32_STRIDE / 4) {
-        _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-        _mm256_maskload_x2_pd(x_ptr + samples, x2, x3, mask);
-
-        x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
-        x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, minf);
+        _mm256_condmaskload_x2_pd(x_ptr + samples, x2, x3, mask, minf);
 
         s01 = _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1));
         s23 = _mm256_max_pd(_mm256_maxwise4_pd(x2), _mm256_maxwise4_pd(x3));
@@ -315,9 +308,7 @@ int ag_argmax_samples5to7_d(
         r -= AVX2_EPI32_STRIDE / 4;
     }
     if (r > 0) {
-        _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-
-        x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, minf);
 
         s01 = _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1));
 
@@ -423,11 +414,8 @@ int ag_argmax_samples9to11_d(
     uint r = n;
 
     while (r >= 2) {
-        _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
-        _mm256_maskload_x3_pd(x_ptr + samples, x3, x4, x5, mask);
-
-        x2 = _mm256_or_pd(x2, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
-        x5 = _mm256_or_pd(x5, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x3_pd(x_ptr, x0, x1, x2, mask, minf);
+        _mm256_condmaskload_x3_pd(x_ptr + samples, x3, x4, x5, mask, minf);
 
         s012 = _mm256_max_pd(_mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1)), _mm256_maxwise4_pd(x2));
         s345 = _mm256_max_pd(_mm256_max_pd(_mm256_maxwise4_pd(x3), _mm256_maxwise4_pd(x4)), _mm256_maxwise4_pd(x5));
@@ -447,9 +435,7 @@ int ag_argmax_samples9to11_d(
         r -= 2;
     }
     if (r > 0) {
-        _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
-
-        x2 = _mm256_or_pd(x2, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x3_pd(x_ptr, x0, x1, x2, mask, minf);
 
         s012 = _mm256_max_pd(_mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1)), _mm256_maxwise4_pd(x2));
 
@@ -533,9 +519,7 @@ int ag_argmax_samples13to15_d(
     uint r = n;
 
     while (r > 0) {
-        _mm256_maskload_x4_pd(x_ptr, x0, x1, x2, x3, mask);
-
-        x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+        _mm256_condmaskload_x4_pd(x_ptr, x0, x1, x2, x3, mask, minf);
 
         s = _mm256_max_pd(
             _mm256_max_pd(_mm256_maxwise4_pd(x0), _mm256_maxwise4_pd(x1)),
@@ -693,9 +677,7 @@ int ag_argmax_unaligned_d(
             k += AVX2_DOUBLE_STRIDE;
         }
         if (r > 0) {
-            _mm256_maskload_x1_pd(x_ptr, x0, mask);
-
-            x0 = _mm256_or_pd(x0, _mm256_andnot_pd(_mm256_castsi256_pd(mask), minf));
+            _mm256_condmaskload_x1_pd(x_ptr, x0, mask, minf);
 
             t = _mm256_max_pd(_mm256_maxwise4_pd(x0), s);
 

@@ -2,6 +2,7 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_min_s.hpp"
+#include "../Inline/inline_cond_s.hpp"
 #include "../Inline/inline_misc.hpp"
 #include "../Inline/inline_cmp_s.hpp"
 #include "../Inline/inline_loadstore_xn_s.hpp"
@@ -299,23 +300,14 @@ int ag_argmin_samples5to7_s(
     uint r = n;
 
     while (r >= AVX2_EPI32_STRIDE) {
-        x0 = _mm256_maskload_ps(x_ptr, mask);
-        x1 = _mm256_maskload_ps(x_ptr + samples, mask);
-        x2 = _mm256_maskload_ps(x_ptr + samples * 2, mask);
-        x3 = _mm256_maskload_ps(x_ptr + samples * 3, mask);
-        x4 = _mm256_maskload_ps(x_ptr + samples * 4, mask);
-        x5 = _mm256_maskload_ps(x_ptr + samples * 5, mask);
-        x6 = _mm256_maskload_ps(x_ptr + samples * 6, mask);
-        x7 = _mm256_maskload_ps(x_ptr + samples * 7, mask);
-
-        x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x2 = _mm256_or_ps(x2, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x3 = _mm256_or_ps(x3, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x4 = _mm256_or_ps(x4, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x5 = _mm256_or_ps(x5, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x6 = _mm256_or_ps(x6, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x7 = _mm256_or_ps(x7, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        x0 = _mm256_condmaskload_ps(x_ptr, mask, pinf);
+        x1 = _mm256_condmaskload_ps(x_ptr + samples, mask, pinf);
+        x2 = _mm256_condmaskload_ps(x_ptr + samples * 2, mask, pinf);
+        x3 = _mm256_condmaskload_ps(x_ptr + samples * 3, mask, pinf);
+        x4 = _mm256_condmaskload_ps(x_ptr + samples * 4, mask, pinf);
+        x5 = _mm256_condmaskload_ps(x_ptr + samples * 5, mask, pinf);
+        x6 = _mm256_condmaskload_ps(x_ptr + samples * 6, mask, pinf);
+        x7 = _mm256_condmaskload_ps(x_ptr + samples * 7, mask, pinf);
 
         s0 = _mm256_minwise8_ps(x0);
         s1 = _mm256_minwise8_ps(x1);
@@ -346,15 +338,10 @@ int ag_argmin_samples5to7_s(
         r -= AVX2_EPI32_STRIDE;
     }
     if (r >= AVX2_EPI32_STRIDE / 2) {
-        x0 = _mm256_maskload_ps(x_ptr, mask);
-        x1 = _mm256_maskload_ps(x_ptr + samples, mask);
-        x2 = _mm256_maskload_ps(x_ptr + samples * 2, mask);
-        x3 = _mm256_maskload_ps(x_ptr + samples * 3, mask);
-
-        x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x2 = _mm256_or_ps(x2, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x3 = _mm256_or_ps(x3, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        x0 = _mm256_condmaskload_ps(x_ptr, mask, pinf);
+        x1 = _mm256_condmaskload_ps(x_ptr + samples, mask, pinf);
+        x2 = _mm256_condmaskload_ps(x_ptr + samples * 2, mask, pinf);
+        x3 = _mm256_condmaskload_ps(x_ptr + samples * 3, mask, pinf);
 
         s0 = _mm256_minwise8_ps(x0);
         s1 = _mm256_minwise8_ps(x1);
@@ -377,11 +364,8 @@ int ag_argmin_samples5to7_s(
         r -= AVX2_EPI32_STRIDE / 2;
     }
     if (r >= AVX2_EPI32_STRIDE / 4) {
-        x0 = _mm256_maskload_ps(x_ptr, mask);
-        x1 = _mm256_maskload_ps(x_ptr + samples, mask);
-
-        x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        x0 = _mm256_condmaskload_ps(x_ptr, mask, pinf);
+        x1 = _mm256_condmaskload_ps(x_ptr + samples, mask, pinf);
 
         s0 = _mm256_minwise8_ps(x0);
         s1 = _mm256_minwise8_ps(x1);
@@ -397,9 +381,7 @@ int ag_argmin_samples5to7_s(
         r -= AVX2_EPI32_STRIDE / 4;
     }
     if (r > 0) {
-        x0 = _mm256_maskload_ps(x_ptr, mask);
-
-        x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        x0 = _mm256_condmaskload_ps(x_ptr, mask, pinf);
 
         s0 = _mm256_minwise8_ps(x0);
 
@@ -528,15 +510,10 @@ int ag_argmin_samples9to15_s(
     uint r = n;
 
     while (r >= AVX2_EPI32_STRIDE / 2) {
-        _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
-        _mm256_maskload_x2_ps(x_ptr + samples, x2, x3, mask);
-        _mm256_maskload_x2_ps(x_ptr + samples * 2, x4, x5, mask);
-        _mm256_maskload_x2_ps(x_ptr + samples * 3, x6, x7, mask);
-
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x3 = _mm256_or_ps(x3, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x5 = _mm256_or_ps(x5, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x7 = _mm256_or_ps(x7, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        _mm256_condmaskload_x2_ps(x_ptr, x0, x1, mask, pinf);
+        _mm256_condmaskload_x2_ps(x_ptr + samples, x2, x3, mask, pinf);
+        _mm256_condmaskload_x2_ps(x_ptr + samples * 2, x4, x5, mask, pinf);
+        _mm256_condmaskload_x2_ps(x_ptr + samples * 3, x6, x7, mask, pinf);
 
         s01 = _mm256_min_ps(_mm256_minwise8_ps(x0), _mm256_minwise8_ps(x1));
         s23 = _mm256_min_ps(_mm256_minwise8_ps(x2), _mm256_minwise8_ps(x3));
@@ -563,11 +540,8 @@ int ag_argmin_samples9to15_s(
         r -= AVX2_EPI32_STRIDE / 2;
     }
     if (r >= AVX2_EPI32_STRIDE / 4) {
-        _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
-        _mm256_maskload_x2_ps(x_ptr + samples, x2, x3, mask);
-
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x3 = _mm256_or_ps(x3, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        _mm256_condmaskload_x2_ps(x_ptr, x0, x1, mask, pinf);
+        _mm256_condmaskload_x2_ps(x_ptr + samples, x2, x3, mask, pinf);
 
         s01 = _mm256_min_ps(_mm256_minwise8_ps(x0), _mm256_minwise8_ps(x1));
         s23 = _mm256_min_ps(_mm256_minwise8_ps(x2), _mm256_minwise8_ps(x3));
@@ -585,9 +559,7 @@ int ag_argmin_samples9to15_s(
         r -= AVX2_EPI32_STRIDE / 4;
     }
     if (r > 0) {
-        _mm256_maskload_x2_ps(x_ptr, x0, x1, mask);
-
-        x1 = _mm256_or_ps(x1, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        _mm256_condmaskload_x2_ps(x_ptr, x0, x1, mask, pinf);
 
         s01 = _mm256_min_ps(_mm256_minwise8_ps(x0), _mm256_minwise8_ps(x1));
 
@@ -693,11 +665,8 @@ int ag_argmin_samples17to23_s(
     uint r = n;
 
     while (r >= 2) {
-        _mm256_maskload_x3_ps(x_ptr, x0, x1, x2, mask);
-        _mm256_maskload_x3_ps(x_ptr + samples, x3, x4, x5, mask);
-
-        x2 = _mm256_or_ps(x2, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
-        x5 = _mm256_or_ps(x5, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        _mm256_condmaskload_x3_ps(x_ptr, x0, x1, x2, mask, pinf);
+        _mm256_condmaskload_x3_ps(x_ptr + samples, x3, x4, x5, mask, pinf);
 
         s012 = _mm256_min_ps(_mm256_min_ps(_mm256_minwise8_ps(x0), _mm256_minwise8_ps(x1)), _mm256_minwise8_ps(x2));
         s345 = _mm256_min_ps(_mm256_min_ps(_mm256_minwise8_ps(x3), _mm256_minwise8_ps(x4)), _mm256_minwise8_ps(x5));
@@ -717,9 +686,7 @@ int ag_argmin_samples17to23_s(
         r -= 2;
     }
     if (r > 0) {
-        _mm256_maskload_x3_ps(x_ptr, x0, x1, x2, mask);
-
-        x2 = _mm256_or_ps(x2, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        _mm256_condmaskload_x3_ps(x_ptr, x0, x1, x2, mask, pinf);
 
         s012 = _mm256_min_ps(_mm256_min_ps(_mm256_minwise8_ps(x0), _mm256_minwise8_ps(x1)), _mm256_minwise8_ps(x2));
 
@@ -803,9 +770,7 @@ int ag_argmin_samples25to31_s(
     uint r = n;
 
     while (r > 0) {
-        _mm256_maskload_x4_ps(x_ptr, x0, x1, x2, x3, mask);
-
-        x3 = _mm256_or_ps(x3, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+        _mm256_condmaskload_x4_ps(x_ptr, x0, x1, x2, x3, mask, pinf);
 
         s = _mm256_min_ps(
             _mm256_min_ps(_mm256_minwise8_ps(x0), _mm256_minwise8_ps(x1)),
@@ -963,9 +928,7 @@ int ag_argmin_unaligned_s(
             k += AVX2_FLOAT_STRIDE;
         }
         if (r > 0) {
-            _mm256_maskload_x1_ps(x_ptr, x0, mask);
-
-            x0 = _mm256_or_ps(x0, _mm256_andnot_ps(_mm256_castsi256_ps(mask), pinf));
+            _mm256_condmaskload_x1_ps(x_ptr, x0, mask, pinf);
 
             t = _mm256_min_ps(_mm256_minwise8_ps(x0), s);
 

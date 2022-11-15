@@ -255,6 +255,12 @@
     <ClInclude Include="Inline\inline_prod_s.hpp">
       <Filter>Source\Inline</Filter>
     </ClInclude>
+    <ClInclude Include="Inline\inline_cond_d.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
+    <ClInclude Include="Inline\inline_cond_s.hpp">
+      <Filter>Source\Inline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Util\util_check.cpp">

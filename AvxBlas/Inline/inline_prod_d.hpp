@@ -2,6 +2,7 @@
 #pragma unmanaged
 
 #include <immintrin.h>
+#include "inline_cond_d.hpp"
 
 // e0,e1 -> e0*e1
 __forceinline double _mm_prod2to1_pd(__m128d x) {
@@ -50,18 +51,20 @@ __forceinline double _mm256_prod16to1_pd(__m256d x, __m256d y, __m256d z, __m256
 
 // e0,...,e11 -> e0*e3*...*e9,e1*e4*...*e10,e2*e5*...*e11,zero
 __forceinline __m256d _mm256_prod12to3_pd(__m256d x0, __m256d x1, __m256d x2) {
-    const __m256d _mask_1 = _mm256_castsi256_pd(_mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0));
-    const __m256d _mask_2 = _mm256_castsi256_pd(_mm256_setr_epi32(0, 0, 0, 0, 0, 0, ~0u, ~0u));
+    const __m256d _ones = _mm256_set1_pd(1);
+
+    const __m256i _mask_1 = _mm256_setr_epi32(~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0);
+    const __m256i _mask_2 = _mm256_setr_epi32(0, 0, 0, 0, 0, 0, ~0u, ~0u);
 
     __m256d y0 = x0;
     __m256d y1 = _mm256_permute4x64_pd(x1, _MM_PERM_ABDC);
     __m256d y2 = _mm256_permute4x64_pd(x2, _MM_PERM_ADCB);
 
-    __m256d z0 = _mm256_permute4x64_pd(_mm256_and_pd(y0, _mask_2), _MM_PERM_AAAD);
-    __m256d z1 = _mm256_permute4x64_pd(_mm256_and_pd(y1, _mask_2), _MM_PERM_AADA);
-    __m256d z2 = _mm256_permute4x64_pd(_mm256_and_pd(y2, _mask_2), _MM_PERM_ADAA);
+    __m256d z0 = _mm256_permute4x64_pd(_mm256_where_pd(_mask_2, y0, _ones), _MM_PERM_AAAD);
+    __m256d z1 = _mm256_permute4x64_pd(_mm256_where_pd(_mask_2, y1, _ones), _MM_PERM_AADA);
+    __m256d z2 = _mm256_permute4x64_pd(_mm256_where_pd(_mask_2, y2, _ones), _MM_PERM_ADAA);
 
-    __m256d w0 = _mm256_and_pd(_mm256_mul_pd(y0, _mm256_mul_pd(y1, y2)), _mask_1);
+    __m256d w0 = _mm256_where_pd(_mask_1, _mm256_mul_pd(y0, _mm256_mul_pd(y1, y2)), _ones);
     __m256d w1 = _mm256_mul_pd(z0, _mm256_mul_pd(z1, z2));
 
     __m256d ret = _mm256_mul_pd(w0, w1);
@@ -84,8 +87,8 @@ __forceinline __m256dx2 _mm256_prod20to5_pd(__m256d x0, __m256d x1, __m256d x2, 
     __m256d w0 = _mm256_blend_pd(y1, y2, 0b0100);
     __m256d w1 = _mm256_blend_pd(y3, y4, 0b0001);
     __m256d wc = _mm256_blend_pd(w0, w1, 0b0011);
-    __m256d wa = _mm256_permute4x64_pd(_mm256_mul_pd(wc, _mm256_permute4x64_pd(wc, _MM_PERM_DBCA)), _MM_PERM_DBCA);
-    __m256d wb = _mm256_mul_pd(wa, _mm256_permute4x64_pd(wa, _MM_PERM_DBCA));
+    __m256d wa = _mm256_permute4x64_pd(_mm256_mul_pd(wc, _mm256_permute4x64_pd(wc, _MM_PERM_CDAB)), _MM_PERM_DBCA);
+    __m256d wb = _mm256_mul_pd(wa, _mm256_permute4x64_pd(wa, _MM_PERM_CDAB));
 
     __m256d imm0 = _mm256_mul_pd(_mm256_mul_pd(z0, z1), _mm256_mul_pd(z2, z3));
     __m256d imm1 = wb;

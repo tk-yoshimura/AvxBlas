@@ -2,6 +2,7 @@
 #include "../constants.h"
 #include "../utils.h"
 #include "../Inline/inline_prod_d.hpp"
+#include "../Inline/inline_cond_d.hpp"
 #include "../Inline/inline_fill_d.hpp"
 #include "../Inline/inline_copy_d.hpp"
 #include "../Inline/inline_loadstore_xn_d.hpp"
@@ -53,8 +54,7 @@ int ag_prod_stride1_d(
             }
         }
         if (r > 0) {
-            x = _mm256_maskload_pd(x_ptr, mask);
-            x = _mm256_or_pd(x, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            x = _mm256_condmaskload_pd(x_ptr, mask, ones);
 
             s = _mm256_mul_pd(x, s);
 
@@ -112,8 +112,7 @@ int ag_prod_stride2_d(
             }
         }
         if (r > 0) {
-            x = _mm256_maskload_pd(x_ptr, mask);
-            x = _mm256_or_pd(x, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            x = _mm256_condmaskload_pd(x_ptr, mask, ones);
 
             s = _mm256_mul_pd(x, s);
 
@@ -176,23 +175,20 @@ int ag_prod_stride3_d(
             }
         }
         if (r > AVX2_DOUBLE_STRIDE * 2 / 3) {
-            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
-            x2 = _mm256_or_pd(x2, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x3_pd(x_ptr, x0, x1, x2, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
             s2 = _mm256_mul_pd(x2, s2);
         }
         else if (r > AVX2_DOUBLE_STRIDE / 3) {
-            _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-            x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
         }
         else if (r > 0) {
-            _mm256_maskload_x1_pd(x_ptr, x0, mask);
-            x0 = _mm256_or_pd(x0, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x1_pd(x_ptr, x0, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
         }
@@ -290,8 +286,7 @@ int ag_prod_stride5_d(
             }
         }
         if (r > AVX2_DOUBLE_STRIDE * 3 / 5) {
-            _mm256_maskload_x4_pd(x_ptr, x0, x1, x2, x3, mask);
-            x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x4_pd(x_ptr, x0, x1, x2, x3, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
@@ -299,16 +294,14 @@ int ag_prod_stride5_d(
             s3 = _mm256_mul_pd(x3, s3);
         }
         else if (r > AVX2_DOUBLE_STRIDE * 2 / 5) {
-            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
-            x2 = _mm256_or_pd(x2, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x3_pd(x_ptr, x0, x1, x2, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
             s2 = _mm256_mul_pd(x2, s2);
         }
         else if (r > 0) {
-            _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-            x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
@@ -371,8 +364,7 @@ int ag_prod_stride6_d(
             }
         }
         if (r > 0) {
-            _mm256_maskload_x2_pd(x_ptr, x0, x1, mask);
-            x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
@@ -407,8 +399,7 @@ int ag_prod_stride7_d(
         __m256d s0 = ones, s1 = ones;
 
         for (uint j = 0; j < samples; j++) {
-            _mm256_maskload_x2_pd(x_ptr, x0, x1, mask3);
-            x1 = _mm256_or_pd(x1, _mm256_andnot_pd(_mm256_castsi256_pd(mask3), ones));
+            _mm256_condmaskload_x2_pd(x_ptr, x0, x1, mask3, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
@@ -475,8 +466,7 @@ int ag_prod_stride9to11_d(
         __m256d s0 = ones, s1 = ones, s2 = ones;
 
         for (uint j = 0; j < samples; j++) {
-            _mm256_maskload_x3_pd(x_ptr, x0, x1, x2, mask);
-            x2 = _mm256_or_pd(x2, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x3_pd(x_ptr, x0, x1, x2, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
@@ -545,8 +535,7 @@ int ag_prod_stride13to15_d(
         __m256d s0 = ones, s1 = ones, s2 = ones, s3 = ones;
 
         for (uint j = 0; j < samples; j++) {
-            _mm256_maskload_x4_pd(x_ptr, x0, x1, x2, x3, mask);
-            x3 = _mm256_or_pd(x3, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
+            _mm256_condmaskload_x4_pd(x_ptr, x0, x1, x2, x3, mask, ones);
 
             s0 = _mm256_mul_pd(x0, s0);
             s1 = _mm256_mul_pd(x1, s1);
@@ -801,9 +790,8 @@ int ag_prod_unaligned_d(
                 r -= AVX2_DOUBLE_STRIDE;
             }
             if (r > 0) {
-                _mm256_loadu_x1_pd(x_ptr, x0);
+                _mm256_condmaskload_x1_pd(x_ptr, x0, mask, ones);
                 _mm256_load_x1_pd(sc_ptr, s0);
-                x0 = _mm256_or_pd(x0, _mm256_andnot_pd(_mm256_castsi256_pd(mask), ones));
 
                 s0 = _mm256_mul_pd(x0, s0);
 

@@ -25,7 +25,7 @@ namespace AvxBlasTest.AggregateTest {
                         uint inlength = n * samples * stride + 4;
                         uint outlength = n * stride + 4;
 
-                        float[] x = (new float[inlength]).Select((_, idx) => (float)random.Next(32) - 16).ToArray();
+                        float[] x = (new float[inlength]).Select((_, idx) => (float)random.NextDouble() * 8 - 4).ToArray();
 
                         float[] ts = new float[outlength];
 
@@ -48,7 +48,7 @@ namespace AvxBlasTest.AggregateTest {
                         float[] ys = y;
 
                         for (int i = 0; i < ts.Length; i++) {
-                            Assert.AreEqual(ts[i], ys[i], Math.Abs(ts[i]) * 1e-6, $"NG: n{n} samples{samples} stride{stride}");
+                            Assert.AreEqual(ts[i], ys[i], Math.Abs(ts[i]) * 1e-5, $"NG: n{n} samples{samples} stride{stride}");
                         }
 
                         Console.WriteLine($"OK: n{n} samples{samples} stride{stride}");
@@ -76,7 +76,7 @@ namespace AvxBlasTest.AggregateTest {
                         uint inlength = n * samples * stride + 4;
                         uint outlength = n * stride + 4;
 
-                        double[] x = (new double[inlength]).Select((_, idx) => (double)random.Next(32) - 16).ToArray();
+                        double[] x = (new double[inlength]).Select((_, idx) => (double)random.NextDouble() * 8 - 4).ToArray();
 
                         double[] ts = new double[outlength];
 
@@ -99,7 +99,7 @@ namespace AvxBlasTest.AggregateTest {
                         double[] ys = y;
 
                         for (int i = 0; i < ts.Length; i++) {
-                            Assert.AreEqual(ts[i], ys[i], Math.Abs(ts[i]) * 1e-12, $"NG: n{n} samples{samples} stride{stride}");
+                            Assert.AreEqual(ts[i], ys[i], Math.Abs(ts[i]) * 1e-10, $"NG: n{n} samples{samples} stride{stride}");
                         }
 
                         Console.WriteLine($"OK: n{n} samples{samples} stride{stride}");
