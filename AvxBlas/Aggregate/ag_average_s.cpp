@@ -3,7 +3,7 @@
 using namespace System;
 
 void AvxBlas::Aggregate::Average(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<float>^ y) {
-    if (n <= 0 || samples <= 0 || stride <= 0) {
+    if (n <= 0 || stride <= 0) {
         return;
     }
     

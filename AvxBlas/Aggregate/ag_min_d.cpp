@@ -825,7 +825,7 @@ int ag_min_unaligned_d(
 #pragma managed
 
 void AvxBlas::Aggregate::Min(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y) {
-    if (n <= 0 || samples <= 0 || stride <= 0) {
+    if (n <= 0 || stride <= 0) {
         return;
     }
 
@@ -834,6 +834,10 @@ void AvxBlas::Aggregate::Min(UInt32 n, UInt32 samples, UInt32 stride, Array<doub
     Util::CheckLength(n * samples * stride, x);
     Util::CheckLength(n * stride, y);
 
+    if (samples == 0) {
+        Initialize::Clear(n * stride, NAN, y);
+        return;
+    }
     if (samples == 1) {
         Elementwise::Copy(n * stride, x, y);
         return;

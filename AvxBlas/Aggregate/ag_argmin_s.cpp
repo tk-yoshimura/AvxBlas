@@ -1153,7 +1153,7 @@ int ag_argmin_samples_unaligned_s(
 #pragma managed
 
 void AvxBlas::Aggregate::ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<float>^ x, Array<Int32>^ y) {
-    if (n <= 0 || samples <= 0 || stride <= 0) {
+    if (n <= 0 || stride <= 0) {
         return;
     }
 
@@ -1162,7 +1162,7 @@ void AvxBlas::Aggregate::ArgMin(UInt32 n, UInt32 samples, UInt32 stride, Array<f
     Util::CheckLength(n * samples * stride, x);
     Util::CheckLength(n * stride, y);
 
-    if (samples == 1) {
+    if (samples <= 1) {
         Initialize::Clear(n * stride, 0, y);
         return;
     }

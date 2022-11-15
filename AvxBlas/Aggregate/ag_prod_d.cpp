@@ -825,7 +825,7 @@ int ag_prod_unaligned_d(
 #pragma managed
 
 void AvxBlas::Aggregate::Prod(UInt32 n, UInt32 samples, UInt32 stride, Array<double>^ x, Array<double>^ y) {
-    if (n <= 0 || samples <= 0 || stride <= 0) {
+    if (n <= 0 || stride <= 0) {
         return;
     }
 
@@ -834,6 +834,10 @@ void AvxBlas::Aggregate::Prod(UInt32 n, UInt32 samples, UInt32 stride, Array<dou
     Util::CheckLength(n * samples * stride, x);
     Util::CheckLength(n * stride, y);
 
+    if (samples == 0) {
+        Initialize::Clear(n * stride, 1, y);
+        return;
+    }
     if (samples == 1) {
         Elementwise::Copy(n * stride, x, y);
         return;
