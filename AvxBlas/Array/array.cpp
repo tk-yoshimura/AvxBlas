@@ -343,7 +343,7 @@ void AvxBlas::Array<T>::CheckOverflow() {
 
     for (UInt64 i = (UInt64)Length * ElementSize; i < allocsize; i++) {
         if (ucptr[i] != ((i & 0x7Fu) | 0x80u)) {
-            throw gcnew System::AccessViolationException();
+            throw gcnew System::AccessViolationException("Detected canary corruption.");
         }
     }
 }

@@ -509,7 +509,7 @@ void AvxBlas::Permutate::Transpose(UInt32 n, UInt32 r, UInt32 s, UInt32 stride, 
     Util::CheckLength(n * r * s * stride, x, y);
     Util::CheckDuplicateArray(x, y);
 
-    double* x_ptr = (double*)(x->Ptr.ToPointer());
+    const double* x_ptr = (const double*)(x->Ptr.ToPointer());
     double* y_ptr = (double*)(y->Ptr.ToPointer());
 
     int ret = UNEXECUTED;
