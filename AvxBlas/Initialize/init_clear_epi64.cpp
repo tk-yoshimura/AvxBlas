@@ -8,7 +8,7 @@ using namespace System;
 #pragma unmanaged
 
 int clear_epi64(
-    const uint index, const uint n, const long c,
+    const uint index, const uint n, const __int64 c,
     outulongs y_ptr) {
 
     uint r = n;
@@ -24,9 +24,7 @@ int clear_epi64(
         r--;
     }
 
-    uint hi = (uint)(((ulong)c) >> 32), lo = (uint)c;
-
-    const __m256i fillc = _mm256_setr_epi32(hi, lo, hi, lo, hi, lo, hi, lo);
+    const __m256i fillc = _mm256_setr_epi64x(c, c, c, c);
 
     while (r >= AVX2_EPI64_STRIDE * 4) {
         _mm256_stream_x4_epi64(y_ptr, fillc, fillc, fillc, fillc);
@@ -62,7 +60,7 @@ void AvxBlas::Initialize::Clear(UInt32 n, Int64 c, Array<Int64>^ y) {
 
     ulong* y_ptr = (ulong*)(y->Ptr.ToPointer());
 
-    int ret = clear_epi64(0, n, (long)c, y_ptr);
+    int ret = clear_epi64(0, n, c, y_ptr);
 
     Util::AssertReturnCode(ret);
 }
@@ -72,7 +70,7 @@ void AvxBlas::Initialize::Clear(UInt32 index, UInt32 n, Int64 c, Array<Int64>^ y
 
     ulong* y_ptr = (ulong*)(y->Ptr.ToPointer());
 
-    int ret = clear_epi64(index, n, (long)c, y_ptr);
+    int ret = clear_epi64(index, n, c, y_ptr);
 
     Util::AssertReturnCode(ret);
 }

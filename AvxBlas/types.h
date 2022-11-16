@@ -2,7 +2,7 @@
 
 #include <immintrin.h>
 
-typedef unsigned int uint;
+typedef unsigned __int32 uint;
 typedef unsigned __int64 ulong;
 
 typedef const float* __restrict infloats;
@@ -24,16 +24,16 @@ static_assert(sizeof(ulong) == 8, "sizeof ulong must be 8");
 
 union _m32 {
     float f;
-    unsigned __int32 i;
+    uint i;
 
-    constexpr _m32(unsigned __int32 i) : i(i) { }
+    constexpr _m32(uint i) : i(i) { }
 };
 
 union _m64 {
     double f;
-    unsigned __int64 i;
+    ulong i;
 
-    constexpr _m64(unsigned __int64 i) : i(i) { }
+    constexpr _m64(ulong i) : i(i) { }
 };
 
 struct __m256x2 {
